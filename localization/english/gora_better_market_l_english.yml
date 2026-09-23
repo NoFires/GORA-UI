@@ -1,0 +1,55 @@
+﻿l_english:
+ # GORA UI+ — Better Market panel strings (header, balance, trade, filters)
+ # Referenced from gui/zz_gora_market_panel.gui and gui/gora_better_market_tooltips.gui.
+
+ # ── Header summary widgets ────────────────────────────────────────────
+ MARKET_BALANCE_MMP:0              "#title Balance:#variable @money![Market.GetBalance|D+=]#!#!"
+ MARKET_GDP:0                      "#title GDP:#variable @money! [Market.GetMarketGDPValue|*v2]"
+ MARKET_GDP_HEADER_TOOLTIP:0       "#header Market GDP#!\nGross Domestic Product: #variable @money![Market.GetMarketGDPValue|*v2]#!"
+ MARKET_CONSTRUCTION_EXPENSES_HEADER:0 "#negative_value @money!-[GetPlayer.GetConstructionGoodsExpenses|1K]#!"
+
+ # ── Construction goods tooltip ────────────────────────────────────────
+ GORA_MARKET_CONSTRUCTION_GOODS_TOOLTIP_TITLE:0          "Construction Goods"
+ GORA_MARKET_CONSTRUCTION_GOODS_TOOLTIP_DESC:0           "Market price and difference from base price."
+ GORA_MARKET_CONSTRUCTION_GOODS_TOOLTIP_TOTAL:0          "Total construction expense: #negative_value @money!-[GetPlayer.GetConstructionGoodsExpenses|D-]#!"
+ GORA_MARKET_CONSTRUCTION_GOODS_TOOLTIP_NOTE:0           "#italic Filters affect this list.#!"
+ GORA_MARKET_CONSTRUCTION_GOODS_TOOLTIP_SPENDING_TITLE:0 "Breakdown"
+ GORA_MARKET_CONSTRUCTION_GOODS_TOOLTIP_GOVERNMENT:0     "#bold Government#!\n[GetPlayer.GetGovernmentConstructionGoodsExpensesByGoodsDesc]"
+ GORA_MARKET_CONSTRUCTION_GOODS_TOOLTIP_PRIVATE:0        "#bold Private#!\n[GetPlayer.GetPrivateConstructionGoodsExpensesByGoodsDesc]"
+
+ # ── Balance & trade trackers ──────────────────────────────────────────
+ MARKET_BALANCE_DETAIL:0           "Market Balance Detail"
+ MARKET_SUPPLY_SURPLUS:0           "Supply Surplus"
+ MARKET_SUPPLY_DEFICIT:0           "Supply Deficit"
+ GORA_BALANCE_DETAIL_SORT_WARNING:0 "For the most accurate view, sort the #header goods#! page list by the #header Balance#! column."
+
+ GORA_EXPORTS_TOOLTIP:0            "#header Exports#!\nGoods shipped from your market to other markets via trade routes.\nHigh exports = goods with local supply surplus."
+ GORA_IMPORTS_TOOLTIP:0            "#header Imports#!\nGoods received from other markets via trade routes.\nHigh imports = goods with local supply deficit."
+ GORA_TRADE_NET_TOOLTIP:0          "#header Trade Balance#!\nDifference between exports and imports.\nPositive = trade surplus\nNegative = trade deficit"
+ GORA_SUPPLY_SURPLUS_TOOLTIP:0     "#header Supply Surplus#!\nGoods where sell orders (production) exceed buy orders (consumption).\nThese goods tend to become cheaper in your market.\nExcess production is exported to other markets."
+ GORA_SUPPLY_DEFICIT_TOOLTIP:0     "#header Supply Deficit#!\nGoods where buy orders (consumption) exceed sell orders (production).\nThese goods tend to become more expensive in your market.\nThe deficit is filled through imports."
+ GORA_BALANCE_NET_TOOLTIP:0        "#header Market Balance#!\nOverall supply-demand balance across all goods.\nPositive = general supply surplus (prices trending down)\nNegative = general demand surplus (prices trending up)"
+
+ # ── Goods filter labels ───────────────────────────────────────────────
+ MARKET_FILTER_STATE_EXPENSES:0    "State Expenses (Construction & Paper)"
+ MARKET_FILTER_EXPORTS:0           "Exported Goods"
+ MARKET_FILTER_IMPORTS:0           "Imported Goods"
+ MARKET_FILTER_DEFICITS:0          "Goods in Deficit"
+
+ # ── Goods leaderboard helpers (referenced from market tooltips) ───────
+ BETTER_GOOD_LEADERBOARD:0         "[SelectLocalization(GreaterThan_int32(Goods.GetLeaderboardSpot(Goods.GetMarket.GetOwner),'(int32)0'),'BETTER_GOODS_LEADERBOARD_HEADER_TOP_PRODUCER','BETTER_GOODS_LEADERBOARD_HEADER_INSIGNIFICANT_PRODUCER')]"
+ BETTER_GOODS_LEADERBOARD_HEADER_TOP_PRODUCER:0          "#tooltippable #tooltip:[Goods.GetTooltipTag],GOODS_NAME_TOOLTIP_LEADERBOARD_RANKING_BREAKDOWN #v ##[Goods.GetLeaderboardSpot(Goods.GetMarket.GetOwner)]#!#!#!"
+ BETTER_GOODS_LEADERBOARD_HEADER_INSIGNIFICANT_PRODUCER:0 "#tooltippable #tooltip:[Goods.GetTooltipTag],GOODS_NAME_TOOLTIP_LEADERBOARD_RANKING_BREAKDOWN #v ##- #!#!#!"
+ BETTER_BALANCE:0                  ": #tooltippable #tooltip:[Market.GetTooltipTag],MARKET_BALANCE_BREAKDOWN #bold @money![Market.GetBalance|+=D]#!#!#!"
+ BETTER_BASE_GOODS_MARKET_SELL_ORDERS:0  "[Goods.GetNonPrestigeGoodsMarketSellOrders|vD] ~[Divide_CFixedPoint(Goods.GetNonPrestigeGoodsMarketSellOrders, Goods.GetMarketSellOrders)|0%]"
+ BETTER_BASE_GOODS_MARKET_BUY_ORDERS:0   "[Goods.GetNonPrestigeGoodsMarketBuyOrders|vD] ~[Divide_CFixedPoint(Goods.GetNonPrestigeGoodsMarketBuyOrders, Goods.GetMarketBuyOrders)|0%]"
+ BETTER_PRESTIGE_GOODS_MARKET_SELL_ORDERS:0 "[Goods.GetMarketSellOrdersWithTooltip] ~[Divide_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetBaseGoods.GetMarketSellOrders)|0%]"
+ BETTER_PRESTIGE_GOODS_MARKET_BUY_ORDERS:0  "[Goods.GetMarketBuyOrdersWithTooltip] ~[Divide_CFixedPoint(Goods.GetMarketBuyOrders, Goods.GetBaseGoods.GetMarketBuyOrders)|0%]"
+ BETTER_PRESTIGE_GOOD_LEADERBOARD:0 "$concept_prestige_good$: $BETTER_PRESTIGE_GOODS_LEADERBOARD_STATUS_INFO$"
+ BETTER_PRESTIGE_GOODS_LEADERBOARD_STATUS_INFO:0 "#tooltippable #tooltip:[Goods.GetTooltipTag],PRESTIGE_GOODS_NAME_TOOLTIP_LEADERBOARD_RANKING_BREAKDOWN [SelectLocalization(GreaterThan_int32(Goods.GetPrestigeGoodLeaderboardSpot(Goods.GetMarket.GetOwner),'(int32)0'),'BETTER_PRESTIGE_GOODS_LEADERBOARD_HEADER_TOP_PRODUCER','BETTER_PRESTIGE_GOODS_LEADERBOARD_HEADER_INSIGNIFICANT_PRODUCER')]#!#!"
+ BETTER_PRESTIGE_GOODS_LEADERBOARD_HEADER_TOP_PRODUCER:0          "#v ##[Goods.GetPrestigeGoodLeaderboardSpot(Goods.GetMarket.GetOwner)]#!"
+ BETTER_PRESTIGE_GOODS_LEADERBOARD_HEADER_INSIGNIFICANT_PRODUCER:0 "#v ##- #!#!#!"
+ BETTER_PRESTIGE_GOODS_WORLD_IMPORTS:0   "[Goods.GetWorldMarketImportsWithTooltip] ~[Divide_CFixedPoint(Goods.GetWorldMarketImports, Goods.GetBaseGoods.GetWorldMarketImports)|0%]"
+ BETTER_PRESTIGE_GOODS_WORLD_EXPORTS:0   "[Goods.GetWorldMarketExportsWithTooltip] ~[Divide_CFixedPoint(Goods.GetWorldMarketExports, Goods.GetBaseGoods.GetWorldMarketExports)|0%]"
+ BETTER_BASE_GOODS_WORLD_MARKET_IMPORTS:0 "[Goods.GetNonPrestigeGoodsWorldMarketImports|vD] ~[Divide_CFixedPoint(Goods.GetNonPrestigeGoodsWorldMarketImports, Goods.GetWorldMarketImports)|0%]"
+ BETTER_BASE_GOODS_WORLD_MARKET_EXPORTS:0 "[Goods.GetNonPrestigeGoodsWorldMarketExports|vD] ~[Divide_CFixedPoint(Goods.GetNonPrestigeGoodsWorldMarketExports, Goods.GetWorldMarketExports)|0%]"

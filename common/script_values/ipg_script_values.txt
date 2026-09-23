@@ -1,0 +1,64 @@
+﻿# =============================================================================
+# Improved ParliamentGraph - Script Values
+# -----------------------------------------------------------------------------
+# Aggregate values consumed by the seat-allocation scripted effects.
+# Kept side-effect free so they can be referenced from any country scope.
+# =============================================================================
+
+# Total seats in the hemicycle. The seat layout GUI is hand-laid out for 300
+# seats; changing this without re-laying out the layout will produce gaps.
+ipg_number_of_seats = {
+	value = 300
+}
+
+# Sum of clout across every IG that currently exerts political influence.
+# Used as the denominator for the Power Structure share calculation.
+ipg_total_active_ig_clout = {
+	value = 0
+	every_interest_group = {
+		limit = { ig_clout > 0 }
+		add = ig_clout
+	}
+}
+
+# Aggregate population share of all aligned IGs (clamped to [0, 1]).
+ipg_total_aligned_population_share = {
+	value = 0
+	every_interest_group = {
+		limit = { interest_group_population_percentage > 0 }
+		add = interest_group_population_percentage
+	}
+	max = 1
+}
+
+# Population share that is not currently aligned with any IG.
+ipg_total_unaligned_population_share = {
+	value = 1
+	subtract = ipg_total_aligned_population_share
+	min = 0
+	max = 1
+}
+
+# Party-scoped accessor used by ordered_active_party.  Ordering by a named
+# script value is supported by the same path already used for party clout.
+ipg_party_captured_vote_share = {
+	value = 0
+	if = {
+		limit = { has_variable = ipg_last_election_vote_share }
+		add = var:ipg_last_election_vote_share
+	}
+}
+
+# Sum of GUI-captured last-election vote shares on currently active parties.
+# Values remain in the API's native scale; normalizing by this total makes the
+# seat calculation scale-independent and robust to small rounding errors.
+ipg_total_captured_vote_share = {
+	value = 0
+	every_active_party = {
+		limit = {
+			has_variable = ipg_last_election_vote_share
+			var:ipg_last_election_vote_share > 0
+		}
+		add = ipg_party_captured_vote_share
+	}
+}

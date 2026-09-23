@@ -1,0 +1,47 @@
+﻿# GORA+ — one first infrastructure level in every eligible owned state
+#
+# The state loop runs only when the player clicks one of the three buttons.
+# Existing buildings and already queued first levels are deliberately skipped.
+
+gora_queue_first_level_in_all_eligible_states = {
+	# Check the country before entering state scope, including direct effect calls.
+	if = {
+		limit = { has_technology_researched = $TECHNOLOGY$ }
+		every_scope_state = {
+			limit = {
+				owner = ROOT
+				can_construct_building = $BUILDING$
+				NOT = { has_building = $BUILDING$ }
+				NOT = {
+					any_scope_building = {
+						is_building_type = $BUILDING$
+						is_under_construction = yes
+					}
+				}
+			}
+
+			start_building_construction = $BUILDING$
+		}
+	}
+}
+
+gora_queue_first_railway_in_all_eligible_states = {
+	gora_queue_first_level_in_all_eligible_states = {
+		BUILDING = building_railway
+		TECHNOLOGY = railways
+	}
+}
+
+gora_queue_first_power_plant_in_all_eligible_states = {
+	gora_queue_first_level_in_all_eligible_states = {
+		BUILDING = building_power_plant
+		TECHNOLOGY = electrical_generation
+	}
+}
+
+gora_queue_first_university_in_all_eligible_states = {
+	gora_queue_first_level_in_all_eligible_states = {
+		BUILDING = building_university
+		TECHNOLOGY = academia
+	}
+}

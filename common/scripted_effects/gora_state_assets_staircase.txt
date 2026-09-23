@@ -1,0 +1,1281 @@
+﻿# GORA UI+ - State Assets: nationally-owned level counter
+#
+# Building scope. Finds how many levels of this building are owned by ROOT.
+# The result is kept in the effect-local gora_sa_nat_levels_tmp variable.
+#
+# levels_owned_by_country is only exposed as a comparison trigger, not a
+# readable value. This balanced decision tree maps every result from 0..200
+# exactly (and clamps larger values to 200) using at most eight trigger tests.
+# The old linear staircase needed as many as 200 tests and persistent writes.
+
+gora_sa_staircase_nat_levels_effect = {
+	if = {
+		limit = { levels_owned_by_country = { target = ROOT value >= 100 } }
+		if = {
+			limit = { levels_owned_by_country = { target = ROOT value >= 150 } }
+			if = {
+				limit = { levels_owned_by_country = { target = ROOT value >= 175 } }
+				if = {
+					limit = { levels_owned_by_country = { target = ROOT value >= 188 } }
+					if = {
+						limit = { levels_owned_by_country = { target = ROOT value >= 194 } }
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 197 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 199 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 200 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 200 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 199 }
+								}
+							}
+							else = {
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 198 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 198 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 197 }
+								}
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 195 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 196 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 196 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 195 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 194 }
+							}
+						}
+					}
+					else = {
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 191 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 192 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 193 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 193 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 192 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 191 }
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 189 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 190 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 190 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 189 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 188 }
+							}
+						}
+					}
+				}
+				else = {
+					if = {
+						limit = { levels_owned_by_country = { target = ROOT value >= 181 } }
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 184 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 186 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 187 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 187 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 186 }
+								}
+							}
+							else = {
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 185 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 185 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 184 }
+								}
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 182 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 183 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 183 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 182 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 181 }
+							}
+						}
+					}
+					else = {
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 178 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 179 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 180 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 180 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 179 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 178 }
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 176 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 177 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 177 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 176 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 175 }
+							}
+						}
+					}
+				}
+			}
+			else = {
+				if = {
+					limit = { levels_owned_by_country = { target = ROOT value >= 162 } }
+					if = {
+						limit = { levels_owned_by_country = { target = ROOT value >= 168 } }
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 171 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 173 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 174 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 174 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 173 }
+								}
+							}
+							else = {
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 172 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 172 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 171 }
+								}
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 169 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 170 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 170 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 169 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 168 }
+							}
+						}
+					}
+					else = {
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 165 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 166 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 167 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 167 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 166 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 165 }
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 163 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 164 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 164 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 163 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 162 }
+							}
+						}
+					}
+				}
+				else = {
+					if = {
+						limit = { levels_owned_by_country = { target = ROOT value >= 156 } }
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 159 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 160 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 161 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 161 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 160 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 159 }
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 157 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 158 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 158 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 157 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 156 }
+							}
+						}
+					}
+					else = {
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 153 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 154 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 155 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 155 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 154 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 153 }
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 151 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 152 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 152 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 151 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 150 }
+							}
+						}
+					}
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = { levels_owned_by_country = { target = ROOT value >= 125 } }
+				if = {
+					limit = { levels_owned_by_country = { target = ROOT value >= 137 } }
+					if = {
+						limit = { levels_owned_by_country = { target = ROOT value >= 143 } }
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 146 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 148 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 149 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 149 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 148 }
+								}
+							}
+							else = {
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 147 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 147 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 146 }
+								}
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 144 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 145 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 145 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 144 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 143 }
+							}
+						}
+					}
+					else = {
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 140 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 141 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 142 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 142 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 141 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 140 }
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 138 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 139 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 139 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 138 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 137 }
+							}
+						}
+					}
+				}
+				else = {
+					if = {
+						limit = { levels_owned_by_country = { target = ROOT value >= 131 } }
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 134 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 135 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 136 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 136 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 135 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 134 }
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 132 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 133 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 133 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 132 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 131 }
+							}
+						}
+					}
+					else = {
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 128 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 129 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 130 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 130 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 129 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 128 }
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 126 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 127 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 127 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 126 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 125 }
+							}
+						}
+					}
+				}
+			}
+			else = {
+				if = {
+					limit = { levels_owned_by_country = { target = ROOT value >= 112 } }
+					if = {
+						limit = { levels_owned_by_country = { target = ROOT value >= 118 } }
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 121 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 123 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 124 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 124 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 123 }
+								}
+							}
+							else = {
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 122 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 122 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 121 }
+								}
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 119 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 120 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 120 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 119 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 118 }
+							}
+						}
+					}
+					else = {
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 115 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 116 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 117 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 117 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 116 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 115 }
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 113 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 114 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 114 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 113 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 112 }
+							}
+						}
+					}
+				}
+				else = {
+					if = {
+						limit = { levels_owned_by_country = { target = ROOT value >= 106 } }
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 109 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 110 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 111 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 111 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 110 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 109 }
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 107 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 108 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 108 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 107 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 106 }
+							}
+						}
+					}
+					else = {
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 103 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 104 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 105 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 105 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 104 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 103 }
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 101 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 102 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 102 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 101 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 100 }
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = { levels_owned_by_country = { target = ROOT value >= 50 } }
+			if = {
+				limit = { levels_owned_by_country = { target = ROOT value >= 75 } }
+				if = {
+					limit = { levels_owned_by_country = { target = ROOT value >= 87 } }
+					if = {
+						limit = { levels_owned_by_country = { target = ROOT value >= 93 } }
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 96 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 98 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 99 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 99 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 98 }
+								}
+							}
+							else = {
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 97 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 97 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 96 }
+								}
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 94 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 95 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 95 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 94 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 93 }
+							}
+						}
+					}
+					else = {
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 90 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 91 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 92 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 92 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 91 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 90 }
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 88 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 89 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 89 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 88 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 87 }
+							}
+						}
+					}
+				}
+				else = {
+					if = {
+						limit = { levels_owned_by_country = { target = ROOT value >= 81 } }
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 84 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 85 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 86 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 86 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 85 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 84 }
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 82 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 83 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 83 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 82 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 81 }
+							}
+						}
+					}
+					else = {
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 78 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 79 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 80 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 80 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 79 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 78 }
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 76 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 77 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 77 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 76 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 75 }
+							}
+						}
+					}
+				}
+			}
+			else = {
+				if = {
+					limit = { levels_owned_by_country = { target = ROOT value >= 62 } }
+					if = {
+						limit = { levels_owned_by_country = { target = ROOT value >= 68 } }
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 71 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 73 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 74 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 74 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 73 }
+								}
+							}
+							else = {
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 72 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 72 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 71 }
+								}
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 69 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 70 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 70 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 69 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 68 }
+							}
+						}
+					}
+					else = {
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 65 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 66 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 67 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 67 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 66 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 65 }
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 63 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 64 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 64 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 63 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 62 }
+							}
+						}
+					}
+				}
+				else = {
+					if = {
+						limit = { levels_owned_by_country = { target = ROOT value >= 56 } }
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 59 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 60 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 61 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 61 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 60 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 59 }
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 57 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 58 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 58 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 57 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 56 }
+							}
+						}
+					}
+					else = {
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 53 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 54 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 55 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 55 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 54 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 53 }
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 51 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 52 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 52 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 51 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 50 }
+							}
+						}
+					}
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = { levels_owned_by_country = { target = ROOT value >= 25 } }
+				if = {
+					limit = { levels_owned_by_country = { target = ROOT value >= 37 } }
+					if = {
+						limit = { levels_owned_by_country = { target = ROOT value >= 43 } }
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 46 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 48 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 49 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 49 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 48 }
+								}
+							}
+							else = {
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 47 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 47 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 46 }
+								}
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 44 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 45 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 45 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 44 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 43 }
+							}
+						}
+					}
+					else = {
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 40 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 41 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 42 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 42 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 41 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 40 }
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 38 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 39 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 39 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 38 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 37 }
+							}
+						}
+					}
+				}
+				else = {
+					if = {
+						limit = { levels_owned_by_country = { target = ROOT value >= 31 } }
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 34 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 35 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 36 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 36 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 35 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 34 }
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 32 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 33 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 33 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 32 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 31 }
+							}
+						}
+					}
+					else = {
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 28 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 29 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 30 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 30 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 29 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 28 }
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 26 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 27 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 27 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 26 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 25 }
+							}
+						}
+					}
+				}
+			}
+			else = {
+				if = {
+					limit = { levels_owned_by_country = { target = ROOT value >= 12 } }
+					if = {
+						limit = { levels_owned_by_country = { target = ROOT value >= 18 } }
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 21 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 23 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 24 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 24 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 23 }
+								}
+							}
+							else = {
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 22 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 22 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 21 }
+								}
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 19 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 20 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 20 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 19 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 18 }
+							}
+						}
+					}
+					else = {
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 15 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 16 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 17 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 17 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 16 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 15 }
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 13 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 14 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 14 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 13 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 12 }
+							}
+						}
+					}
+				}
+				else = {
+					if = {
+						limit = { levels_owned_by_country = { target = ROOT value >= 6 } }
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 9 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 10 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 11 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 11 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 10 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 9 }
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 7 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 8 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 8 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 7 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 6 }
+							}
+						}
+					}
+					else = {
+						if = {
+							limit = { levels_owned_by_country = { target = ROOT value >= 3 } }
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 4 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 5 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 5 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 4 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 3 }
+							}
+						}
+						else = {
+							if = {
+								limit = { levels_owned_by_country = { target = ROOT value >= 1 } }
+								if = {
+									limit = { levels_owned_by_country = { target = ROOT value >= 2 } }
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 2 }
+								}
+								else = {
+									set_local_variable = { name = gora_sa_nat_levels_tmp value = 1 }
+								}
+							}
+							else = {
+								set_local_variable = { name = gora_sa_nat_levels_tmp value = 0 }
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+# Per-building national value (cost tier x 250 x levels)
+# Building scope. Computes ROOT's nationally-owned value for this building.
+# gora_sa_nat_levels_tmp must be set first by the binary-tree effect above.
+# The result stays in the effect-local gora_sa_nat_value_tmp variable.
+gora_sa_compute_nat_value_for_building_effect = {
+	if = {
+		limit = { is_building_group = bg_trade }
+		set_local_variable = {
+			name = gora_sa_nat_value_tmp
+			value = { value = 100 multiply = 250 multiply = local_var:gora_sa_nat_levels_tmp }
+		}
+	}
+	else_if = {
+		limit = {
+			OR = {
+				is_building_group = bg_agriculture
+				is_building_group = bg_ranching
+				is_building_group = bg_plantations
+				is_building_group = bg_logging
+				is_building_group = bg_rubber
+				is_building_group = bg_fishing
+				is_building_group = bg_whaling
+			}
+		}
+		set_local_variable = {
+			name = gora_sa_nat_value_tmp
+			value = { value = 200 multiply = 250 multiply = local_var:gora_sa_nat_levels_tmp }
+		}
+	}
+	else_if = {
+		# Railway must precede bg_private_infrastructure medium tier.
+		limit = { is_building_type = building_railway }
+		set_local_variable = {
+			name = gora_sa_nat_value_tmp
+			value = { value = 800 multiply = 250 multiply = local_var:gora_sa_nat_levels_tmp }
+		}
+	}
+	else_if = {
+		limit = {
+			OR = {
+				is_building_group = bg_mining
+				is_building_group = bg_oil_extraction
+				is_building_group = bg_private_infrastructure
+				is_building_group = bg_arts
+				is_building_group = bg_power
+			}
+		}
+		set_local_variable = {
+			name = gora_sa_nat_value_tmp
+			value = { value = 400 multiply = 250 multiply = local_var:gora_sa_nat_levels_tmp }
+		}
+	}
+	else_if = {
+		limit = { is_building_group = bg_light_industry }
+		set_local_variable = {
+			name = gora_sa_nat_value_tmp
+			value = { value = 600 multiply = 250 multiply = local_var:gora_sa_nat_levels_tmp }
+		}
+	}
+	else = {
+		# Heavy industry, military industry, and anything else.
+		set_local_variable = {
+			name = gora_sa_nat_value_tmp
+			value = { value = 800 multiply = 250 multiply = local_var:gora_sa_nat_levels_tmp }
+		}
+	}
+}

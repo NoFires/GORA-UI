@@ -1,0 +1,22 @@
+﻿namespace = ipg_election_watch
+
+# on_election_campaign_end is unreliable, so this hidden country event checks
+# at a low frequency after the reliable campaign-start signal. No persistent
+# state variable is needed: campaign state alone decides whether to reschedule.
+ipg_election_watch.1 = {
+	type = country_event
+	hidden = yes
+
+	immediate = {
+		if = {
+			limit = { is_player = yes }
+			if = {
+				limit = { in_election_campaign = yes }
+				trigger_event = { id = ipg_election_watch.1 days = 30 }
+			}
+			else = {
+				ipg_request_election_capture = yes
+			}
+		}
+	}
+}

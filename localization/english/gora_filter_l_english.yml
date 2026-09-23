@@ -1,0 +1,52 @@
+﻿l_english:
+ # GORA UI+ — War-Goal & Treaty country-filter labels.
+ # Used by both the Add-War-Goal panel (target / holder) and the Sway panel
+ # (single country). Key prefix GORA_FILTER_*; legacy ZZ_GORA_/UBOY_ prefixes
+ # have been retired.
+
+ GORA_FILTER_BY_COUNTRY:0            "Filter by Country"
+ GORA_FILTER_TOGGLE_TOOLTIP:0        "Show or hide the country filters."
+ GORA_FILTER_SELECT_HEADER:0         "Select Country to Filter"
+ GORA_FILTER_CLEAR:0                 "Clear"
+ GORA_FILTER_CLEAR_TOOLTIP:0         "Clear country filter"
+ GORA_FILTER_FILTERING_BY:0          "Filtering by:"
+
+ # War goal: target / holder split
+ GORA_FILTER_TARGET:0                "Target"
+ GORA_FILTER_HOLDER:0                "Holder"
+ GORA_FILTER_TARGET_TOOLTIP:0        "Filter war goals by the country being targeted."
+ GORA_FILTER_HOLDER_TOOLTIP:0        "Filter war goals by the country the war goal is added for."
+ GORA_FILTER_SELECT_TARGET:0         "Select Target Country"
+ GORA_FILTER_SELECT_HOLDER:0         "Select Holder Country"
+ GORA_FILTER_FILTERING_TARGET:0      "Target:"
+ GORA_FILTER_FILTERING_HOLDER:0      "Holder:"
+ GORA_FILTER_CLEAR_TARGET:0          "Clear Target"
+ GORA_FILTER_CLEAR_HOLDER:0          "Clear Holder"
+ GORA_FILTER_CLEAR_ALL:0             "Clear All"
+ GORA_FILTER_CLEAR_TARGET_TOOLTIP:0  "Clear target filter"
+ GORA_FILTER_CLEAR_HOLDER_TOOLTIP:0  "Clear holder filter"
+ GORA_FILTER_CLEAR_ALL_TOOLTIP:0     "Clear all war goal filters"
+
+ # ─── Backward-compat aliases ─────────────────────────────────────────
+ # gora_filter.gui (legacy GORA copy) references the OLD ZZ_GORA_* key
+ # names. Aliases keep the GUI working without forking the inherited file.
+ ZZ_GORA_FILTER_BY_COUNTRY:0            "$GORA_FILTER_BY_COUNTRY$"
+ ZZ_GORA_TOGGLE_COUNTRY_FILTER_TOOLTIP:0 "$GORA_FILTER_TOGGLE_TOOLTIP$"
+ ZZ_GORA_SELECT_COUNTRY_HEADER:0        "$GORA_FILTER_SELECT_HEADER$"
+ ZZ_GORA_CLEAR_FILTER:0                 "$GORA_FILTER_CLEAR$"
+ ZZ_GORA_CLEAR_COUNTRY_FILTER:0         "$GORA_FILTER_CLEAR_TOOLTIP$"
+ ZZ_GORA_FILTERING_BY:0                 "$GORA_FILTER_FILTERING_BY$"
+ ZZ_GORA_TARGET_FILTER:0                "$GORA_FILTER_TARGET$"
+ ZZ_GORA_HOLDER_FILTER:0                "$GORA_FILTER_HOLDER$"
+ ZZ_GORA_TARGET_FILTER_TOOLTIP:0        "$GORA_FILTER_TARGET_TOOLTIP$"
+ ZZ_GORA_HOLDER_FILTER_TOOLTIP:0        "$GORA_FILTER_HOLDER_TOOLTIP$"
+ ZZ_GORA_SELECT_TARGET_HEADER:0         "$GORA_FILTER_SELECT_TARGET$"
+ ZZ_GORA_SELECT_HOLDER_HEADER:0         "$GORA_FILTER_SELECT_HOLDER$"
+ ZZ_GORA_FILTERING_TARGET:0             "$GORA_FILTER_FILTERING_TARGET$"
+ ZZ_GORA_FILTERING_HOLDER:0             "$GORA_FILTER_FILTERING_HOLDER$"
+ ZZ_GORA_CLEAR_TARGET:0                 "$GORA_FILTER_CLEAR_TARGET$"
+ ZZ_GORA_CLEAR_HOLDER:0                 "$GORA_FILTER_CLEAR_HOLDER$"
+ ZZ_GORA_CLEAR_ALL:0                    "$GORA_FILTER_CLEAR_ALL$"
+ ZZ_GORA_CLEAR_TARGET_FILTER:0          "$GORA_FILTER_CLEAR_TARGET_TOOLTIP$"
+ ZZ_GORA_CLEAR_HOLDER_FILTER:0          "$GORA_FILTER_CLEAR_HOLDER_TOOLTIP$"
+ ZZ_GORA_CLEAR_ALL_FILTERS:0            "$GORA_FILTER_CLEAR_ALL_TOOLTIP$"

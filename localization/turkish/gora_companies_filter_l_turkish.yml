@@ -1,0 +1,11 @@
+﻿l_turkish:
+ # GORA UI — companies filter labels.
+
+ charter_filter: "Sanayi İmtiyazı"
+ GORA_COMPANIES_COMPACT_LIST: "Kompakt liste"
+ GORA_COMPANIES_FULL_CARDS: "Tam kartlar"
+ GORA_COMPANIES_COMPACT_LIST_HINT: "Kompakt liste: canlı ayrıntıları görmek için bir şirket seçin"
+ GORA_COMPANIES_FULL_CARDS_HINT: "Tam kartlar: daha yüksek CPU kullanımı"
+ GORA_COMPANIES_CLOSE_DETAILS: "Ayrıntıları kapat"
+ GORA_COMPANIES_INDUSTRIES_LABEL: "Sektörler:"
+ GORA_COMPANIES_PRESTIGE_GOODS_LABEL: "Prestij malları:"

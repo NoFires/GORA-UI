@@ -1,0 +1,314 @@
+﻿# GORA UI+ — London Conference flag-icon switches
+#
+# Each entry returns a per-country flag-line locale key when that country
+# has cast a vote on the matching proposal, or an empty string otherwise.
+# Referenced from the journal-entry override in
+# localization/english/replace/00_gora_london_overrides_l_english.yml.
+#
+# Identifiers keep the legacy `tlcm_` prefix because the journal-entry
+# override text references them directly. Treat the `tlcm_*` namespace as
+# reserved by GORA UI+ London (see docs/NAMESPACES.md).
+
+# ─── Favour Belgium ───────────────────────────────────────────────────────
+tlcm_gbr_favours_belgium = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:GBR ?= { has_variable = favour_belgium_button_var } } localization_key = tlcm_gbr_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_fra_favours_belgium = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:FRA ?= { has_variable = favour_belgium_button_var } } localization_key = tlcm_fra_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_rus_favours_belgium = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:RUS ?= { has_variable = favour_belgium_button_var } } localization_key = tlcm_rus_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_aus_favours_belgium = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:AUS ?= { has_variable = favour_belgium_button_var } } localization_key = tlcm_aus_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_pru_favours_belgium = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:PRU ?= { has_variable = favour_belgium_button_var } } localization_key = tlcm_pru_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_spa_favours_belgium = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:SPA ?= { has_variable = favour_belgium_button_var } } localization_key = tlcm_spa_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_usa_favours_belgium = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:USA ?= { has_variable = favour_belgium_button_var } } localization_key = tlcm_usa_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_tur_favours_belgium = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:TUR ?= { has_variable = favour_belgium_button_var } } localization_key = tlcm_tur_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_jap_favours_belgium = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:JAP ?= { has_variable = favour_belgium_button_var } } localization_key = tlcm_jap_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_ita_favours_belgium = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:ITA ?= { has_variable = favour_belgium_button_var } } localization_key = tlcm_ita_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_other_favours_belgium = {
+	type = country
+	random_valid = no
+	text = {
+		trigger = {
+			any_country = {
+				NOR = { c:GBR ?= this c:FRA ?= this c:RUS ?= this c:AUS ?= this c:PRU ?= this c:SPA ?= this c:USA ?= this c:TUR ?= this c:JAP ?= this c:ITA ?= this }
+				has_variable = favour_belgium_button_var
+			}
+		}
+		localization_key = tlcm_other_favour_loc
+	}
+	text = { localization_key = tlcm_no_loc }
+}
+
+# ─── Favour Netherlands ───────────────────────────────────────────────────
+tlcm_gbr_favours_netherlands = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:GBR ?= { has_variable = favour_netherlands_button_var } } localization_key = tlcm_gbr_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_fra_favours_netherlands = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:FRA ?= { has_variable = favour_netherlands_button_var } } localization_key = tlcm_fra_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_rus_favours_netherlands = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:RUS ?= { has_variable = favour_netherlands_button_var } } localization_key = tlcm_rus_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_aus_favours_netherlands = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:AUS ?= { has_variable = favour_netherlands_button_var } } localization_key = tlcm_aus_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_pru_favours_netherlands = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:PRU ?= { has_variable = favour_netherlands_button_var } } localization_key = tlcm_pru_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_spa_favours_netherlands = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:SPA ?= { has_variable = favour_netherlands_button_var } } localization_key = tlcm_spa_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_usa_favours_netherlands = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:USA ?= { has_variable = favour_netherlands_button_var } } localization_key = tlcm_usa_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_tur_favours_netherlands = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:TUR ?= { has_variable = favour_netherlands_button_var } } localization_key = tlcm_tur_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_jap_favours_netherlands = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:JAP ?= { has_variable = favour_netherlands_button_var } } localization_key = tlcm_jap_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_ita_favours_netherlands = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:ITA ?= { has_variable = favour_netherlands_button_var } } localization_key = tlcm_ita_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_other_favours_netherlands = {
+	type = country
+	random_valid = no
+	text = {
+		trigger = {
+			any_country = {
+				NOR = { c:GBR ?= this c:FRA ?= this c:RUS ?= this c:AUS ?= this c:PRU ?= this c:SPA ?= this c:USA ?= this c:TUR ?= this c:JAP ?= this c:ITA ?= this }
+				has_variable = favour_netherlands_button_var
+			}
+		}
+		localization_key = tlcm_other_favour_loc
+	}
+	text = { localization_key = tlcm_no_loc }
+}
+
+# ─── Partition compromise ─────────────────────────────────────────────────
+tlcm_gbr_partition_compromise = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:GBR ?= { has_variable = partition_compromise_button_var } } localization_key = tlcm_gbr_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_fra_partition_compromise = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:FRA ?= { has_variable = partition_compromise_button_var } } localization_key = tlcm_fra_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_rus_partition_compromise = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:RUS ?= { has_variable = partition_compromise_button_var } } localization_key = tlcm_rus_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_aus_partition_compromise = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:AUS ?= { has_variable = partition_compromise_button_var } } localization_key = tlcm_aus_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_pru_partition_compromise = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:PRU ?= { has_variable = partition_compromise_button_var } } localization_key = tlcm_pru_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_spa_partition_compromise = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:SPA ?= { has_variable = partition_compromise_button_var } } localization_key = tlcm_spa_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_usa_partition_compromise = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:USA ?= { has_variable = partition_compromise_button_var } } localization_key = tlcm_usa_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_tur_partition_compromise = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:TUR ?= { has_variable = partition_compromise_button_var } } localization_key = tlcm_tur_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_jap_partition_compromise = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:JAP ?= { has_variable = partition_compromise_button_var } } localization_key = tlcm_jap_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_ita_partition_compromise = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:ITA ?= { has_variable = partition_compromise_button_var } } localization_key = tlcm_ita_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_other_partition_compromise = {
+	type = country
+	random_valid = no
+	text = {
+		trigger = {
+			any_country = {
+				NOR = { c:GBR ?= this c:FRA ?= this c:RUS ?= this c:AUS ?= this c:PRU ?= this c:SPA ?= this c:USA ?= this c:TUR ?= this c:JAP ?= this c:ITA ?= this }
+				has_variable = partition_compromise_button_var
+			}
+		}
+		localization_key = tlcm_other_favour_loc
+	}
+	text = { localization_key = tlcm_no_loc }
+}
+
+# ─── Luxembourg compromise ────────────────────────────────────────────────
+tlcm_gbr_luxembourg_compromise = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:GBR ?= { has_variable = luxembourg_compromise_button_var } } localization_key = tlcm_gbr_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_fra_luxembourg_compromise = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:FRA ?= { has_variable = luxembourg_compromise_button_var } } localization_key = tlcm_fra_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_rus_luxembourg_compromise = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:RUS ?= { has_variable = luxembourg_compromise_button_var } } localization_key = tlcm_rus_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_aus_luxembourg_compromise = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:AUS ?= { has_variable = luxembourg_compromise_button_var } } localization_key = tlcm_aus_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_pru_luxembourg_compromise = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:PRU ?= { has_variable = luxembourg_compromise_button_var } } localization_key = tlcm_pru_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_spa_luxembourg_compromise = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:SPA ?= { has_variable = luxembourg_compromise_button_var } } localization_key = tlcm_spa_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_usa_luxembourg_compromise = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:USA ?= { has_variable = luxembourg_compromise_button_var } } localization_key = tlcm_usa_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_tur_luxembourg_compromise = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:TUR ?= { has_variable = luxembourg_compromise_button_var } } localization_key = tlcm_tur_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_jap_luxembourg_compromise = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:JAP ?= { has_variable = luxembourg_compromise_button_var } } localization_key = tlcm_jap_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_ita_luxembourg_compromise = {
+	type = country
+	random_valid = no
+	text = { trigger = { c:ITA ?= { has_variable = luxembourg_compromise_button_var } } localization_key = tlcm_ita_favour_loc }
+	text = { localization_key = tlcm_no_loc }
+}
+tlcm_other_luxembourg_compromise = {
+	type = country
+	random_valid = no
+	text = {
+		trigger = {
+			any_country = {
+				NOR = { c:GBR ?= this c:FRA ?= this c:RUS ?= this c:AUS ?= this c:PRU ?= this c:SPA ?= this c:USA ?= this c:TUR ?= this c:JAP ?= this c:ITA ?= this }
+				has_variable = luxembourg_compromise_button_var
+			}
+		}
+		localization_key = tlcm_other_favour_loc
+	}
+	text = { localization_key = tlcm_no_loc }
+}

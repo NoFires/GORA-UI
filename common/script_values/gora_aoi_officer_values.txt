@@ -1,0 +1,35 @@
+﻿# GORA UI+ — Advanced Officer Info script values
+#
+# Character-scope values surfaced by the recruit-officer popup
+# (gui/generate_character.gui). Each one is a thin pass-through to a
+# vanilla 1.13.4 character/unit modifier so the GUI can render a compact
+# 2x4 stat grid alongside the portrait. Lightweight by design: the popup
+# evaluates them once per visible candidate card.
+
+gora_aoi_commander_offense = {
+	value = modifier:unit_offense_mult
+}
+
+gora_aoi_commander_defense = {
+	value = modifier:unit_defense_mult
+}
+
+gora_aoi_commander_kill_rate = {
+	value = modifier:unit_kill_rate_add
+}
+
+gora_aoi_commander_morale_damage = {
+	value = modifier:unit_morale_damage_mult
+}
+
+gora_aoi_commander_morale_loss = {
+	value = modifier:unit_morale_loss_mult
+}
+
+gora_aoi_commander_supply_consumption = {
+	value = modifier:unit_supply_consumption_mult
+}
+
+gora_aoi_commander_popularity = {
+	value = modifier:character_popularity_add
+}

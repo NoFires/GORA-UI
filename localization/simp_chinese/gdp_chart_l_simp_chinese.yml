@@ -1,0 +1,6 @@
+﻿l_simp_chinese:
+ GDP_CHART_TITLE: "GDP 构成"
+ GDP_CHART_SUBTITLE: "图形大小代表各商品对国家GDP的贡献占比（按卖单量 × 市价估算）"
+ GDP_CHART_PIETOOLTIP: "#header [Goods.GetName]#!\n年产值：@money![Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice)|K]#!\n占GDP比例：[Divide_CFixedPoint(Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice), Market.GetMarketGDPValue)|%0]\n市价：@money![Goods.GetMarketPrice|v1]#!\n卖单量：[Goods.GetMarketSellOrders|v0]"
+ GDP_CHART_SHOW_MORE: "显示更多"
+ GDP_CHART_SHOW_LESS: "折叠"

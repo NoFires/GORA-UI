@@ -1,0 +1,18 @@
+﻿l_english:
+
+  ipg_panel_title:0 "Parliament"
+  ipg_expand:0 "Expand"
+  ipg_collapse:0 "Collapse"
+  ipg_view_power:0 "Power Structure"
+  ipg_view_alignment:0 "Political Alignment"
+  ipg_view_electoral:0 "Party Structure"
+  ipg_power_desc:0 "Political strength of all Interest Groups."
+  ipg_alignment_desc:0 "Population alignment by Interest Group."
+  ipg_electoral_desc:0 "Based on captured results of the last election."
+  ipg_unaligned:0 "Politically Unaligned"
+  ipg_last_election:0 "Last Election"
+  ipg_seats_unit:0 "Seats"
+  ipg_power_list_item:0 "[InterestGroup.GetName]: #variable [InterestGroup.MakeScope.Var('power_seats').GetValue|v0]#! $ipg_seats_unit$ ([InterestGroup.MakeScope.Var('power_share').GetValue|1]%)"
+  ipg_alignment_list_item:0 "[InterestGroup.GetName]: #variable [InterestGroup.MakeScope.Var('alignment_share').GetValue|1]%#!"
+  ipg_alignment_unaligned_desc:0 "$ipg_unaligned$: #variable [Country.MakeScope.Var('ipg_alignment_unaligned_share').GetValue|1]%#!"
+  ipg_electoral_list_item:0 "[Party.GetName]: #variable [Party.MakeScope.Var('electoral_seats').GetValue|v0]#! $ipg_seats_unit$ ($ipg_last_election$: [Party.MakeScope.Var('ipg_last_election_vote_share').GetValue|%1])"

@@ -1,0 +1,12 @@
+﻿l_russian:
+ # GORA UI+ — companies filter labels.
+ # Used by the companies panel
+
+  charter_filter: "Industry Rights"
+  GORA_COMPANIES_COMPACT_LIST: "Компактный список"
+  GORA_COMPANIES_FULL_CARDS: "Полные карточки"
+  GORA_COMPANIES_COMPACT_LIST_HINT: "Компактный список: выберите компанию для просмотра актуальных сведений"
+  GORA_COMPANIES_FULL_CARDS_HINT: "Полные карточки: повышенная нагрузка на процессор"
+  GORA_COMPANIES_CLOSE_DETAILS: "Закрыть сведения"
+  GORA_COMPANIES_INDUSTRIES_LABEL: "Отрасли:"
+  GORA_COMPANIES_PRESTIGE_GOODS_LABEL: "Престижные товары:"

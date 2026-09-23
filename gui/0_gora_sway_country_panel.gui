@@ -1,0 +1,223 @@
+﻿# GORA UI+ — sway_country_panel (partial type override)
+# ─────────────────────────────────────────────────────────────────────────────
+# Vanilla 1.13.9 baseline: gui/sway_country_panel.gui.
+# The only divergences from vanilla are the visible-expressions wrapped with the
+# country-filter predicate; no vanilla behavior is dropped.
+# type sway_country_panel (line 3+, inside types sway_country_types).
+# Other vanilla types in that file (direct_support_button, sway_offer_item,
+# sway_offer_type_item, sway_offer_wargoal_type_item) inherited from vanilla.
+#
+# GORA deltas (all inside sway_country_panel):
+#   (1) `zz_gora_sway_filter` widget injected above the sway offer list,
+#       with filter state stored in player-scope var `zz_gora_sway_filter_country`.
+#   (2) Selected-country predicate added to the `visible` expression of every
+#       sway-offer row inside the list datamodel. Short-circuits via Or(Not(IsSet))
+#       so the per-row cost is zero when the filter is inactive.
+#
+# Bug fixes carried from Phase 9 deep-polish (1.13.4 rebase):
+#   - back_button_large legacy stacked extra onclicks (parser only fires the first;
+#     they were silently dead). Removed; filter persists across step-backs by design.
+#   - Top-level `using FILE.gui` directive (not valid V3 syntax) dropped.
+#
+# Re-sync recipe: diff vanilla type sway_country_panel, replace this file's type
+# body with new vanilla, re-insert fenced `### GORA UI+` deltas (5 locations).
+# ─────────────────────────────────────────────────────────────────────────────
+
+types gora_sway_country_panel {
+
+	type sway_country_panel = default_block_window {
+		name = "sway_country_panel"
+
+		blockoverride "window_header_name" {
+			text = "SWAY_COUNTRY_HEADER_SELECTOR"
+		}
+
+		blockoverride "entire_back_button" {
+			back_button_large = {
+				position = { 8 30 }
+				onclick = "[SwayCountryPanel.DecreaseFilterLevel]"
+				input_action = "back"
+				visible = "[Not(SwayCountryPanel.IsShowingSwayOfferTypes)]"
+			}
+
+			back_button_large = {
+				position = { 8 30 }
+				onclick = "[InformationPanelBar.OpenPreviousPanel]"
+				input_action = "back"
+				visible = "[SwayCountryPanel.IsShowingSwayOfferTypes]"
+			}
+		}
+
+
+		blockoverride "scrollarea_content" {
+			flowcontainer = {
+				direction = vertical
+				using = default_list_position
+				datacontext = "[SwayCountryPanel.AccessDiplomaticPlay]"
+
+				dynamicgridbox = {
+					name = "sway_offer_type_selection_list"
+					visible = "[SwayCountryPanel.IsShowingSwayOfferTypes]"
+					datamodel = "[SwayCountryPanel.AccessSwayOfferTypes]"
+
+					item = {
+						sway_offer_type_item = {}
+					}
+				}
+
+				dynamicgridbox = {
+					name = "wargoal_type_selection_list"
+					visible = "[SwayCountryPanel.IsShowingSwayOfferWarGoalTypes]"
+					datamodel = "[SwayCountryPanel.AccessSwayOfferWarGoalTypes]"
+
+					item = {
+						sway_offer_wargoal_type_item = {}
+					}
+				}
+
+				### GORA UI+ — country filter strip above the sway offer list
+				zz_gora_sway_filter = {}
+				### /GORA UI+
+
+				dynamicgridbox = {
+					name = "offer_wargoal_selection_list"
+					visible = "[SwayCountryPanel.IsShowingSwayOffers]"
+					datamodel = "[SwayCountryPanel.AccessShownSwayOffers]"
+
+					item = {
+						container = {
+							sway_offer_item = {
+								### GORA UI+ — vanilla visibility AND selected-country filter
+								visible = "[And(SwayOffer.RequiresAnyInput, Or(Not(GetPlayer.MakeScope.Var('zz_gora_sway_filter_country').IsSet), ObjectsEqual(SwayOffer.GetCountryForFlag(SwayCountryPanel.GetCountry).MakeScope, GetPlayer.MakeScope.Var('zz_gora_sway_filter_country').GetCountry.MakeScope)))]"
+								onclick = "[RightClickMenuManager.ToggleSwayOfferArticleTypeInput(SwayOffer.Self, PdxGuiWidget.AccessSelf, 'article_input_right_click_menu_right')]"
+
+								blockoverride "maneuvers_and_infamy" {}
+
+								blockoverride "acceptance_icon" {
+									### PLUS ICON
+									button = {
+										texture = "gfx/interface/buttons/button_icons/plus.dds"
+										parentanchor = vcenter
+										size = { 40 40 }
+										alwaystransparent = yes
+									}
+								}
+
+								blockoverride "button_style" {
+									using = default_button
+								}
+							}
+
+							sway_offer_item = {
+								visible = "[And(And( Not( SwayOffer.RequiresAnyInput ), And(Or( DiplomaticPlay.IsPrimaryParticipant(GetPlayer), DiplomaticPlay.IsUndecidedParticipant(GetPlayer) ), Not( GetPlayer.HasAnyAllianceLikeTreatiesWith(SwayCountryPanel.GetOtherCountry.Self) ) ) ), Or(Not(GetPlayer.MakeScope.Var('zz_gora_sway_filter_country').IsSet), ObjectsEqual(SwayOffer.GetCountryForFlag(SwayCountryPanel.GetCountry).MakeScope, GetPlayer.MakeScope.Var('zz_gora_sway_filter_country').GetCountry.MakeScope)))]"
+								onclick = "[Execute( SwayCountryPanel.AccessDiplomaticPlay.CreateSway( GetPlayer.Self, SwayCountryPanel.GetCountry, SwayOffer.Self ))]"
+								onclick = "[InformationPanelBar.OpenDiplomaticPlayPanel( DiplomaticPlay.AccessSelf )]"
+							}
+
+							sway_offer_item = {
+								visible = "[And(And( Not( SwayOffer.RequiresAnyInput ), And(Or( DiplomaticPlay.IsPrimaryParticipant(GetPlayer), DiplomaticPlay.IsUndecidedParticipant(GetPlayer) ), GetPlayer.HasAnyAllianceLikeTreatiesWith(SwayCountryPanel.GetOtherCountry.Self) ) ), Or(Not(GetPlayer.MakeScope.Var('zz_gora_sway_filter_country').IsSet), ObjectsEqual(SwayOffer.GetCountryForFlag(SwayCountryPanel.GetCountry).MakeScope, GetPlayer.MakeScope.Var('zz_gora_sway_filter_country').GetCountry.MakeScope)))]"
+								onclick = "[PopupManager.AskConfirmation( SwayCountryPanel.AccessDiplomaticPlay.CreateSway( GetPlayer.Self, SwayCountryPanel.GetCountry, SwayOffer.Self ))]"
+								onclick = "[InformationPanelBar.OpenDiplomaticPlayPanel( DiplomaticPlay.AccessSelf )]"
+							}
+
+							sway_offer_item = {
+								visible = "[And(And(Not(SwayOffer.RequiresAnyInput), DiplomaticPlay.IsBacker(GetPlayer)), Or(Not(GetPlayer.MakeScope.Var('zz_gora_sway_filter_country').IsSet), ObjectsEqual(SwayOffer.GetCountryForFlag(SwayCountryPanel.GetCountry).MakeScope, GetPlayer.MakeScope.Var('zz_gora_sway_filter_country').GetCountry.MakeScope)))]"
+								onclick = "[PopupManager.AskConfirmation( SwayCountryPanel.AccessDiplomaticPlay.CreateSway( GetPlayer.Self, SwayCountryPanel.GetCountry, SwayOffer.Self ))]"
+								onclick = "[InformationPanelBar.OpenDiplomaticPlayPanel( DiplomaticPlay.AccessSelf )]"
+							}
+						}
+					}
+				}
+
+				widget = {
+					size = { 10 10 }
+				}
+
+				divider_decorative = {
+					visible = "[DiplomaticPlay.IsTargetOrInitiator(SwayCountryPanel.GetCountry)]"
+				}
+
+				widget = {
+					size = { 10 10 }
+				}
+
+				# DIRECTLY SUPPORT INITIATOR
+				container = {
+					visible = "[DiplomaticPlay.IsInitiator(SwayCountryPanel.GetCountry)]"
+
+					direct_support_button = {
+						visible = "[And(DiplomaticPlay.IsUndecidedParticipant(GetPlayer), Not(GetPlayer.HasAnyAllianceLikeTreatiesWith(DiplomaticPlay.GetInitiator)))]"
+
+						blockoverride "button_properties" {
+							enabled = "[DiplomaticPlay.CanSupportInitiator(GetPlayer)]"
+							tooltip = "SUPPORT_INITIATOR_DIPLOMATIC_PLAY_TOOLTIP"
+							onclick = "[Execute(DiplomaticPlay.SupportInitiator(GetPlayer))]"
+							onclick = "[InformationPanelBar.OpenDiplomaticPlayPanel( DiplomaticPlay.AccessSelf )]"
+						}
+					}
+
+					direct_support_button = {
+						visible = "[And(DiplomaticPlay.IsUndecidedParticipant(GetPlayer), GetPlayer.HasAnyAllianceLikeTreatiesWith(DiplomaticPlay.GetInitiator))]"
+
+						blockoverride "button_properties" {
+							enabled = "[DiplomaticPlay.CanSupportInitiator(GetPlayer)]"
+							tooltip = "SUPPORT_INITIATOR_DIPLOMATIC_PLAY_TOOLTIP"
+							onclick = "[PopupManager.AskConfirmation(DiplomaticPlay.SupportInitiator(GetPlayer))]"
+							onclick = "[InformationPanelBar.OpenDiplomaticPlayPanel( DiplomaticPlay.AccessSelf )]"
+						}
+					}
+
+					direct_support_button = {
+						visible = "[DiplomaticPlay.IsBacker(GetPlayer)]"
+
+						blockoverride "button_properties" {
+							enabled = "[DiplomaticPlay.CanSupportInitiator(GetPlayer)]"
+							tooltip = "SUPPORT_INITIATOR_DIPLOMATIC_PLAY_TOOLTIP"
+							onclick = "[PopupManager.AskConfirmation(DiplomaticPlay.SupportInitiator(GetPlayer))]"
+							onclick = "[InformationPanelBar.OpenDiplomaticPlayPanel( DiplomaticPlay.AccessSelf )]"
+						}
+					}
+				}
+
+				# DIRECTLY SUPPORT TARGET
+				container = {
+					visible = "[DiplomaticPlay.IsTarget(SwayCountryPanel.GetCountry)]"
+
+					direct_support_button = {
+						visible = "[And(DiplomaticPlay.IsUndecidedParticipant(GetPlayer), Not(GetPlayer.HasAnyAllianceLikeTreatiesWith(DiplomaticPlay.GetInitiator)))]"
+
+						blockoverride "button_properties" {
+							enabled = "[DiplomaticPlay.CanSupportTarget(GetPlayer)]"
+							tooltip = "SUPPORT_TARGET_DIPLOMATIC_PLAY_TOOLTIP"
+							onclick = "[Execute(DiplomaticPlay.SupportTarget(GetPlayer))]"
+							onclick = "[InformationPanelBar.OpenDiplomaticPlayPanel( DiplomaticPlay.AccessSelf )]"
+						}
+					}
+
+					direct_support_button = {
+						visible = "[And(DiplomaticPlay.IsUndecidedParticipant(GetPlayer), GetPlayer.HasAnyAllianceLikeTreatiesWith(DiplomaticPlay.GetInitiator))]"
+
+						blockoverride "button_properties" {
+							enabled = "[DiplomaticPlay.CanSupportTarget(GetPlayer)]"
+							tooltip = "SUPPORT_TARGET_DIPLOMATIC_PLAY_TOOLTIP"
+							onclick = "[PopupManager.AskConfirmation(DiplomaticPlay.SupportTarget(GetPlayer))]"
+							onclick = "[InformationPanelBar.OpenDiplomaticPlayPanel( DiplomaticPlay.AccessSelf )]"
+						}
+					}
+
+					direct_support_button = {
+						visible = "[DiplomaticPlay.IsBacker(GetPlayer)]"
+
+						blockoverride "button_properties" {
+							enabled = "[DiplomaticPlay.CanSupportTarget(GetPlayer)]"
+							tooltip = "SUPPORT_TARGET_DIPLOMATIC_PLAY_TOOLTIP"
+							onclick = "[PopupManager.AskConfirmation(DiplomaticPlay.SupportTarget(GetPlayer))]"
+							onclick = "[InformationPanelBar.OpenDiplomaticPlayPanel( DiplomaticPlay.AccessSelf )]"
+						}
+					}
+				}
+			}
+		}
+	}
+}
+

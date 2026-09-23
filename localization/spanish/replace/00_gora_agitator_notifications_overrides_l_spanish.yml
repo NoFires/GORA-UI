@@ -1,0 +1,18 @@
+﻿l_spanish:
+ # GORA UI+ — Override vanilla notification descriptions to include character details
+ # (interest group, ideology, traits). Uses helper fragments from
+ # `localization/english/00_gora_agitator_notifications_l_english.yml`.
+ # Keys verified against vanilla 1.13.4:
+ #   character_interactions_l_english.yml:40  — notification_exile_notification_desc
+ #   interfaces_l_english.yml:7544            — notification_agitator_spawned_desc
+ #   interfaces_l_english.yml:7580            — notification_heir_born_notification_desc
+ #   interfaces_l_english.yml:10514           — notification_new_ruler_desc
+ # File lives in localization/english/replace/ so it overrides the vanilla string.
+
+ notification_exile_notification_desc: "[SCOPE.sCountry('exiling_country_scope').GetName] ha enviado a [SCOPE.sCharacter('exile_scope').GetFullName] al [Concept('concept_exile', 'exilio')].\n$gora_dan_agitator_interest_group$\n$gora_dan_agitator_ideology$\n$gora_dan_agitator_traits$"
+
+ notification_new_ruler_desc: "El periodo de [SCOPE.sCharacter( 'previous' ).GetFullName] como [concept_ruler|l] ha llegado a su fin. [SCOPE.GetRootScope.GetCharacter.GetFullName] es [Concept('concept_ruler', SCOPE.GetRootScope.GetCharacter.GetCustom('ES_ElLa'))] nuev[Concept('concept_ruler', SCOPE.GetRootScope.GetCharacter.GetCustom('ES_OA'))] [Concept('concept_ruler', SCOPE.GetRootScope.GetCharacter.GetPrimaryRoleTitle)|l] de [SCOPE.GetRootScope.GetCharacter.GetCountry.GetName]\n$gora_dan_ruler_interest_group$\n$gora_dan_ruler_ideology$\n$gora_dan_ruler_traits$"
+
+ notification_heir_born_notification_desc:0 "Ha nacido [SCOPE.GetRootScope.GetCharacter.GetFullName], quien [Concept('concept_heir','heredará')] el trono de [SCOPE.GetRootScope.GetCharacter.GetCountry.GetName]\n$gora_dan_ruler_interest_group$\n$gora_dan_ruler_ideology$\n$gora_dan_ruler_traits$"
+
+ notification_agitator_spawned_desc:1 "[SCOPE.sCha('character').GetAgitatorSpawnedNotificationText]\n$gora_dan_spawn_interest_group$\n$gora_dan_spawn_ideology$\n$gora_dan_spawn_traits$"

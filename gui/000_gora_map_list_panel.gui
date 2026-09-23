@@ -1,0 +1,1310 @@
+﻿# GORA UI — map_list_panel (partial type override)
+# ─────────────────────────────────────────────────────────────────────────────
+# Vanilla 1.13.9 baseline, audited against vanilla 1.14.3:
+# gui/map_list_panel.gui. The 1.14 location-list refresh fix below deliberately
+# replaces only the inherited scrollarea data-model host, leaving the remaining
+# GORA layout delta isolated from future vanilla changes.
+# Note: construction_interaction_item_full is deliberately NOT redeclared here.
+# CMF (00_MPM_map_list_panel.gui) owns that type; redeclaring it would clobber
+# CMF's horizontal-scrollarea QoL for the construction queue. If a trait-count
+# cap is ever needed on the full row, propose it upstream to CMF instead.
+#
+# Filename `000_gora_*` is intentional: must sort BEFORE CMF's
+# `00_MPM_map_list_panel.gui` so GORA registers these types first
+# (V3 GUI type registry is first-load-wins per filename alphabetic order;
+# see partial_type_override_pattern memory).
+#
+# Types redeclared by GORA (5 — all touched by GORA deltas, none touched by CMF):
+#   - build_building_map_list_panel     (4 line diff vs vanilla)
+#   - construction_interaction_item_condensed (99 line diff, unfenced layout/column tweaks)
+#   - construction_headers_condensed     (42 line diff)
+#   - construction_headers_full          (2 line diff)
+#   - construction_filters               (155 line diff, the big one — state filter strip etc.)
+#
+# Types intentionally NOT redeclared (left to CMF / vanilla):
+#   - construction_interaction_item_full — CMF (00_MPM_map_list_panel.gui) overrides
+#     this to wrap the production-methods widget in a horizontal scrollarea (QoL).
+#     GORA had only 2 trivial line diffs here — letting CMF win preserves CMF's
+#     scrollarea feature for the construction-queue panel.
+#   - map_list_panel, map_list_panel_item, map_list_panel_item_interaction, all the
+#     *_map_list_panel variants (country_*, state_*, decree_*, etc.) — vanilla
+#     unchanged in GORA.
+#   - The `state_buildings` namespace types (buildings_list, buildings_list_item) — same.
+#
+# GORA deltas preserved:
+#   (1) State filter strip (Incorporated / Unincorporated / Vassals / Efficient)
+#       wired through GUI variables show_only_* — inside construction_filters.
+#   (2) Up to 3 state trait icons per row + "Sort by traits" header button —
+#       inside construction_headers_condensed.
+#   (3) Per-row visibility AND-chain on the 4 state filters — inside
+#       construction_interaction_item_condensed (datamodel iteration item).
+#   (4) Column width / padding tweaks throughout (120→100, 85→70, 105→95) and
+#       fontsize_min bumps — scattered across the 5 extracted types.
+#
+# KNOWN ISSUE (unconfirmed): switching between the status filter buttons may
+# leave the previous selection active. Stacked onclick properties are NOT the
+# cause - vanilla 1.13.9 itself stacks onclicks in many files and they all fire.
+# If the symptom reproduces, investigate the Toggle/Clear ordering of the GUI
+# variables; a clean fix is a single scripted_gui that switches all filter
+# variables atomically.
+#
+# Re-sync recipe when Paradox bumps map_list_panel.gui: diff the 5 vanilla
+# type bodies against this file, port new vanilla content, re-apply the GORA
+# tweaks (column widths + fontsize_min + the fenced `### GORA UI+` deltas).
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Parser-level @constants — file-scoped in V3. Only 2 panel-width constants
+# referenced; @green_checkmark / @red_cross are text-icons, not parser constants.
+@panel_width = 540
+@panel_width_plus_14 = 554
+
+types gora_map_list_panel {
+
+	# Victoria 3 1.14 can update MapListPanel.AccessValidOptions asynchronously
+	# after switching the construction location filter. Reusing rows during that
+	# transition can leave widgets bound to the previous domestic/abroad model
+	# until another construction action invalidates the list. Rebuild the three
+	# option lists for this panel only; other map-list panels keep vanilla reuse.
+	type gora_build_building_map_list_panel_base = map_list_panel {
+		blockoverride "scrollarea_content" {
+			flowcontainer = {
+				onmousehierarchyenter = "[SetCanOpenRightClickContextMenu( Not(MapListPanelManager.HasCurrentInteraction) )]"
+				onmousehierarchyleave = "[SetCanOpenRightClickContextMenu( '(bool)yes' )]"
+				parentanchor = hcenter
+				direction = vertical
+				datamodel = "[MapListPanel.AccessValidOptions]"
+				datamodel_reuse_widgets = no
+
+				block "scrollarea_spacing" {}
+
+				block "item" {
+					block "item" {
+						item = {
+							map_list_panel_item = {}
+						}
+					}
+				}
+
+				block "empty_state" {
+					empty_state = {
+						blockoverride "visible" {
+							visible = "[IsDataModelEmpty(MapListPanel.AccessValidOptions)]"
+						}
+						blockoverride "text" {
+							text = "MAP_LIST_NO_AVAILABLE_OPTIONS"
+						}
+					}
+				}
+			}
+
+			widget = {
+				size = { 10 10 }
+			}
+
+			section_header_button = {
+				visible = "[GreaterThan_int32(GetDataModelSize(MapListPanel.AccessFailedOptions), '(int32)0')]"
+				blockoverride "left_text" { text = "FAILED_OPTIONS" }
+				blockoverride "onclick" { onclick = "[MapListPanelManager.ToggleFailedOptions]" }
+				blockoverride "onclick_showmore" { visible = "[Not(MapListPanelManager.IsShowingFailedOptions)]" }
+				blockoverride "onclick_showless" { visible = "[MapListPanelManager.IsShowingFailedOptions]" }
+			}
+
+			flowcontainer = {
+				direction = vertical
+				parentanchor = hcenter
+				visible = "[And( MapListPanelManager.IsShowingFailedOptions, Not(IsDataModelEmpty(MapListPanel.AccessFailedOptions)))]"
+				datamodel = "[MapListPanel.AccessFailedOptions]"
+				datamodel_reuse_widgets = no
+
+				block "item" {
+					item = { map_list_panel_item = {} }
+				}
+			}
+
+			section_header_button = {
+				visible = "[GreaterThan_int32(GetDataModelSize(MapListPanel.AccessInvalidOptions), '(int32)0')]"
+				blockoverride "left_text" { text = "INVALID_OPTIONS" }
+				blockoverride "onclick" { onclick = "[MapListPanelManager.ToggleInvalidOptions]" }
+				blockoverride "onclick_showmore" { visible = "[Not(MapListPanelManager.IsShowingInvalidOptions)]" }
+				blockoverride "onclick_showless" { visible = "[MapListPanelManager.IsShowingInvalidOptions]" }
+			}
+
+			flowcontainer = {
+				direction = vertical
+				parentanchor = hcenter
+				visible = "[And( MapListPanelManager.IsShowingInvalidOptions, Not(IsDataModelEmpty(MapListPanel.AccessInvalidOptions)))]"
+				datamodel = "[MapListPanel.AccessInvalidOptions]"
+				datamodel_reuse_widgets = no
+
+				block "item" {
+					item = { map_list_panel_item = {} }
+				}
+			}
+
+			widget = {
+				size = { 10 10 }
+			}
+		}
+	}
+
+	type build_building_map_list_panel = gora_build_building_map_list_panel_base {
+		name = "build_building_map_list_panel"
+		datamodel_reuse_widgets = no
+
+		blockoverride "headers" {
+			direction = vertical
+
+			construction_filters = {}
+			construction_headers_condensed = {
+				visible = "[Not(GetVariableSystem.Exists('construction_list_toggle_full_or_condensed'))]"
+			}
+			construction_headers_full = {
+				visible = "[GetVariableSystem.Exists('construction_list_toggle_full_or_condensed')]"
+			}
+		}
+
+		blockoverride "item" {
+			item = {
+				container = {
+					min_width = @panel_width
+					### GORA UI+ — gate each row on the 4 state filters (AND-chain).
+					### Short-circuits via the leading `Not(HasValue('...', 'true'))`
+					### so an unused filter doesn't pay for the state lookup.
+					visible = "[And( Or( MapListBuildingPanel.HasFilter('all'), Or( And( MapListBuildingPanel.HasFilter('domestic'), ObjectsEqual(MapListOption.GetBuildingData.GetState.GetOwner, GetPlayer.Self) ), And( MapListBuildingPanel.HasFilter('abroad'), Not(ObjectsEqual(MapListOption.GetBuildingData.GetState.GetOwner, GetPlayer.Self)) ) ) ), And( Or( Not(GetVariableSystem.HasValue('show_only_incorporated', 'true')), MapListOption.GetBuildingData.GetState.IsIncorporated ), And( Or( Not(GetVariableSystem.HasValue('show_only_unincorporated', 'true')), MapListOption.GetBuildingData.GetState.IsUnincorporated ), And( Or( Not(GetVariableSystem.HasValue('show_only_vassals', 'true')), ObjectsEqual(MapListOption.GetBuildingData.GetState.GetOwner.GetOverlord, GetPlayer.Self) ), Or( Not(GetVariableSystem.HasValue('show_only_efficient', 'true')), GreaterThan_CFixedPoint( MapListOption.GetBuildingData.GetState.GetConstructionEfficiencyForBuildingType(MapListBuildingPanel.GetBuildingType), '(CFixedPoint)-0.01' ) ) ) ) ) )]"
+
+					construction_interaction_item_condensed = {
+						visible = "[Not(GetVariableSystem.Exists('construction_list_toggle_full_or_condensed'))]"
+					}
+
+					construction_interaction_item_full = {
+						visible = "[GetVariableSystem.Exists('construction_list_toggle_full_or_condensed')]"
+					}
+				}
+			}
+		}
+	}
+
+	type construction_interaction_item_condensed = map_list_panel_item_interaction {
+		# this is very expensive for big countries like China
+		max_update_rate = 32
+
+		blockoverride "name_button_visibility" {
+			visible = yes
+		}
+
+		blockoverride "name_button_size" {
+			size = { 100 40 } #size = { 120 40 }
+		}
+
+		blockoverride "name_button_properties" {
+
+			datacontext = "[MapListOption.AccessBuildingData.AccessState]"
+
+			onmousehierarchyenter = "[AccessHighlightManager.HighlightState(State.Self)]"
+			onmousehierarchyleave = "[AccessHighlightManager.RemoveHighlight]"
+
+			datacontext = "[MapListOption.AccessBuildingData.AccessBuilding]"
+			onclick = "[InformationPanelBar.OpenBuildingDetailsPanel(Building.AccessSelf)]"
+			enabled = "[Building.IsValid]"
+			onrightclick = "[RightClickMenuManager.ShowForBuilding(Building.AccessSelf)]"
+
+			tooltipwidget = {
+				FancyTooltip_Building = {}
+			}
+
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+
+				margin = {10 0}
+				spacing = 5
+
+				textbox = {
+					text = "STATE_NAME_WITH_FOREIGN_FLAG_NO_FORMAT"
+
+					layoutpolicy_horizontal = expanding
+					align = nobaseline
+					elide = right
+					fontsize_min = 12
+				}
+
+				icon = {
+					visible = "[And(State.IsUnincorporated, Not(State.IsIncorporating))]"
+					size = { 25 25 }
+					texture = "gfx/interface/icons/state_status_icons/unincorporated_state.dds"
+				}
+			}
+
+		}
+
+		blockoverride "values" {
+		
+			widget = {
+				size = { 55 25 }
+				parentanchor = vcenter
+				
+				hbox = {
+					datacontext = "[MapListOption.AccessBuildingData.AccessState]"
+					visible = "[Not(IsDataModelEmpty(State.AccessStateRegion.AccessTraits))]"
+					datamodel = "[DataModelFirst(State.AccessStateRegion.AccessTraits, '(int32)3')]"
+					spacing = 2
+					parentanchor = center
+					
+					item = {
+						icon = {
+							size = { 20 20 }
+							tooltip = TOOLTIP_STATE_TRAIT
+							onmousehierarchyenter = "[AccessHighlightManager.HighlightStateTrait(StateTrait.Self)]"
+							onmousehierarchyleave = "[AccessHighlightManager.RemoveHighlight]"
+							alwaystransparent = no
+							texture = "[StateTrait.GetTexture]"
+						}
+					}
+				}
+			}
+
+			flowcontainer = {
+				parentanchor = vcenter
+				direction = vertical
+				datacontext = "[MapListOption.AccessBuildingData.AccessBuilding]"
+				margin_right = 5
+				margin_left = 5 #7
+				margin_bottom = 3
+				using = building_size_tooltip_with_ownership
+				using = tooltip_above
+
+				textbox = {
+					size = { 40 23 } #58 23
+					align = nobaseline
+					text = "BUILDING_SIZE"
+					elide = right
+					using = building_size_choose_alpha
+					fontsize_min = 11 #12
+				}
+
+				widget = {
+					size = { 40 5 } #58 5
+					visible = "[And(Building.IsActive, NotEqualTo_CFixedPoint(Building.GetEmploymentPercentage, '(CFixedPoint)1'))]"
+
+					default_progressbar_horizontal = {
+						tooltip = "TOOLTIP_BUILDING_EMPLOYMENT"
+						size = { 40 2 } #58 2
+						parentanchor = bottom
+
+						blockoverride "values" {
+							value = "[FixedPointToFloat(Building.GetEmploymentPercentage)]"
+							min = 0
+							max = 1
+						}
+					}
+				}
+			}
+
+			### SETTING - JOBSEEKERS
+			textbox = {
+				datacontext = "[MapListOption.GetBuildingData.GetState]"
+				margin = { 3 0 } #5 0
+				size = { 70 25 } #85 25
+				align = right|nobaseline
+				text = "MAP_LIST_STATE_AVAILABLE_LABOR"
+				parentanchor = vcenter
+				elide = right
+				tooltip = "STATE_AVAILABLE_LABOR_TOOLTIP"
+				visible = "[GetVariableSystem.HasValue('show_jobseekers', 'true')]"
+			}
+
+			### SETTING - PEASANTS
+			textbox = {
+				datacontext = "[MapListOption.GetBuildingData.GetState]"
+				margin = { 3 0 } #5 0
+				size = { 70 25 } #85 25
+				align = right|nobaseline
+				text = "[State.GetNumSubsistenceWorkingAdults|Dv] [SelectLocalization(State.HasInsufficientQualificationsForAvailablePositions, '@red_cross!', '@green_checkmark!')]"
+				parentanchor = vcenter
+				elide = right
+				fontsize_min = 11
+				tooltip = "STATE_AVAILABLE_LABOR_TOOLTIP"
+				visible = "[Not(GetVariableSystem.HasValue('hide_peasants', 'true'))]"
+			}
+
+			### SETTING - UNEMPLOYED
+			textbox = {
+				datacontext = "[MapListOption.GetBuildingData.GetState]"
+				margin = { 3 0 } #5 0
+				size = { 70 25 } #85 25
+				align = right|nobaseline
+				raw_text = "#variable [State.GetNumUnemployedWorkingAdults|D]#! [SelectLocalization(State.HasInsufficientQualificationsForAvailablePositions, '@red_cross!', '@green_checkmark!')]"
+				parentanchor = vcenter
+				elide = right
+				fontsize_min = 11
+				tooltip = "STATE_AVAILABLE_LABOR_TOOLTIP"
+				visible = "[GetVariableSystem.HasValue('show_unemployed', 'true')]"
+			}
+
+			textbox = {
+				margin = { 3 0 } #5 0
+				#margin_right = 5
+				size = { 60 25 }
+				align = hcenter|nobaseline #right
+				datacontext = "[MapListOption.GetBuildingData.GetState]"
+				raw_text = "#v [State.GetInfrastructureBalance|0+=]#!"
+				tooltip = "STATE_INFRASTRUCTURE_DESC"
+				parentanchor = vcenter
+				elide = right
+				fontsize_min = 11
+				visible = "[Not(MapListOption.GetBuildingData.GetBuilding.GetBuildingType.GeneratesCombatUnits)]"
+			}
+
+			widget = {
+				size = { 95 25 } #105 25
+				visible = "[MapListOption.GetBuildingData.GetBuilding.GetBuildingType.GeneratesCombatUnits]"
+				parentanchor = vcenter
+				textbox = {
+					margin = { 3 0 } # 5 0
+					size = { 95 25 } # 105 25
+					align = hcenter|nobaseline #right
+					datacontext = "[MapListOption.AccessBuildingData.AccessBuilding]"
+					datacontext = "[MapListOption.AccessBuildingData.GetMilitaryFormation]"
+					text = "UNITS_PROVIDED_FROM_BUILDING"
+					tooltip = "UNITS_PROVIDED_FROM_BUILDING_TOOLTIP"
+					parentanchor = vcenter
+					elide = right
+					fontsize_min = 11
+					visible = "[NotZero(Building.GetExpansionLevel)]"
+					alpha = "[TransparentIfZero_int32(Building.GetNumActiveUnitsProvidedToFormation(MilitaryFormation.Self))]"
+				}
+
+				textbox = {
+					margin = { 3 0 } #5 0
+					size = { 95 25 } #105 25
+					align = hcenter|nobaseline #right
+					datacontext = "[MapListOption.AccessBuildingData.AccessBuilding]"
+					datacontext = "[MapListOption.AccessBuildingData.GetMilitaryFormation]"
+					text = "NOT_AVAILABLE"
+					parentanchor = vcenter
+					elide = right
+					fontsize_min = 11
+					visible = "[IsZero(Building.GetExpansionLevel)]"
+					alpha = "[TransparentIfTrue('(bool)yes')]"
+				}
+			}
+
+			flowcontainer = {
+				visible = "[And(MapListOption.GetBuildingData.GetBuilding.GetBuildingType.IsMilitaryBuilding, Not(MapListOption.GetBuildingData.GetBuilding.GetBuildingType.GeneratesCombatUnits))]"
+				parentanchor = vcenter
+
+				textbox = {
+					visible = "[Not(ObjectsEqual(Building.GetBuildingType, GetBuildingType('building_trade_center').Self))]"
+					margin = { 5 0 }
+					margin_right = 10
+					size = { 150 25 }
+					align = right|nobaseline
+					datacontext = "[MapListOption.GetBuildingData.GetBuilding]"
+					raw_text = "#v [Building.GetBuildingType.GetExpansionRevenueImpact(Building.Self, Building.GetState)|K+=]#!"
+					tooltip = "[Building.GetBuildingType.GetExpansionRevenueImpactDesc(Building.Self, Building.GetState)]"
+					parentanchor = vcenter
+					elide = right
+				}
+			}
+
+			flowcontainer = {
+				visible = "[Not(MapListOption.GetBuildingData.GetBuilding.GetBuildingType.IsMilitaryBuilding)]"
+				parentanchor = vcenter
+
+				productivity_or_other_information = {
+					blockoverride "productivity_info_datacontext" {
+						datacontext = "[MapListOption.GetBuildingData.GetBuilding]"
+						datacontext = "[Building.GetState]"
+					}
+
+					blockoverride "productivity_info_text_style" {
+						size = { 60 25 } # 70 25
+						margin = { 3 0 } # 3 0
+						margin_right = 10
+						align = hcenter|nobaseline # right
+						parentanchor = vcenter
+					}
+				}
+
+				# EVERYTHING EXCEPT TRADE CENTERS
+				textbox = {
+					visible = "[Not(ObjectsEqual(Building.GetBuildingType, GetBuildingType('building_trade_center').Self))]"
+					margin = { 3 0 } # 5 0
+					margin_right = 10
+					size = { 75 25 } #80 25
+					align = hcenter|nobaseline #right
+					datacontext = "[MapListOption.GetBuildingData.GetBuilding]"
+					raw_text = "#v [Building.GetBuildingType.GetExpansionRevenueImpact(Building.Self, Building.GetState)|K+=]#!"
+					tooltip = "[Building.GetBuildingType.GetExpansionRevenueImpactDesc(Building.Self, Building.GetState)]"
+					parentanchor = vcenter
+					elide = right
+					fontsize_min = 11
+				}
+
+				# TRADE CENTERS
+				textbox = {
+					visible = "[ObjectsEqual(Building.GetBuildingType, GetBuildingType('building_trade_center').Self)]"
+					margin = { 3 0 } # 5 0
+					margin_right = 10
+					size = { 75 25 } #80 25
+					align = hcenter|nobaseline #right
+					datacontext = "[MapListOption.GetBuildingData.GetBuilding]"
+					datacontext = "[MapListOption.GetBuildingData.GetBuilding.GetState]"
+					raw_text = "TRADE_POTENTIAL_VALUE"
+					tooltip = "TRADE_POTENTIAL_TOOLTIP"
+					parentanchor = vcenter
+					elide = right
+					fontsize_min = 11
+				}
+			}
+
+
+			textbox = {
+				margin = { 3 0 } # 5 0
+				margin_right = 5
+				size = { 95 25 } #80 25
+				align = hcenter|nobaseline #right
+				datacontext = "[MapListOption.GetBuildingData.GetBuilding]"
+				raw_text = "#v [Building.GetState.GetStateRegion.GetStrategicRegion.GetName]#!"
+				parentanchor = vcenter
+				elide = right
+				visible = "[MapListOption.GetBuildingData.GetBuilding.GetBuildingType.GeneratesCombatUnits]"
+			}
+		}
+	}
+
+	type construction_headers_condensed = flowcontainer {
+		#parentanchor = hcenter
+		sort_button = {
+			align = hcenter|nobaseline
+			text = "BUILDING_MAP_LIST_PANEL_STATE_HEADER"
+			tooltip = "BUILDING_MAP_LIST_PANEL_STATE_HEADER_TOOLTIP"
+			size = { 100 20 } #120 20
+			onclick = "[MapListPanel.Sort('state')]"
+		}
+		
+		### GORA UI+ — Sort-by-traits header button
+		sort_button = {
+			align = hcenter|nobaseline
+			tooltip = "SORT_TRAITS_TOOLTIP"
+			size = { 55 20 }
+			onclick = "[MapListPanel.Sort('traits')]"
+
+			icon = {
+				texture = "gfx/interface/icons/state_trait_icons/good_soils.dds"
+				size = { 25 25 }
+				parentanchor = center
+				alwaystransparent = yes
+			}
+		}
+		### /GORA UI+
+
+		sort_button = {
+			align = hcenter|nobaseline
+			tooltip = "BUILDING_LEVEL_HEADER_TOOLTIP"
+			size = { 50 20 } #70 20
+			onclick = "[MapListPanel.Sort('size')]"
+			icon = {
+				texture = "gfx/interface/buttons/sort_button_icons/sort_icon_size.dds"
+				size = { 25 25 }
+				parentanchor = center
+				alwaystransparent = yes
+			}
+		}
+
+		### SETTING - JOBSEEKERS
+		sort_button = {
+			align = hcenter|nobaseline
+			text = "BUILDING_MAP_LIST_PANEL_AVAILABLE_LABOR_HEADER"
+			tooltip = "BUILDING_MAP_LIST_PANEL_AVAILABLE_LABOR_HEADER_TOOLTIP"
+			size = { 70 20 } #85 20
+			onclick = "[MapListPanel.Sort('jobseekers')]"
+			visible = "[GetVariableSystem.HasValue('show_jobseekers', 'true')]"
+		}
+
+		### SETTING - PEASANTS
+		sort_button = {
+			align = hcenter|nobaseline
+			text = "peasants_no_icon"
+			size = { 70 20 } #85 20
+			onclick = "[MapListPanel.Sort('peasants')]"
+			visible = "[Not(GetVariableSystem.HasValue('hide_peasants', 'true'))]"
+		}
+
+		### SETTING - UNEMPLOYED
+		sort_button = {
+			align = hcenter|nobaseline
+			text = "concept_unemployed"
+			size = { 70 20 } #85 20
+			onclick = "[MapListPanel.Sort('unemployed')]"
+			visible = "[GetVariableSystem.HasValue('show_unemployed', 'true')]"
+		}
+
+		sort_button = {
+			align = hcenter|nobaseline
+			tooltip = "BUILDING_MAP_LIST_PANEL_INFRASTRUCTURE_HEADER_TOOLTIP"
+			size = { 60 20 }
+			onclick = "[MapListPanel.Sort('infrastructure_balance')]"
+			visible = "[Not(MapListBuildingPanel.GetBuildingType.GeneratesCombatUnits)]"
+			icon = {
+				texture = "gfx/interface/icons/state_status_icons/state_infrastructure.dds"
+				size = { 25 25 }
+				parentanchor = center
+				alwaystransparent = yes
+			}
+		}
+
+		sort_button = {
+			align = hcenter|nobaseline
+			text = "concept_units_short"
+			size = { 95 20 } #105 20
+			visible = "[MapListBuildingPanel.GetBuildingType.GeneratesCombatUnits]"
+			onclick = "[MapListPanel.Sort('units')]"
+		}
+
+		sort_button = {
+			visible = "[And(MapListBuildingPanel.GetBuildingType.IsMilitaryBuilding, Not(MapListBuildingPanel.GetBuildingType.GeneratesCombatUnits))]"
+			align = hcenter|nobaseline
+			text = "BUILDING_MAP_LIST_PANEL_PROFIT_IMPACT_HEADER"
+			tooltip = "BUILDING_MAP_LIST_PANEL_PROFIT_IMPACT_TOOLTIP"
+			size = { 150 20 }
+			onclick = "[MapListPanel.Sort('profit_impact')]"
+		}
+
+		flowcontainer = {
+			visible = "[Not(MapListBuildingPanel.GetBuildingType.IsMilitaryBuilding)]"
+
+			sort_button = {
+				visible = "[And(Not(ObjectsEqual(MapListBuildingPanel.GetBuildingType, GetBuildingType('building_government_administration').Self)), Not(ObjectsEqual(MapListBuildingPanel.GetBuildingType, GetBuildingType('building_trade_center').Self)))]"
+
+				align = hcenter|nobaseline
+				tooltip = "BUILDING_PROFITABILITY_HEADER_TOOLTIP"
+				size = { 60 20 } #70 20
+				onclick = "[MapListPanel.Sort('profitability')]"
+
+				icon = {
+					texture = "gfx/interface/buttons/sort_button_icons/sort_icon_profitability.dds"
+					size = { 25 25 }
+					parentanchor = center
+					alwaystransparent = yes
+				}
+			}
+
+			sort_button = {
+				align = hcenter|nobaseline
+				text = "concept_tax"
+				tooltip = "BUILDING_TAXATION_CAPACITY_HEADER_TOOLTIP"
+				size = { 60 20 } #70 20
+				onclick = "[MapListPanel.Sort('tax_capacity_balance')]"
+				visible = "[ObjectsEqual(MapListBuildingPanel.GetBuildingType, GetBuildingType('building_government_administration').Self)]"
+			}
+
+			sort_button = {
+				align = hcenter|nobaseline
+
+				icon = {
+					texture = "gfx/interface/icons/state_status_icons/trade_capacity.dds"
+					size = { 25 25 }
+					parentanchor = center
+					alwaystransparent = yes
+				}
+
+				tooltip = "TRADE_CAPACITY_EXPLAINER"
+				size = { 60 20 } #70 20
+				onclick = "[MapListPanel.Sort('trade_capacity_balance')]"
+				visible = "[ObjectsEqual(MapListBuildingPanel.GetBuildingType, GetBuildingType('building_trade_center').Self)]"
+			}
+
+			sort_button = {
+				visible = "[Not(ObjectsEqual(MapListBuildingPanel.GetBuildingType, GetBuildingType('building_trade_center').Self))]"
+				align = hcenter|nobaseline
+				text = "BUILDING_MAP_LIST_PANEL_PROFIT_IMPACT_HEADER"
+				tooltip = "BUILDING_MAP_LIST_PANEL_PROFIT_IMPACT_TOOLTIP"
+				size = { 75 20 } #80 20
+				onclick = "[MapListPanel.Sort('profit_impact')]"
+			}
+
+			sort_button = {
+				visible = "[ObjectsEqual(MapListBuildingPanel.GetBuildingType, GetBuildingType('building_trade_center').Self)]"
+				align = hcenter|nobaseline
+
+				icon = {
+					texture = "gfx/interface/icons/trade_icons/trade_potential.dds"
+					size = { 25 25 }
+					parentanchor = center
+					alwaystransparent = yes
+				}
+
+				tooltip = "TRADE_POTENTIAL_EXPLAINER"
+				size = { 75 20 } #80 20
+				onclick = "[MapListPanel.Sort('trade_potential')]"
+			}
+		}
+
+		sort_button = {
+			align = hcenter|nobaseline
+			text = "[concept_hq]"
+			size = { 95 20 } #105 20
+			onclick = "[MapListPanel.Sort('strategic_region')]"
+			visible = "[MapListBuildingPanel.GetBuildingType.GeneratesCombatUnits]"
+		}
+
+		sort_button = {
+			align = hcenter|nobaseline
+			tooltip = "BUILDING_MAP_LIST_PANEL_STATUS_HEADER_TOOLTIP"
+			size = { 55 20 }
+			onclick = "[MapListPanel.Sort('status')]"
+			icon = {
+				texture = "gfx/interface/buttons/sort_button_icons/sort_icon_status.dds"
+				size = { 25 25 }
+				parentanchor = center
+				alwaystransparent = yes
+			}
+		}
+	}
+
+	type construction_headers_full = flowcontainer {
+		direction = vertical
+		#parentanchor = hcenter
+
+		### TOP ROW
+		flowcontainer = {
+
+			sort_button = {
+				align = hcenter|nobaseline
+				text = "BUILDING_MAP_LIST_PANEL_STATE_HEADER"
+				tooltip = "BUILDING_MAP_LIST_PANEL_STATE_HEADER_TOOLTIP"
+				size = { 230 20 }
+				onclick = "[MapListPanel.Sort('state')]"
+			}
+
+			sort_button = {
+				align = hcenter|nobaseline
+				text = "TRAITS"
+				tooltip = "SORT_TRAITS_TOOLTIP"
+				size = { 120 20 }
+				onclick = "[MapListPanel.Sort('traits')]"
+			}
+			sort_button = {
+				align = hcenter|nobaseline
+				tooltip = "BUILDING_LEVEL_HEADER_TOOLTIP"
+				size = { 95 20 }
+				onclick = "[MapListPanel.Sort('size')]"
+				icon = {
+					texture = "gfx/interface/buttons/sort_button_icons/sort_icon_size.dds"
+					size = { 25 25 }
+					parentanchor = center
+					alwaystransparent = yes
+				}
+			}
+
+			sort_button = {
+				align = hcenter|nobaseline
+				tooltip = "BUILDING_MAP_LIST_PANEL_STATUS_HEADER_TOOLTIP"
+				size = { 95 20 }
+				onclick = "[MapListPanel.Sort('status')]"
+				icon = {
+					texture = "gfx/interface/buttons/sort_button_icons/sort_icon_status.dds"
+					size = { 25 25 }
+					parentanchor = center
+					alwaystransparent = yes
+				}
+			}
+		}
+
+		### BOTTOM ROW
+		flowcontainer = {
+
+			sort_button = {
+				align = hcenter|nobaseline
+				text = "CONTROLLER"
+				tooltip = "SORT_CONTROLLER_TOOLTIP"
+				size = { 55 20 }
+				onclick = "[MapListPanel.Sort('controller')]"
+			}
+
+			### SETTING - JOBSEEKERS
+			sort_button = {
+				align = hcenter|nobaseline
+				text = "BUILDING_MAP_LIST_PANEL_AVAILABLE_LABOR_HEADER"
+				tooltip = "BUILDING_MAP_LIST_PANEL_AVAILABLE_LABOR_HEADER_TOOLTIP"
+				size = { 95 20 }
+				onclick = "[MapListPanel.Sort('jobseekers')]"
+				visible = "[GetVariableSystem.HasValue('show_jobseekers', 'true')]"
+			}
+
+			### SETTING - PEASANTS
+			sort_button = {
+				align = hcenter|nobaseline
+				text = "peasants_no_icon"
+				size = { 95 20 }
+				onclick = "[MapListPanel.Sort('peasants')]"
+				visible = "[Not(GetVariableSystem.HasValue('hide_peasants', 'true'))]"
+			}
+
+			### SETTING - UNEMPLOYED
+			sort_button = {
+				align = hcenter|nobaseline
+				text = "concept_unemployed"
+				size = { 95 20 }
+				onclick = "[MapListPanel.Sort('unemployed')]"
+				visible = "[GetVariableSystem.HasValue('show_unemployed', 'true')]"
+			}
+
+			sort_button = {
+				align = hcenter|nobaseline
+				tooltip = "BUILDING_MAP_LIST_PANEL_INFRASTRUCTURE_HEADER_TOOLTIP"
+				size = { 50 20 }
+				onclick = "[MapListPanel.Sort('infrastructure_balance')]"
+				visible = "[Not(MapListBuildingPanel.GetBuildingType.GeneratesCombatUnits)]"
+
+
+				icon = {
+					texture = "gfx/interface/icons/state_status_icons/state_infrastructure.dds"
+					size = { 25 25 }
+					parentanchor = center
+					alwaystransparent = yes
+				}
+			}
+
+			sort_button = {
+				align = hcenter|nobaseline
+				text = "concept_units_short"
+				size = { 100 20 }
+				visible = "[MapListBuildingPanel.GetBuildingType.GeneratesCombatUnits]"
+				onclick = "[MapListPanel.Sort('units')]"
+			}
+
+			flowcontainer = {
+				visible = "[Not(MapListBuildingPanel.GetBuildingType.GeneratesCombatUnits)]"
+
+				sort_button = {
+					visible = "[And(Not(ObjectsEqual(MapListBuildingPanel.GetBuildingType, GetBuildingType('building_government_administration').Self)), Not(ObjectsEqual(MapListBuildingPanel.GetBuildingType, GetBuildingType('building_trade_center').Self)))]"
+
+					align = hcenter|nobaseline
+					tooltip = "BUILDING_PROFITABILITY_HEADER_TOOLTIP"
+					size = { 70 20 }
+					onclick = "[MapListPanel.Sort('profitability')]"
+					icon = {
+						texture = "gfx/interface/buttons/sort_button_icons/sort_icon_profitability.dds"
+						size = { 25 25 }
+						parentanchor = center
+						alwaystransparent = yes
+					}
+				}
+
+				sort_button = {
+					align = hcenter|nobaseline
+					text = "concept_tax"
+					tooltip = "BUILDING_TAXATION_CAPACITY_HEADER_TOOLTIP"
+					size = { 70 20 }
+					onclick = "[MapListPanel.Sort('tax_capacity_balance')]"
+					visible = "[ObjectsEqual(MapListBuildingPanel.GetBuildingType, GetBuildingType('building_government_administration').Self)]"
+				}
+
+				sort_button = {
+					align = hcenter|nobaseline
+
+					icon = {
+						texture = "gfx/interface/icons/state_status_icons/trade_capacity.dds"
+						size = { 25 25 }
+						parentanchor = center
+						alwaystransparent = yes
+					}
+
+					tooltip = "TRADE_CAPACITY_EXPLAINER"
+					size = { 70 20 }
+					onclick = "[MapListPanel.Sort('trade_capacity_balance')]"
+					visible = "[ObjectsEqual(MapListBuildingPanel.GetBuildingType, GetBuildingType('building_trade_center').Self)]"
+				}
+
+				sort_button = {
+					visible = "[Not(ObjectsEqual(MapListBuildingPanel.GetBuildingType, GetBuildingType('building_trade_center').Self))]"
+					align = hcenter|nobaseline
+					text = "BUILDING_MAP_LIST_PANEL_PROFIT_IMPACT_HEADER"
+					tooltip = "BUILDING_MAP_LIST_PANEL_PROFIT_IMPACT_TOOLTIP"
+					size = { 80 20 }
+					onclick = "[MapListPanel.Sort('profit_impact')]"
+				}
+
+				sort_button = {
+					visible = "[ObjectsEqual(MapListBuildingPanel.GetBuildingType, GetBuildingType('building_trade_center').Self)]"
+					align = hcenter|nobaseline
+
+					icon = {
+						texture = "gfx/interface/icons/state_status_icons/trade_capacity.dds"
+						size = { 25 25 }
+						parentanchor = center
+						alwaystransparent = yes
+					}
+
+					tooltip = "TRADE_POTENTIAL_EXPLAINER"
+					size = { 80 20 }
+					onclick = "[MapListPanel.Sort('trade_potential')]"
+				}
+			}
+
+			sort_button = {
+				align = hcenter|nobaseline
+				text = "[concept_hq]"
+				size = { 100 20 }
+				onclick = "[MapListPanel.Sort('strategic_region')]"
+				visible = "[MapListBuildingPanel.GetBuildingType.GeneratesCombatUnits]"
+			}
+
+			sort_button = {
+				align = hcenter|nobaseline
+				text = "CONSTRUCTION_EFFICIENCY_SHORT"
+				tooltip = "SORT_CONSTRUCTION_EFFICIENCY_TOOLTIP"
+				size = { 70 20 }
+				onclick = "[MapListPanel.Sort('construction_efficiency')]"
+			}
+
+			sort_button = {
+				align = hcenter|nobaseline
+				text = "EMPLOYMENT_SHORT"
+				tooltip = "SORT_EMPLOYMENT_TOOLTIP"
+				size = { 60 20 }
+				onclick = "[MapListPanel.Sort('employment')]"
+			}
+
+			sort_button = {
+				align = hcenter|nobaseline
+				text = "CASH_RESERVES_SHORT"
+				tooltip = "SORT_CASH_RESERVES_TOOLTIP"
+				size = { 60 20 }
+				onclick = "[MapListPanel.Sort('cash_reserves')]"
+			}
+		}
+	}
+
+	type construction_filters = flowcontainer {
+		direction = vertical
+
+		section_header_button = {
+			blockoverride "left_text" {
+				text = "FILTERS"
+				fontsize_min = 12
+				elide = right
+			}
+
+			blockoverride "right_text" {
+				section_header_right_text = {
+					text = "CURRENT_CONSTRUCTION_FILTER_DESC"
+				}
+			}
+
+			blockoverride "onclick" {
+				onclick = "[GetVariableSystem.Toggle( 'construction_interaction_filters' )]"
+			}
+
+			blockoverride "onclick_showmore" {
+				visible = "[Not(GetVariableSystem.Exists( 'construction_interaction_filters' ))]"
+			}
+
+			blockoverride "onclick_showless" {
+				visible = "[GetVariableSystem.Exists( 'construction_interaction_filters' )]"
+			}
+		}
+
+		flowcontainer = {
+			visible = "[GetVariableSystem.Exists( 'construction_interaction_filters' )]"
+			minimumsize = { @panel_width_plus_14 -1 }
+			parentanchor = hcenter
+			spacing = 10
+			margin_bottom = 10
+
+			background = {
+				using = dark_area
+			}
+
+			flowcontainer = {
+				direction = vertical
+
+				textbox = {
+					multiline = yes
+					size = { 95 60 }
+					text = "LOCATION"
+					align = right|nobaseline
+					margin_right = 10
+					margin_left = 10
+				}
+
+				### GORA UI+ — "Status" column header for the state-filter strip
+				textbox = {
+					multiline = yes
+					size = { 95 60 }
+					text = "mod_filter_status"
+					align = right|nobaseline
+					margin_right = 10
+					margin_left = 10
+				}
+				### /GORA UI+
+
+				textbox = {
+					multiline = yes
+					size = { 95 60 }
+					text = "LIST_ITEM"
+					align = right|nobaseline
+					margin_right = 10
+					margin_left = 10
+				}
+
+				textbox = {
+					multiline = yes
+					size = { 95 60 }
+					text = "WORKFORCE"
+					align = right|nobaseline
+					margin_right = 10
+					margin_left = 10
+				}
+			}
+
+			vertical_divider = {}
+
+			flowcontainer = {
+				direction = vertical
+				margin_top = 10
+				spacing = 20
+				margin_left = 10
+
+				flowcontainer = {
+					spacing = 5
+
+					filter_button = {
+						visible = "[Not(MapListBuildingPanel.HasFilter('all'))]"
+						size = { 132 40 }
+
+						tooltip = "LOCATION_FILTER_ALL"
+						using = tooltip_above
+
+						blockoverride "text" {
+							text = "ALL"
+						}
+
+						blockoverride "onclick" {
+							onclick = "[MapListBuildingPanel.SetFilter('all')]"
+							### GORA UI+ — also clear all state filters when the user
+							### picks "All" in the building filter row. These onclicks
+							### live inside `blockoverride "onclick"` so multi-action
+							### fires correctly (V3 block-slot pattern).
+							onclick = "[GetVariableSystem.Clear('show_only_incorporated')]"
+							onclick = "[GetVariableSystem.Clear('show_only_unincorporated')]"
+							onclick = "[GetVariableSystem.Clear('show_only_vassals')]"
+							onclick = "[GetVariableSystem.Clear('show_only_efficient')]"
+						}
+					}
+
+					filter_background_selected = {
+						visible = "[MapListBuildingPanel.HasFilter('all')]"
+						size = { 132 40 }
+
+						blockoverride "text" {
+							text = "ALL"
+						}
+					}
+
+					filter_button = {
+						visible = "[Not(MapListBuildingPanel.HasFilter('domestic'))]"
+						size = { 132 40 }
+
+						tooltip = "LOCATION_FILTER_DOMESTIC"
+						using = tooltip_above
+
+						blockoverride "text" {
+							text = "DOMESTIC"
+						}
+
+						blockoverride "onclick" {
+							onclick = "[MapListBuildingPanel.SetFilter('domestic')]"
+						}
+					}
+
+					filter_background_selected = {
+						visible = "[MapListBuildingPanel.HasFilter('domestic')]"
+						size = { 132 40 }
+
+						blockoverride "text" {
+							text = "DOMESTIC"
+						}
+					}
+
+					filter_button = {
+						visible = "[Not(MapListBuildingPanel.HasFilter('abroad'))]"
+						size = { 132 40 }
+
+						tooltip = "LOCATION_FILTER_ABROAD"
+						using = tooltip_above
+
+						blockoverride "text" {
+							text = "ABROAD"
+						}
+
+						blockoverride "onclick" {
+							onclick = "[MapListBuildingPanel.SetFilter('abroad')]"
+						}
+					}
+
+					filter_background_selected = {
+						visible = "[MapListBuildingPanel.HasFilter('abroad')]"
+						size = { 132 40 }
+
+						blockoverride "text" {
+							text = "ABROAD"
+						}
+					}
+				}
+
+				### GORA UI+ — State filter strip (icon row, left-aligned + right-aligned toggle)
+				### Layout: 410x35, left flowcontainer hosts mutually-exclusive status
+				### filters (All / Incorporated / Unincorporated / Vassals); right
+				### flowcontainer hosts independent toggle filters (Efficient).
+				### KNOWN LIMITATION: see file header — the per-button "set this and
+				### clear siblings" onclick chains are direct properties, so only
+				### the first onclick fires on a chain.
+				widget = {
+					size = { 410 35 }
+
+					# LEFT: mutually-exclusive status filters
+					flowcontainer = {
+						parentanchor = left|vcenter
+						spacing = 6
+
+						# 1. "All" (reset) — visible while any status filter is active
+						widget = {
+							size = { 35 35 }
+
+							button_icon_round = {
+								visible = "[Or( GetVariableSystem.HasValue('show_only_incorporated', 'true'), Or( GetVariableSystem.HasValue('show_only_unincorporated', 'true'), GetVariableSystem.HasValue('show_only_vassals', 'true') ) )]"
+								size = { 100% 100% }
+								tooltip = "mod_filter_all_status_desc"
+								onclick = "[GetVariableSystem.Clear('show_only_incorporated')]"
+								onclick = "[GetVariableSystem.Clear('show_only_unincorporated')]"
+								onclick = "[GetVariableSystem.Clear('show_only_vassals')]"
+								onclick = "[GetVariableSystem.Clear('show_only_efficient')]"
+								blockoverride "icon" { texture = "gfx/interface/icons/building_icons/building_browser_filter_icons/filter_icons_all.dds" }
+							}
+
+							# Selected (no status filters active) — clicking clears the
+							# Efficient toggle as a convenience reset.
+							button_icon_round_action = {
+								visible = "[And( Not(GetVariableSystem.HasValue('show_only_incorporated', 'true')), And( Not(GetVariableSystem.HasValue('show_only_unincorporated', 'true')), Not(GetVariableSystem.HasValue('show_only_vassals', 'true')) ) )]"
+								size = { 100% 100% }
+								tooltip = "mod_filter_all_status_desc"
+								onclick = "[GetVariableSystem.Clear('show_only_efficient')]"
+								blockoverride "icon" { texture = "gfx/interface/icons/building_icons/building_browser_filter_icons/filter_icons_all.dds" }
+							}
+						}
+
+						widget = { size = { 5 1 } }
+						vertical_divider = { parentanchor = vcenter size = { 1 24 } }
+						widget = { size = { 5 1 } }
+
+						# 2. Incorporated
+						widget = {
+							size = { 35 35 }
+							button_icon_round = {
+								visible = "[Not(GetVariableSystem.HasValue('show_only_incorporated', 'true'))]"
+								size = { 100% 100% }
+								tooltip = "mod_filter_incorporated_desc"
+								onclick = "[GetVariableSystem.Set('show_only_incorporated', 'true')]"
+								onclick = "[GetVariableSystem.Clear('show_only_unincorporated')]"
+								onclick = "[GetVariableSystem.Clear('show_only_vassals')]"
+								blockoverride "icon" { texture = "gfx/interface/icons/state_status_icons/incorporated_state.dds" }
+							}
+							button_icon_round_action = {
+								visible = "[GetVariableSystem.HasValue('show_only_incorporated', 'true')]"
+								size = { 100% 100% }
+								tooltip = "mod_filter_incorporated_desc"
+								onclick = "[GetVariableSystem.Clear('show_only_incorporated')]"
+								blockoverride "icon" { texture = "gfx/interface/icons/state_status_icons/incorporated_state.dds" }
+							}
+						}
+
+						# 3. Unincorporated
+						widget = {
+							size = { 35 35 }
+							button_icon_round = {
+								visible = "[Not(GetVariableSystem.HasValue('show_only_unincorporated', 'true'))]"
+								size = { 100% 100% }
+								tooltip = "mod_filter_unincorporated_desc"
+								onclick = "[GetVariableSystem.Set('show_only_unincorporated', 'true')]"
+								onclick = "[GetVariableSystem.Clear('show_only_incorporated')]"
+								onclick = "[GetVariableSystem.Clear('show_only_vassals')]"
+								blockoverride "icon" { texture = "gfx/interface/icons/state_status_icons/unincorporated_state.dds" }
+							}
+							button_icon_round_action = {
+								visible = "[GetVariableSystem.HasValue('show_only_unincorporated', 'true')]"
+								size = { 100% 100% }
+								tooltip = "mod_filter_unincorporated_desc"
+								onclick = "[GetVariableSystem.Clear('show_only_unincorporated')]"
+								blockoverride "icon" { texture = "gfx/interface/icons/state_status_icons/unincorporated_state.dds" }
+							}
+						}
+
+						# 4. Subjects / vassals
+						widget = {
+							size = { 35 35 }
+							button_icon_round = {
+								visible = "[Not(GetVariableSystem.HasValue('show_only_vassals', 'true'))]"
+								size = { 100% 100% }
+								tooltip = "mod_filter_vassals_desc"
+								onclick = "[GetVariableSystem.Set('show_only_vassals', 'true')]"
+								onclick = "[GetVariableSystem.Clear('show_only_incorporated')]"
+								onclick = "[GetVariableSystem.Clear('show_only_unincorporated')]"
+								blockoverride "icon" { texture = "gfx/interface/icons/lens_toolbar_icons/protectorate.dds" }
+							}
+							button_icon_round_action = {
+								visible = "[GetVariableSystem.HasValue('show_only_vassals', 'true')]"
+								size = { 100% 100% }
+								tooltip = "mod_filter_vassals_desc"
+								onclick = "[GetVariableSystem.Clear('show_only_vassals')]"
+								blockoverride "icon" { texture = "gfx/interface/icons/lens_toolbar_icons/protectorate.dds" }
+							}
+						}
+					}
+
+					# RIGHT: independent toggle filters
+					flowcontainer = {
+						parentanchor = right|vcenter
+						spacing = 6
+
+						# 5. Efficient regions — independent toggle, does NOT clear left-side filters
+						widget = {
+							size = { 35 35 }
+							button_icon_round = {
+								visible = "[Not(GetVariableSystem.HasValue('show_only_efficient', 'true'))]"
+								size = { 100% 100% }
+								tooltip = "mod_filter_efficient_desc"
+								onclick = "[GetVariableSystem.Set('show_only_efficient', 'true')]"
+								blockoverride "icon" { texture = "gfx/interface/icons/state_status_icons/has_construction.dds" }
+							}
+							button_icon_round_action = {
+								visible = "[GetVariableSystem.HasValue('show_only_efficient', 'true')]"
+								size = { 100% 100% }
+								tooltip = "mod_filter_efficient_desc"
+								onclick = "[GetVariableSystem.Clear('show_only_efficient')]"
+								blockoverride "icon" { texture = "gfx/interface/icons/state_status_icons/has_construction.dds" }
+							}
+						}
+					}
+				}
+				### /GORA UI+
+
+				flowcontainer = {
+
+					filter_button = {
+						size = { 410 40 }
+
+						blockoverride "text" {
+							text = "CONSTRUCTION_CONDENSED_OR_FULL"
+						}
+
+						blockoverride "onclick" {
+							onclick = "[GetVariableSystem.Toggle('construction_list_toggle_full_or_condensed')]"
+						}
+					}
+				}
+
+				flowcontainer = {
+					spacing = 5
+
+
+					filter_button = {
+						size = { 132 40 }
+
+						blockoverride "text" {
+							text = "peasants_no_icon"
+						}
+
+						visible = "[And(Not(GetVariableSystem.HasValue('hide_peasants', 'false')), GetVariableSystem.Exists('hide_peasants'))]"
+
+						blockoverride "onclick" {
+							onclick = "[GetVariableSystem.Set('hide_peasants', 'false')]"
+							onclick = "[GetVariableSystem.Set('show_unemployed', 'false')]"
+							onclick = "[GetVariableSystem.Set('show_jobseekers', 'false')]"
+						}
+					}
+
+					filter_background_selected = {
+						visible = "[Not(GetVariableSystem.HasValue('hide_peasants', 'true'))]"
+						size = { 132 40 }
+
+						blockoverride "text" {
+							text = "peasants_no_icon"
+						}
+					}
+
+					filter_button = {
+						size = { 132 40 }
+
+						blockoverride "text" {
+							text = "concept_jobseekers"
+						}
+
+						visible = "[Or(GetVariableSystem.HasValue('show_jobseekers', 'false'), Not(GetVariableSystem.Exists('show_jobseekers')))]"
+
+						blockoverride "onclick" {
+							onclick = "[GetVariableSystem.Set('hide_peasants', 'true')]"
+							onclick = "[GetVariableSystem.Set('show_unemployed', 'false')]"
+							onclick = "[GetVariableSystem.Set('show_jobseekers', 'true')]"
+						}
+					}
+
+					filter_background_selected = {
+						visible = "[GetVariableSystem.HasValue('show_jobseekers', 'true')]"
+						size = { 132 40 }
+
+						blockoverride "text" {
+							text = "concept_jobseekers"
+						}
+					}
+
+					filter_button = {
+						size = { 132 40 }
+
+						blockoverride "text" {
+							text = "concept_unemployed"
+						}
+
+						visible = "[Or(GetVariableSystem.HasValue('show_unemployed', 'false'), Not(GetVariableSystem.Exists('show_unemployed')))]"
+
+						blockoverride "onclick" {
+							onclick = "[GetVariableSystem.Set('hide_peasants', 'true')]"
+							onclick = "[GetVariableSystem.Set('show_unemployed', 'true')]"
+							onclick = "[GetVariableSystem.Set('show_jobseekers', 'false')]"
+						}
+					}
+
+					filter_background_selected = {
+						visible = "[GetVariableSystem.HasValue('show_unemployed', 'true')]"
+						size = { 132 40 }
+
+						blockoverride "text" {
+							text = "concept_unemployed"
+						}
+					}
+				}
+			}
+		}
+
+		widget = {
+			visible = "[GetVariableSystem.Exists( 'construction_interaction_filters' )]"
+			size = { 5 5 }
+		}
+	}
+
+
+	### GORA UI+ — construction_interaction_item_full (CMF scrollarea + GORA trait cap)
+	### Adopted CMF's `00_MPM_map_list_panel.gui:13` version verbatim (which wraps the
+	### PMs widget in a horizontal scrollarea) and applied ONE GORA tweak:
+	### the state-trait datamodel is wrapped with `DataModelFirst(..., 3)` so the
+	### trait icon row stays within the construction queue row layout even when other
+	### mods add 5+ state traits. Both features coexist in this single type — since
+	### the file name `000_gora_*` sorts before `00_MPM_*`, this type registers first
+	### and CMF's identical body gets the silent already-registered warning (CMF's
+	### scrollarea is preserved here, not lost). Search this type body for
+	### `DataModelFirst.*AccessTraits` to find the GORA tweak.
+
+}
+

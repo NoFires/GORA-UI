@@ -1,0 +1,12 @@
+﻿l_russian:
+ TRADE_PARTNERS_MARKET_TOOLTIP_IMPORT: "@market_imports! Импортирует [TradePartnersGetImportsFrom(Market, GetPlayer.GetMarket)|v0] товаров с рынка [GetPlayer.GetMarket.GetOwner.GetFlagTextIcon] [GetPlayer.GetMarket.GetName]"
+ TRADE_PARTNERS_MARKET_TOOLTIP_EXPORT: "@market_exports! Экспортирует [TradePartnersGetExportsTo(Market, GetPlayer.GetMarket)|v0] товаров на рынок [GetPlayer.GetMarket.GetOwner.GetFlagTextIcon] [GetPlayer.GetMarket.GetName]"
+ TRADE_PARTNERS_MARKET_TOOLTIP_VALUES: "[MakeLineIf(TradePartnersIsImporterFrom(Market, GetPlayer.GetMarket),'TRADE_PARTNERS_MARKET_TOOLTIP_IMPORT')][MakeLineIf(TradePartnersIsExporterTo(Market, GetPlayer.GetMarket),'TRADE_PARTNERS_MARKET_TOOLTIP_EXPORT')]"
+ TRADE_PARTNERS_OTHER_MARKET_EXPORTS_TOOLTIP: "#white #b @market_exports! Рынок [Market.GetName] экспортирует товары на рынок [GetPlayer.GetMarket.GetOwner.GetFlagTextIcon] [GetPlayer.GetMarket.GetName]\n#!#!Количество: [TradePartnersGetExportsTo(Market, GetPlayer.GetMarket)|v0]"
+ TRADE_PARTNERS_OTHER_MARKET_IMPORTS_TOOLTIP: "#white #b @market_imports! Рынок [Market.GetName] импортирует товары с рынка [GetPlayer.GetMarket.GetOwner.GetFlagTextIcon] [GetPlayer.GetMarket.GetName]\n#!#!Количество: [TradePartnersGetImportsFrom(Market, GetPlayer.GetMarket)|v0]"
+ TRADE_PARTNERS_IMPORT_PARTNERS_TITLE: "#white #b @market_imports! Рынок [Market.GetName] импортирует товары с рынка [Scope.GetMarket.GetOwner.GetFlagTextIcon] [Scope.GetMarket.GetName]\n#!#!Количество: [TradePartnersGetImportsFrom(Market, Scope.GetMarket)|v0]"
+ TRADE_PARTNERS_EXPORT_PARTNERS_TITLE: "#white #b @market_exports! Рынок [Market.GetName] экспортирует товары на рынок [Scope.GetMarket.GetOwner.GetFlagTextIcon] [Scope.GetMarket.GetName]\n#!#!Количество: [TradePartnersGetExportsTo(Market, Scope.GetMarket)|v0]"
+ TRADE_PARTNERS_EXPORTED_GOODS_TITLE: "Экспортируемые товары:"
+ TRADE_PARTNERS_IMPORTED_GOODS_TITLE: "Импортируемые товары:"
+ TRADE_PARTNERS_EXPORT_PARTNERS_GRAPH_TITLE: "Экспортные партнёры"
+ TRADE_PARTNERS_IMPORT_PARTNERS_GRAPH_TITLE: "Импортные партнёры"

@@ -1,0 +1,9 @@
+﻿REPLACE_OR_CREATE:add_com_topbar_element = {
+	add_to_global_variable_list = {
+		target = flag:$element_name$
+		name = com_topbar_items
+	}
+	flag:$element_name$ = {
+		save_scope_as = $element_name$
+	}
+}

@@ -1,0 +1,24 @@
+﻿l_simp_chinese:
+ # GORA UI+ — State / building labor-pressure stats panel strings.
+ # Referenced from the budget-panel and state-panel patches in Faz 3.
+
+ STATS_LABOR_PRESSURE:0 "劳动力状况"
+ STATS_LABOR_PRESSURE_LOW:0 "#P 低#!"
+ STATS_LABOR_PRESSURE_MEDIUM:0 "#gold 警告#!"
+ STATS_LABOR_PRESSURE_HIGH:0 "#N 高#!"
+ STATS_LABOR_PRESSURE_AVG_WAGE_LABEL:0 "平均工资："
+ STATS_LABOR_PRESSURE_AVG_WAGE_VALUE:0 "#variable @money![State.GetAverageAnnualWage|vD]#!"
+ STATS_LABOR_PRESSURE_TOOLTIP:0 "#header 劳动力状况#!\n省份中的可用劳动力、资质和平均工资。\n$TOOLTIP_DELIMITER$\n年均工资：#variable @money![State.GetAverageAnnualWage|vD]#!\n资质：[SelectLocalization(State.HasInsufficientQualificationsForAvailablePositions, 'STATS_LABOR_PRESSURE_QUAL_BAD', 'STATS_LABOR_PRESSURE_QUAL_OK')]"
+ STATS_LABOR_PRESSURE_WAGE_TOOLTIP:0 "#header 平均年薪#!\n该省份雇员的平均年薪：#variable @money![State.GetAverageAnnualWage|vD]#!\n$TOOLTIP_DELIMITER$\n高工资可能表明当可用劳动力不足或建筑无法填补空缺职位时存在工资压力。"
+ STATS_LABOR_PRESSURE_LOW_TOOLTIP:0 "可用劳动力充足，未出现资质短缺。"
+ STATS_LABOR_PRESSURE_MEDIUM_TOOLTIP:0 "可用劳动力正在减少，或存在资质短缺。"
+ STATS_LABOR_PRESSURE_HIGH_TOOLTIP:0 "可用劳动力不足，且存在技能人才短缺。"
+ STATS_LABOR_PRESSURE_QUAL_OK:0 "#P 足够#!"
+ STATS_LABOR_PRESSURE_QUAL_BAD:0 "#N 不足#!"
+ STATS_LABOR_PRESSURE_QUAL_OK_ICON:0 "@green_checkmark!"
+ STATS_LABOR_PRESSURE_QUAL_BAD_ICON:0 "@red_cross!"
+ STATS_BUILDING_LABOR_PRESSURE_TOOLTIP:0 "#header 人员不足#!\n该建筑员工未满。\n$TOOLTIP_DELIMITER$\n雇佣情况：#variable [Building.GetEmploymentPercentage|%1v]#!\n员工平均收入：#variable @money![Building.GetAverageAnnualEarningsPerEmployeeFormatted|+]#!\n工资支出：#variable @money![Building.GetLastWagesExpenses|K]#!\n[AddLocalizationIf(Building.HasAnyInputShortage, 'STATS_BUILDING_INPUT_SHORTAGE_NOTE')]"
+ STATS_BUILDING_INPUT_SHORTAGE_NOTE:0 "\n#N 该建筑存在投入不足。#!"
+ STATS_BUDGET_LABOR:0 "劳动力"
+ STATS_BUDGET_LABOR_TOOLTIP:0 "#header 自由劳动力#!\n显示该省份最大的可用劳动力池。\n$TOOLTIP_DELIMITER$\n@peasants!农民\n@unemployed_icon!失业\n\n@green_checkmark!资质充足\n@red_cross!资质不足"
+ STATS_BUDGET_LABOR_ROW_TOOLTIP:0 "#header [State.GetName]劳动力#!\n农民：#variable [State.GetNumSubsistenceWorkingAdults|D]#!\n失业人口：#variable [State.GetNumUnemployedWorkingAdults|D]#!\n资质：[SelectLocalization(State.HasInsufficientQualificationsForAvailablePositions, 'STATS_LABOR_PRESSURE_QUAL_BAD', 'STATS_LABOR_PRESSURE_QUAL_OK')]"

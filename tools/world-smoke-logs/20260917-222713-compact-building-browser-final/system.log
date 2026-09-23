@@ -1,0 +1,17 @@
+[22:27:14][game_setup.cpp:224]: Exe Git Version: release/1.14.3 : bf52e8efe8
+[22:27:14][game_setup.cpp:225]: Build Timestamp: 2026-09-15 13:40:09 +0200 long hash: bf52e8efe8f45334a3fbd421cc9e06d51077c045
+[22:27:14][systemsettings.cpp:205]: CPU Model: 12th Gen Intel(R) Core(TM) i7-12700H
+[22:27:14][systemsettings.cpp:206]: CPU Speed: 2688MHz
+[22:27:14][systemsettings.cpp:207]: CPU Physical Cores: 14
+[22:27:14][systemsettings.cpp:208]: CPU Logical Cores: 20
+[22:27:14][systemsettings.cpp:209]: RAM Total: 16068
+[22:27:14][systemsettings.cpp:210]: RAM Free: 2934
+[22:27:14][systemsettings.cpp:211]: Swap Total: 33022
+[22:27:14][systemsettings.cpp:212]: Swap Free: 8816
+[22:27:14][systemsettings.cpp:213]: OS Version: Windows 11 (Build 26200)
+[22:27:14][systemsettings.cpp:214]: OS Language: zh
+[22:27:23][contextowner.cpp:870]: GPU Name: NVIDIA GeForce RTX 3060 Laptop GPU
+[22:27:23][contextowner.cpp:871]: GPU Vendor: nVidia
+[22:27:23][contextowner.cpp:872]: GPU Id: 9568
+[22:27:23][contextowner.cpp:873]: GPU Dedicated Memory: 5994
+[22:27:29][gameapplication.cpp:1276]: Loading cursors...

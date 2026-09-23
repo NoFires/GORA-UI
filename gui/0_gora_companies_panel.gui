@@ -1,0 +1,1808 @@
+# Generated GORA-preserving performance patch. Load after GORA UI+.
+# Filter criteria are retained; company predicates are hoisted and widgets reused.
+# GORA UI+ — company_filter (partial type override)
+# ─────────────────────────────────────────────────────────────────────────────
+# Vanilla 1.13.9 baseline: gui/companies_panel.gui
+# type companies_panel, company_filter (inside types companies_panel)
+#
+# Other vanilla types in that file inherited from vanilla unchanged.
+#
+# GORA delta: Add company charter filter to companies panel, with associated UI elements and logic.
+# This is a partial override of the vanilla companies_panel type,
+# which adds the new filter while preserving all existing vanilla functionality and layout.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Parser-level @constants are file-scoped in V3. Redeclare every @ referenced
+# in the extracted body; values match vanilla 1.13.9 exactly.
+
+@panel_width = 540  				# used to be 460
+@panel_width_plus_10 = 550  		# used to be 470
+@panel_width_plus_14 = 554			# used to be 474
+
+types gora_companies_panel
+{
+	type companies_panel = default_block_window {
+		name = "companies_panel"
+		
+		blockoverride "animation_state_block" {
+			state = {
+				name = _show
+				on_start = "[GetVariableSystem.Clear('gora_od_open')]"
+				on_start = "[GetVariableSystem.Set('gora_od_active', 'yes')]"
+				on_start = "[GetVariableSystem.Clear('hide_current_companies')]"
+				start_sound = {
+					soundeffect = "event:/SFX/UI/SideBar/companies"
+				}
+			}
+		
+			state = {
+				name = _hide
+				on_start = "[GetVariableSystem.Clear('gora_od_open')]"
+				on_start = "[GetVariableSystem.Clear('gora_od_active')]"
+				start_sound = {
+					soundeffect = "event:/SFX/UI/SideBar/companies_stop"
+				}
+			}
+		}
+
+		blockoverride "header_close_button" {
+			onclick = "[InformationPanelBar.ClosePanel]"
+			onclick = "[GetVariableSystem.Clear('hide_current_companies')]"
+		}
+
+		blockoverride "entire_back_button" {
+			back_button_large = {
+				position = { 8 30 }
+				onclick = "[GetVariableSystem.Toggle('hide_current_companies')]"
+				visible = "[GetVariableSystem.Exists('hide_current_companies')]"
+				input_action = "back"
+			}
+
+			back_button_large = {
+				position = { 8 30 }
+				onclick = "[InformationPanelBar.OpenPreviousPanel]"
+				visible = "[Not(GetVariableSystem.Exists('hide_current_companies'))]"
+				input_action = "back"
+			}
+		}
+		
+		blockoverride "window_header_name"
+		{
+			text = "COMPANIES_HEADER"
+		}
+
+		#TOP
+		blockoverride "fixed_top" {
+			tab_buttons = {
+				# Overview
+				blockoverride "first_button" {
+					text = "[GetPlayer.GetNameNoFormatting]"
+				}
+				blockoverride "first_button_tooltip" {
+					tooltip = "[GetPlayer.GetNameNoFormatting]"
+				}
+				blockoverride "first_button_click" {
+					onclick = "[InformationPanel.SelectTab('default')]"
+				}
+				blockoverride "first_button_visibility" {
+					visible = "[InformationPanel.IsTabSelected('default')]"
+				}
+				blockoverride "first_button_visibility_checked" {
+					visible = "[Not( InformationPanel.IsTabSelected('default') )]"
+				}
+				blockoverride "first_button_selected" {
+					text = "[GetPlayer.GetNameNoFormatting]"
+				}
+
+				# Details
+				blockoverride "second_button" {
+					text = "GLOBAL_CULTURE"
+				}
+				blockoverride "second_button_tooltip" {
+					tooltip = "GLOBAL_CULTURE"
+				}
+				blockoverride "second_button_click" {
+					onclick = "[InformationPanel.SelectTab('ranking')]"
+				}
+				blockoverride "second_button_visibility" {
+					visible = "[InformationPanel.IsTabSelected('ranking')]"
+				}
+				blockoverride "second_button_visibility_checked" {
+					visible = "[Not( InformationPanel.IsTabSelected('ranking') )]"
+				}
+				blockoverride "second_button_selected" {
+					text = "GLOBAL_CULTURE"
+				}
+			}
+		}
+		
+		blockoverride "scrollarea_content"
+		{
+			flowcontainer = {
+				visible = "[InformationPanel.IsTabSelected('default')]"
+				using = default_list_position
+				direction = vertical
+				minimumsize = { @panel_width_plus_14 -1 }
+				maximumsize = { @panel_width_plus_14 -1 }
+				datacontext = "[AccessPlayer]"
+
+				#COMPANY
+				country_stats_entry = {
+					visible = "[Country.HasOwningCompany]"
+					datacontext = "[Country.GetOwningCompany]"
+					parentanchor = hcenter
+
+					blockoverride "stats_tooltip" {
+						tooltipwidget = {
+							FancyTooltip_Company = {}
+						}
+					}
+
+					### COMPANY ICON
+					blockoverride "entire_icon" {
+						button_icon_round = {
+							parentanchor = right|vcenter
+							position = { -5 0 }
+							onclick = "[InformationPanelBar.OpenCompanyPanel(Company.Self)]"
+
+							blockoverride "size" {
+								size = { 45 45 }
+							}
+
+							blockoverride "icon_size" {
+								size = { 65% 65% }
+							}
+
+							blockoverride "icon" {
+								texture = "[Company.GetCompanyType.GetIcon]"
+							}
+						}
+					}
+
+					blockoverride "stats_label" {
+						text = "[concept_company]"
+					}
+
+					blockoverride "stats_value" {
+						text = "[Company.GetNameNoIcon]"
+					}
+				}
+
+				top_illu = {
+					datacontext = "[AccessPlayer]"
+					blockoverride "illu" {
+						texture = "gfx/interface/illustrations/top_illus/top_illu_companies.dds"
+					}
+
+					size = { @panel_width_plus_10 120 }
+
+					flowcontainer = {
+						direction = vertical
+						parentanchor = center
+
+						textbox = {	
+							margin_top = 2			
+							text = "BONUS_FOR_ESTABLISHED_COMPANIES"
+							using = fontsize_xl
+							using = companies_header_texts
+						}
+
+						textbox = {				
+							text = "COMPANY_THROUGHPUT_BONUS_HEADER"
+							using = companies_header_texts
+						}
+
+
+						textbox = {				
+							text = "COMPANY_CONSTRUCTION_BONUS_HEADER"
+							using = companies_header_texts
+						}
+
+						textbox = {
+							text = "USING_X_FREE_CHARTERS"
+							using = companies_header_texts
+						}
+					}
+				}
+
+				### ESTABLISHED COMPANIES HEADER
+				section_header_button = {
+					blockoverride "left_text" {
+						text = "ESTABLISHED_COMPANIES"
+					}
+
+					blockoverride "right_text" {
+						section_header_right_text = {
+							text = "COMPANIES_AMOUNT_HEADER"
+						}
+					}
+					blockoverride "onclick" {
+						onclick = "[GetVariableSystem.Toggle('established_companies')]"
+					}
+					
+					blockoverride "onclick_showmore" {
+						visible = "[GetVariableSystem.Exists('established_companies')]" # Flipped to show by default
+					}
+
+					blockoverride "onclick_showless" {
+						visible = "[Not(GetVariableSystem.Exists('established_companies'))]" # Flipped to show by default
+					}
+				}
+
+				### ESTABLISHED COMPANIES LIST
+				flowcontainer = {
+					visible = "[Not(GetVariableSystem.Exists('established_companies'))]" # Flipped to show by default
+					parentanchor = hcenter
+					direction = vertical
+
+					flowcontainer = {
+						parentanchor = hcenter
+						visible = "[Not(IsDataModelEmpty(AccessPlayer.GetCompanies))]"
+						datamodel = "[AccessPlayer.GetCompanies]"
+						direction = vertical
+						spacing = 10
+
+						item = {
+							company_item = {}
+						}
+					}
+				}
+
+				widget = {
+					size = { 10 10 }
+				}
+
+				default_header = {
+					blockoverride "text" {
+						text = "NOT_YET_ESTABLISHED_COMPANIES"
+					}
+				}
+
+
+                # On-demand view controls; no economic data is queried here.
+                flowcontainer = {
+                    parentanchor = hcenter
+                    direction = vertical
+                    spacing = 4
+
+                    textbox = {
+                        text = "[SelectLocalization(GetVariableSystem.Exists('gora_od_full'), 'GORA_COMPANIES_FULL_CARDS_HINT', 'GORA_COMPANIES_COMPACT_LIST_HINT')]"
+                        autoresize = yes
+                        max_width = @panel_width
+                        using = elide_fontsize_min
+                    }
+
+                    flowcontainer = {
+                        spacing = 8
+                        button = {
+                            using = default_button
+                            size = { 230 32 }
+                            text = "[SelectLocalization(GetVariableSystem.Exists('gora_od_full'), 'GORA_COMPANIES_COMPACT_LIST', 'GORA_COMPANIES_FULL_CARDS')]"
+                            onclick = "[GetVariableSystem.Toggle('gora_od_full')]"
+                            onclick = "[GetVariableSystem.Clear('gora_od_open')]"
+                        }
+                        button = {
+                            using = default_button
+                            size = { 180 32 }
+                            text = "GORA_COMPANIES_CLOSE_DETAILS"
+                            enabled = "[GetVariableSystem.Exists('gora_od_open')]"
+                            onclick = "[GetVariableSystem.Clear('gora_od_open')]"
+                        }
+                    }
+                }
+
+				company_filter = {}
+
+				search_bar = {
+					parentanchor = hcenter
+					datacontext = "[CompaniesPanel.GetSearchBar]"
+				}
+
+				### sort buttons
+				widget = {
+					size = { @panel_width_plus_14 30 }
+
+					hbox = {
+
+						sort_button = {
+							layoutpolicy_horizontal = expanding
+							size = { 0 30 }
+							onclick = "[CompaniesPanel.SortCompanyTypes('name')]"
+							tooltip = "NAME"
+							text = "NAME"
+
+							blockoverride "selected_visibility" {
+								visible = "[CompaniesPanel.IsCompanyTypesSorted('name')]"
+							}
+						}
+
+						sort_button = {
+							layoutpolicy_horizontal = expanding
+							size = { 0 30 }
+							onclick = "[CompaniesPanel.SortCompanyTypes('building_database_order')]"
+							tooltip = "BUILDING_DATABASE_ORDER"
+							text = "BUILDING_DATABASE_ORDER"
+
+							blockoverride "selected_visibility" {
+								visible = "[CompaniesPanel.IsCompanyTypesSorted('building_database_order')]"
+							}
+						}
+
+						sort_button = {
+							layoutpolicy_horizontal = expanding
+							size = { 0 30 }
+							onclick = "[CompaniesPanel.SortCompanyTypes('productivity')]"
+							text = "[concept_productivity]"
+
+							blockoverride "selected_visibility" {
+								visible = "[CompaniesPanel.IsCompanyTypesSorted('productivity')]"
+							}
+						}
+
+						sort_button = {
+							layoutpolicy_horizontal = expanding
+							size = { 0 30 }
+							onclick = "[CompaniesPanel.SortCompanyTypes('levels')]"
+							text = "[concept_building_level]"
+
+							blockoverride "selected_visibility" {
+								visible = "[CompaniesPanel.IsCompanyTypesSorted('levels')]"
+							}
+						}
+					}
+				}
+
+				### All Companies
+				flowcontainer = {
+					parentanchor = hcenter
+					direction = vertical
+
+					flowcontainer = {
+						# GORA UI+ — Company filter
+						# Hidden when YES is selected, shown otherwise (shown when NO or neither is selected)
+						visible = "[Not(GetVariableSystem.Exists('filter_charter_only'))]"
+						# GORA UI+ — end Company filter
+						parentanchor = hcenter
+						datamodel = "[CompaniesPanel.GetFilteredCompanyTypes]"
+						datamodel_reuse_widgets = yes # GORA performance patch: retain item widgets.
+						direction = vertical
+						spacing = 5
+
+						item = {
+							gora_od_ordinary_row = {}
+						}
+					}
+
+					# GORA UI+ — Company filter
+					flowcontainer = {
+						# The button is hidden when "NO" is selected, and displayed otherwise (displayed when "YES" or neither is selected).
+						visible = "[And(Not(GetVariableSystem.Exists('filter_non_charter_only')),
+								Or( CompaniesPanel.IsVisibilityFilterSelected('available'),
+									And( Not(CompaniesPanel.IsVisibilityFilterSelected('potential')),
+										Not(CompaniesPanel.IsVisibilityFilterSelected('attainable')) 
+									)
+								)
+							)]"
+						parentanchor = hcenter
+						datamodel = "[AccessPlayer.GetAvailableCompanies]"
+						datamodel_reuse_widgets = yes # GORA performance patch: retain item widgets.
+						direction = vertical
+
+						item = {
+							container = {
+								# GORA performance patch: company filters once per company, not per industry.
+								name = "gora_perf_company_filter"
+								visible = "[And(Or3( And( CompanyType.IsFlavoredCompany, CompaniesPanel.IsHistoricalFilterSelected('historical_only') ),
+											And( Not(CompanyType.IsFlavoredCompany), CompaniesPanel.IsHistoricalFilterSelected('non_historical_only') ),
+											And( Not(CompaniesPanel.IsHistoricalFilterSelected('historical_only')), Not(CompaniesPanel.IsHistoricalFilterSelected('non_historical_only')) )
+										), Or3( And( CompaniesPanel.IsPrestigeGoodsFilterSelected('without_prestige_goods'),  IsDataModelEmpty(CompanyType.GetPrestigeGoods) ),
+											And( CompaniesPanel.IsPrestigeGoodsFilterSelected('with_prestige_goods'),  Not(IsDataModelEmpty(CompanyType.GetPrestigeGoods)) ),
+											And( Not(CompaniesPanel.IsPrestigeGoodsFilterSelected('with_prestige_goods')), Not(CompaniesPanel.IsPrestigeGoodsFilterSelected('without_prestige_goods')) )
+										))]"
+								datamodel = "[CompanyType.GetPotentialBuildingTypes(GetPlayer.Self)]"
+								datamodel_reuse_widgets = yes # GORA performance patch: retain item widgets.
+								item = {
+									gora_od_available_row = {
+                                        visible = "[Or(EqualTo_string(GetVariableSystem.Get('building_filter_type'), 'None'), EqualTo_string(GetVariableSystem.Get('building_filter_type'), BuildingType.GetName))]"
+									}
+								}
+							}
+						}
+					}
+					flowcontainer = {
+                        visible = "[And(Not(GetVariableSystem.Exists('filter_non_charter_only')),
+								Or( CompaniesPanel.IsVisibilityFilterSelected('attainable'),
+									And( Not(CompaniesPanel.IsVisibilityFilterSelected('available')),
+										Not(CompaniesPanel.IsVisibilityFilterSelected('potential')) 
+									)
+								)
+							)]"
+						parentanchor = hcenter
+						datamodel = "[AccessPlayer.GetAttainableCompanies]"
+						datamodel_reuse_widgets = yes # GORA performance patch: retain item widgets.
+						direction = vertical
+
+						item = {
+							container = {
+								# GORA performance patch: company filters once per company, not per industry.
+								name = "gora_perf_company_filter"
+								visible = "[And(Or3( And( CompanyType.IsFlavoredCompany, CompaniesPanel.IsHistoricalFilterSelected('historical_only') ),
+											And( Not(CompanyType.IsFlavoredCompany), CompaniesPanel.IsHistoricalFilterSelected('non_historical_only') ),
+											And( Not(CompaniesPanel.IsHistoricalFilterSelected('historical_only')), Not(CompaniesPanel.IsHistoricalFilterSelected('non_historical_only')) )
+										), Or3( And( CompaniesPanel.IsPrestigeGoodsFilterSelected('without_prestige_goods'),  IsDataModelEmpty(CompanyType.GetPrestigeGoods) ),
+											And( CompaniesPanel.IsPrestigeGoodsFilterSelected('with_prestige_goods'),  Not(IsDataModelEmpty(CompanyType.GetPrestigeGoods)) ),
+											And( Not(CompaniesPanel.IsPrestigeGoodsFilterSelected('with_prestige_goods')), Not(CompaniesPanel.IsPrestigeGoodsFilterSelected('without_prestige_goods')) )
+										))]"
+								datamodel = "[CompanyType.GetPotentialBuildingTypes(GetPlayer.Self)]"
+								datamodel_reuse_widgets = yes # GORA performance patch: retain item widgets.
+								item = {
+									gora_od_attainable_row = {
+                                        visible = "[Or(EqualTo_string(GetVariableSystem.Get('building_filter_type'), 'None'), EqualTo_string(GetVariableSystem.Get('building_filter_type'), BuildingType.GetName))]"
+									}
+								}
+							}
+						}
+					}
+					flowcontainer = {
+                        visible = "[And(Not(GetVariableSystem.Exists('filter_non_charter_only')),
+								Or( CompaniesPanel.IsVisibilityFilterSelected('potential'),
+									And( Not(CompaniesPanel.IsVisibilityFilterSelected('available')),
+										Not(CompaniesPanel.IsVisibilityFilterSelected('attainable')) 
+									)
+								)
+							)]"
+						parentanchor = hcenter
+						datamodel = "[AccessPlayer.GetPotentialCompanies]"
+						datamodel_reuse_widgets = yes # GORA performance patch: retain item widgets.
+						direction = vertical
+
+						item = {
+							container = {
+								# GORA performance patch: company filters once per company, not per industry.
+								name = "gora_perf_company_filter"
+								visible = "[And(Or3( And( CompanyType.IsFlavoredCompany, CompaniesPanel.IsHistoricalFilterSelected('historical_only') ),
+											And( Not(CompanyType.IsFlavoredCompany), CompaniesPanel.IsHistoricalFilterSelected('non_historical_only') ),
+											And( Not(CompaniesPanel.IsHistoricalFilterSelected('historical_only')), Not(CompaniesPanel.IsHistoricalFilterSelected('non_historical_only')) )
+										), Or3( And( CompaniesPanel.IsPrestigeGoodsFilterSelected('without_prestige_goods'),  IsDataModelEmpty(CompanyType.GetPrestigeGoods) ),
+											And( CompaniesPanel.IsPrestigeGoodsFilterSelected('with_prestige_goods'),  Not(IsDataModelEmpty(CompanyType.GetPrestigeGoods)) ),
+											And( Not(CompaniesPanel.IsPrestigeGoodsFilterSelected('with_prestige_goods')), Not(CompaniesPanel.IsPrestigeGoodsFilterSelected('without_prestige_goods')) )
+										))]"
+								datamodel = "[CompanyType.GetPotentialBuildingTypes(GetPlayer.Self)]"
+								datamodel_reuse_widgets = yes # GORA performance patch: retain item widgets.
+								item = {
+									gora_od_potential_row = {
+                                        visible = "[Or(EqualTo_string(GetVariableSystem.Get('building_filter_type'), 'None'), EqualTo_string(GetVariableSystem.Get('building_filter_type'), BuildingType.GetName))]"
+									}
+								}
+							}
+						}
+					}
+					# GORA UI+ — end Company filter
+
+					empty_state = {
+						blockoverride "visible" {
+							visible = "[EqualTo_int32(CompaniesPanel.GetNumFilteredCompanies, '(int32)0')]"
+						}
+
+						blockoverride "text" {
+							text = "NONE"
+						}
+					}
+				}			
+			}
+
+			flowcontainer = {
+				parentanchor = hcenter
+				direction = vertical
+				
+				visible = "[InformationPanel.IsTabSelected('ranking')]"
+
+				flowcontainer = {
+					direction = vertical
+					company_filter = {
+						blockoverride "filter_visible" {}
+						blockoverride "companies_ranking" {
+							text = "COMPANIES_RANKED_TOTAL_COUNT"
+						}
+					}
+				}
+
+				### sort buttons
+				widget = {
+					visible = "[InformationPanel.IsTabSelected('ranking')]"
+					size = { @panel_width 30 }
+					
+					hbox = {
+
+						sort_button = {
+							layoutpolicy_horizontal = preferred
+							size = { 70 30 }
+							text = "COUNTRY"
+							onclick = "[CompaniesPanel.Sort('owner')]"
+							tooltip = "SORT_BY_COUNTRY"
+
+							blockoverride "selected_visibility" {
+								visible = "[CompaniesPanel.IsSorted('owner')]"
+							}
+						}
+
+						sort_button = {
+							layoutpolicy_horizontal = preferred
+							size = { 220 30 }
+							text = "NAME"
+							onclick = "[CompaniesPanel.Sort('name')]"
+							tooltip = "SORT_BY_NAME"
+
+							blockoverride "selected_visibility" {
+								visible = "[CompaniesPanel.IsSorted('name')]"
+							}
+						}
+
+						sort_button = {
+							enabled = no
+							layoutpolicy_horizontal = preferred
+							size = { 110 30 }
+							text = "BUILDINGS"
+							tooltip = "BUILDINGS"
+						}
+
+						sort_button = {
+							layoutpolicy_horizontal = preferred
+							size = { 110 30 }
+							text = "concept_building_balance_profit"
+							onclick = "[CompaniesPanel.Sort('profit')]"
+							tooltip = "concept_building_balance_profit"
+
+							blockoverride "selected_visibility" {
+								visible = "[CompaniesPanel.IsSorted('profit')]"
+							}
+						}
+					}
+				}
+
+				flowcontainer = {
+					direction = vertical
+
+					datamodel = "[CompaniesPanel.GetCompanies]"
+
+					item = {
+						flowcontainer = {
+							tooltipwidget = {
+								FancyTooltip_Company = {}
+							}
+							minimumsize = { @panel_width 34 }
+							margin_left = 10
+							margin_right = 10
+
+							using = alternating_dark_bg
+
+							tiny_flag = {
+								datacontext = "[Company.GetCountry]"
+								parentanchor = vcenter
+							}
+
+							widget = {
+								size = { 10 10 }
+							}
+
+							textbox = {
+								text = "[Company.GetName]"
+								autoresize = yes
+								align = nobaseline
+								minimumsize = { 240 -1 }
+								maximumsize = { 240 -1 }
+								elide = right
+								margin_right = 5
+								parentanchor = vcenter
+							}
+
+							button_icon_goto = {
+								visible = "[Company.GetBuilding.IsValid]"
+								parentanchor = vcenter
+								size = { 23 23 }
+								using = tooltip_above
+								tooltip = "GO_TO_BUTTON_COMPANY"
+								onclick = "[InformationPanelBar.OpenCompanyPanel(Company.Self)]"
+							}
+
+							widget = { size = { 10 10 } }
+
+							overlappingitembox = {
+								spacing = 2
+								datamodel = "[Company.GetBuildingTypes]"
+								size = { 110 30 }
+								parentanchor = vcenter
+
+								item = {
+									button = {
+										texture = "[BuildingType.GetIcon]"
+										onrightclick = "[RightClickMenuManager.ShowForBuildingType(BuildingType.AccessSelf)]"
+										effectname = "NoHighlight"
+										distribute_visual_state = no
+										inherit_visual_state = no
+										alpha = "[TransparentIfZero_int32(BuildingType.GetNumLevelsOwnedByCompanyRaw(Company.Self))]"
+										size = { 30 30 }
+										
+										textbox = {
+											autoresize = yes
+											position = { 4 0 }
+											parentanchor = bottom
+											align = right|nobaseline
+											max_width = 26
+											elide = right
+											fontsize_min = 12
+											raw_text = "[BuildingType.GetNumLevelsOwnedByCompanyFormatted(Company.Self)]"
+										}
+
+										tooltipwidget = {
+											FancyTooltip_BuildingType = {}
+										}
+									}
+								}
+							}
+
+
+							textbox = {
+								raw_text = "@money![Company.GetProfit|v+=D]"
+								autoresize = yes
+								align = right|nobaseline
+								minimumsize = { 100 -1 }
+								maximumsize = { 100 -1 }
+								parentanchor = vcenter
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+
+	### FILTERS
+	type company_filter = flowcontainer {
+		direction = vertical
+
+		flowcontainer = {
+			direction = vertical
+
+			background = {
+				using = dropdown_background
+				margin = { 0 -2 }
+			}
+
+			section_header_button = {
+				blockoverride "left_text" {
+					text = "FILTERS"
+					elide = right
+				}
+
+				blockoverride "right_text" {
+					### GORA UI+ — Company filter
+					section_header_right_text = {
+						block "companies_ranking" {
+							text = "COMPANIES_FILTER_COUNT"
+						}
+					}
+					### GORA UI+ — end Company filter
+				}
+
+				blockoverride "onclick" {
+					onclick = "[GetVariableSystem.Toggle( 'companies_filters' )]"
+				}
+
+				blockoverride "onclick_showmore" {
+					visible = "[Not(GetVariableSystem.Exists( 'companies_filters' ))]"
+				}
+
+				blockoverride "onclick_showless" {
+					visible = "[GetVariableSystem.Exists( 'companies_filters' )]"
+				}
+			}
+
+			flowcontainer = {
+				visible = "[GetVariableSystem.Exists( 'companies_filters' )]"
+				minimumsize = { @panel_width_plus_14 -1 }
+				parentanchor = hcenter
+				margin_top = 5
+				margin_bottom = 10
+				direction = vertical
+
+				### Visibility Filter
+				block "filter_visible" {
+					building_browser_filter_line = {
+						parentanchor = hcenter
+						blockoverride "line_background" {}
+
+						blockoverride "line_size" {
+							size = { @panel_width 38 }
+						}
+
+						blockoverride "filter_line_label"
+						{
+							text = "FILTER_VISIBILITY"
+						}
+
+						blockoverride "filter_line_buttons"
+						{
+							building_browser_filter_line_button = {
+								text = "COMPANY_AVAILABLE_FILTER_TITLE"
+								align = hcenter
+
+								blockoverride "line_button_tooltip"{
+									tooltip = "COMPANY_AVAILABLE_FILTER_NAME"
+								}
+
+								blockoverride "line_button_onclick" {
+									onclick = "[CompaniesPanel.SetVisibilityFilter('available')]"
+								}
+
+								blockoverride "line_button_icon_texture" {
+									visible = no
+								}
+
+								blockoverride "line_button_selected" {
+									visible = "[CompaniesPanel.IsVisibilityFilterSelected('available')]"
+								}
+							}
+
+							building_browser_filter_line_button = {
+								text = "COMPANY_ATTAINABLE_FILTER_TITLE"
+								align = hcenter
+
+								blockoverride "line_button_tooltip"{
+									tooltip = "COMPANY_ATTAINABLE_FILTER_NAME"
+								}
+
+								blockoverride "line_button_onclick" {
+									onclick = "[CompaniesPanel.SetVisibilityFilter('attainable')]"
+								}
+
+								blockoverride "line_button_icon_texture" {
+									visible = no
+								}
+
+								blockoverride "line_button_selected" {
+									visible = "[CompaniesPanel.IsVisibilityFilterSelected('attainable')]"
+								}
+							}
+
+							building_browser_filter_line_button = {
+								text = "COMPANY_POTENTIAL_FILTER_TITLE"
+								align = hcenter
+
+								blockoverride "line_button_tooltip"{
+									tooltip = "COMPANY_POTENTIAL_FILTER_NAME"
+								}
+
+								blockoverride "line_button_onclick" {
+									onclick = "[CompaniesPanel.SetVisibilityFilter('potential')]"
+								}
+
+								blockoverride "line_button_icon_texture" {
+									visible = no
+								}
+
+								blockoverride "line_button_selected" {
+									visible = "[CompaniesPanel.IsVisibilityFilterSelected('potential')]"
+								}
+							}
+						}
+					}
+				}
+				### Historical filter
+				building_browser_filter_line = {
+					parentanchor = hcenter
+					blockoverride "line_background" {}
+
+					blockoverride "line_size" {
+						size = { @panel_width 38 }
+					}
+
+					blockoverride "filter_line_label"
+					{
+						text = "FILTER_HISTORICAL"
+					}
+
+					blockoverride "filter_line_buttons"
+					{
+						building_browser_filter_line_button = {
+							text = "HISTORICAL_FILTER_NAME"
+							align = hcenter
+
+							blockoverride "line_button_tooltip"{
+								#tooltip = "HISTORICAL_FILTER_NAME"
+							}
+
+							blockoverride "line_button_onclick" {
+								onclick = "[CompaniesPanel.SetHistoricalFilter('historical_only')]"
+							}
+
+							blockoverride "line_button_icon_texture" {
+								visible = no
+							}
+
+							blockoverride "line_button_selected" {
+								visible = "[CompaniesPanel.IsHistoricalFilterSelected('historical_only')]"
+							}
+						}
+
+						building_browser_filter_line_button = {
+							text = "NON_HISTORICAL_FILTER_NAME"
+							align = hcenter
+
+							blockoverride "line_button_tooltip"{
+								#tooltip = "NON_HISTORICAL_FILTER_NAME"
+							}
+
+							blockoverride "line_button_onclick" {
+								onclick = "[CompaniesPanel.SetHistoricalFilter('non_historical_only')]"
+							}
+
+							blockoverride "line_button_icon_texture" {
+								visible = no
+							}
+
+							blockoverride "line_button_selected" {
+								visible = "[CompaniesPanel.IsHistoricalFilterSelected('non_historical_only')]"
+							}
+						}
+					}
+				}
+				### Prestige Goods filter
+				building_browser_filter_line = {
+					parentanchor = hcenter
+					blockoverride "line_background" {}
+
+					blockoverride "line_size" {
+						size = { @panel_width 38 }
+					}
+
+					blockoverride "filter_line_label"
+					{
+						text = "FILTER_PRESTIGE_GOODS"
+					}
+
+					blockoverride "filter_line_buttons"
+					{
+						building_browser_filter_line_button = {
+							text = "YES"
+							align = hcenter
+
+							blockoverride "line_button_tooltip"{
+								#tooltip = "YES"
+							}
+
+							blockoverride "line_button_onclick" {
+								onclick = "[CompaniesPanel.SetPrestigeGoodsFilter('with_prestige_goods')]"
+							}
+
+							blockoverride "line_button_icon_texture" {
+								visible = no
+							}
+
+							blockoverride "line_button_selected" {
+								visible = "[CompaniesPanel.IsPrestigeGoodsFilterSelected('with_prestige_goods')]"
+							}
+						}
+
+						building_browser_filter_line_button = {
+							text = "NO"
+							align = hcenter
+
+							blockoverride "line_button_tooltip"{
+								#tooltip = "NO"
+							}
+
+							blockoverride "line_button_onclick" {
+								onclick = "[CompaniesPanel.SetPrestigeGoodsFilter('without_prestige_goods')]"
+							}
+
+							blockoverride "line_button_icon_texture" {
+								visible = no
+							}
+
+							blockoverride "line_button_selected" {
+								visible = "[CompaniesPanel.IsPrestigeGoodsFilterSelected('without_prestige_goods')]"
+							}
+						}
+					}
+				}
+				### GORA UI+ — Company charter filter
+				building_browser_filter_line = {
+					parentanchor = hcenter
+					# Charters are a DLC mechanic; hide this filter row without the
+					# feature (same gate vanilla uses on its own charter widgets).
+					visible = "[HasDlcFeature('mp1_charter_companies')]"
+					blockoverride "line_background" {}
+
+					blockoverride "line_size" {
+						size = { @panel_width 38 }
+					}
+
+					blockoverride "filter_line_label"
+					{
+						text = "charter_filter"
+					}
+
+					blockoverride "filter_line_buttons"
+					{
+						building_browser_filter_line_button = {
+							text = "YES"
+							align = hcenter
+
+							blockoverride "line_button_tooltip"{
+								tooltip = "YES"
+							}
+
+							blockoverride "line_button_onclick" {
+								# Toggle YES on/off, and force NO to clear
+								onclick = "[GetVariableSystem.Toggle('filter_charter_only')]"
+								onclick = "[GetVariableSystem.Clear('filter_non_charter_only')]"
+							}
+
+							blockoverride "line_button_icon_texture" {
+								visible = no
+							}
+
+							blockoverride "line_button_selected" {
+								visible = "[GetVariableSystem.Exists('filter_charter_only')]"
+							}
+						}
+
+						building_browser_filter_line_button = {
+							text = "NO"
+							align = hcenter
+
+							blockoverride "line_button_tooltip"{
+								tooltip = "NO"
+							}
+
+							blockoverride "line_button_onclick" {
+								# Toggle NO on/off, and force YES to clear
+								onclick = "[GetVariableSystem.Toggle('filter_non_charter_only')]"
+								onclick = "[GetVariableSystem.Clear('filter_charter_only')]"
+							}
+
+							blockoverride "line_button_icon_texture" {
+								visible = no
+							}
+
+							blockoverride "line_button_selected" {
+								# Now only appears selected if the NO variable actually exists
+								visible = "[GetVariableSystem.Exists('filter_non_charter_only')]"
+							}
+						}
+					}
+				}
+				### GORA UI+ — end Company filter
+
+				### Building filter
+				flowcontainer = {
+					parentanchor = hcenter
+					minimumsize = { @panel_width 38 }
+					margin = { 2 0 }
+					spacing = 2
+
+					textbox = {
+						size = { 132 38 }
+						margin = { 8 8 }
+						align = nobaseline
+						alpha = 0.5
+						using = elide_fontsize_min
+						text = "FILTER_BUILDING_TYPE"
+					}
+
+					flowcontainer = {
+						wrap_count = 10
+						datamodel = "[CompaniesPanel.GetAllBuildingTypes]"
+
+						item = {
+							widget = {
+								size = { 40 40 }
+
+								button = {
+									size = { 38 38 }
+									parentanchor = center
+									using = tooltip_se
+									tooltip = "[BuildingType.GetName]"
+									texture = "[BuildingType.GetIcon]"
+
+									click_modifiers = {
+										ondefault = "[CompaniesPanel.SetBuildingFilter(BuildingType.Self)]"
+										onshift = "[CompaniesPanel.ToggleBuildingFilter(BuildingType.Self)]"
+										### GORA UI+ — Company filter
+										ondefault = "[GetVariableSystem.Set('building_filter_type',
+											Select_CString(
+												EqualTo_string(
+													GetVariableSystem.Get('building_filter_type'), BuildingType.GetName),
+													'None',
+													BuildingType.GetName)
+											)
+										]"
+										onshift = "[GetVariableSystem.Clear('building_filter_type')]"
+										### GORA UI+ — end Company filter
+									}
+								}
+
+								icon = {
+									visible = "[CompaniesPanel.IsBuildingFilterSelected(BuildingType.Self)]"
+									using = highlighted_square_selection
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+# Preserve the native count rendering, but back off unchanged text fetches.
+# No panel-wide throttling; native actions and filter criteria are retained.
+types gora_companies_performance
+{
+	type company_type_building_item = button {
+		texture = "[BuildingType.GetIcon]"
+		onrightclick = "[RightClickMenuManager.ShowForBuildingType(BuildingType.AccessSelf)]"
+		effectname = "NoHighlight"
+		distribute_visual_state = no
+		inherit_visual_state = no
+		alpha = "[TransparentIfZero_int32(BuildingType.GetNumLevelsInCountryRaw(GetPlayer.Self))]"
+
+		block "icon_size" {
+			size = { 50 50 }
+		}
+
+		textbox = {
+			name = "gora_perf_building_level_count"
+			# Adaptive backoff in GUI-manager passes, not Hz or milliseconds.
+			max_update_rate = 32
+			text = "[BuildingType.GetNumLevelsInCountryFormatted(GetPlayer.Self)]"
+			autoresize = yes
+			position = { 5 -2 }
+			parentanchor = bottom
+			align = right|nobaseline
+		}
+
+		tooltipwidget = {
+			FancyTooltip_BuildingType = {}
+		}
+	}
+
+	type potential_company_item = flowcontainer {
+		direction = vertical
+		minimumsize = { @panel_width -1 }		
+		maximumsize = { @panel_width -1 }
+		margin = { 10 10 }
+		margin_top = 3
+		spacing = 5		
+			
+		background = {
+			using = simple_frame
+		}
+
+		tooltipwidget = {
+			FancyTooltip_CompanyType = {
+				datacontext = "[GetPlayer]"
+			}
+		}
+
+		container = {
+			minimumsize = { 536 -1 }
+			parentanchor = hcenter
+
+			flowcontainer = {
+				minimumsize = { 536 -1 }
+				parentanchor = vcenter
+				spacing = 5
+				margin_left = 10
+				margin_top = 2
+				margin_bottom = 2
+
+				background = {
+					using = fade_right_simple
+				}
+
+				textbox = {
+					text = "[CompanyType.GetNameNoFormatting]"
+					default_format = "#header"
+					autoresize = yes
+					multiline = no
+					using = fontsize_large
+					using = company_item_text
+					margin_bottom = 5
+				}	
+			}	
+		}
+
+		flowcontainer = {
+			spacing = 10
+
+			container = {
+				# COMPANY DETAILS
+				flowcontainer = {
+					direction = vertical
+					parentanchor = vcenter
+					minimumsize = { 380 130 }
+					maximumsize = { 380 -1 }
+					margin = { 10 10 }
+					spacing = 4
+
+					background = {
+						texture = "[CompanyType.GetBackground]"
+					}
+				
+					background = {
+						using = entry_bg_simple
+					}
+
+					textbox = {
+						autoresize = yes
+						align = nobaseline
+						elide = right
+						fontsize_min = 12
+						max_width = 360
+						text = "COMPANY_TYPE_HEADQUARTER_STATE"
+					}
+
+					textbox = {
+						autoresize = yes
+						align = nobaseline
+						using = elide_fontsize_min
+						max_width = 360
+						text = "DATA_COMPANY_TYPE_PREDICTED_PRODUCTIVITY"
+					}
+
+					flowcontainer = {
+						direction = horizontal
+						spacing = 5
+						datamodel = "[CompanyType.AccessBuildingTypes(GetPlayer.Self)]"
+
+						item = {
+							widget = {
+								size = { 50 50 }
+								company_type_building_item = {}
+
+								icon = {
+									visible = "[CompaniesPanel.IsBuildingFilterSelected(BuildingType.Self)]"
+									size = { 100% 100% }
+									using = highlighted_selected_square_selection
+								}
+							}
+						}
+					}
+
+					textbox = {
+						visible = "[HasDlcFeature('mp1_charter_companies')]"
+						autoresize = yes
+						align = nobaseline
+						using = elide_fontsize_min
+						max_width = 360
+						text = "DATA_COMPANY_TYPE_POTENTIAL_ADDITIONAL_INDUSTRIES_HEADER"
+					}
+
+					flowcontainer = {
+						visible = "[HasDlcFeature('mp1_charter_companies')]"
+						direction = horizontal
+						spacing = 5
+						datamodel = "[CompanyType.GetPotentialBuildingTypes(GetPlayer.Self)]"
+
+						item = {
+							widget = {
+								size = { 50 50 }
+								company_type_building_item = {}
+
+								icon = {
+									visible = "[CompaniesPanel.IsBuildingFilterSelected(BuildingType.Self)]"
+									size = { 100% 100% }
+									using = highlighted_selected_square_selection
+								}
+							}
+						}
+					}
+
+					flowcontainer = {
+						visible = "[Not(IsDataModelEmpty(CompanyType.GetPrestigeGoods))]"
+
+						textbox = {
+							autoresize = yes
+							align = left|vcenter
+							elide = right
+							fontsize_min = 12
+							max_width = 360
+							text = "PRESTIGE_GOODS_CONCEPT"
+						}
+
+						widget = { size = { 5 5 } }
+
+						flowcontainer = {
+							direction = horizontal
+							spacing = 5
+
+							datamodel = "[CompanyType.GetPrestigeGoods]"
+
+							item = {
+								company_type_prestige_good_item = {}
+							}
+						}
+					}
+
+					textbox = {
+						autoresize = yes
+						align = nobaseline
+						using = elide_fontsize_min
+						max_width = 360
+						multiline = yes
+						name = "gora_perf_prosperity_modifier"
+						# Back off unchanged rich modifier descriptions, retaining their full text.
+						max_update_rate = 32
+						text = "COMPANY_TYPE_PROSPERITY_MODIFIER"
+					}
+				}
+			}
+
+			# COMPANY LOGO
+			flowcontainer = {
+				direction = vertical
+				parentanchor = vcenter
+
+				icon = {
+					parentanchor = hcenter
+					size = { 90 90 }
+					texture = "[CompanyType.GetIcon]"
+				}
+
+				button = {
+					using = default_button
+					using = company_building_establish_sound
+					size = { 130 40 }
+					name = "tutorial_highlight_establish_company"
+					# Avoid repeated state/asset validation for an unchanged enabled state.
+					max_update_rate = 8
+					text = "ESTABLISH_COMPANY"
+					onclick = "[PopupManager.AskConfirmationCustom(GetPlayer.CreateCompany(CompanyType.Self), 'company_confirmation_window')]"
+					onclick = "[GetVariableSystem.Clear('hide_current_companies')]"
+					enabled = "[IsValid(GetPlayer.CreateCompany(CompanyType.Self))]"
+					tooltip = "CREATE_COMPANY_DESC"
+
+				}
+			}
+		}
+	}
+}
+
+
+types gora_company_ondemand
+{
+    type gora_od_row = flowcontainer {
+        direction = vertical
+        parentanchor = hcenter
+        minimumsize = { @panel_width_plus_14 -1 }
+        maximumsize = { @panel_width_plus_14 -1 }
+        spacing = 5
+
+        button = {
+            using = default_button
+            parentanchor = hcenter
+            size = { @panel_width 42 }
+            visible = "[Not(GetVariableSystem.Exists('gora_od_full'))]"
+            text = "[CompanyType.GetNameNoFormatting]"
+            raw_tooltip = "Load this company's live details"
+            block "gora_od_select" {}
+
+            icon = {
+                parentanchor = left|vcenter
+                position = { 5 0 }
+                size = { 30 30 }
+                texture = "[CompanyType.GetIcon]"
+            }
+        }
+
+        flowcontainer = {
+            name = "gora_od_summary_host"
+            direction = vertical
+            datamodel_reuse_widgets = yes
+            block "gora_od_summary_model" {}
+            item = { gora_od_summary = {} }
+        }
+
+        flowcontainer = {
+            direction = vertical
+            # An empty model gates creation, rather than merely hiding a full card.
+            datamodel_reuse_widgets = no
+            block "gora_od_live_model" {}
+            item = { gora_od_live_card = {} }
+        }
+
+        flowcontainer = {
+            direction = vertical
+            datamodel_reuse_widgets = no
+            block "gora_od_full_model" {}
+            item = { potential_company_item = {} }
+        }
+    }
+
+    type gora_od_summary = flowcontainer {
+        direction = vertical
+        parentanchor = hcenter
+        minimumsize = { @panel_width -1 }
+        maximumsize = { @panel_width -1 }
+        spacing = 3
+        margin_bottom = 4
+
+        background = { using = entry_bg_simple }
+
+        flowcontainer = {
+            name = "gora_od_summary_industries"
+            direction = horizontal
+            spacing = 8
+            margin_left = 12
+            margin_right = 12
+
+            textbox = {
+                text = "GORA_COMPANIES_INDUSTRIES_LABEL"
+                size = { 120 26 }
+                align = left|nobaseline
+                fontsize = 16
+            }
+
+            flowcontainer = {
+                direction = horizontal
+                spacing = 3
+                wrap_count = 14
+                datamodel_reuse_widgets = yes
+                datamodel = "[CompanyType.AccessBuildingTypes(GetPlayer.Self)]"
+                item = {
+                    icon = {
+                        size = { 24 24 }
+                        alwaystransparent = no
+                        texture = "[BuildingType.GetIcon]"
+                        raw_tooltip = "[BuildingType.GetNameNoFormatting]"
+                    }
+                }
+            }
+        }
+
+        flowcontainer = {
+            name = "gora_od_summary_prestige"
+            direction = horizontal
+            spacing = 8
+            margin_left = 12
+            margin_right = 12
+            visible = "[Not(IsDataModelEmpty(CompanyType.GetPrestigeGoods))]"
+
+            textbox = {
+                text = "GORA_COMPANIES_PRESTIGE_GOODS_LABEL"
+                size = { 120 26 }
+                align = left|nobaseline
+                fontsize = 16
+            }
+
+            flowcontainer = {
+                direction = horizontal
+                spacing = 3
+                wrap_count = 14
+                datamodel_reuse_widgets = yes
+                datamodel = "[CompanyType.GetPrestigeGoods]"
+                item = {
+                    icon = {
+                        size = { 24 24 }
+                        alwaystransparent = no
+                        texture = "[Goods.GetTexture]"
+                        raw_tooltip = "[Goods.GetName]"
+                    }
+                }
+            }
+        }
+    }
+
+    type gora_od_ordinary_row = gora_od_row {
+        blockoverride "gora_od_select" {
+            onclick = "[GetVariableSystem.Set('gora_od_branch', 'ordinary')]"
+            onclick = "[GetVariableSystem.Set('gora_od_company', CompanyType.GetNameNoFormatting)]"
+            onclick = "[GetVariableSystem.Set('gora_od_industry', '')]"
+            onclick = "[GetVariableSystem.Set('gora_od_open', 'yes')]"
+        }
+        blockoverride "gora_od_live_model" {
+            datamodel = "[DataModelRepeatedItem(Select_int32(And(GetVariableSystem.Exists('gora_od_active'), And(InformationPanel.IsTabSelected('default'), And(Not(GetVariableSystem.Exists('gora_od_full')), And(And3(GetVariableSystem.Exists('gora_od_open'), EqualTo_string(GetVariableSystem.Get('gora_od_branch'), 'ordinary'), And(EqualTo_string(GetVariableSystem.Get('gora_od_company'), CompanyType.GetNameNoFormatting), EqualTo_string(GetVariableSystem.Get('gora_od_industry'), ''))), Not(GetVariableSystem.Exists('filter_charter_only')))))), '(int32)1', '(int32)0'))]"
+        }
+        blockoverride "gora_od_full_model" {
+            datamodel = "[DataModelRepeatedItem(Select_int32(And(GetVariableSystem.Exists('gora_od_active'), And(InformationPanel.IsTabSelected('default'), And(GetVariableSystem.Exists('gora_od_full'), Not(GetVariableSystem.Exists('filter_charter_only'))))), '(int32)1', '(int32)0'))]"
+        }
+        blockoverride "gora_od_summary_model" {
+            datamodel = "[DataModelRepeatedItem(Select_int32(And(GetVariableSystem.Exists('gora_od_active'), And(InformationPanel.IsTabSelected('default'), And(Not(GetVariableSystem.Exists('gora_od_full')), And(Not(And3(GetVariableSystem.Exists('gora_od_open'), EqualTo_string(GetVariableSystem.Get('gora_od_branch'), 'ordinary'), And(EqualTo_string(GetVariableSystem.Get('gora_od_company'), CompanyType.GetNameNoFormatting), EqualTo_string(GetVariableSystem.Get('gora_od_industry'), '')))), Not(GetVariableSystem.Exists('filter_charter_only')))))), '(int32)1', '(int32)0'))]"
+        }
+    }
+
+    type gora_od_available_row = gora_od_row {
+        blockoverride "gora_od_select" {
+            onclick = "[GetVariableSystem.Set('gora_od_branch', 'available')]"
+            onclick = "[GetVariableSystem.Set('gora_od_company', CompanyType.GetNameNoFormatting)]"
+            onclick = "[GetVariableSystem.Set('gora_od_industry', BuildingType.GetName)]"
+            onclick = "[GetVariableSystem.Set('gora_od_open', 'yes')]"
+        }
+        blockoverride "gora_od_live_model" {
+            datamodel = "[DataModelRepeatedItem(Select_int32(And(GetVariableSystem.Exists('gora_od_active'), And(InformationPanel.IsTabSelected('default'), And(Not(GetVariableSystem.Exists('gora_od_full')), And(And3(GetVariableSystem.Exists('gora_od_open'), EqualTo_string(GetVariableSystem.Get('gora_od_branch'), 'available'), And(EqualTo_string(GetVariableSystem.Get('gora_od_company'), CompanyType.GetNameNoFormatting), EqualTo_string(GetVariableSystem.Get('gora_od_industry'), BuildingType.GetName))), And(And(Not(GetVariableSystem.Exists('filter_non_charter_only')),
+								Or( CompaniesPanel.IsVisibilityFilterSelected('available'),
+									And( Not(CompaniesPanel.IsVisibilityFilterSelected('potential')),
+										Not(CompaniesPanel.IsVisibilityFilterSelected('attainable')) 
+									)
+								)
+							), And(And(Or3( And( CompanyType.IsFlavoredCompany, CompaniesPanel.IsHistoricalFilterSelected('historical_only') ),
+											And( Not(CompanyType.IsFlavoredCompany), CompaniesPanel.IsHistoricalFilterSelected('non_historical_only') ),
+											And( Not(CompaniesPanel.IsHistoricalFilterSelected('historical_only')), Not(CompaniesPanel.IsHistoricalFilterSelected('non_historical_only')) )
+										), Or3( And( CompaniesPanel.IsPrestigeGoodsFilterSelected('without_prestige_goods'),  IsDataModelEmpty(CompanyType.GetPrestigeGoods) ),
+											And( CompaniesPanel.IsPrestigeGoodsFilterSelected('with_prestige_goods'),  Not(IsDataModelEmpty(CompanyType.GetPrestigeGoods)) ),
+											And( Not(CompaniesPanel.IsPrestigeGoodsFilterSelected('with_prestige_goods')), Not(CompaniesPanel.IsPrestigeGoodsFilterSelected('without_prestige_goods')) )
+										)), Or(EqualTo_string(GetVariableSystem.Get('building_filter_type'), 'None'), EqualTo_string(GetVariableSystem.Get('building_filter_type'), BuildingType.GetName)))))))), '(int32)1', '(int32)0'))]"
+        }
+        blockoverride "gora_od_full_model" {
+            datamodel = "[DataModelRepeatedItem(Select_int32(And(GetVariableSystem.Exists('gora_od_active'), And(InformationPanel.IsTabSelected('default'), And(GetVariableSystem.Exists('gora_od_full'), And(And(Not(GetVariableSystem.Exists('filter_non_charter_only')),
+								Or( CompaniesPanel.IsVisibilityFilterSelected('available'),
+									And( Not(CompaniesPanel.IsVisibilityFilterSelected('potential')),
+										Not(CompaniesPanel.IsVisibilityFilterSelected('attainable')) 
+									)
+								)
+							), And(And(Or3( And( CompanyType.IsFlavoredCompany, CompaniesPanel.IsHistoricalFilterSelected('historical_only') ),
+											And( Not(CompanyType.IsFlavoredCompany), CompaniesPanel.IsHistoricalFilterSelected('non_historical_only') ),
+											And( Not(CompaniesPanel.IsHistoricalFilterSelected('historical_only')), Not(CompaniesPanel.IsHistoricalFilterSelected('non_historical_only')) )
+										), Or3( And( CompaniesPanel.IsPrestigeGoodsFilterSelected('without_prestige_goods'),  IsDataModelEmpty(CompanyType.GetPrestigeGoods) ),
+											And( CompaniesPanel.IsPrestigeGoodsFilterSelected('with_prestige_goods'),  Not(IsDataModelEmpty(CompanyType.GetPrestigeGoods)) ),
+											And( Not(CompaniesPanel.IsPrestigeGoodsFilterSelected('with_prestige_goods')), Not(CompaniesPanel.IsPrestigeGoodsFilterSelected('without_prestige_goods')) )
+										)), Or(EqualTo_string(GetVariableSystem.Get('building_filter_type'), 'None'), EqualTo_string(GetVariableSystem.Get('building_filter_type'), BuildingType.GetName))))))), '(int32)1', '(int32)0'))]"
+        }
+        blockoverride "gora_od_summary_model" {
+            datamodel = "[DataModelRepeatedItem(Select_int32(And(GetVariableSystem.Exists('gora_od_active'), And(InformationPanel.IsTabSelected('default'), And(Not(GetVariableSystem.Exists('gora_od_full')), And(Not(And3(GetVariableSystem.Exists('gora_od_open'), EqualTo_string(GetVariableSystem.Get('gora_od_branch'), 'available'), And(EqualTo_string(GetVariableSystem.Get('gora_od_company'), CompanyType.GetNameNoFormatting), EqualTo_string(GetVariableSystem.Get('gora_od_industry'), BuildingType.GetName)))), And(And(Not(GetVariableSystem.Exists('filter_non_charter_only')),
+								Or( CompaniesPanel.IsVisibilityFilterSelected('available'),
+									And( Not(CompaniesPanel.IsVisibilityFilterSelected('potential')),
+										Not(CompaniesPanel.IsVisibilityFilterSelected('attainable')) 
+									)
+								)
+							), And(And(Or3( And( CompanyType.IsFlavoredCompany, CompaniesPanel.IsHistoricalFilterSelected('historical_only') ),
+											And( Not(CompanyType.IsFlavoredCompany), CompaniesPanel.IsHistoricalFilterSelected('non_historical_only') ),
+											And( Not(CompaniesPanel.IsHistoricalFilterSelected('historical_only')), Not(CompaniesPanel.IsHistoricalFilterSelected('non_historical_only')) )
+										), Or3( And( CompaniesPanel.IsPrestigeGoodsFilterSelected('without_prestige_goods'),  IsDataModelEmpty(CompanyType.GetPrestigeGoods) ),
+											And( CompaniesPanel.IsPrestigeGoodsFilterSelected('with_prestige_goods'),  Not(IsDataModelEmpty(CompanyType.GetPrestigeGoods)) ),
+											And( Not(CompaniesPanel.IsPrestigeGoodsFilterSelected('with_prestige_goods')), Not(CompaniesPanel.IsPrestigeGoodsFilterSelected('without_prestige_goods')) )
+										)), Or(EqualTo_string(GetVariableSystem.Get('building_filter_type'), 'None'), EqualTo_string(GetVariableSystem.Get('building_filter_type'), BuildingType.GetName)))))))), '(int32)1', '(int32)0'))]"
+        }
+    }
+
+    type gora_od_attainable_row = gora_od_row {
+        blockoverride "gora_od_select" {
+            onclick = "[GetVariableSystem.Set('gora_od_branch', 'attainable')]"
+            onclick = "[GetVariableSystem.Set('gora_od_company', CompanyType.GetNameNoFormatting)]"
+            onclick = "[GetVariableSystem.Set('gora_od_industry', BuildingType.GetName)]"
+            onclick = "[GetVariableSystem.Set('gora_od_open', 'yes')]"
+        }
+        blockoverride "gora_od_live_model" {
+            datamodel = "[DataModelRepeatedItem(Select_int32(And(GetVariableSystem.Exists('gora_od_active'), And(InformationPanel.IsTabSelected('default'), And(Not(GetVariableSystem.Exists('gora_od_full')), And(And3(GetVariableSystem.Exists('gora_od_open'), EqualTo_string(GetVariableSystem.Get('gora_od_branch'), 'attainable'), And(EqualTo_string(GetVariableSystem.Get('gora_od_company'), CompanyType.GetNameNoFormatting), EqualTo_string(GetVariableSystem.Get('gora_od_industry'), BuildingType.GetName))), And(And(Not(GetVariableSystem.Exists('filter_non_charter_only')),
+								Or( CompaniesPanel.IsVisibilityFilterSelected('attainable'),
+									And( Not(CompaniesPanel.IsVisibilityFilterSelected('available')),
+										Not(CompaniesPanel.IsVisibilityFilterSelected('potential')) 
+									)
+								)
+							), And(And(Or3( And( CompanyType.IsFlavoredCompany, CompaniesPanel.IsHistoricalFilterSelected('historical_only') ),
+											And( Not(CompanyType.IsFlavoredCompany), CompaniesPanel.IsHistoricalFilterSelected('non_historical_only') ),
+											And( Not(CompaniesPanel.IsHistoricalFilterSelected('historical_only')), Not(CompaniesPanel.IsHistoricalFilterSelected('non_historical_only')) )
+										), Or3( And( CompaniesPanel.IsPrestigeGoodsFilterSelected('without_prestige_goods'),  IsDataModelEmpty(CompanyType.GetPrestigeGoods) ),
+											And( CompaniesPanel.IsPrestigeGoodsFilterSelected('with_prestige_goods'),  Not(IsDataModelEmpty(CompanyType.GetPrestigeGoods)) ),
+											And( Not(CompaniesPanel.IsPrestigeGoodsFilterSelected('with_prestige_goods')), Not(CompaniesPanel.IsPrestigeGoodsFilterSelected('without_prestige_goods')) )
+										)), Or(EqualTo_string(GetVariableSystem.Get('building_filter_type'), 'None'), EqualTo_string(GetVariableSystem.Get('building_filter_type'), BuildingType.GetName)))))))), '(int32)1', '(int32)0'))]"
+        }
+        blockoverride "gora_od_full_model" {
+            datamodel = "[DataModelRepeatedItem(Select_int32(And(GetVariableSystem.Exists('gora_od_active'), And(InformationPanel.IsTabSelected('default'), And(GetVariableSystem.Exists('gora_od_full'), And(And(Not(GetVariableSystem.Exists('filter_non_charter_only')),
+								Or( CompaniesPanel.IsVisibilityFilterSelected('attainable'),
+									And( Not(CompaniesPanel.IsVisibilityFilterSelected('available')),
+										Not(CompaniesPanel.IsVisibilityFilterSelected('potential')) 
+									)
+								)
+							), And(And(Or3( And( CompanyType.IsFlavoredCompany, CompaniesPanel.IsHistoricalFilterSelected('historical_only') ),
+											And( Not(CompanyType.IsFlavoredCompany), CompaniesPanel.IsHistoricalFilterSelected('non_historical_only') ),
+											And( Not(CompaniesPanel.IsHistoricalFilterSelected('historical_only')), Not(CompaniesPanel.IsHistoricalFilterSelected('non_historical_only')) )
+										), Or3( And( CompaniesPanel.IsPrestigeGoodsFilterSelected('without_prestige_goods'),  IsDataModelEmpty(CompanyType.GetPrestigeGoods) ),
+											And( CompaniesPanel.IsPrestigeGoodsFilterSelected('with_prestige_goods'),  Not(IsDataModelEmpty(CompanyType.GetPrestigeGoods)) ),
+											And( Not(CompaniesPanel.IsPrestigeGoodsFilterSelected('with_prestige_goods')), Not(CompaniesPanel.IsPrestigeGoodsFilterSelected('without_prestige_goods')) )
+										)), Or(EqualTo_string(GetVariableSystem.Get('building_filter_type'), 'None'), EqualTo_string(GetVariableSystem.Get('building_filter_type'), BuildingType.GetName))))))), '(int32)1', '(int32)0'))]"
+        }
+        blockoverride "gora_od_summary_model" {
+            datamodel = "[DataModelRepeatedItem(Select_int32(And(GetVariableSystem.Exists('gora_od_active'), And(InformationPanel.IsTabSelected('default'), And(Not(GetVariableSystem.Exists('gora_od_full')), And(Not(And3(GetVariableSystem.Exists('gora_od_open'), EqualTo_string(GetVariableSystem.Get('gora_od_branch'), 'attainable'), And(EqualTo_string(GetVariableSystem.Get('gora_od_company'), CompanyType.GetNameNoFormatting), EqualTo_string(GetVariableSystem.Get('gora_od_industry'), BuildingType.GetName)))), And(And(Not(GetVariableSystem.Exists('filter_non_charter_only')),
+								Or( CompaniesPanel.IsVisibilityFilterSelected('attainable'),
+									And( Not(CompaniesPanel.IsVisibilityFilterSelected('available')),
+										Not(CompaniesPanel.IsVisibilityFilterSelected('potential')) 
+									)
+								)
+							), And(And(Or3( And( CompanyType.IsFlavoredCompany, CompaniesPanel.IsHistoricalFilterSelected('historical_only') ),
+											And( Not(CompanyType.IsFlavoredCompany), CompaniesPanel.IsHistoricalFilterSelected('non_historical_only') ),
+											And( Not(CompaniesPanel.IsHistoricalFilterSelected('historical_only')), Not(CompaniesPanel.IsHistoricalFilterSelected('non_historical_only')) )
+										), Or3( And( CompaniesPanel.IsPrestigeGoodsFilterSelected('without_prestige_goods'),  IsDataModelEmpty(CompanyType.GetPrestigeGoods) ),
+											And( CompaniesPanel.IsPrestigeGoodsFilterSelected('with_prestige_goods'),  Not(IsDataModelEmpty(CompanyType.GetPrestigeGoods)) ),
+											And( Not(CompaniesPanel.IsPrestigeGoodsFilterSelected('with_prestige_goods')), Not(CompaniesPanel.IsPrestigeGoodsFilterSelected('without_prestige_goods')) )
+										)), Or(EqualTo_string(GetVariableSystem.Get('building_filter_type'), 'None'), EqualTo_string(GetVariableSystem.Get('building_filter_type'), BuildingType.GetName)))))))), '(int32)1', '(int32)0'))]"
+        }
+    }
+
+    type gora_od_potential_row = gora_od_row {
+        blockoverride "gora_od_select" {
+            onclick = "[GetVariableSystem.Set('gora_od_branch', 'potential')]"
+            onclick = "[GetVariableSystem.Set('gora_od_company', CompanyType.GetNameNoFormatting)]"
+            onclick = "[GetVariableSystem.Set('gora_od_industry', BuildingType.GetName)]"
+            onclick = "[GetVariableSystem.Set('gora_od_open', 'yes')]"
+        }
+        blockoverride "gora_od_live_model" {
+            datamodel = "[DataModelRepeatedItem(Select_int32(And(GetVariableSystem.Exists('gora_od_active'), And(InformationPanel.IsTabSelected('default'), And(Not(GetVariableSystem.Exists('gora_od_full')), And(And3(GetVariableSystem.Exists('gora_od_open'), EqualTo_string(GetVariableSystem.Get('gora_od_branch'), 'potential'), And(EqualTo_string(GetVariableSystem.Get('gora_od_company'), CompanyType.GetNameNoFormatting), EqualTo_string(GetVariableSystem.Get('gora_od_industry'), BuildingType.GetName))), And(And(Not(GetVariableSystem.Exists('filter_non_charter_only')),
+								Or( CompaniesPanel.IsVisibilityFilterSelected('potential'),
+									And( Not(CompaniesPanel.IsVisibilityFilterSelected('available')),
+										Not(CompaniesPanel.IsVisibilityFilterSelected('attainable')) 
+									)
+								)
+							), And(And(Or3( And( CompanyType.IsFlavoredCompany, CompaniesPanel.IsHistoricalFilterSelected('historical_only') ),
+											And( Not(CompanyType.IsFlavoredCompany), CompaniesPanel.IsHistoricalFilterSelected('non_historical_only') ),
+											And( Not(CompaniesPanel.IsHistoricalFilterSelected('historical_only')), Not(CompaniesPanel.IsHistoricalFilterSelected('non_historical_only')) )
+										), Or3( And( CompaniesPanel.IsPrestigeGoodsFilterSelected('without_prestige_goods'),  IsDataModelEmpty(CompanyType.GetPrestigeGoods) ),
+											And( CompaniesPanel.IsPrestigeGoodsFilterSelected('with_prestige_goods'),  Not(IsDataModelEmpty(CompanyType.GetPrestigeGoods)) ),
+											And( Not(CompaniesPanel.IsPrestigeGoodsFilterSelected('with_prestige_goods')), Not(CompaniesPanel.IsPrestigeGoodsFilterSelected('without_prestige_goods')) )
+										)), Or(EqualTo_string(GetVariableSystem.Get('building_filter_type'), 'None'), EqualTo_string(GetVariableSystem.Get('building_filter_type'), BuildingType.GetName)))))))), '(int32)1', '(int32)0'))]"
+        }
+        blockoverride "gora_od_full_model" {
+            datamodel = "[DataModelRepeatedItem(Select_int32(And(GetVariableSystem.Exists('gora_od_active'), And(InformationPanel.IsTabSelected('default'), And(GetVariableSystem.Exists('gora_od_full'), And(And(Not(GetVariableSystem.Exists('filter_non_charter_only')),
+								Or( CompaniesPanel.IsVisibilityFilterSelected('potential'),
+									And( Not(CompaniesPanel.IsVisibilityFilterSelected('available')),
+										Not(CompaniesPanel.IsVisibilityFilterSelected('attainable')) 
+									)
+								)
+							), And(And(Or3( And( CompanyType.IsFlavoredCompany, CompaniesPanel.IsHistoricalFilterSelected('historical_only') ),
+											And( Not(CompanyType.IsFlavoredCompany), CompaniesPanel.IsHistoricalFilterSelected('non_historical_only') ),
+											And( Not(CompaniesPanel.IsHistoricalFilterSelected('historical_only')), Not(CompaniesPanel.IsHistoricalFilterSelected('non_historical_only')) )
+										), Or3( And( CompaniesPanel.IsPrestigeGoodsFilterSelected('without_prestige_goods'),  IsDataModelEmpty(CompanyType.GetPrestigeGoods) ),
+											And( CompaniesPanel.IsPrestigeGoodsFilterSelected('with_prestige_goods'),  Not(IsDataModelEmpty(CompanyType.GetPrestigeGoods)) ),
+											And( Not(CompaniesPanel.IsPrestigeGoodsFilterSelected('with_prestige_goods')), Not(CompaniesPanel.IsPrestigeGoodsFilterSelected('without_prestige_goods')) )
+										)), Or(EqualTo_string(GetVariableSystem.Get('building_filter_type'), 'None'), EqualTo_string(GetVariableSystem.Get('building_filter_type'), BuildingType.GetName))))))), '(int32)1', '(int32)0'))]"
+        }
+        blockoverride "gora_od_summary_model" {
+            datamodel = "[DataModelRepeatedItem(Select_int32(And(GetVariableSystem.Exists('gora_od_active'), And(InformationPanel.IsTabSelected('default'), And(Not(GetVariableSystem.Exists('gora_od_full')), And(Not(And3(GetVariableSystem.Exists('gora_od_open'), EqualTo_string(GetVariableSystem.Get('gora_od_branch'), 'potential'), And(EqualTo_string(GetVariableSystem.Get('gora_od_company'), CompanyType.GetNameNoFormatting), EqualTo_string(GetVariableSystem.Get('gora_od_industry'), BuildingType.GetName)))), And(And(Not(GetVariableSystem.Exists('filter_non_charter_only')),
+								Or( CompaniesPanel.IsVisibilityFilterSelected('potential'),
+									And( Not(CompaniesPanel.IsVisibilityFilterSelected('available')),
+										Not(CompaniesPanel.IsVisibilityFilterSelected('attainable')) 
+									)
+								)
+							), And(And(Or3( And( CompanyType.IsFlavoredCompany, CompaniesPanel.IsHistoricalFilterSelected('historical_only') ),
+											And( Not(CompanyType.IsFlavoredCompany), CompaniesPanel.IsHistoricalFilterSelected('non_historical_only') ),
+											And( Not(CompaniesPanel.IsHistoricalFilterSelected('historical_only')), Not(CompaniesPanel.IsHistoricalFilterSelected('non_historical_only')) )
+										), Or3( And( CompaniesPanel.IsPrestigeGoodsFilterSelected('without_prestige_goods'),  IsDataModelEmpty(CompanyType.GetPrestigeGoods) ),
+											And( CompaniesPanel.IsPrestigeGoodsFilterSelected('with_prestige_goods'),  Not(IsDataModelEmpty(CompanyType.GetPrestigeGoods)) ),
+											And( Not(CompaniesPanel.IsPrestigeGoodsFilterSelected('with_prestige_goods')), Not(CompaniesPanel.IsPrestigeGoodsFilterSelected('without_prestige_goods')) )
+										)), Or(EqualTo_string(GetVariableSystem.Get('building_filter_type'), 'None'), EqualTo_string(GetVariableSystem.Get('building_filter_type'), BuildingType.GetName)))))))), '(int32)1', '(int32)0'))]"
+        }
+    }
+
+# On-demand live detail types; no additional refresh backoff.
+type gora_od_live_count = button {
+		texture = "[BuildingType.GetIcon]"
+		onrightclick = "[RightClickMenuManager.ShowForBuildingType(BuildingType.AccessSelf)]"
+		effectname = "NoHighlight"
+		distribute_visual_state = no
+		inherit_visual_state = no
+		alpha = "[TransparentIfZero_int32(BuildingType.GetNumLevelsInCountryRaw(GetPlayer.Self))]"
+
+		block "icon_size" {
+			size = { 50 50 }
+		}
+
+		textbox = {
+			name = "gora_od_live_building_count"
+			# Live selected detail: no explicit backoff.
+			max_update_rate = 0
+			text = "[BuildingType.GetNumLevelsInCountryFormatted(GetPlayer.Self)]"
+			autoresize = yes
+			position = { 5 -2 }
+			parentanchor = bottom
+			align = right|nobaseline
+		}
+
+		tooltipwidget = {
+			FancyTooltip_BuildingType = {}
+		}
+	}
+
+type gora_od_live_card = flowcontainer {
+		direction = vertical
+		minimumsize = { @panel_width -1 }		
+		maximumsize = { @panel_width -1 }
+		margin = { 10 10 }
+		margin_top = 3
+		spacing = 5		
+			
+		background = {
+			using = simple_frame
+		}
+
+		tooltipwidget = {
+			FancyTooltip_CompanyType = {
+				datacontext = "[GetPlayer]"
+			}
+		}
+
+		container = {
+			minimumsize = { 536 -1 }
+			parentanchor = hcenter
+
+			flowcontainer = {
+				minimumsize = { 536 -1 }
+				parentanchor = vcenter
+				spacing = 5
+				margin_left = 10
+				margin_top = 2
+				margin_bottom = 2
+
+				background = {
+					using = fade_right_simple
+				}
+
+				textbox = {
+					text = "[CompanyType.GetNameNoFormatting]"
+					default_format = "#header"
+					autoresize = yes
+					multiline = no
+					using = fontsize_large
+					using = company_item_text
+					margin_bottom = 5
+				}	
+			}	
+		}
+
+		flowcontainer = {
+			spacing = 10
+
+			container = {
+				# COMPANY DETAILS
+				flowcontainer = {
+					direction = vertical
+					parentanchor = vcenter
+					minimumsize = { 380 130 }
+					maximumsize = { 380 -1 }
+					margin = { 10 10 }
+					spacing = 4
+
+					background = {
+						texture = "[CompanyType.GetBackground]"
+					}
+				
+					background = {
+						using = entry_bg_simple
+					}
+
+					textbox = {
+						autoresize = yes
+						align = nobaseline
+						elide = right
+						fontsize_min = 12
+						max_width = 360
+						text = "COMPANY_TYPE_HEADQUARTER_STATE"
+					}
+
+					textbox = {
+						autoresize = yes
+						align = nobaseline
+						using = elide_fontsize_min
+						max_width = 360
+						text = "DATA_COMPANY_TYPE_PREDICTED_PRODUCTIVITY"
+					}
+
+					flowcontainer = {
+						direction = horizontal
+						spacing = 5
+						datamodel = "[CompanyType.AccessBuildingTypes(GetPlayer.Self)]"
+
+						item = {
+							widget = {
+								size = { 50 50 }
+								gora_od_live_count = {}
+
+								icon = {
+									visible = "[CompaniesPanel.IsBuildingFilterSelected(BuildingType.Self)]"
+									size = { 100% 100% }
+									using = highlighted_selected_square_selection
+								}
+							}
+						}
+					}
+
+					textbox = {
+						visible = "[HasDlcFeature('mp1_charter_companies')]"
+						autoresize = yes
+						align = nobaseline
+						using = elide_fontsize_min
+						max_width = 360
+						text = "DATA_COMPANY_TYPE_POTENTIAL_ADDITIONAL_INDUSTRIES_HEADER"
+					}
+
+					flowcontainer = {
+						visible = "[HasDlcFeature('mp1_charter_companies')]"
+						direction = horizontal
+						spacing = 5
+						datamodel = "[CompanyType.GetPotentialBuildingTypes(GetPlayer.Self)]"
+
+						item = {
+							widget = {
+								size = { 50 50 }
+								gora_od_live_count = {}
+
+								icon = {
+									visible = "[CompaniesPanel.IsBuildingFilterSelected(BuildingType.Self)]"
+									size = { 100% 100% }
+									using = highlighted_selected_square_selection
+								}
+							}
+						}
+					}
+
+					flowcontainer = {
+						visible = "[Not(IsDataModelEmpty(CompanyType.GetPrestigeGoods))]"
+
+						textbox = {
+							autoresize = yes
+							align = left|vcenter
+							elide = right
+							fontsize_min = 12
+							max_width = 360
+							text = "PRESTIGE_GOODS_CONCEPT"
+						}
+
+						widget = { size = { 5 5 } }
+
+						flowcontainer = {
+							direction = horizontal
+							spacing = 5
+
+							datamodel = "[CompanyType.GetPrestigeGoods]"
+
+							item = {
+								company_type_prestige_good_item = {}
+							}
+						}
+					}
+
+					textbox = {
+						autoresize = yes
+						align = nobaseline
+						using = elide_fontsize_min
+						max_width = 360
+						multiline = yes
+						name = "gora_perf_prosperity_modifier"
+						# Live selected detail: no explicit backoff.
+						max_update_rate = 0
+						text = "COMPANY_TYPE_PROSPERITY_MODIFIER"
+					}
+				}
+			}
+
+			# COMPANY LOGO
+			flowcontainer = {
+				direction = vertical
+				parentanchor = vcenter
+
+				icon = {
+					parentanchor = hcenter
+					size = { 90 90 }
+					texture = "[CompanyType.GetIcon]"
+				}
+
+				button = {
+					using = default_button
+					using = company_building_establish_sound
+					size = { 130 40 }
+					name = "tutorial_highlight_establish_company"
+					# Live selected detail: no explicit backoff.
+					max_update_rate = 0
+					text = "ESTABLISH_COMPANY"
+					onclick = "[PopupManager.AskConfirmationCustom(GetPlayer.CreateCompany(CompanyType.Self), 'company_confirmation_window')]"
+					onclick = "[GetVariableSystem.Clear('hide_current_companies')]"
+					enabled = "[IsValid(GetPlayer.CreateCompany(CompanyType.Self))]"
+					tooltip = "CREATE_COMPANY_DESC"
+
+				}
+			}
+		}
+	}
+}

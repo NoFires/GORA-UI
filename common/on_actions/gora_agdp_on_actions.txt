@@ -1,0 +1,64 @@
+﻿# GORA UI+ — Advanced GDP Tracker: on-action hooks
+#
+# Four hooks:
+#   on_game_started      — seed new games and adopt legacy records in saves
+#   on_country_created   — late-game country births get seeded immediately
+#   on_yearly_pulse      — refresh the Jan-to-Jan annual diff directly
+#   on_monthly_pulse     — dispatch the calendar month once, then update all
+#                          tracked countries without per-country events
+#
+# Decentralized country types are filtered out for performance — they have
+# no GDP worth tracking.
+
+on_game_started = {
+	on_actions = { GDPGR_on_start }
+}
+
+on_country_created = {
+	effect = { GDPGR_initialize_country = yes }
+}
+
+on_yearly_pulse = {
+	# Use on_actions = { ... } so we append cleanly to other mods that
+	# also extend this pulse, instead of overwriting via `effect = { }`.
+	on_actions = { GDPGR_on_yearly }
+}
+
+on_monthly_pulse = {
+	on_actions = { GDPGR_on_monthly }
+}
+
+GDPGR_on_start = {
+	effect = { GDPGR_initialize_all = yes }
+}
+
+GDPGR_on_yearly = {
+	effect = {
+		set_global_variable = { name = GDPGR_year value = year }
+		every_country = {
+			limit = { NOT = { is_country_type = decentralized } }
+			GDPGR_update_annual_growth = yes
+		}
+	}
+}
+
+GDPGR_on_monthly = {
+	effect = {
+		# Calendar dispatch happens once in null scope. The selected branch then
+		# walks countries with fixed CUR/PREV/NEXT slot names.
+		GDPGR_update_all_countries_for_current_month = yes
+
+		# Ranking is deliberately quarterly; country snapshots remain monthly.
+		if = {
+			limit = {
+				OR = {
+					month = 0
+					month = 3
+					month = 6
+					month = 9
+				}
+			}
+			GDPGR_calculate_annl_growth_leaderboard = yes
+		}
+	}
+}

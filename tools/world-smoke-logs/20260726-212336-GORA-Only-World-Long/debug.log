@@ -1,0 +1,558 @@
+[21:24:25][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: headlines_all_minor_events: headlines_all_minor_events, near line: 1" in file: "" near line: 1
+[21:24:25][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: headlines_all_minor_events: headlines_all_minor_events, near line: 1" in file: "" near line: 1
+[21:24:25][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: directly_controlled_investment_pool: directly_controlled_investment_pool, near line: 1" in file: "" near line: 1
+[21:24:25][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: directly_controlled_investment_pool: directly_controlled_investment_pool, near line: 1" in file: "" near line: 1
+[21:24:25][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: canal_buildings_add_company_capacity: canal_buildings_add_company_capacity, near line: 1
+Failed to read key reference: headlines_all_minor_events: headlines_all_minor_events, near line: 1" in file: "" near line: 1
+[21:24:25][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: autonomous_investment_pool: autonomous_investment_pool, near line: 1" in file: "" near line: 1
+[21:24:25][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1" in file: "save games/prusya_ironman.v3" near line: 1
+[21:24:25][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: autonomous_investment_pool: autonomous_investment_pool, near line: 1" in file: "" near line: 1
+[21:24:25][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: autonomous_investment_pool: autonomous_investment_pool, near line: 1" in file: "" near line: 1
+[21:24:25][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: autonomous_investment_pool: autonomous_investment_pool, near line: 1" in file: "" near line: 1
+[21:24:25][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: autonomous_investment_pool: autonomous_investment_pool, near line: 1" in file: "" near line: 1
+[21:24:25][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: ec_construction_points_100: ec_construction_points_100, near line: 1
+Failed to read key reference: ec_subject_construction_same: ec_subject_construction_same, near line: 1
+Failed to read key reference: ec_building_priorities_roleplay: ec_building_priorities_roleplay, near line: 1
+Failed to read key reference: rs_default: rs_default, near line: 1
+Failed to read key reference: ec_allow_autobuild: ec_allow_autobuild, near line: 1
+Failed to read key reference: alert_settings_alert_country_default: alert_settings_alert_country_default, near line: 1
+Failed to read key reference: alert_settings_alert_is_construction_paused: alert_settings_alert_is_construction_paused, near line: 1
+Failed to read key reference: alert_settings_alert_country_approaching_bureaucracy_shortage: alert_settings_alert_country_approaching_bureaucracy_shortage, near line: 1
+Failed to read key reference: alert_settings_alert_has_no_research_alert: alert_settings_alert_has_no_research_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_free_government_reform: alert_settings_important_action_free_government_reform, near line: 1
+Failed to read key reference: alert_settings_alert_revolution_alert: alert_settings_alert_revolution_alert, near line: 1
+Failed to read key reference: alert_settings_alert_secession_alert: alert_settings_alert_secession_alert, near line: 1
+Failed to read key reference: alert_settings_alert_is_losing_rank_alert: alert_settings_alert_is_losing_rank_alert, near line: 1
+Failed to read key reference: alert_settings_alert_has_no_war_goal_alert: alert_settings_alert_has_no_war_goal_alert, near line: 1
+Failed to read key reference: alert_settings_alert_vulnerable_front: alert_settings_alert_vulnerable_front, near line: 1
+Failed to read key reference: alert_settings_alert_high_attrition_alert: alert_settings_alert_high_attrition_alert, near line: 1
+Failed to read key reference: alert_settings_alert_active_peace_deal_alert: alert_settings_alert_active_peace_deal_alert, near line: 1
+Failed to read key reference: alert_settings_alert_wasted_construction: alert_settings_alert_wasted_construction, near line: 1
+Failed to read key reference: alert_settings_important_action_isolated_state_alert: alert_settings_important_action_isolated_state_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_inactive_trade_route_alert: alert_settings_important_action_inactive_trade_route_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_state_in_turmoil_alert: alert_settings_important_action_state_in_turmoil_alert, near line: 1
+Failed to read key reference: alert_settings_disabled_high_tension_alert: alert_settings_disabled_high_tension_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_insurrectionary_alert: alert_settings_important_action_insurrectionary_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_secession_growing_alert: alert_settings_important_action_secession_growing_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_diplomatic_pact_in_danger: alert_settings_important_action_diplomatic_pact_in_danger, near line: 1
+Failed to read key reference: alert_settings_important_action_has_decreasing_interests_alert: alert_settings_important_action_has_decreasing_interests_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_obligation_expiring: alert_settings_important_action_obligation_expiring, near line: 1
+Failed to read key reference: alert_settings_important_action_idle_mobilized_general: alert_settings_important_action_idle_mobilized_general, near line: 1
+Failed to read key reference: alert_settings_important_action_has_convoys_being_sunk: alert_settings_important_action_has_convoys_being_sunk, near line: 1
+Failed to read key reference: alert_settings_important_action_unhealthy_economy_alert: alert_settings_important_action_unhealthy_economy_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_stockpiling_gold_alert: alert_settings_important_action_stockpiling_gold_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_low_legitimacy_alert: alert_settings_important_action_low_legitimacy_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_unused_interests_alert: alert_settings_important_action_unused_interests_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_unproductive_trade_route_alert: alert_settings_important_action_unproductive_trade_route_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_trade_route_needs_convoys_alert: alert_settings_important_action_trade_route_needs_convoys_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_market_goods_shortage_alert: alert_settings_important_action_market_goods_shortage_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_low_market_access_alert: alert_settings_important_action_low_market_access_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_insufficient_tax_capacity_alert: alert_settings_important_action_insufficient_tax_capacity_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_expensive_government_goods_alert: alert_settings_important_action_expensive_government_goods_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_expensive_military_goods_alert: alert_settings_important_action_expensive_military_goods_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_has_army_troops_in_reserve_alert: alert_settings_important_action_has_army_troops_in_reserve_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_has_navy_troops_in_reserve_alert: alert_settings_important_action_has_navy_troops_in_reserve_alert, near line: 1" in file: "" near line: 1
+[21:24:25][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1" in file: "" near line: 1
+[21:24:25][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: ec_construction_points_100: ec_construction_points_100, near line: 1
+Failed to read key reference: ec_subject_construction_same: ec_subject_construction_same, near line: 1
+Failed to read key reference: ec_building_priorities_roleplay: ec_building_priorities_roleplay, near line: 1
+Failed to read key reference: rs_default: rs_default, near line: 1
+Failed to read key reference: ec_allow_autobuild: ec_allow_autobuild, near line: 1" in file: "" near line: 1
+[21:24:25][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1" in file: "" near line: 1
+[21:24:25][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1" in file: "" near line: 1
+[21:24:25][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1" in file: "" near line: 1
+[21:24:25][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: autonomous_investment_pool: autonomous_investment_pool, near line: 1" in file: "" near line: 1
+[21:24:26][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: autonomous_investment_pool: autonomous_investment_pool, near line: 1" in file: "" near line: 1
+[21:24:26][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: autonomous_investment_pool: autonomous_investment_pool, near line: 1
+Failed to read key reference: ACL_allow_overstacking_no: ACL_allow_overstacking_no, near line: 1
+Failed to read key reference: EU_allow_union_no: EU_allow_union_no, near line: 1
+Failed to read key reference: retire_ruler_no: retire_ruler_no, near line: 1" in file: "" near line: 1
+[21:24:26][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1" in file: "" near line: 1
+[21:24:26][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1" in file: "" near line: 1
+[21:24:26][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1" in file: "" near line: 1
+[21:24:26][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: autonomous_investment_pool: autonomous_investment_pool, near line: 1" in file: "" near line: 1
+[21:24:26][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1" in file: "" near line: 1
+[21:24:26][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1" in file: "" near line: 1
+[21:24:26][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1" in file: "" near line: 1
+[21:24:26][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: autonomous_investment_pool: autonomous_investment_pool, near line: 1" in file: "" near line: 1
+[21:24:26][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: autonomous_investment_pool: autonomous_investment_pool, near line: 1
+Failed to read key reference: ACL_allow_overstacking_no: ACL_allow_overstacking_no, near line: 1" in file: "" near line: 1
+[21:24:27][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1" in file: "" near line: 1
+[21:24:27][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1" in file: "" near line: 1
+[21:24:27][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: : , near line: 1
+Failed to read key reference: autonomous_investment_pool: autonomous_investment_pool, near line: 1
+Failed to read key reference: ACL_allow_overstacking_no: ACL_allow_overstacking_no, near line: 1
+Failed to read key reference: EU_allow_union_no: EU_allow_union_no, near line: 1
+Failed to read key reference: NSN_allow_navalinvasion_no: NSN_allow_navalinvasion_no, near line: 1
+Failed to read key reference: retire_ruler_no: retire_ruler_no, near line: 1" in file: "" near line: 1
+[21:24:27][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: autonomous_investment_pool: autonomous_investment_pool, near line: 1" in file: "" near line: 1
+[21:24:27][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: autonomous_investment_pool: autonomous_investment_pool, near line: 1" in file: "" near line: 1
+[21:24:27][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: autonomous_investment_pool: autonomous_investment_pool, near line: 1" in file: "" near line: 1
+[21:24:27][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: ec_construction_points_100: ec_construction_points_100, near line: 1
+Failed to read key reference: ec_subject_construction_same: ec_subject_construction_same, near line: 1
+Failed to read key reference: ec_building_priorities_roleplay: ec_building_priorities_roleplay, near line: 1
+Failed to read key reference: rs_default: rs_default, near line: 1
+Failed to read key reference: ec_allow_autobuild: ec_allow_autobuild, near line: 1
+Failed to read key reference: alert_settings_alert_country_default: alert_settings_alert_country_default, near line: 1
+Failed to read key reference: alert_settings_alert_is_construction_paused: alert_settings_alert_is_construction_paused, near line: 1
+Failed to read key reference: alert_settings_alert_country_approaching_bureaucracy_shortage: alert_settings_alert_country_approaching_bureaucracy_shortage, near line: 1
+Failed to read key reference: alert_settings_alert_has_no_research_alert: alert_settings_alert_has_no_research_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_free_government_reform: alert_settings_important_action_free_government_reform, near line: 1
+Failed to read key reference: alert_settings_alert_revolution_alert: alert_settings_alert_revolution_alert, near line: 1
+Failed to read key reference: alert_settings_alert_secession_alert: alert_settings_alert_secession_alert, near line: 1
+Failed to read key reference: alert_settings_alert_is_losing_rank_alert: alert_settings_alert_is_losing_rank_alert, near line: 1
+Failed to read key reference: alert_settings_alert_has_no_war_goal_alert: alert_settings_alert_has_no_war_goal_alert, near line: 1
+Failed to read key reference: alert_settings_alert_vulnerable_front: alert_settings_alert_vulnerable_front, near line: 1
+Failed to read key reference: alert_settings_alert_high_attrition_alert: alert_settings_alert_high_attrition_alert, near line: 1
+Failed to read key reference: alert_settings_alert_active_peace_deal_alert: alert_settings_alert_active_peace_deal_alert, near line: 1
+Failed to read key reference: alert_settings_alert_wasted_construction: alert_settings_alert_wasted_construction, near line: 1
+Failed to read key reference: alert_settings_important_action_isolated_state_alert: alert_settings_important_action_isolated_state_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_inactive_trade_route_alert: alert_settings_important_action_inactive_trade_route_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_state_in_turmoil_alert: alert_settings_important_action_state_in_turmoil_alert, near line: 1
+Failed to read key reference: alert_settings_disabled_high_tension_alert: alert_settings_disabled_high_tension_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_insurrectionary_alert: alert_settings_important_action_insurrectionary_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_secession_growing_alert: alert_settings_important_action_secession_growing_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_diplomatic_pact_in_danger: alert_settings_important_action_diplomatic_pact_in_danger, near line: 1
+Failed to read key reference: alert_settings_important_action_has_decreasing_interests_alert: alert_settings_important_action_has_decreasing_interests_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_obligation_expiring: alert_settings_important_action_obligation_expiring, near line: 1
+Failed to read key reference: alert_settings_important_action_idle_mobilized_general: alert_settings_important_action_idle_mobilized_general, near line: 1
+Failed to read key reference: alert_settings_important_action_has_convoys_being_sunk: alert_settings_important_action_has_convoys_being_sunk, near line: 1
+Failed to read key reference: alert_settings_important_action_unhealthy_economy_alert: alert_settings_important_action_unhealthy_economy_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_stockpiling_gold_alert: alert_settings_important_action_stockpiling_gold_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_low_legitimacy_alert: alert_settings_important_action_low_legitimacy_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_unused_interests_alert: alert_settings_important_action_unused_interests_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_unproductive_trade_route_alert: alert_settings_important_action_unproductive_trade_route_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_trade_route_needs_convoys_alert: alert_settings_important_action_trade_route_needs_convoys_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_market_goods_shortage_alert: alert_settings_important_action_market_goods_shortage_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_low_market_access_alert: alert_settings_important_action_low_market_access_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_insufficient_tax_capacity_alert: alert_settings_important_action_insufficient_tax_capacity_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_expensive_government_goods_alert: alert_settings_important_action_expensive_government_goods_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_expensive_military_goods_alert: alert_settings_important_action_expensive_military_goods_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_has_army_troops_in_reserve_alert: alert_settings_important_action_has_army_troops_in_reserve_alert, near line: 1
+Failed to read key reference: alert_settings_important_action_has_navy_troops_in_reserve_alert: alert_settings_important_action_has_navy_troops_in_reserve_alert, near line: 1" in file: "" near line: 1
+[21:24:27][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: autonomous_investment_pool: autonomous_investment_pool, near line: 1" in file: "" near line: 1
+[21:24:27][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: autonomous_investment_pool: autonomous_investment_pool, near line: 1" in file: "" near line: 1
+[21:24:27][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: autonomous_investment_pool: autonomous_investment_pool, near line: 1" in file: "" near line: 1
+[21:24:27][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: autonomous_investment_pool: autonomous_investment_pool, near line: 1" in file: "" near line: 1
+[21:24:27][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: autonomous_investment_pool: autonomous_investment_pool, near line: 1" in file: "" near line: 1
+[21:24:27][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: autonomous_investment_pool: autonomous_investment_pool, near line: 1
+Failed to read key reference: NSN_allow_navalinvasion_no: NSN_allow_navalinvasion_no, near line: 1" in file: "" near line: 1
+[21:24:27][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: autonomous_investment_pool: autonomous_investment_pool, near line: 1
+Failed to read key reference: disallow_ngf_unification: disallow_ngf_unification, near line: 1
+Failed to read key reference: leave_france_alone: leave_france_alone, near line: 1
+Failed to read key reference: universalis_enabled: universalis_enabled, near line: 1" in file: "" near line: 1
+[21:24:27][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: autonomous_investment_pool: autonomous_investment_pool, near line: 1" in file: "" near line: 1
+[21:24:27][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: autonomous_investment_pool: autonomous_investment_pool, near line: 1" in file: "" near line: 1
+[21:24:27][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: autonomous_investment_pool: autonomous_investment_pool, near line: 1" in file: "" near line: 1
+[21:24:27][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: autonomous_investment_pool: autonomous_investment_pool, near line: 1" in file: "" near line: 1
+[21:24:27][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: autonomous_investment_pool: autonomous_investment_pool, near line: 1" in file: "" near line: 1
+[21:24:27][pdx_persistent_reader.cpp:268]: Error: "Failed to read key reference: directly_controlled_investment_pool: directly_controlled_investment_pool, near line: 1" in file: "" near line: 1

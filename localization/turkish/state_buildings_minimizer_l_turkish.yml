@@ -1,0 +1,3 @@
+﻿l_turkish:
+ STATE_PANEL_BUILDINGS_COLLAPSE: "Bu bölümü daraltmak için #instruction tıklayın#!\n#b Tüm#! bölümleri daraltmak için #instruction $SHORTCUT_KEY_MOD_shift$Tık#!"
+ STATE_PANEL_BUILDINGS_EXPAND: "Bu bölümü genişletmek için #instruction tıklayın#!\n#b Tüm#! bölümleri genişletmek için #instruction $SHORTCUT_KEY_MOD_shift$Tık#!"

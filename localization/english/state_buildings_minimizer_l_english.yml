@@ -1,0 +1,3 @@
+﻿l_english:
+ STATE_PANEL_BUILDINGS_COLLAPSE: "#instruction Click#! to collapse this section\n#instruction $SHORTCUT_KEY_MOD_shift$Click#! to collapse #b all#! sections"
+ STATE_PANEL_BUILDINGS_EXPAND: "#instruction Click#! to expand this section\n#instruction $SHORTCUT_KEY_MOD_shift$Click#! to expand #b all#! sections"

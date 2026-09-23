@@ -1,0 +1,542 @@
+﻿# GORA UI — goods_panel (partial type override)
+# Vanilla 1.13.9 baseline: gui/goods_panel.gui (type goods_panel).
+# GORA delta: fiyat grafigi tek beyaz cizgi yerine 2 renkli plot_line (width 3.5)
+# plus layout refinements. The line-color and plotpoint changes relative to
+# vanilla are intentional (two colored price plot lines instead of one white).
+@panel_width = 540  				# used to be 460
+
+types gora_goods_panel_types
+{
+	type goods_panel = default_block_window_two_lines {
+		name = "goods_panel"
+		datacontext = "[GoodsPanel.GetGoods]"
+
+		blockoverride "window_header_name"
+		{
+			text = "[LabelingHelper.CapitalizeOnlyFirst(GoodsPanel.GetGoods.GetNameNoFormatting)]"
+
+			tooltipwidget = {
+				FancyTooltip_Goods = {}
+			}
+		}
+
+		blockoverride "window_header_name_line_two"
+		{
+			text = "GOODS_PANEL_LINE_TWO"
+		}
+		blockoverride "goto_button" {
+			button_icon_goto = {
+				datacontext = "[GoodsPanel.GetGoods.GetMarket]"
+				onclick = "[InformationPanelBar.OpenMarketPanel(Market.Self)]"
+				tooltip = "GO_TO_BUTTON_MARKET"
+				size = { 30 30 }
+				input_action = "go_to_details"
+			}
+		}
+
+		blockoverride "map_modes_button" {
+			map_modes_single_button_minimized = {
+				datacontext = "[GoodsPanel.GetMapModeList]"
+				using = map_modes_button_position
+			}
+		}
+
+		blockoverride "pin_visibility" {
+			visible = "[And(GoodsPanel.GetGoods.HasMarketContext, GoodsPanel.GetGoods.GetMarket.GetOwner.IsLocalPlayer)]"
+		}
+
+		blockoverride "pin_properties" {
+			datacontext = "[GoodsPanel.GetGoods]"
+			onclick = "[GoodsPanel.GetGoods.TogglePinInOutliner]"
+			tooltip = "GOODS_RIGHT_CLICK_MENU_PIN_IN_OUTLINER"
+			visible = "[GoodsPanel.GetGoods.IsPinnedInOutliner]"
+		}
+
+		blockoverride "unpin_properties" {
+			datacontext = "[GoodsPanel.GetGoods]"
+			visible = "[Not(GoodsPanel.GetGoods.IsPinnedInOutliner)]"
+			onclick = "[GoodsPanel.GetGoods.TogglePinInOutliner]"
+			tooltip = "GOODS_RIGHT_CLICK_MENU_PIN_IN_OUTLINER"
+		}
+		
+		blockoverride "fixed_top"{
+
+			tab_buttons = {
+				
+				# OBS! these 5 tabs are copied to goods_panel.gui / goods_usage_panel.gui / goods_state_panel.gui / goods_local_prices_panel.gui
+				# consider merging these panels into the same panel
+
+				# world market
+				blockoverride "first_button" {
+					text = "concept_world_market"
+				}
+				blockoverride "first_button_tooltip" {
+					tooltip = "[concept_world_market]"
+				} 
+				blockoverride "first_button_click" {
+					onclick = "[InformationPanelBar.OpenGoodsWorldMarketPanel( GoodsPanel.GetGoods.Self )]"
+				}
+				blockoverride "first_button_visibility_checked" {
+					visible = "[Not(GoodsPanel.GetGoods.IsLocal)]"
+				}
+
+				# market (SELECTED)
+				blockoverride "second_button_selected" {
+					text = "[GoodsPanel.GetGoods.GetMarket.GetNameNoFormatting]"
+				}
+				blockoverride "second_button_visibility" {
+					visible = yes
+				}
+				
+				# selected state
+				blockoverride "third_button" {
+					text = "[GoodsPanel.GetGoods.GetState.GetNameNoFormatting]"
+				}
+				blockoverride "third_button_tooltip" {
+					tooltip = "[GoodsPanel.GetGoods.GetState.GetNameNoFormatting]"
+				} 
+				blockoverride "third_button_visibility_checked" {
+					visible = "[GoodsPanel.GetGoods.HasStateContext]"
+				}
+				blockoverride "third_button_click" {
+					onclick = "[InformationPanelBar.OpenGoodsStatePanel(GoodsPanel.GetGoods.GetState, GoodsPanel.GetGoods.Self)]"
+				}
+
+				# states in market
+				blockoverride "fourth_button" {
+					text = "LOCAL_PRICES"
+				}
+				blockoverride "fourth_button_tooltip" {
+					tooltip = "LOCAL_PRICES"
+				} 					
+				blockoverride "fourth_button_visibility_checked" {
+					visible = "[GoodsPanel.GetGoods.HasMarketContext]"
+				}			
+				blockoverride "fourth_button_click" {
+					onclick = "[InformationPanelBar.OpenGoodsLocalPricesPanel(GoodsPanel.GetGoods.Self)]"
+				}	
+				
+				# usage / application
+				blockoverride "fifth_button" {
+					text = USAGE
+				}
+				blockoverride "fifth_button_click" {
+					onclick = "[InformationPanelBar.OpenGoodsUsagePanel(GoodsPanel.GetGoods.Self)]"
+				}
+				blockoverride "fifth_button_visibility_checked" {
+					visible = yes
+				}
+			}
+		}
+		
+		blockoverride "bottom_spacing" {}
+
+		blockoverride "scrollarea_content"
+		{
+			container = {
+				parentanchor = hcenter									
+				
+				flowcontainer = {
+					margin_top = 10
+					minimumsize = { @panel_width -1 }
+					using = default_list_position
+					direction = vertical
+					datacontext = "[GoodsPanel.GetGoods]"
+
+					container = {
+						parentanchor = hcenter
+						minimumsize = { @panel_width -1 }
+						maximumsize = { @panel_width -1 }
+						
+						good_icon_and_prize = {
+							blockoverride "price_card" {
+								market_price_card = {
+									blockoverride "icons_visible" {
+										visible = yes
+									}
+									
+									blockoverride "icon_balance" {
+										texture = "gfx/interface/icons/trade_icons/balance.dds"
+									}
+
+									blockoverride = "icon_input" {
+										texture = "gfx/interface/icons/trade_icons/sell_orders.dds"	
+									}
+
+									blockoverride "icon_output" {
+										texture = "gfx/interface/icons/trade_icons/buy_orders.dds"
+									}
+
+									blockoverride "price_card_name_maximumsize" {
+										maximumsize = { 250 -1 }
+										minimumsize = { 250 -1 }
+									}
+								}
+							}
+						}
+					}
+					
+					widget = { size = { 5 5 }}
+
+					widget = {
+						size = { @panel_width 110 }
+						parentanchor = hcenter
+						#visible = no
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+
+							background = {
+								using = entry_bg_simple
+							}
+
+							#CONSUMPTION TAXES
+							vbox = {
+								spacing = 8
+								margin_left = 60
+
+								textbox = {
+									text = "BUDGET_CONSUMPTION_TAXES"
+									layoutpolicy_horizontal = expanding
+									align = center|nobaseline
+									#parentanchor = left|vcenter
+								}	
+
+								widget = { size = { 5 5 }}
+								
+								consumption_tax_button_toggle = {
+									visible = "[Not(ObjectsEqual(GetMetaPlayer.GetPlayedOrObservedCountry.GetCapital.GetMarket, Goods.GetMarket))]"
+									
+									blockoverride "size" { 
+										size = { 50 50 }
+									}
+
+									blockoverride "tooltip" {
+										tooltip = "NOT_PLAYER_MARKET_CONSUMPTION_TAXES"
+									}
+
+									blockoverride "enabled" {
+										enabled = no
+									}
+								}
+
+								consumption_tax_button_toggle = {
+									visible = "[ObjectsEqual(GetMetaPlayer.GetPlayedOrObservedCountry.GetCapital.GetMarket, Goods.GetMarket)]"
+
+									blockoverride "size" { 
+										size = { 50 50 }
+									}
+								}	
+
+								widget = { size = { 5 5 }}
+							}
+
+							widget = { size = { 20 5 }}
+
+							vertical_divider_full = {
+								blockoverride "size" {
+									size = { 0 95 }
+								}
+							}
+
+							#TARIFFS AND SUBVENTION
+							vbox = {
+								visible = "[Goods.IsTradeable]"
+								name = "tutorial_highlight_market_goods_policy"
+								spacing = 5
+
+								widget = {
+									textbox = {
+										text = "BUDGET_TARIFFS"
+										autoresize = yes
+										align = nobaseline
+										parentanchor = left|vcenter
+									}
+								}
+
+								hbox = {
+									margin_top = 9
+									spacing = 5
+
+									icon = {
+										texture = "gfx/interface/icons/trade_icons/imports.dds"
+										size = { 28 28 }
+									}
+
+									set_level_bar_import_tariffs = {}
+								}
+
+								hbox = {
+									spacing = 5
+									#margin_top = 5
+
+									icon = {
+										texture = "gfx/interface/icons/trade_icons/exports.dds"
+										size = { 28 28 }
+									}
+
+									set_level_bar_export_tariffs = {}
+								}
+							}
+
+						}
+					}
+
+					### GRAPH LINE
+					v3_plotline = {
+						using = default_list_position
+						margin_bottom = 5
+
+						blockoverride "size" {
+							size = { 450 100 }
+						}
+						blockoverride "header" {
+							text = "PRICE"
+						}
+						
+						blockoverride "line_plotpoints" {
+							# Financial Market Price Gradient Graph
+							# Base white curve + colored clipped bands every 25 percentage points.
+							# Range mapping: top = +75%, middle = 0%, bottom = -75%.
+
+							# +50% to +75% : red
+							widget = {
+								parentanchor = top
+								position = { 0 0 }
+								size = { 450 17 }
+								scissor = yes
+								visible = "[Not(IsEmpty(Goods.GetPriceTrend))]"
+								plotline = {
+									parentanchor = top
+									position = { 0 0 }
+									size = { 450 100 }
+									using = plot_line
+									width = 3.5
+									color = { 1.00 0.08 0.08 1.0 }
+									plotpoints = "[GetTrendPlotPointsNormalized( Goods.GetPriceTrend, Goods.GetMinPrice, Goods.GetMaxPrice )]"
+								}
+							}
+
+							# +25% to +50% : light red
+							widget = {
+								parentanchor = top
+								position = { 0 16 }
+								size = { 450 18 }
+								scissor = yes
+								visible = "[Not(IsEmpty(Goods.GetPriceTrend))]"
+								plotline = {
+									parentanchor = top
+									position = { 0 -16 }
+									size = { 450 100 }
+									using = plot_line
+									width = 3.5
+									color = { 1.00 0.45 0.38 1.0 }
+									plotpoints = "[GetTrendPlotPointsNormalized( Goods.GetPriceTrend, Goods.GetMinPrice, Goods.GetMaxPrice )]"
+								}
+							}
+
+							# 0% to +25% : very pale red, close to white
+							widget = {
+								parentanchor = top
+								position = { 0 33 }
+								size = { 450 18 }
+								scissor = yes
+								visible = "[Not(IsEmpty(Goods.GetPriceTrend))]"
+								plotline = {
+									parentanchor = top
+									position = { 0 -33 }
+									size = { 450 100 }
+									using = plot_line
+									width = 3.5
+									color = { 1.00 0.78 0.74 1.0 }
+									plotpoints = "[GetTrendPlotPointsNormalized( Goods.GetPriceTrend, Goods.GetMinPrice, Goods.GetMaxPrice )]"
+								}
+							}
+
+							# 0% to -25% : very pale blue, close to white
+							widget = {
+								parentanchor = top
+								position = { 0 49 }
+								size = { 450 18 }
+								scissor = yes
+								visible = "[Not(IsEmpty(Goods.GetPriceTrend))]"
+								plotline = {
+									parentanchor = top
+									position = { 0 -49 }
+									size = { 450 100 }
+									using = plot_line
+									width = 3.5
+									color = { 0.76 0.86 1.00 1.0 }
+									plotpoints = "[GetTrendPlotPointsNormalized( Goods.GetPriceTrend, Goods.GetMinPrice, Goods.GetMaxPrice )]"
+								}
+							}
+
+							# -25% to -50% : medium blue
+							widget = {
+								parentanchor = top
+								position = { 0 66 }
+								size = { 450 18 }
+								scissor = yes
+								visible = "[Not(IsEmpty(Goods.GetPriceTrend))]"
+								plotline = {
+									parentanchor = top
+									position = { 0 -66 }
+									size = { 450 100 }
+									using = plot_line
+									width = 3.5
+									color = { 0.34 0.58 1.00 1.0 }
+									plotpoints = "[GetTrendPlotPointsNormalized( Goods.GetPriceTrend, Goods.GetMinPrice, Goods.GetMaxPrice )]"
+								}
+							}
+
+							# -50% to -75% : blue
+							widget = {
+								parentanchor = top
+								position = { 0 83 }
+								size = { 450 17 }
+								scissor = yes
+								visible = "[Not(IsEmpty(Goods.GetPriceTrend))]"
+								plotline = {
+									parentanchor = top
+									position = { 0 -83 }
+									size = { 450 100 }
+									using = plot_line
+									width = 3.5
+									color = { 0.08 0.22 1.00 1.0 }
+									plotpoints = "[GetTrendPlotPointsNormalized( Goods.GetPriceTrend, Goods.GetMinPrice, Goods.GetMaxPrice )]"
+								}
+							}
+						}
+						blockoverride "maxvalue" {
+							raw_text = "@money![Goods.GetMaxPrice]"
+						}
+						blockoverride "minvalue" {
+							raw_text = "@money![Goods.GetMinPrice]"
+						}
+						blockoverride "startdate" {
+							text = "[GetOldestDate(Goods.GetPriceTrend)]"
+						}
+						blockoverride "enddate" {
+							text = "[GetLatestDate(Goods.GetPriceTrend)]"
+						}
+						blockoverride "multiitem" {}
+						
+						blockoverride "extra_plotlines" {
+							### Base Price line
+							plotline = {
+								plotpoints = "[Goods.GetBasePricePlotPoints]"
+								size = { 100% 100% }
+								using = plot_line
+								width = 1
+								color = { 0.2 0.2 0.9 1.0 }
+							}
+						}
+						blockoverride "empty_state_visibility" {
+							visible = "[IsEmpty(Goods.GetPriceTrend)]"
+						}
+
+						blockoverride "everything_that_is_not_empty_state_visibility" {
+							visible = "[Not(IsEmpty(Goods.GetPriceTrend))]"
+						}
+
+						blockoverride "empty_state_text" {
+							text = "GRAPH_NOT_INITIALIZED"
+						}
+					}
+
+					flowcontainer = {
+						visible = "[Not(IsDataModelEmpty(Goods.GetMarketPrestigeGoods))]"
+						parentanchor = hcenter
+						direction = vertical
+						margin_bottom = 5
+						margin_top = 5
+
+						default_header = {
+							parentanchor = hcenter
+
+							blockoverride "text"
+							{
+								text = "GOODS_AND_PRESTIGE_GOODS_DISTRIBUTION_HEADER"
+							}
+
+							blockoverride "text_max_width" {
+								max_width = 530
+							}
+						}
+
+						goods_prestige_goods_breakdown_list_item = {						
+							parentanchor = hcenter
+
+							blockoverride "prestige_goods_item_name_size" {
+								minimumsize = { 300 -1 }
+								maximumsize = { 300 -1 }
+							}
+
+							blockoverride "prestige_goods_item_text_1" {
+								raw_text = "BASE_GOODS_MARKET_SELL_ORDERS"
+							}
+
+							blockoverride "prestige_goods_item_text_2" {
+								raw_text = "BASE_GOODS_MARKET_BUY_ORDERS"
+							}
+						}
+
+						flowcontainer = {
+							direction = vertical
+							parentanchor = hcenter
+							datamodel = "[Goods.GetMarketPrestigeGoods]"
+
+							item = {
+								goods_prestige_goods_breakdown_list_item = {
+
+									blockoverride "prestige_goods_item_name_size" {
+										minimumsize = { 260 -1 }
+										maximumsize = { 260 -1 }
+									}
+								}
+							}
+						}
+					}
+
+					### BOUGHT BY / SOLD BY
+					flowcontainer = {
+						margin_top = 5
+						using = default_list_position
+						
+						### SOLD BY LIST
+						market_orders_list = {}
+						
+						vertical_divider_full = {}
+						
+						### BOUGHT BY LIST
+						market_orders_list = {
+							blockoverride "header_text" {
+								text = "BOUGHT_BY"
+							}
+							blockoverride "alpha_summary_orders" {
+								alpha = "[TransparentIfZero(GoodsPanel.GetOutputValuesTotal)]"
+							}
+							blockoverride "label_summary_orders" {
+								text = "BUY_ORDERS"
+							}
+							blockoverride "label_tooltip_orders" {
+								tooltip = "GOODS_MARKET_BUY_ORDERS_BREAKDOWN"
+							}							
+							blockoverride "value_summary_orders" {
+								text = "[GoodsPanel.GetOutputValuesTotal|D]"
+							}
+							blockoverride "datamodel_orders" {
+								datamodel = "[GoodsPanel.GetOutputValues]"
+							}
+
+							blockoverride "trade_center_provider" {
+								datamodel = "[Goods.GetImportersFromMarket]"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+

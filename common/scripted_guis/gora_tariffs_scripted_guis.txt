@@ -1,0 +1,177 @@
+﻿# GORA UI+ — Bulk tariffs: scripted GUIs
+#
+# 14 thin button-handlers — each gates on the matching cooldown variable
+# (showing the cooldown tooltip when blocked) and dispatches to the
+# corresponding scripted_effect. is_shown is `always = yes` because the
+# widgets in gora_tariff_widgets.gui are themselves placed only inside
+# the world_market_trade tab.
+
+# ─── Imports ──────────────────────────────────────────────────────────────
+gora_tariffs_import_max_tariffs = {
+	scope = country
+	is_shown = { always = yes }
+	is_valid = {
+		custom_tooltip = {
+			text = gora_tariffs_import_cooldown_tt
+			NOT = { has_variable = gora_tariffs_import_cooldown }
+		}
+	}
+	effect = { gora_tariffs_set_all_import_max_tariffs = yes }
+}
+
+gora_tariffs_import_high_tariffs = {
+	scope = country
+	is_shown = { always = yes }
+	is_valid = {
+		custom_tooltip = {
+			text = gora_tariffs_import_cooldown_tt
+			NOT = { has_variable = gora_tariffs_import_cooldown }
+		}
+	}
+	effect = { gora_tariffs_set_all_import_high_tariffs = yes }
+}
+
+gora_tariffs_import_low_tariffs = {
+	scope = country
+	is_shown = { always = yes }
+	is_valid = {
+		custom_tooltip = {
+			text = gora_tariffs_import_cooldown_tt
+			NOT = { has_variable = gora_tariffs_import_cooldown }
+		}
+	}
+	effect = { gora_tariffs_set_all_import_low_tariffs = yes }
+}
+
+gora_tariffs_import_none = {
+	scope = country
+	is_shown = { always = yes }
+	is_valid = {
+		custom_tooltip = {
+			text = gora_tariffs_import_cooldown_tt
+			NOT = { has_variable = gora_tariffs_import_cooldown }
+		}
+	}
+	effect = { gora_tariffs_set_all_import_none = yes }
+}
+
+gora_tariffs_import_low_subventions = {
+	scope = country
+	is_shown = { always = yes }
+	is_valid = {
+		custom_tooltip = {
+			text = gora_tariffs_import_cooldown_tt
+			NOT = { has_variable = gora_tariffs_import_cooldown }
+		}
+	}
+	effect = { gora_tariffs_set_all_import_low_subventions = yes }
+}
+
+gora_tariffs_import_high_subventions = {
+	scope = country
+	is_shown = { always = yes }
+	is_valid = {
+		custom_tooltip = {
+			text = gora_tariffs_import_cooldown_tt
+			NOT = { has_variable = gora_tariffs_import_cooldown }
+		}
+	}
+	effect = { gora_tariffs_set_all_import_high_subventions = yes }
+}
+
+gora_tariffs_import_max_subventions = {
+	scope = country
+	is_shown = { always = yes }
+	is_valid = {
+		custom_tooltip = {
+			text = gora_tariffs_import_cooldown_tt
+			NOT = { has_variable = gora_tariffs_import_cooldown }
+		}
+	}
+	effect = { gora_tariffs_set_all_import_max_subventions = yes }
+}
+
+# ─── Exports ──────────────────────────────────────────────────────────────
+gora_tariffs_export_max_tariffs = {
+	scope = country
+	is_shown = { always = yes }
+	is_valid = {
+		custom_tooltip = {
+			text = gora_tariffs_export_cooldown_tt
+			NOT = { has_variable = gora_tariffs_export_cooldown }
+		}
+	}
+	effect = { gora_tariffs_set_all_export_max_tariffs = yes }
+}
+
+gora_tariffs_export_high_tariffs = {
+	scope = country
+	is_shown = { always = yes }
+	is_valid = {
+		custom_tooltip = {
+			text = gora_tariffs_export_cooldown_tt
+			NOT = { has_variable = gora_tariffs_export_cooldown }
+		}
+	}
+	effect = { gora_tariffs_set_all_export_high_tariffs = yes }
+}
+
+gora_tariffs_export_low_tariffs = {
+	scope = country
+	is_shown = { always = yes }
+	is_valid = {
+		custom_tooltip = {
+			text = gora_tariffs_export_cooldown_tt
+			NOT = { has_variable = gora_tariffs_export_cooldown }
+		}
+	}
+	effect = { gora_tariffs_set_all_export_low_tariffs = yes }
+}
+
+gora_tariffs_export_none = {
+	scope = country
+	is_shown = { always = yes }
+	is_valid = {
+		custom_tooltip = {
+			text = gora_tariffs_export_cooldown_tt
+			NOT = { has_variable = gora_tariffs_export_cooldown }
+		}
+	}
+	effect = { gora_tariffs_set_all_export_none = yes }
+}
+
+gora_tariffs_export_low_subventions = {
+	scope = country
+	is_shown = { always = yes }
+	is_valid = {
+		custom_tooltip = {
+			text = gora_tariffs_export_cooldown_tt
+			NOT = { has_variable = gora_tariffs_export_cooldown }
+		}
+	}
+	effect = { gora_tariffs_set_all_export_low_subventions = yes }
+}
+
+gora_tariffs_export_high_subventions = {
+	scope = country
+	is_shown = { always = yes }
+	is_valid = {
+		custom_tooltip = {
+			text = gora_tariffs_export_cooldown_tt
+			NOT = { has_variable = gora_tariffs_export_cooldown }
+		}
+	}
+	effect = { gora_tariffs_set_all_export_high_subventions = yes }
+}
+
+gora_tariffs_export_max_subventions = {
+	scope = country
+	is_shown = { always = yes }
+	is_valid = {
+		custom_tooltip = {
+			text = gora_tariffs_export_cooldown_tt
+			NOT = { has_variable = gora_tariffs_export_cooldown }
+		}
+	}
+	effect = { gora_tariffs_set_all_export_max_subventions = yes }
+}

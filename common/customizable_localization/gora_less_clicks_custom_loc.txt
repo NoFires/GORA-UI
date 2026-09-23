@@ -1,0 +1,47 @@
+﻿# GORA UI+ — Less Clicks: tech-gated tooltip switches
+#
+# Each entry returns one of two localization keys depending on whether the
+# relevant tech has been researched. The GUI buttons reference these via
+# [GetPlayer.GetCustom('gora_lc_*_tooltip')].
+
+gora_lc_railways_tooltip = {
+	type = country
+	random_valid = no
+	log_loc_errors = no
+
+	text = {
+		trigger = { has_technology_researched = railways }
+		localization_key = gora_lc_build_railways_ready
+	}
+	text = {
+		localization_key = gora_lc_build_railways_locked
+	}
+}
+
+gora_lc_powerplants_tooltip = {
+	type = country
+	random_valid = no
+	log_loc_errors = no
+
+	text = {
+		trigger = { has_technology_researched = electrical_generation }
+		localization_key = gora_lc_build_powerplants_ready
+	}
+	text = {
+		localization_key = gora_lc_build_powerplants_locked
+	}
+}
+
+gora_lc_transportation_tooltip = {
+	type = country
+	random_valid = no
+	log_loc_errors = no
+
+	text = {
+		trigger = { has_technology_researched = railways }
+		localization_key = gora_lc_build_transportation_ready
+	}
+	text = {
+		localization_key = gora_lc_build_transportation_locked
+	}
+}

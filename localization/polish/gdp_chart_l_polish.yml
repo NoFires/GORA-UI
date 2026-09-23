@@ -1,0 +1,6 @@
+﻿l_polish:
+ GDP_CHART_TITLE: "Struktura PKB"
+ GDP_CHART_SUBTITLE: "Wielkość figury przedstawia szacowany udział każdego towaru w krajowym PKB (zlecenia sprzedaży × cena rynkowa)"
+ GDP_CHART_PIETOOLTIP: "#header [Goods.GetName]#!\nWartość roczna: @money![Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice)|K]#!\nUdział w PKB: [Divide_CFixedPoint(Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice), Market.GetMarketGDPValue)|%0]\nCena rynkowa: @money![Goods.GetMarketPrice|v1]#!\nZlecenia sprzedaży: [Goods.GetMarketSellOrders|v0]"
+ GDP_CHART_SHOW_MORE: "Pokaż więcej"
+ GDP_CHART_SHOW_LESS: "Pokaż mniej"

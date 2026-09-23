@@ -1,0 +1,480 @@
+### GORA UI+ — country-filter widgets
+### Additive widget definitions for the Add-War-Goal and Sway country
+### panels. Two top-level types: `zz_gora_wg_filter` (Add War Goal —
+### target + holder filters) and `zz_gora_sway_filter` (Sway — single
+### country filter). Both store selections on the player scope via
+### `common/scripted_guis/gora_filter_scripted_guis.txt`.
+### The `zz_gora_` prefix is reserved by GORA UI+ — see docs/NAMESPACES.md.
+
+types zz_gora_filter_types
+{
+	# Add War Goal country filter. Target and holder selections are stored separately on the player scope.
+	type zz_gora_wg_filter = flowcontainer {
+		direction = vertical
+		spacing = 5
+		parentanchor = hcenter
+		visible = "[AddWarGoalPanel.HasSelectedWarGoalType]"
+
+		flowcontainer = {
+			direction = horizontal
+			spacing = 10
+			margin_top = 5
+			margin_bottom = 5
+			parentanchor = hcenter
+
+			# zz_gora: compact local collapse button. Avoid section_header_button here; it assumes wider vanilla panels.
+			button = {
+				size = { 260 42 }
+				using = default_button
+				onclick = "[GetVariableSystem.Toggle('zz_gora_show_wg_filter')]"
+				down = "[GetVariableSystem.Exists('zz_gora_show_wg_filter')]"
+				tooltip = "ZZ_GORA_TOGGLE_COUNTRY_FILTER_TOOLTIP"
+
+				textbox = {
+					visible = "[Not(GetVariableSystem.Exists('zz_gora_show_wg_filter'))]"
+					raw_text = ">"
+					position = { 14 0 }
+					autoresize = yes
+					align = left|nobaseline
+					parentanchor = left|vcenter
+					default_format = "#high"
+				}
+
+				textbox = {
+					visible = "[GetVariableSystem.Exists('zz_gora_show_wg_filter')]"
+					raw_text = "v"
+					position = { 14 0 }
+					autoresize = yes
+					align = left|nobaseline
+					parentanchor = left|vcenter
+					default_format = "#high"
+				}
+
+				textbox = {
+					text = "ZZ_GORA_FILTER_BY_COUNTRY"
+					autoresize = yes
+					align = center|nobaseline
+					parentanchor = center
+					default_format = "#high"
+				}
+			}
+
+			button = {
+				visible = "[Or(GetPlayer.MakeScope.Var('zz_gora_wg_target_filter_country').IsSet, GetPlayer.MakeScope.Var('zz_gora_wg_holder_filter_country').IsSet)]"
+				size = { 120 50 }
+				using = default_button
+				parentanchor = vcenter
+				onclick = "[GetScriptedGui('zz_gora_wg_clear_all_filters').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+				tooltip = "ZZ_GORA_CLEAR_ALL_FILTERS"
+
+				textbox = {
+					text = "ZZ_GORA_CLEAR_ALL"
+					autoresize = yes
+					align = center|nobaseline
+					parentanchor = center
+					default_format = "#high"
+				}
+			}
+		}
+
+		flowcontainer = {
+			visible = "[GetPlayer.MakeScope.Var('zz_gora_wg_holder_filter_country').IsSet]"
+			direction = horizontal
+			spacing = 5
+			parentanchor = hcenter
+			margin = { 5 5 }
+
+			textbox = {
+				text = "ZZ_GORA_FILTERING_HOLDER"
+				autoresize = yes
+				align = left|nobaseline
+				parentanchor = vcenter
+				default_format = "#variable"
+			}
+
+			textbox = {
+				raw_text = "[GetPlayer.MakeScope.Var('zz_gora_wg_holder_filter_country').GetCountry.GetName]"
+				autoresize = yes
+				align = left|nobaseline
+				parentanchor = vcenter
+				maximumsize = { 200 -1 }
+				elide = right
+			}
+
+			button = {
+				size = { 130 28 }
+				using = default_button
+				onclick = "[GetScriptedGui('zz_gora_wg_clear_holder_filter').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+				tooltip = "ZZ_GORA_CLEAR_HOLDER_FILTER"
+
+				textbox = {
+					text = "ZZ_GORA_CLEAR_HOLDER"
+					autoresize = yes
+					align = center|nobaseline
+					parentanchor = center
+				}
+			}
+		}
+
+		flowcontainer = {
+			visible = "[GetPlayer.MakeScope.Var('zz_gora_wg_target_filter_country').IsSet]"
+			direction = horizontal
+			spacing = 5
+			parentanchor = hcenter
+			margin = { 5 5 }
+
+			textbox = {
+				text = "ZZ_GORA_FILTERING_TARGET"
+				autoresize = yes
+				align = left|nobaseline
+				parentanchor = vcenter
+				default_format = "#variable"
+			}
+
+			textbox = {
+				raw_text = "[GetPlayer.MakeScope.Var('zz_gora_wg_target_filter_country').GetCountry.GetName]"
+				autoresize = yes
+				align = left|nobaseline
+				parentanchor = vcenter
+				maximumsize = { 200 -1 }
+				elide = right
+			}
+
+			button = {
+				size = { 130 28 }
+				using = default_button
+				onclick = "[GetScriptedGui('zz_gora_wg_clear_target_filter').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+				tooltip = "ZZ_GORA_CLEAR_TARGET_FILTER"
+
+				textbox = {
+					text = "ZZ_GORA_CLEAR_TARGET"
+					autoresize = yes
+					align = center|nobaseline
+					parentanchor = center
+				}
+			}
+		}
+
+		flowcontainer = {
+			visible = "[And(GetVariableSystem.Exists('zz_gora_show_wg_filter'), AddWarGoalPanel.HasSelectedWarGoalType)]"
+			direction = vertical
+			spacing = 5
+			parentanchor = hcenter
+			margin = { 10 10 }
+			margin_bottom = 20
+
+			background = {
+				using = default_background
+				margin = { 5 5 }
+				margin_left = 10
+			}
+
+			flowcontainer = {
+				direction = horizontal
+				spacing = 8
+				parentanchor = hcenter
+				margin_bottom = 5
+
+				button = {
+					size = { 120 36 }
+					using = default_button
+					onclick = "[GetVariableSystem.Set('zz_gora_wg_holder_tab', 'true')]"
+					down = "[GetVariableSystem.Exists('zz_gora_wg_holder_tab')]"
+					tooltip = "ZZ_GORA_HOLDER_FILTER_TOOLTIP"
+
+					textbox = {
+						text = "ZZ_GORA_HOLDER_FILTER"
+						autoresize = yes
+						align = center|nobaseline
+						parentanchor = center
+						default_format = "#high"
+					}
+				}
+
+				button = {
+					size = { 120 36 }
+					using = default_button
+					onclick = "[GetVariableSystem.Clear('zz_gora_wg_holder_tab')]"
+					down = "[Not(GetVariableSystem.Exists('zz_gora_wg_holder_tab'))]"
+					tooltip = "ZZ_GORA_TARGET_FILTER_TOOLTIP"
+
+					textbox = {
+						text = "ZZ_GORA_TARGET_FILTER"
+						autoresize = yes
+						align = center|nobaseline
+						parentanchor = center
+						default_format = "#high"
+					}
+				}
+			}
+
+			textbox = {
+				visible = "[Not(GetVariableSystem.Exists('zz_gora_wg_holder_tab'))]"
+				text = "ZZ_GORA_SELECT_TARGET_HEADER"
+				autoresize = yes
+				align = center|nobaseline
+				parentanchor = hcenter
+				default_format = "#title"
+				margin_bottom = 5
+			}
+
+			textbox = {
+				visible = "[GetVariableSystem.Exists('zz_gora_wg_holder_tab')]"
+				text = "ZZ_GORA_SELECT_HOLDER_HEADER"
+				autoresize = yes
+				align = center|nobaseline
+				parentanchor = hcenter
+				default_format = "#title"
+				margin_bottom = 5
+			}
+
+			# Player is on the initiator side, so the useful filter targets are on the opposing side.
+			dynamicgridbox = {
+				visible = "[And(Not(GetVariableSystem.Exists('zz_gora_wg_holder_tab')), AddWarGoalPanel.AccessDiplomaticPlay.IsInitiatorOrBacker(GetPlayer))]"
+				datamodel = "[AddWarGoalPanel.AccessDiplomaticPlay.AccessTargetSideCountries]"
+				datamodel_wrap = 3
+				flipdirection = yes
+
+				item = {
+					zz_gora_wg_target_country_button = {}
+				}
+			}
+
+			# Player is on the target side, so show countries from the initiator side.
+			dynamicgridbox = {
+				visible = "[And(Not(GetVariableSystem.Exists('zz_gora_wg_holder_tab')), AddWarGoalPanel.AccessDiplomaticPlay.IsTargetOrBacker(GetPlayer))]"
+				datamodel = "[AddWarGoalPanel.AccessDiplomaticPlay.AccessInitiatorSideCountries]"
+				datamodel_wrap = 3
+				flipdirection = yes
+
+				item = {
+					zz_gora_wg_target_country_button = {}
+				}
+			}
+
+			# Holder tab lists countries on the player's side, because war goals can be added on behalf of allies.
+			dynamicgridbox = {
+				visible = "[And(GetVariableSystem.Exists('zz_gora_wg_holder_tab'), AddWarGoalPanel.AccessDiplomaticPlay.IsInitiatorOrBacker(GetPlayer))]"
+				datamodel = "[AddWarGoalPanel.AccessDiplomaticPlay.AccessInitiatorSideCountries]"
+				datamodel_wrap = 3
+				flipdirection = yes
+
+				item = {
+					zz_gora_wg_holder_country_button = {}
+				}
+			}
+
+			dynamicgridbox = {
+				visible = "[And(GetVariableSystem.Exists('zz_gora_wg_holder_tab'), AddWarGoalPanel.AccessDiplomaticPlay.IsTargetOrBacker(GetPlayer))]"
+				datamodel = "[AddWarGoalPanel.AccessDiplomaticPlay.AccessTargetSideCountries]"
+				datamodel_wrap = 3
+				flipdirection = yes
+
+				item = {
+					zz_gora_wg_holder_country_button = {}
+				}
+			}
+		}
+	}
+
+	type zz_gora_wg_target_country_button = button {
+		size = { 170 40 }
+		using = default_button
+		onclick = "[GetScriptedGui('zz_gora_wg_set_target_filter').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('country', Country.MakeScope).End)]"
+		down = "[ObjectsEqual(Country.MakeScope, GetPlayer.MakeScope.Var('zz_gora_wg_target_filter_country').GetCountry.MakeScope)]"
+
+		tooltipwidget = {
+			FancyTooltip_Country = {}
+		}
+
+		onmousehierarchyenter = "[AccessHighlightManager.HighlightCountry(Country.Self)]"
+		onmousehierarchyleave = "[AccessHighlightManager.RemoveHighlight]"
+
+		textbox = {
+			raw_text = "[Country.GetName]"
+			autoresize = yes
+			align = left|nobaseline
+			parentanchor = vcenter
+			minimumsize = { 160 -1 }
+			maximumsize = { 160 -1 }
+			elide = right
+			margin_left = 10
+		}
+	}
+
+	type zz_gora_wg_holder_country_button = button {
+		size = { 170 40 }
+		using = default_button
+		onclick = "[GetScriptedGui('zz_gora_wg_set_holder_filter').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('country', Country.MakeScope).End)]"
+		down = "[ObjectsEqual(Country.MakeScope, GetPlayer.MakeScope.Var('zz_gora_wg_holder_filter_country').GetCountry.MakeScope)]"
+
+		tooltipwidget = {
+			FancyTooltip_Country = {}
+		}
+
+		onmousehierarchyenter = "[AccessHighlightManager.HighlightCountry(Country.Self)]"
+		onmousehierarchyleave = "[AccessHighlightManager.RemoveHighlight]"
+
+		textbox = {
+			raw_text = "[Country.GetName]"
+			autoresize = yes
+			align = left|nobaseline
+			parentanchor = vcenter
+			minimumsize = { 160 -1 }
+			maximumsize = { 160 -1 }
+			elide = right
+			margin_left = 10
+		}
+	}
+
+	# Sway offer country filter. Kept separate from the Add War Goal filter so both panels can reset cleanly.
+	type zz_gora_sway_filter = flowcontainer {
+		direction = vertical
+		spacing = 5
+		parentanchor = hcenter
+		visible = "[SwayCountryPanel.IsShowingSwayOffers]"
+
+		flowcontainer = {
+			direction = horizontal
+			spacing = 10
+			margin_top = 5
+			margin_bottom = 5
+			parentanchor = hcenter
+
+			button = {
+				size = { 150 50 }
+				using = default_button
+				onclick = "[GetVariableSystem.Toggle('zz_gora_show_sway_filter')]"
+				down = "[GetVariableSystem.Exists('zz_gora_show_sway_filter')]"
+				tooltip = "ZZ_GORA_TOGGLE_COUNTRY_FILTER_TOOLTIP"
+
+				textbox = {
+					text = "ZZ_GORA_FILTER_BY_COUNTRY"
+					autoresize = yes
+					align = center|nobaseline
+					parentanchor = center
+					default_format = "#high"
+				}
+
+				background = {
+					visible = "[GetVariableSystem.Exists('zz_gora_show_sway_filter')]"
+					using = entry_bg
+				}
+			}
+
+			button = {
+				visible = "[GetPlayer.MakeScope.Var('zz_gora_sway_filter_country').IsSet]"
+				size = { 80 50 }
+				using = default_button
+				onclick = "[GetScriptedGui('zz_gora_sway_clear_filter').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+				tooltip = "ZZ_GORA_CLEAR_COUNTRY_FILTER"
+
+				textbox = {
+					text = "ZZ_GORA_CLEAR_FILTER"
+					autoresize = yes
+					align = center|nobaseline
+					parentanchor = center
+					default_format = "#high"
+				}
+			}
+		}
+
+		flowcontainer = {
+			visible = "[GetPlayer.MakeScope.Var('zz_gora_sway_filter_country').IsSet]"
+			direction = horizontal
+			spacing = 5
+			parentanchor = hcenter
+			margin = { 5 5 }
+
+			textbox = {
+				text = "ZZ_GORA_FILTERING_BY"
+				autoresize = yes
+				align = left|nobaseline
+				parentanchor = vcenter
+				default_format = "#variable"
+			}
+
+			textbox = {
+				raw_text = "[GetPlayer.MakeScope.Var('zz_gora_sway_filter_country').GetCountry.GetName]"
+				autoresize = yes
+				align = left|nobaseline
+				parentanchor = vcenter
+				maximumsize = { 200 -1 }
+				elide = right
+			}
+		}
+
+		flowcontainer = {
+			visible = "[And(GetVariableSystem.Exists('zz_gora_show_sway_filter'), SwayCountryPanel.IsShowingSwayOffers)]"
+			direction = vertical
+			spacing = 5
+			parentanchor = hcenter
+			margin = { 10 10 }
+			margin_bottom = 20
+
+			background = {
+				using = default_background
+				margin = { 5 5 }
+				margin_left = 10
+			}
+
+			textbox = {
+				text = "ZZ_GORA_SELECT_COUNTRY_HEADER"
+				autoresize = yes
+				align = center|nobaseline
+				parentanchor = hcenter
+				default_format = "#title"
+				margin_bottom = 5
+			}
+
+			# The country being swayed is on the target side, so offers point at initiator-side countries.
+			dynamicgridbox = {
+				visible = "[SwayCountryPanel.AccessDiplomaticPlay.IsTargetOrBacker(SwayCountryPanel.GetCountry)]"
+				datamodel = "[SwayCountryPanel.AccessDiplomaticPlay.AccessInitiatorSideCountries]"
+				datamodel_wrap = 3
+				flipdirection = yes
+
+				item = {
+					zz_gora_sway_country_button = {}
+				}
+			}
+
+			# The country being swayed is on the initiator side, so offers point at target-side countries.
+			dynamicgridbox = {
+				visible = "[SwayCountryPanel.AccessDiplomaticPlay.IsInitiatorOrBacker(SwayCountryPanel.GetCountry)]"
+				datamodel = "[SwayCountryPanel.AccessDiplomaticPlay.AccessTargetSideCountries]"
+				datamodel_wrap = 3
+				flipdirection = yes
+
+				item = {
+					zz_gora_sway_country_button = {}
+				}
+			}
+		}
+	}
+
+	type zz_gora_sway_country_button = button {
+		size = { 170 40 }
+		using = default_button
+		onclick = "[GetScriptedGui('zz_gora_sway_set_filter').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('country', Country.MakeScope).End)]"
+		down = "[ObjectsEqual(Country.MakeScope, GetPlayer.MakeScope.Var('zz_gora_sway_filter_country').GetCountry.MakeScope)]"
+
+		tooltipwidget = {
+			FancyTooltip_Country = {}
+		}
+
+		onmousehierarchyenter = "[AccessHighlightManager.HighlightCountry(Country.Self)]"
+		onmousehierarchyleave = "[AccessHighlightManager.RemoveHighlight]"
+
+		textbox = {
+			raw_text = "[Country.GetName]"
+			autoresize = yes
+			align = left|nobaseline
+			parentanchor = vcenter
+			minimumsize = { 160 -1 }
+			maximumsize = { 160 -1 }
+			elide = right
+			margin_left = 10
+		}
+	}
+}

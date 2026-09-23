@@ -1,0 +1,93 @@
+### GORA UI+ — compact war-goal item
+### Additive widget type `zz_gora_small_goal_item` used by treaty popups
+### and the war-goal columns of `gui/add_wargoal_panel.gui`. The vanilla
+### `small_wargoal_item_with_checkmark` types are redefined there to
+### substitute this compact item.
+### The `zz_gora_` prefix is reserved by GORA UI+ — see docs/NAMESPACES.md.
+types zz_gora_goal_item_types
+{
+	# Compact war goal item for treaty popups. Executed or accepted goals stay bright and bold; dropped goals fade.
+	type zz_gora_small_goal_item = flowcontainer {
+		minimumsize = { 170 40 }
+		maximumsize = { 170 -1 }
+		direction = vertical
+		margin_top = 7
+		margin_bottom = 7
+		onmousehierarchyenter = "[WarGoal.ShowHighlight]"
+		onmousehierarchyleave = "[AccessHighlightManager.RemoveHighlight]"
+		alwaystransparent = no
+		alpha = "[TransparentIfFalse(Or(WarGoal.IsPressedInShownPeaceDeal(GetPlayer), WarGoal.IsExecuted))]"
+
+		block "war_goal_tooltip" {
+			tooltipwidget = {
+				FancyTooltip_WarGoal = {}
+			}
+		}
+
+		# Unaccepted goals keep a plain frame and are dimmed by the alpha rule above.
+		background = {
+			using = simple_frame
+			visible = "[Not(Or(WarGoal.IsPressedInShownPeaceDeal(GetPlayer), WarGoal.IsExecuted))]"
+		}
+
+		# Accepted or executed goals get the highlighted frame and bold label below.
+		background = {
+			using = simple_frame
+			using = shimmer_fade_in
+			alpha = 1
+			visible = "[Or(WarGoal.IsPressedInShownPeaceDeal(GetPlayer), WarGoal.IsExecuted)]"
+		}
+
+		flowcontainer = {
+			spacing = 10
+			parentanchor = hcenter
+
+			tiny_flag = {
+				parentanchor = left|vcenter
+				widgetanchor = left|vcenter
+				datacontext = "[WarGoal.GetHolder]"
+			}
+
+			icon = {
+				size = { 20 20 }
+				parentanchor = vcenter
+				texture = "gfx/interface/icons/generic_icons/turns_into.dds"
+			}
+
+			tiny_flag = {
+				parentanchor = left|vcenter
+				widgetanchor = left|vcenter
+				datacontext = "[WarGoal.GetTarget]"
+			}
+
+			icon = {
+				size = { 30 30 }
+				texture = "[WarGoal.GetTexture]"
+				parentanchor = left|vcenter
+				widgetanchor = left|vcenter
+			}
+		}
+
+		textbox = {
+			multiline = yes
+			autoresize = yes
+			minimumsize = { 150 -1 }
+			maximumsize = { 150 -1 }
+			raw_text = "#BOLD [WarGoal.GetNameNoIcon]#!"
+			align = center|nobaseline
+			parentanchor = hcenter
+			visible = "[Or(WarGoal.IsPressedInShownPeaceDeal(GetPlayer), WarGoal.IsExecuted)]"
+		}
+
+		textbox = {
+			multiline = yes
+			autoresize = yes
+			minimumsize = { 150 -1 }
+			maximumsize = { 150 -1 }
+			raw_text = "[WarGoal.GetNameNoIcon]"
+			align = center|nobaseline
+			parentanchor = hcenter
+			visible = "[Not(Or(WarGoal.IsPressedInShownPeaceDeal(GetPlayer), WarGoal.IsExecuted))]"
+		}
+	}
+}

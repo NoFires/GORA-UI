@@ -1,0 +1,20 @@
+﻿l_simp_chinese:
+ # GORA UI+ — Advanced GDP Tracker: vanilla tooltip overrides
+ # Adds GDP-growth, LARP fractions and per-state GDP breakdowns to vanilla
+ # tooltips. Verified against vanilla 1.13.4 keys (RADICALS_TOOLTIP,
+ # LOYALISTS_TOOLTIP, NEUTRALS_TOOLTIP, POP_TOOLTIP, GDP_TOOLTIP,
+ # CURRENT_GDP_STATE).
+
+ # ─── LARP-extended population & GDP tooltips ────────────────────────────
+ RADICALS_TOOLTIP:1 "#tooltip_header $RADICALS$#!\n[Country.GetName]的国家总人口为#v [Country.GetTotalPopulation|D]#!，其中$RADICALS$为#v [Country.GetNumRadicals|D]#!人(占[Country.MakeScope.ScriptValue('larp_radicals_percent')|%v1])\n$TOOLTIP_DELIMITER$\n$RADICALS$的数量将由#v #tooltippable #tooltip:[Country.GetTooltipTag],RADICALS_CHANGE_TOOLTIP [Country.GetTotalNumRadicalsChange|D=-]#!#!#!改变，自从[Country.GetRadicalsLoyalistsChangeStartDate|v]\n最重要的激进派产生因素是[Country.GetRadicalsChangeSummary]\n\n[Country.GetRadicalsSummaryDesc][ConcatIfNeitherEmpty('\n\n',SelectLocalization( GreaterThan_int32(Country.CalcNumStatesInTurmoil, '(int32)0'), 'STATES_IN_TURMOIL', '' ))][ConcatIfNeitherEmpty('\n\n',SelectLocalization( Country.HasIGApprovalFromRadicals, 'RADICALS_IG_APPROVAL', '' ))]"
+
+ LOYALISTS_TOOLTIP:1 "#tooltip_header $LOYALISTS$#!\n[Country.GetName]现有人口#v [Country.GetTotalPopulation|D]#!，其中$LOYALISTS$#v [Country.GetNumLoyalists|D]#!人（占[Country.MakeScope.ScriptValue('larp_loyalists_percent')|%v1]）\n$TOOLTIP_DELIMITER$\n$LOYALISTS$的人数将由#v #tooltippable #tooltip:[Country.GetTooltipTag],LOYALISTS_CHANGE_TOOLTIP [Country.GetTotalNumLoyalistsChange|D=+]#!#!#!自从[Country.GetRadicalsLoyalistsChangeStartDate|v]\n导致效忠派人数改变的最重要的原因是[Country.GetLoyalistsChangeSummary]\n\n[Country.GetLoyalistsSummaryDesc][ConcatIfNeitherEmpty('\n\n',SelectLocalization( Country.HasIGApprovalFromLoyalists, 'LOYALISTS_IG_APPROVAL', '' ))]"
+
+ NEUTRALS_TOOLTIP: "#tooltip_header $NEUTRALS$#!\n[Country.GetName]#v [Country.GetTotalPopulation|*2]#!总人口中有#v [Country.GetNumNeutrals|*2]#!（[Country.MakeScope.ScriptValue('larp_neutrals_percent')|%v1]）$NEUTRALS$"
+
+ POP_TOOLTIP:2 "#tooltip_header [Concept('concept_pop','$concept_population$')]#!\n当前：[Country.GetTotalPopulation|*2v]（[Country.GetPopulationRanking]）\n[Country.GetPopGrowthDesc]$POP_TOOLTIP_DELAYED$\n$TOOLTIP_DELIMITER$\n[Country.GetAdjective]人口占全球人口的[Country.MakeScope.ScriptValue('larp_global_pop_percent')|%v1]\n全球人口：[Country.MakeScope.ScriptValue('larp_global_pop')|*2v]"
+
+ GDP_TOOLTIP:1 "#header [Country.GetAdjective][concept_gdp]#!\n@money![Country.GetGDP|Dv] (#u #tooltippable #tooltip:[Country.GetTooltipTag],COUNTRY_GDP_OWNERSHIP_TOOLTIP [Country.GetDomesticallyOwnedGDPFraction|%1b]#!#!#!) 本国所有 $concept_gdp_short$ ([Country.GetGDPRanking])\n@money![Country.GetGDPPerCapita|2*v] [Concept('concept_gdp_per_capita', '$concept_gdp_per_capita_short$')] ([Country.GetGDPPerCapitaRanking])\n$GDPGR_growth_text$\n$TOOLTIP_DELIMITER$\n[Country.GetAdjective] $concept_gdp_short$ 占全球GDP的 [Country.MakeScope.ScriptValue('larp_global_gdp_percent')|%v2]\n全球总GDP: @money![Country.MakeScope.ScriptValue('larp_global_gdp')|Dv]"
+
+ # ─── Per-state GDP breakdown ────────────────────────────────────────────
+ CURRENT_GDP_STATE:2 "#header [State.GetOwner.GetAdjectiveNoFormatting][concept_gdp]来自[State.GetName]#!\n$TOOLTIP_DELIMITER$\n目前年度GDP贡献：#variable @money![State.GetGDPContribution|K]#!\n[State.GetName]的人均 GDP 为：#variable @money![State.MakeScope.ScriptValue('get_state_gdp_per')|Dv]#!\n[State.GetName]人均GDP差距来自[State.GetOwner.GetAdjectiveNoFormatting]：#variable @money![State.MakeScope.ScriptValue('get_country_state_relative_value')|D2+=]#!\n[State.GetName]人均 GDP 与全球的差距：#variable @money![State.MakeScope.ScriptValue('get_global_state_relative_value')|D2+=]#!\n[State.GetName]正贡献[State.GetOwner.GetAdjectiveNoFormatting]$GDP_SHORT$的#variable [State.GetGDPContributionPercentage|%1]#!\n\n[State.GetGDPGoodsContributionBreakdown]"

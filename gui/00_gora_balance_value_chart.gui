@@ -1,0 +1,60 @@
+﻿# Market balance charts: compact rows, skipping goods with the opposite sign.
+# The chart instances supply the goods model, amounts, prices and tooltips.
+types market_panel {
+	type gora_balance_value_chart = compact_chart {
+		blockoverride "labels" {
+			scrollarea = {
+				size = { 144 112 }
+				parentanchor = vcenter
+				scrollbarpolicy_horizontal = always_off
+				alwaystransparent = no
+
+				scrollwidget = {
+					flowcontainer = {
+						direction = vertical
+						spacing = 0
+						ignoreinvisible = yes
+						block "datamodel" {}
+
+						item = {
+							widget = {
+								size = { 128 28 }
+								block "gora_balance_row_visibility" {}
+								block "tooltip" {}
+								block "pie_item_goto_button" {}
+
+								icon = {
+									position = { 3 6 }
+									size = { 3 16 }
+									texture = "/gfx/interface/piechart/piechart_legend.dds"
+									block "color" {}
+								}
+								textbox = {
+									position = { 9 2 }
+									size = { 47 24 }
+									align = left|nobaseline
+									fontsize = 14
+									fontsize_min = 11
+									elide = right
+									block "rightside1_info" {}
+								}
+								textbox = {
+									position = { 58 2 }
+									size = { 67 24 }
+									align = right|nobaseline
+									fontsize = 13
+									fontsize_min = 10
+									elide = right
+									block "rightside2_info" {}
+								}
+							}
+						}
+					}
+				}
+				scrollbar_vertical = {
+					using = vertical_scrollbar
+				}
+			}
+		}
+	}
+}

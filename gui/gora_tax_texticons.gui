@@ -1,0 +1,19 @@
+### GORA UI+ — tax texticons
+### Additive texticon entries used by the budget / tax tooltips.
+texticon = {
+  icon = consumption_tax
+  iconsize = {
+    offset = { 0 20 }
+    texture = "gfx/interface/icons/trade_icons/consumption_tax.dds"
+    fontsize = 42
+  }
+}
+
+texticon = {
+  icon = consumption_tax_not
+  iconsize = {
+    offset = { 0 20 }
+    texture = "gfx/interface/icons/trade_icons/consumption_tax_not.dds"
+    fontsize = 42
+  }
+}

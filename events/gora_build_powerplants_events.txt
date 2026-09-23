@@ -1,0 +1,160 @@
+﻿namespace = gora_build_powerplants_events
+
+# ════════════════════════════════════════════════════════════════════════════
+# GORA UI+ — One-click power-plant builder
+# ════════════════════════════════════════════════════════════════════════════
+# Closes electricity deficits in incorporated states. Skips tiny frontier
+# states (population threshold) and avoids spamming construction in states
+# that already have a build queued.
+# Per-state and per-country caps live in script_values/gora_less_clicks_values.txt.
+# ════════════════════════════════════════════════════════════════════════════
+
+gora_build_powerplants_events.1 = {
+	type = country_event
+	hidden = yes
+	trigger = { always = yes }
+
+	immediate = {
+		set_variable = { name = total_queued value = 0 }
+		# Country-constant output; technology cannot differ between states.
+		set_variable = {
+			name = electricity_per_plant
+			value = {
+				value = 25
+				if = {
+					limit = { has_technology_researched = oil_turbine }
+					add = 55
+				}
+				else_if = {
+					limit = { has_technology_researched = steam_turbine }
+					add = 25
+				}
+			}
+		}
+
+		every_scope_state = {
+			limit = {
+				is_incorporated = yes
+				root.var:total_queued < gora_lc_country_powerplant_cap
+				sg:electricity = { state_goods_delta < 0 }
+				sg:electricity = { state_goods_pricier > 0.20 }
+				state_population >= gora_lc_min_state_population_for_powerplant
+			}
+
+			# One collection pass replaces the repeated any_scope_building queries.
+			set_variable = { name = gora_lc_has_powerplant value = 0 }
+			set_variable = { name = gora_lc_powerplant_occupied value = 0 }
+			set_variable = { name = gora_lc_powerplant_viable value = 0 }
+			set_variable = { name = gora_lc_powerplant_queued value = 0 }
+			every_scope_building = {
+				limit = { is_building_type = building_power_plant }
+				prev = { set_variable = { name = gora_lc_has_powerplant value = 1 } }
+				if = {
+					limit = { occupancy > 0.75 }
+					prev = { set_variable = { name = gora_lc_powerplant_occupied value = 1 } }
+				}
+				if = {
+					limit = {
+						OR = {
+							weekly_profit >= 0
+							is_subsidized = yes
+						}
+					}
+					prev = { set_variable = { name = gora_lc_powerplant_viable value = 1 } }
+				}
+				if = {
+					limit = { is_under_construction = yes }
+					prev = { set_variable = { name = gora_lc_powerplant_queued value = 1 } }
+				}
+			}
+
+			if = {
+				limit = {
+					# Electricity deficit & price pressure
+					sg:electricity = { state_goods_delta < 0 }
+					sg:electricity = { state_goods_pricier > 0.20 }
+
+					# Existing plants are at high occupancy, OR none built yet
+					OR = {
+						var:gora_lc_powerplant_occupied > 0
+						var:gora_lc_has_powerplant = 0
+					}
+
+					# Profitable, subsidised, or no plants yet
+					OR = {
+						var:gora_lc_powerplant_viable > 0
+						var:gora_lc_has_powerplant = 0
+					}
+
+					# Spam-protection
+					var:gora_lc_powerplant_queued = 0
+
+					# Skip tiny frontier states; vanilla power plants need
+					# ~1000-3000 workers per level.
+					state_population >= gora_lc_min_state_population_for_powerplant
+				}
+
+				set_variable = {
+					name = levels_to_build
+					value = {
+						value = sg:electricity.state_goods_delta
+						multiply = -1
+						divide = root.var:electricity_per_plant
+						ceiling = yes
+					}
+				}
+
+				# Per-state cap
+				if = {
+					limit = { var:levels_to_build > gora_lc_state_powerplant_cap }
+					set_variable = { name = levels_to_build value = gora_lc_state_powerplant_cap }
+				}
+
+				# Per-country cap (with remaining-quota clamp)
+				if = {
+					limit = {
+						var:levels_to_build > 0
+						owner.var:total_queued < gora_lc_country_powerplant_cap
+					}
+					set_variable = {
+						name = remaining_quota
+						value = {
+							value = gora_lc_country_powerplant_cap
+							subtract = owner.var:total_queued
+						}
+					}
+					if = {
+						limit = { var:levels_to_build > var:remaining_quota }
+						set_variable = { name = levels_to_build value = var:remaining_quota }
+					}
+
+					while = {
+						count = var:levels_to_build
+						start_building_construction = building_power_plant
+					}
+
+					owner = {
+						change_variable = {
+							name = total_queued
+							add  = prev.var:levels_to_build
+						}
+					}
+				}
+
+				remove_variable = levels_to_build
+				if = {
+					limit = { has_variable = remaining_quota }
+					remove_variable = remaining_quota
+				}
+			}
+
+			remove_variable = gora_lc_has_powerplant
+			remove_variable = gora_lc_powerplant_occupied
+			remove_variable = gora_lc_powerplant_viable
+			remove_variable = gora_lc_powerplant_queued
+		}
+
+		remove_variable = electricity_per_plant
+		remove_variable = total_queued
+	}
+}

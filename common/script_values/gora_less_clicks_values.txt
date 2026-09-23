@@ -1,0 +1,22 @@
+﻿# GORA UI+ — Less Clicks: tunable caps
+#
+# Centralised so balance changes are a one-line edit. Country-cap = total
+# levels added by a single click across the country; State-cap = per-state
+# limit that is enforced inside the build events.
+
+# Railways (shared by both build_railways and build_transportation events)
+gora_lc_country_railway_cap    = 15
+gora_lc_state_railway_cap      = 5
+
+# Power plants
+gora_lc_country_powerplant_cap = 10
+gora_lc_state_powerplant_cap   = 3
+
+# Government administrations
+gora_lc_country_admin_cap      = 10
+gora_lc_state_admin_cap        = 3
+
+# Filter for tiny frontier states. Vanilla power plants need ~1000-3000
+# workers per level, so anything under this threshold is rejected to keep
+# the click batch meaningful.
+gora_lc_min_state_population_for_powerplant = 100000

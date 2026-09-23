@@ -1,0 +1,50 @@
+﻿### GORA UI — v3_plotline_gdp (partial type override)
+### Vanilla 1.13.9 baseline: gui/politics_panel_types.gui (type v3_plotline_gdp).
+### GORA delta: the GDP trend line is green (.2 .9 .2 .9; vanilla uses white
+### .9 .9 .9 1.0) and the plot is sized 280x100. Everything else matches vanilla
+### 1.13.9, including the GetMinPadded/GetMaxPadded normalization - preserve
+### those calls when re-syncing. This is a vanilla type override, not an
+### additive helper.
+
+types information_panels_types
+{
+	type v3_plotline_gdp = v3_plotline {
+		using = default_list_position
+		blockoverride "header" {
+			text = "GDP"
+		}
+		blockoverride "size" {
+			size = { 280 100 } # { 840 200 } # Returned to normal size
+		}
+		blockoverride "line_color" {
+			color = { .2 .9 .2 .9 }
+		}
+		blockoverride "line_plotpoints" {
+			visible = "[Not(IsEmpty(Country.GetGDPTrend))]"
+			plotpoints = "[GetTrendPlotPointsNormalized(Country.GetGDPTrend, GetMinPadded(Country.GetGDPTrend), GetMaxPadded(Country.GetGDPTrend))]"
+		}
+		blockoverride "maxvalue" {
+			text = "[GetMax(Country.GetGDPTrend)|K]"
+		}
+		blockoverride "minvalue" {
+			text = "[GetMin(Country.GetGDPTrend)|K]"
+		}
+		blockoverride "startdate" {
+			text = "[GetOldestDate(Country.GetGDPTrend)]"
+		}
+		blockoverride "enddate" {
+			text = "[GetLatestDate(Country.GetGDPTrend)]"
+		}
+		blockoverride "multiitem" {}
+
+		blockoverride "empty_state_visibility" {
+			visible = "[EqualTo_string(GetOldestDate(Country.GetGDPTrend), GetLatestDate(Country.GetGDPTrend))]"
+		}
+		blockoverride "everything_that_is_not_empty_state_visibility" {
+			visible = "[Not(EqualTo_string(GetOldestDate(Country.GetGDPTrend), GetLatestDate(Country.GetGDPTrend)))]"
+		}
+		blockoverride "empty_state_text" {
+			text = "GRAPH_NOT_INITIALIZED"
+		}
+	}
+}

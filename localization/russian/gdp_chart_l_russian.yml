@@ -1,0 +1,6 @@
+﻿l_russian:
+ GDP_CHART_TITLE: "Структура ВВП"
+ GDP_CHART_SUBTITLE: "Размер фигуры отражает оценочный вклад каждого товара в ВВП страны (объём заявок на продажу × рыночная цена)"
+ GDP_CHART_PIETOOLTIP: "#header [Goods.GetName]#!\nГодовая стоимость: @money![Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice)|K]#!\nДоля ВВП: [Divide_CFixedPoint(Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice), Market.GetMarketGDPValue)|%0]\nРыночная цена: @money![Goods.GetMarketPrice|v1]#!\nЗаявки на продажу: [Goods.GetMarketSellOrders|v0]"
+ GDP_CHART_SHOW_MORE: "Показать больше"
+ GDP_CHART_SHOW_LESS: "Показать меньше"

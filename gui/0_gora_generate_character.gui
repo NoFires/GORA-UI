@@ -1,0 +1,558 @@
+﻿# GORA UI+ — generate_character_type (partial type override)
+# ─────────────────────────────────────────────────────────────────────────────
+# Vanilla 1.13.9 baseline: gui/generate_character.gui.
+# The SPECIAL ORDERS section follows the 1.13.9 vanilla structure (including the
+# transparent spacer textbox for non-commanders that keeps card heights aligned);
+# preserve it when re-syncing. The only intentional divergence from vanilla is
+# the rank/interest-group strip replaced by the stat panel described below.
+# type generate_character_type (line 87+, inside types generate_character_types).
+# The 3 top-level widget instances at the head of vanilla (generate_character_ruler /
+# _general / _admiral) are inherited from vanilla unchanged.
+#
+# GORA delta: rank + interest-group strip replaced with an Advanced Officer Info
+# 2x4 stat panel (320x40, 4 equal 80px columns, 2 rows at y=1/y=21).
+# Row 1: Offense / Defense / Kill rate / Ideology+IG icons.
+# Row 2: Morale damage / Morale loss (morale + small defense overlay) / Supply /
+# Popularity. Values resolve via gora_aoi_commander_* script values in
+# common/script_values/gora_aoi_officer_values.txt (pass-through to vanilla
+# character/unit modifiers).
+#
+# Bug fix: legacy delta referenced these script values but never shipped them;
+# every readout was undefined. Pos-alignment fix: column 4 was at x=246 making
+# 80/80/86/74 spacing asymmetric; now consistent x=0/80/160/240.
+#
+# Tutorial highlights: tutorial_highlight_recruit_commander_rank and ..._interest_group
+# reattached to column 1 and column 4 sub-widgets so the in-game tutorial still
+# finds anchor points.
+#
+# Re-sync recipe: diff vanilla type generate_character_type, replace this
+# file's type body with new vanilla, re-insert fenced delta.
+# ─────────────────────────────────────────────────────────────────────────────
+
+types gora_generate_character_type {
+
+	type generate_character_type = default_popup
+	{
+		layer = top
+
+		blockoverride "header_close_button_visibility" {
+			visible = yes
+		}
+
+		blockoverride "scrollarea_content"
+		{
+			flowcontainer = {
+				block "datamodel" {}
+				resizeparent = yes
+				spacing = 5
+
+				item = {
+					container = {
+						datacontext = "[Character.GetCountry]"
+
+						using = entry_bg_fancy
+
+						flowcontainer = {
+							direction = vertical
+
+							vertical_divider_full = {}
+
+							### INFO
+							flowcontainer = {
+								direction = vertical
+								spacing = 4
+								margin_bottom = 12
+								margin_left = 2
+
+								### NAME + ICONS
+								widget = {
+									parentanchor = hcenter
+									size = { 340 35 }
+									scissor = yes
+
+									background = {
+										using = default_header_bg
+										using = frame_small_mask_top
+									}
+
+									textbox = {
+										raw_text = "[Character.GetCountry.GetFlagTextIcon] #BOLD  [Character.GetFullNameNoFormatting]#!"
+										size = { 100% 100% }
+										elide = right
+										align = nobaseline
+										using = fontsize_large
+										margin = { 10 0 }
+										parentanchor = vcenter
+									}
+
+									icon = {
+										size = { 30 30 }
+										position = { -5 0 }
+										parentanchor = right|vcenter
+										texture = "gfx/interface/icons/character_role_icons/ruler.dds"
+										visible = "[Character.IsRulerOfOwnCountry]"
+										tooltip = "RULER_OF_COUNTRY"
+									}
+
+									icon = {
+										size = { 30 30 }
+										position = { -5 0 }
+										parentanchor = right|vcenter
+										texture = "gfx/interface/icons/character_role_icons/heir.dds"
+										visible = "[Character.IsHeirOfOwnCountry]"
+										tooltip = "HEIR_OF_COUNTRY"
+									}
+								}
+
+								### PORTRAIT
+								character_portrait_large_torso = {
+									parentanchor = hcenter
+
+									blockoverride "show_hat" {}
+									blockoverride "portrait_icons" {}
+									blockoverride "portrait_button" {}
+
+									blockoverride "tooltip_button_visibility" {
+										visible = no
+									}
+
+									blockoverride "portrait_size" {
+										size = { 85% 85% }
+									}
+								}
+
+								### GORA UI+ — Advanced Officer Info (AOI) 2x4 stat panel
+								# Replaces vanilla's rank + interest-group strip with a denser
+								# stat readout for commanders. Layout: 320x40 widget, 4 equal
+								# 80px columns, 2 rows at y=1 and y=21 (each row 18px tall).
+								# Per cell: 18x18 icon at column start, 50x18 textbox 10px to
+								# its right.
+								#
+								# Row 1: Offense | Defense | Kill rate | Ideology + IG (icons)
+								# Row 2: Morale dmg | Morale loss | Supply | Popularity
+								#
+								# Values resolve via gora_aoi_commander_* script values
+								# (common/script_values/gora_aoi_officer_values.txt), each a
+								# thin pass-through to a vanilla 1.13.4 unit/character modifier.
+								#
+								# The `tutorial_highlight_recruit_commander_*` names that the
+								# 1.13 tutorial system anchors to are retained on inner widgets
+								# so the tutorial highlight still finds a target.
+								widget = {
+									name = "gora_aoi_officer_recruit_details"
+									visible = "[Character.IsCommander]"
+									parentanchor = hcenter
+									size = { 320 40 }
+
+									# Row 1, column 1 — Offense
+									widget = {
+										name = "tutorial_highlight_recruit_commander_rank"
+										position = { 0 1 }
+										size = { 78 18 }
+
+										icon = {
+											size = { 18 18 }
+											texture = "gfx/interface/icons/military_icons/offense.dds"
+											tooltip = "concept_offense_desc"
+										}
+
+										textbox = {
+											position = { 28 0 }
+											size = { 50 18 }
+											align = right|nobaseline
+											using = fontsize_small
+											text = "[Character.MakeScope.ScriptValue('gora_aoi_commander_offense')|%=+0]"
+											tooltip = "concept_offense_desc"
+										}
+									}
+
+									# Row 1, column 2 — Defense
+									icon = {
+										position = { 80 1 }
+										size = { 18 18 }
+										texture = "gfx/interface/icons/military_icons/defense.dds"
+										tooltip = "concept_defense_desc"
+									}
+
+									textbox = {
+										position = { 108 1 }
+										size = { 50 18 }
+										align = right|nobaseline
+										using = fontsize_small
+										text = "[Character.MakeScope.ScriptValue('gora_aoi_commander_defense')|%=+0]"
+										tooltip = "concept_defense_desc"
+									}
+
+									# Row 1, column 3 — Kill rate
+									icon = {
+										position = { 160 1 }
+										size = { 18 18 }
+										texture = "gfx/interface/icons/military_icons/attrition.dds"
+										tooltip = "concept_kill_rate_desc"
+									}
+
+									textbox = {
+										position = { 188 1 }
+										size = { 50 18 }
+										align = right|nobaseline
+										using = fontsize_small
+										text = "[Character.MakeScope.ScriptValue('gora_aoi_commander_kill_rate')|%=+0]"
+										tooltip = "concept_kill_rate_desc"
+									}
+
+									# Row 1, column 4 — Ideology + Interest Group (icons only)
+									widget = {
+										name = "tutorial_highlight_recruit_commander_interest_group"
+										position = { 240 1 }
+										size = { 78 18 }
+
+										icon = {
+											size = { 18 18 }
+											texture = "[Ideology.GetTexture]"
+											datacontext = "[Character.GetIdeology]"
+
+											tooltipwidget = {
+												FancyTooltip_Ideology = {}
+											}
+										}
+
+										character_ig_icon = {
+											position = { 24 0 }
+											size = { 18 18 }
+											datacontext = "[Character.AccessInterestGroup]"
+
+											blockoverride "tooltip" {
+												tooltipwidget = {
+													FancyTooltip_IG = {}
+												}
+											}
+										}
+									}
+
+									# Row 2, column 1 — Morale damage
+									icon = {
+										position = { 0 21 }
+										size = { 18 18 }
+										texture = "gfx/interface/icons/military_icons/morale.dds"
+										tooltip = "concept_morale_damage_desc"
+									}
+
+									textbox = {
+										position = { 28 21 }
+										size = { 50 18 }
+										align = right|nobaseline
+										using = fontsize_small
+										text = "[Character.MakeScope.ScriptValue('gora_aoi_commander_morale_damage')|%=+0]"
+										tooltip = "concept_morale_damage_desc"
+									}
+
+									# Row 2, column 2 — Morale loss (morale icon + small defense overlay)
+									widget = {
+										position = { 80 21 }
+										size = { 18 18 }
+										tooltip = "unit_morale_loss_mult_desc"
+
+										icon = {
+											size = { 18 18 }
+											texture = "gfx/interface/icons/military_icons/morale.dds"
+										}
+
+										icon = {
+											position = { 8 8 }
+											size = { 10 10 }
+											texture = "gfx/interface/icons/military_icons/defense.dds"
+										}
+									}
+
+									textbox = {
+										position = { 108 21 }
+										size = { 50 18 }
+										align = right|nobaseline
+										using = fontsize_small
+										text = "[Character.MakeScope.ScriptValue('gora_aoi_commander_morale_loss')|%=-0]"
+										tooltip = "unit_morale_loss_mult_desc"
+									}
+
+									# Row 2, column 3 — Supply consumption
+									icon = {
+										position = { 160 21 }
+										size = { 18 18 }
+										texture = "gfx/interface/icons/goods_icons/small_arms.dds"
+										tooltip = "unit_supply_consumption_mult_desc"
+									}
+
+									textbox = {
+										position = { 188 21 }
+										size = { 50 18 }
+										align = right|nobaseline
+										using = fontsize_small
+										text = "[Character.MakeScope.ScriptValue('gora_aoi_commander_supply_consumption')|%=-0]"
+										tooltip = "unit_supply_consumption_mult_desc"
+									}
+
+									# Row 2, column 4 — Popularity (additive, not %)
+									icon = {
+										position = { 240 21 }
+										size = { 18 18 }
+										texture = "gfx/interface/icons/generic_icons/popularity.dds"
+										tooltip = "concept_popularity_desc"
+									}
+
+									textbox = {
+										position = { 268 21 }
+										size = { 50 18 }
+										align = right|nobaseline
+										using = fontsize_small
+										text = "[Character.MakeScope.ScriptValue('gora_aoi_commander_popularity')|+0]"
+										tooltip = "concept_popularity_desc"
+									}
+								}
+								### /GORA UI+
+
+								divider_clean = {
+									parentanchor = hcenter
+									size = { 310 1 }
+								}
+
+								# traits + ideology
+								container = {
+									parentanchor = hcenter
+									minimumsize = { 320 110 }
+
+									dynamicgridbox = {
+										datamodel = "[Character.AccessTraits]"
+										maxhorizontalslots = 3
+										datamodel_wrap = 2
+										flipdirection = yes
+										parentanchor = hcenter
+										position = { 0 5 }
+
+										item = {
+											flowcontainer = {
+												margin_right = 5
+												margin_bottom = 5
+
+												container = {
+													name = "tutorial_highlight_recruit_commander_trait"
+													minimumsize = { 150 45 }
+													maximumsize = { 150 45 }
+													using = tooltip_above
+
+													background = {
+														using = entry_bg_simple
+													}
+
+													tooltipwidget = {
+														FancyTooltip_CharacterTrait = {}
+													}
+
+													flowcontainer = {
+														parentanchor = vcenter
+														margin_left = 5
+
+														icon = {
+															size = { 25 35 }
+															parentanchor = vcenter
+															texture = "[CharacterTrait.GetTexture]"
+														}
+
+														textbox = {
+															margin_left = 5
+															margin_right = 10
+															maximumsize = { 125 35 }
+															elide = right
+															autoresize = yes
+															parentanchor = vcenter
+															align = left|nobaseline
+															multiline = yes
+															using = fontsize_small
+															text = "[CharacterTrait.GetNameNoFormatting]"
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+
+								# SPECIAL ORDERS
+								flowcontainer = {
+									parentanchor = hcenter
+									direction = vertical
+									spacing = 5
+									margin_bottom = 10
+
+									# HAS SPECIAL ORDERS - COMMANDER
+									textbox = {
+										visible = "[Not(IsDataModelEmpty(Character.AccessPossibleSpecialOrders))]"
+										parentanchor = hcenter
+										autoresize = yes
+										multiline = yes
+										align = nobaseline
+										text = "RECRUIT_COMMANDER_SPECIAL_ORDERS_TITLE"
+									}
+
+									# NO SPECIAL ORDERS - COMMANDER
+									textbox = {
+										visible = "[And(IsDataModelEmpty(Character.AccessPossibleSpecialOrders), Character.IsCommander)]"
+										parentanchor = hcenter
+										autoresize = yes
+										multiline = yes
+										align = nobaseline
+										minimumsize = { -1 73 }
+										alpha = "[TransparentIfTrue('(bool)yes')]"
+										text = "NO_SPECIAL_ORDERS_TITLE"
+									}
+
+									# NO SPECIAL ORDERS
+									textbox = {
+										visible = "[And(IsDataModelEmpty(Character.AccessPossibleSpecialOrders), Not(Character.IsCommander))]"
+										parentanchor = hcenter
+										autoresize = yes
+										multiline = yes
+										align = nobaseline
+										minimumsize = { -1 73 }
+										alpha = "[TransparentIfTrue('(bool)yes')]"
+										#text = "NO_SPECIAL_ORDERS_TITLE"
+									}
+
+									scrollarea = {
+										visible = "[Not(IsDataModelEmpty(Character.AccessPossibleSpecialOrders))]"
+										parentanchor = hcenter
+										size = { 310 46 }
+
+										scrollbar_horizontal = {
+											using = horizontal_scrollbar
+										}
+
+										scrollbar_vertical = {
+											using = vertical_scrollbar
+										}
+
+										scrollwidget = {
+											container = {
+												parentanchor = hcenter
+												# SPECIAL ORDERS LIST
+												dynamicgridbox = {
+													parentanchor = hcenter
+													flipdirection = yes
+													datamodel_wrap = 2
+													minimumsize = { 310 -1 }
+													datamodel = "[Character.AccessPossibleSpecialOrders]"
+
+													item = {
+														flowcontainer = {
+															margin_right = 5
+
+															flowcontainer = {
+																minimumsize = { 150 45 }
+																maximumsize = { 150 45 }
+																margin_left = 5
+																spacing = 5
+
+																tooltipwidget = {
+																	FancyTooltip_CommanderOrderType = {
+																		blockoverride "text_before" {
+																			using = visible_if_either_current_or_next_order
+																			text =  "NEXT_OR_CURRENT_ORDER"
+																			margin_bottom = 15
+																		}
+																	}
+																}
+
+																background = {
+																	using = entry_bg_simple
+																}
+
+																icon = {
+																	parentanchor = vcenter
+																	size = { 35 35 }
+																	texture = "[CommanderOrderType.GetTexture]"
+																}
+
+																textbox = {
+																	parentanchor = vcenter
+																	text = "[CommanderOrderType.GetNameNoFormatting]"
+																	autoresize = yes
+																	multiline = yes
+																	align = nobaseline
+																	fontsize_min = 12
+																	elide = right
+																	maximumsize = { 100 35 }
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+
+
+								### ORDERS
+								dynamicgridbox = {
+									visible = no
+									flipdirection = yes
+									datamodel_wrap = 2
+									parentanchor = hcenter
+									datamodel = "[Character.AccessOrders]"
+
+									item = {
+										flowcontainer = {
+											spacing = 10
+
+											tooltipwidget = {
+												FancyTooltip_CommanderOrderType = {
+													blockoverride "text_before" {
+														using = visible_if_either_current_or_next_order
+														text =  "NEXT_OR_CURRENT_ORDER"
+														margin_bottom = 15
+													}
+												}
+											}
+
+											icon = {
+												size = { 30 30 }
+												texture = "[CommanderOrderType.GetTexture]"
+											}
+
+											textbox = {
+												parentanchor = vcenter
+												autoresize = yes
+												align = nobaseline
+												max_width = 120
+												using = elide_fontsize_min
+												text = "[CommanderOrderType.GetName]"
+											}
+										}
+									}
+								}
+
+								### RECRUIT BUTTON
+								button = {
+									name = "tutorial_highlight_recruit_commander_recruit_button"
+									parentanchor = hcenter
+									using = default_button_action
+									size = { 325 45 }
+
+									block "select_button_properties" {
+										tooltip = "COMMANDER_RECRUIT_BUTTON_TOOLTIP"
+										enabled = "[IsValid(Character.GetRecruitCommandNoFormation)]"
+										onclick = "[Character.RecruitCharacterNoFormation]"
+										text = "RECRUIT_CHARACTER_BUTTON"
+									}
+
+									block "sound" {
+										using = commander_recruit_button_sound
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+

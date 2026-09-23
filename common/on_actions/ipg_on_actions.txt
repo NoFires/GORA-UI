@@ -1,0 +1,89 @@
+﻿# =============================================================================
+# Improved ParliamentGraph - On Actions
+# -----------------------------------------------------------------------------
+# All recalculations are gated by `is_player = yes` so that the work is
+# limited to human-controlled countries.  The election bridge is initiated
+# by each player's GUI and its scripted-GUI command is synchronized by the
+# engine; multiplayer should still be tested after game-version updates.
+# =============================================================================
+
+# Initial seed: run once when a save is loaded so the panel is populated
+# before the player even opens the Government screen.
+on_game_started_after_lobby = {
+	on_actions = {
+		ipg_on_game_started
+	}
+}
+
+# Slow heartbeat: monthly is plenty for IG clout drift and avoids piling up
+# work on the daily tick (important for large MP games).
+on_monthly_pulse_country = {
+	on_actions = {
+		ipg_on_player_recalc
+	}
+}
+
+# The campaign-start on_action is reliable and starts a cheap 30-day delayed
+# event watcher for campaign completion.
+on_election_campaign_start = {
+	on_actions = {
+		ipg_on_election_campaign_start
+	}
+}
+
+# Laws can flip enfranchisement (and therefore the Electoral view's existence).
+on_law_activated = {
+	on_actions = {
+		ipg_on_law_activated
+	}
+}
+
+# -----------------------------------------------------------------------------
+# Bridges from the on_action triggers above into the recalc effect.
+# Kept tiny on purpose: scope guard + dispatch.
+# -----------------------------------------------------------------------------
+
+ipg_on_game_started = {
+	effect = {
+		every_country = {
+			limit = { is_player = yes }
+			# on_game_started_after_lobby has no root scope. Resolve the player
+			# country once, rebuild dynamic views, and directly capture Party Structure.
+			ipg_recalculate_dynamic_structures = yes
+			ipg_request_election_capture = yes
+		}
+	}
+}
+
+ipg_on_player_recalc = {
+	effect = {
+		if = {
+			limit = { is_player = yes }
+			ipg_recalculate_player = yes
+		}
+	}
+}
+
+ipg_on_election_campaign_start = {
+	effect = {
+		if = {
+			limit = { is_player = yes }
+			# Cancel only the transient GUI pulse if a campaign starts immediately
+			# after loading; the event will issue a fresh pulse after the campaign.
+			remove_variable = ipg_election_capture_requested
+			trigger_event = { id = ipg_election_watch.1 days = 30 }
+		}
+	}
+}
+
+# on_law_activated fires in Law scope; hop to the owner country first.
+ipg_on_law_activated = {
+	effect = {
+		owner = {
+			if = {
+				limit = { is_player = yes }
+				ipg_recalculate_dynamic_structures = yes
+			}
+		}
+	}
+}

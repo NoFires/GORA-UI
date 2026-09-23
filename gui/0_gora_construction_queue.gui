@@ -1,0 +1,491 @@
+﻿# GORA UI+ — construction_queue (partial type override)
+# ─────────────────────────────────────────────────────────────────────────────
+# Vanilla 1.13.9 baseline: gui/construction_queue.gui.
+# type construction_queue (line 16+, inside types construction_queue).
+# Other vanilla types (construction_queue_item, construction_queue_goto_building,
+# construction_queue_item_texts) inherited from vanilla unchanged.
+#
+# GORA delta: inside `default_header_2texts` blockoverride — a 5-button
+# "Less Clicks" strip (reduce-govadm / build-transportation / build-powerplants
+# / build-railways / build-govadm). Buttons reference gora_lc_*_tooltip keys.
+#
+# Phase 9 fixes carried in this type body:
+#   - Stale tech gate fixed: build-powerplants now gates on
+#     `check_if_has_researched_electrical_generation` (was railways).
+#   - Legacy `cancel_construction_all_levels` button removed — had 30
+#     duplicate direct-property onclicks (only the first fires per V3 parser).
+#
+# Re-sync recipe: diff vanilla type construction_queue, replace this file's
+# type body with new vanilla, re-insert fenced delta.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Parser-level @constants are file-scoped in V3. Redeclare every @ referenced
+# in the extracted body; values match vanilla 1.13.4 exactly.
+@panel_width = 540
+@panel_width_plus_14 = 554
+@queue_item_width = 540
+@queue_item_height = 40
+
+types gora_construction_queue {
+
+	type construction_queue = flowcontainer {
+		using = default_list_position
+		direction = vertical
+		minimumsize = { @panel_width -1 }
+		margin_bottom = 10
+
+		flowcontainer = {
+			parentanchor = hcenter
+			direction = vertical
+
+			background = {
+				using = dark_area
+			}
+
+			background = {
+				using = fade_right_entry_header_colored
+				color = "[GetDefine('NGUI','BUILDING_OWNERSHIP_COLOR_PLAYER_POPS')]"
+				margin_left = 2
+				margin_right = 2
+				margin_bottom = -1
+			}
+
+			background = {
+				using = fade_right_entry_header_colored
+				color = "[GetDefine('NGUI','BUILDING_OWNERSHIP_COLOR_PLAYER_POPS')]"
+				margin_left = 2
+				margin_right = 2
+				margin_bottom = -1
+				mirror = horizontal
+			}
+
+			divider_clean = {}
+
+			widget = {
+						  
+				size = { @panel_width_plus_14 50 }
+
+				textbox = {
+					parentanchor = vcenter
+					margin = { 10 10 }
+					  
+					align = nobaseline
+					autoresize = yes
+					max_width = 265
+					using = elide_fontsize_min
+					using = investment_pool_tooltip_with_graph
+					text = "CURRENT_INVESTMENT_POOL"
+				}
+
+				textbox = {
+					parentanchor = vcenter|right
+					margin = { 10 10 }
+					align = nobaseline
+					autoresize = yes
+					max_width = 265
+					using = elide_fontsize_min
+					tooltip = "[GetPlayer.GetPreviousAutonomousInvestmentsDesc]"
+					text = "PREVIOUS_INVESTMENTS"
+				}
+			}
+
+			divider_decorative = {}
+
+			textbox = {
+				visible = "[GetPlayer.ShowInvestmentPoolPredictedNextBuilding]"
+				parentanchor = hcenter
+				minimumsize = { @panel_width_plus_14 -1 }
+				maximumsize = { @panel_width_plus_14 -1 }
+				margin = { 10 10 }
+					  
+				autoresize = yes
+				multiline = yes
+				align = hcenter|nobaseline
+																
+				text = "NEXT_PRIVATE_CONSTRUCTION"
+
+				background = {
+					using = dark_area
+					margin_top = 2
+				}
+			}
+
+			divider_clean = {}
+		}
+
+		default_header_2texts = {
+			blockoverride "text1" {
+				block "text" {
+					text = "CONSTRUCTION_QUEUE"
+				}
+			}
+			blockoverride "text2" {
+				block "text" {
+					visible = "[And(Country.HasConstructionQueued, Not(Country.IsConstructionPaused))]"
+					text = "QUEUE_CONSTRUCTION_POINTS_SUMMARY"
+					tooltip = "QUEUE_CONSTRUCTION_POINTS_SUMMARY_TOOLTIP"
+				}
+			}
+
+			### GORA UI+ — Less Clicks header buttons
+			# Five action buttons overlaid on the header bar. The reduce-govadm
+			# button uses a button + red_cross overlay to signal "decrease".
+			# Positions are absolute (parent type lays out text1/text2 with
+			# pre-computed widths); keep these aligned with right edge.
+			widget = {
+				size = { 40 40 }
+				position = { 190 3 }
+
+				button_icon_round_action = {
+					size = { 40 40 }
+					tooltip = "gora_lc_reduce_administrations_tooltip"
+					using = confirm_button_sound
+					onclick = "[GetScriptedGui('executelessclicksreducegovadmin').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End)]"
+					blockoverride "icon" {
+						texture = "gfx/interface/buttons/government_administration_button.dds"
+					}
+				}
+
+				icon = {
+					parentanchor = center
+					position = { 0 0 }
+					size = { 34 34 }
+					texture = "gfx/interface/icons/generic_icons/red_cross.dds"
+					alwaystransparent = yes
+				}
+			}
+
+			button_icon_round_action = {
+				size = { 40 40 }
+				position = { 290 3 }
+				tooltip = "gora_lc_build_transportation_tooltip"
+				using = confirm_button_sound
+				enabled = "[GetScriptedGui('check_if_has_researched_railways').IsValid( GuiScope.SetRoot( GetPlayer.MakeScope ).End)]"
+				onclick = "[GetScriptedGui('executelessclicktransportation').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End)]"
+				blockoverride "icon" {
+					texture = "gfx/interface/buttons/transportation_button.dds"
+				}
+			}
+
+			button_icon_round_action = {
+				size = { 40 40 }
+				position = { 330 3 }
+				tooltip = "gora_lc_build_powerplants_tooltip"
+				using = confirm_button_sound
+				enabled = "[GetScriptedGui('check_if_has_researched_electrical_generation').IsValid( GuiScope.SetRoot( GetPlayer.MakeScope ).End)]"
+				onclick = "[GetScriptedGui('executebuildpowerplants').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End)]"
+				blockoverride "icon" {
+					texture = "gfx/interface/buttons/electricity.dds"
+				}
+			}
+
+			button_icon_round_action = {
+				size = { 40 40 }
+				position = { 370 3 }
+				tooltip = "gora_lc_build_railways_tooltip"
+				using = confirm_button_sound
+				enabled = "[GetScriptedGui('check_if_has_researched_railways').IsValid( GuiScope.SetRoot( GetPlayer.MakeScope ).End)]"
+				onclick = "[GetScriptedGui('executelessclicksrailways').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End)]"
+				blockoverride "icon" {
+					texture = "gfx/interface/buttons/railroad_button.dds"
+				}
+			}
+
+			button_icon_round_action = {
+				size = { 40 40 }
+				position = { 410 3 }
+				tooltip = "gora_lc_build_administrations_tooltip"
+				using = confirm_button_sound
+				onclick = "[GetScriptedGui('executelessclicksgovadmin').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End)]"
+				blockoverride "icon" {
+					texture = "gfx/interface/buttons/government_administration_button.dds"
+				}
+			}
+			### /GORA UI+
+		}
+
+		# Advisor: additive quick-construction strip; the five GORA+ header buttons
+		# above remain unchanged. This is the only construction_queue integration hook.
+		advisor_construction_quick_actions = {}
+
+		# GORA+: separate zero-level infrastructure group. Its own GUI type keeps
+		# Advisor compatibility deterministic; the type contains the requested divider.
+		gora_zero_level_infrastructure_actions = {}
+
+		## FILTERS
+
+		flowcontainer = {
+			direction = vertical
+
+			section_header_button = {
+				blockoverride "left_text" {
+					text = "FILTERS"
+					fontsize_min = 12
+					elide = right
+				}
+
+				blockoverride "right_text" {
+					section_header_right_text = {
+						text = "CONSTRUCTION_QUEUE_FILTER_SUMMARY"
+					}
+				}
+
+				blockoverride "onclick" {
+					onclick = "[GetVariableSystem.Toggle( 'construction_queue_filters' )]"
+				}
+
+				blockoverride "onclick_showmore" {
+					visible = "[Not(GetVariableSystem.Exists( 'construction_queue_filters' ))]"
+				}
+
+				blockoverride "onclick_showless" {
+					visible = "[GetVariableSystem.Exists( 'construction_queue_filters' )]"
+				}
+			}
+
+			flowcontainer = {
+				visible = "[GetVariableSystem.Exists( 'construction_queue_filters' )]"
+				minimumsize = { @panel_width_plus_14 -1 }
+				parentanchor = hcenter
+				spacing = 10
+				margin_bottom = 10
+
+				background = {
+					using = dark_area
+				}
+
+				flowcontainer = {
+					direction = vertical
+
+					textbox = {
+						multiline = yes
+						size = { 95 60 }
+						text = "LOCATION"
+						align = right|nobaseline
+						margin_right = 10
+						margin_left = 10
+						fontsize_min = 14
+						elide = right
+					}
+
+					textbox = {
+						size = { 95 60 }
+						text = "CONSTRUCTION_QUEUE_FILTER_FUNDING"
+						align = right|nobaseline
+						margin_right = 10
+						margin_left = 10
+						fontsize_min = 14
+						elide = right
+					}
+				}
+
+				vertical_divider = {}
+
+				flowcontainer = {
+					direction = vertical
+					margin_top = 10
+					spacing = 20
+					margin_left = 10
+
+					flowcontainer = {
+						spacing = 5
+
+						filter_button = {
+							visible = "[ConstructionPanel.IsFiltered('is_domestic')]"
+							size = { 132 40 }
+
+							tooltip = "LOCATION_FILTER_ALL"
+							using = tooltip_above
+
+							blockoverride "text" {
+								text = "ALL"
+							}
+
+							blockoverride "onclick" {
+								onclick = "[ConstructionPanel.SetFilterMode('is_domestic', 'off')]"
+							}
+						}
+
+						filter_background_selected = {
+							visible = "[Not(ConstructionPanel.IsFiltered('is_domestic'))]"
+							size = { 132 40 }
+
+							blockoverride "text" {
+								text = "ALL"
+							}
+						}
+
+						filter_button = {
+							visible = "[Not(ConstructionPanel.IsFilterYes('is_domestic'))]"
+							size = { 132 40 }
+
+							tooltip = "LOCATION_FILTER_DOMESTIC"
+							using = tooltip_above
+
+							blockoverride "text" {
+								text = "DOMESTIC"
+							}
+
+							blockoverride "onclick" {
+								onclick = "[ConstructionPanel.SetFilterMode('is_domestic', 'yes')]"
+							}
+						}
+
+						filter_background_selected = {
+							visible = "[ConstructionPanel.IsFilterYes('is_domestic')]"
+							size = { 132 40 }
+
+							blockoverride "text" {
+								text = "DOMESTIC"
+							}
+						}
+
+						filter_button = {
+							visible = "[Not(ConstructionPanel.IsFilterNo('is_domestic'))]"
+							size = { 132 40 }
+
+							tooltip = "LOCATION_FILTER_ABROAD"
+							using = tooltip_above
+
+							blockoverride "text" {
+								text = "ABROAD"
+							}
+
+							blockoverride "onclick" {
+								onclick = "[ConstructionPanel.SetFilterMode('is_domestic', 'no')]"
+							}
+						}
+
+						filter_background_selected = {
+							visible = "[ConstructionPanel.IsFilterNo('is_domestic')]"
+
+							size = { 132 40 }
+
+							blockoverride "text" {
+								text = "ABROAD"
+							}
+						}
+					}
+
+					flowcontainer = {
+						spacing = 5
+
+						filter_button = {
+
+							blockoverride "text" {
+								text = "CONSTRUCTION_QUEUE_FILTER_FUNDING_NATIONAL"
+							}
+
+							tooltip = "CONSTRUCTION_QUEUE_FILTER_FUNDING_NATIONAL_TT"
+
+							visible = "[Not(ConstructionPanel.IsShowingGovernmentConstructions)]"
+
+							blockoverride "onclick" {
+								onclick = "[ConstructionPanel.ShowGovernmentConstructions]"
+							}
+						}
+
+						filter_background_selected = {
+							visible = "[ConstructionPanel.IsShowingGovernmentConstructions]"
+
+							blockoverride "text" {
+								text = "CONSTRUCTION_QUEUE_FILTER_FUNDING_NATIONAL"
+							}
+
+							tooltip = "CONSTRUCTION_QUEUE_FILTER_FUNDING_NATIONAL_TT"
+						}
+
+						filter_button = {
+
+							blockoverride "text" {
+								text = "CONSTRUCTION_QUEUE_FILTER_FUNDING_PRIVATE"
+							}
+
+							tooltip = "CONSTRUCTION_QUEUE_FILTER_FUNDING_PRIVATE_TT"
+
+							visible = "[Not(ConstructionPanel.IsShowingPrivateConstructions)]"
+
+							blockoverride "onclick" {
+								onclick = "[ConstructionPanel.ShowPrivateConstructions]"
+							}
+						}
+
+						filter_background_selected = {
+							visible = "[ConstructionPanel.IsShowingPrivateConstructions]"
+
+							blockoverride "text" {
+								text = "CONSTRUCTION_QUEUE_FILTER_FUNDING_PRIVATE"
+							}
+
+							tooltip = "CONSTRUCTION_QUEUE_FILTER_FUNDING_PRIVATE_TT"
+						}
+					}
+				}
+			}
+
+			widget = {
+				visible = "[GetVariableSystem.Exists( 'construction_queue_filters' )]"
+				size = { 5 5 }
+			}
+		}
+
+		# PRIVATE CONSTRUCTION QUEUE
+
+		fixedgridbox = {
+			visible = "[And(ConstructionPanel.IsShowingPrivateConstructions, Not(IsDataModelEmpty(Country.AccessPagedPrivateConstructionQueue(ConstructionPanel.AccessCurrentPrivateConstructionQueuePage(GetMetaPlayer.GetPlayedOrObservedCountry), ConstructionPanel.GetFilter))))]"
+			addcolumn = @queue_item_width
+			addrow = @queue_item_height
+			parentanchor = hcenter
+			datamodel = "[Country.AccessPagedPrivateConstructionQueue(ConstructionPanel.AccessCurrentPrivateConstructionQueuePage(GetMetaPlayer.GetPlayedOrObservedCountry), ConstructionPanel.GetFilter)]"
+
+			item = {
+				construction_queue_item = {}
+			}
+		}
+
+		# GOVERNMENT CONSTRUCTION QUEUE
+
+		fixedgridbox = {
+			visible = "[And(ConstructionPanel.IsShowingGovernmentConstructions, Not(IsDataModelEmpty(Country.AccessPagedGovernmentConstructionQueue(ConstructionPanel.AccessCurrentGovernmentConstructionQueuePage(GetMetaPlayer.GetPlayedOrObservedCountry), ConstructionPanel.GetFilter))))]"
+			addcolumn = @queue_item_width
+			addrow = @queue_item_height
+			parentanchor = hcenter
+			datamodel = "[Country.AccessPagedGovernmentConstructionQueue(ConstructionPanel.AccessCurrentGovernmentConstructionQueuePage(GetMetaPlayer.GetPlayedOrObservedCountry), ConstructionPanel.GetFilter)]"
+
+			item = {
+				construction_queue_item = {
+					draggable_behavior = {
+						draggable_id = "construction_queue_element"
+
+						drag_widget = {
+							widget = {
+								size = { 1 1 }
+
+								construction_queue_item = {
+									position = "[GuiCurrentDrag.CurrentPosition]"
+									widgetanchor = center
+								}
+							}
+						}
+					}
+
+					drop_target = {
+						accept_draggable_id = "construction_queue_element"
+						on_receive_drop = "[Execute( GetDraggedDatacontext( 'ConstructionQueueElement' ).MoveToIndex( ConstructionQueueElement.GetIndex ) )]"
+					}
+				}
+			}
+		}
+
+		empty_state = {
+			blockoverride "visible" {
+				visible = "[Not(Country.HasConstructionQueued)]"
+			}
+			blockoverride "text" {
+				text = "CONSTRUCTION_QUEUE_IS_EMPTY"
+			}
+		}
+	}
+
+}
+

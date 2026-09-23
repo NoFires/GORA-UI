@@ -1,0 +1,37 @@
+﻿com_topbar_new_country = {
+	#= Prestige
+	add_to_variable_list = {
+		name = com_topbar_first_line
+		target = flag:com_topbar_element_prestige
+	}
+	#= Legitimacy
+	add_to_variable_list = {
+		name = com_topbar_first_line
+		target = flag:com_topbar_element_legitimacy
+	}
+	#= Innovation
+	add_to_variable_list = {
+		name = com_topbar_first_line
+		target = flag:com_topbar_element_innovation
+	}
+	#= Army Size
+	add_to_variable_list = {
+		name = com_topbar_first_line
+		target = flag:com_topbar_element_army_size
+	}
+	#= Navy Size
+	add_to_variable_list = {
+		name = com_topbar_first_line
+		target = flag:com_topbar_element_navy_size
+	}
+	#= Interests
+	add_to_variable_list = {
+		name = com_topbar_first_line
+		target = flag:com_topbar_element_interests
+	}
+	#= Subsistence
+	add_to_variable_list = {
+		name = com_topbar_first_line
+		target = flag:com_topbar_element_subsistence_pops
+	}
+}

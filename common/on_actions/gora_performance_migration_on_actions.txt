@@ -1,0 +1,27 @@
+﻿# GORA UI+ performance schema migration.
+#
+# This migration is intentionally independent from the integrated COM Topbar
+# migration.  Do not merge the two systems: the Topbar files are vendor-frozen.
+
+on_game_started_after_lobby = {
+	on_actions = { gora_perf_schema_v3_on_start }
+}
+
+# Compatibility bridge for integrations that still dispatch the v2 handle.
+gora_perf_schema_v2_on_start = {
+	trigger = {
+		NOT = { has_global_variable = gora_perf_schema_v3_complete }
+	}
+	effect = {
+		gora_perf_migrate_schema_v3 = yes
+	}
+}
+
+gora_perf_schema_v3_on_start = {
+	trigger = {
+		NOT = { has_global_variable = gora_perf_schema_v3_complete }
+	}
+	effect = {
+		gora_perf_migrate_schema_v3 = yes
+	}
+}

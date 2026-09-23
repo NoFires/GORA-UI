@@ -1,0 +1,23 @@
+﻿INJECT:advance_reckless = {
+	texture = "gfx/interface/icons/commander_order_icons/zw_advance_reckless_advance.dds"
+}
+
+INJECT:advance_pillager = {
+	texture = "gfx/interface/icons/commander_order_icons/zw_advance_pillage.dds"
+}
+
+INJECT:advance_cautious = {
+	texture = "gfx/interface/icons/commander_order_icons/zw_advance_cautious_advance.dds"
+}
+
+INJECT:advance_heavy_barrage = {
+	texture = "gfx/interface/icons/commander_order_icons/zw_advance_heavy_barrage.dds"
+}
+
+INJECT:advance_cavalry_assualt = {
+	texture = "gfx/interface/icons/commander_order_icons/zw_advance_rapid_advance.dds"
+}
+
+INJECT:advance_tank_assualt = {
+	texture = "gfx/interface/icons/commander_order_icons/zw_advance_heavy_advance.dds"
+}

@@ -1,0 +1,34 @@
+﻿l_simp_chinese:
+ # GORA UI+ — Less Clicks button labels & tooltips
+ # `gora_lc_*_tooltip` keys are referenced by the GUI button widgets.
+ # `gora_lc_build_*_ready` / `_locked` keys are returned by the matching
+ # customizable_localization in gora_less_clicks_custom_loc.txt.
+
+ # ─── Railways ────────────────────────────────────────────────────────────
+ gora_lc_build_railways:0 "修建铁路"
+ gora_lc_build_railways_desc:0 "在各地建造足量的铁路，以确保完全的市场准入度。"
+ gora_lc_build_railways_tooltip:0 "[GetPlayer.GetCustom('gora_lc_railways_tooltip')]"
+ gora_lc_build_railways_ready:0 "#header 最大化市场准入度#!\n$TOOLTIP_DELIMITER$\n点击将所需数量的铁路添加到建设队列中，以实现最大化的市场准入度。"
+ gora_lc_build_railways_locked:0 "#header 最大化市场准入度#!\n$TOOLTIP_DELIMITER$\n#R [GetPlayer.GetName] 尚未研发 #italic #bold #gold 铁路#! 技术。"
+
+ # ─── Government administrations ─────────────────────────────────────────
+ gora_lc_build_administrations:0 "建立政府行政部门"
+ gora_lc_build_administrations_desc:0 "在各地建造足量的政府行政机构，以确保税收能力。"
+ gora_lc_build_administrations_tooltip:0 "#header 最大化税收能力#!\n$TOOLTIP_DELIMITER$\n点击在已整合地区添加所需数量的政府行政机构，以最大化税收能力。"
+ gora_lc_reduce_administrations_tooltip:0 "#header 削减冗余政府行政机构#!\n$TOOLTIP_DELIMITER$\n仅修剪安全的冗余部分。不会使国家官僚机构低于 #v +200#!，不会缩减税收能力盈余不足 #v 2级#! 的地区，且每次点击每个地区最多移除 #v 1级#!。"
+
+ # ─── Power plants ───────────────────────────────────────────────────────
+ gora_lc_build_powerplants:0 "建造发电厂"
+ gora_lc_build_powerplants_desc:0 "在各地建造足量的发电厂，以满足电力需求。"
+ gora_lc_build_powerplants_tooltip:0 "[GetPlayer.GetCustom('gora_lc_powerplants_tooltip')]"
+ gora_lc_build_powerplants_ready:0 "#header 建造发电厂#!\n$TOOLTIP_DELIMITER$\n在各地建造足量的发电厂以满足电力需求。"
+ gora_lc_build_powerplants_locked:0 "#header 建造发电厂#!\n$TOOLTIP_DELIMITER$\n#R [GetPlayer.GetName] 尚未研发 #italic #bold #gold 发电#! 技术。"
+
+ # ─── Reduce-transportation-shortage variant of the railway button ───────
+ gora_lc_build_transportation_tooltip:0 "[GetPlayer.GetCustom('gora_lc_transportation_tooltip')]"
+ gora_lc_build_transportation_ready:0 "#header 缓解运输短缺#!\n$TOOLTIP_DELIMITER$\n点击在已整合地区添加所需数量的铁路，以缓解运输商品的短缺。"
+ gora_lc_build_transportation_locked:0 "#header 缓解运输短缺#!\n$TOOLTIP_DELIMITER$\n#R [GetPlayer.GetName] 尚未研发 #italic #bold #gold 铁路#! 技术。"
+
+ # ─── Construction queue helpers ─────────────────────────────────────────
+ GO_PREV_10_PAGES:0 "往前翻10页"
+ GO_NEXT_10_PAGES:0 "向前翻10页"

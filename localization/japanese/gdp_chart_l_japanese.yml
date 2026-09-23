@@ -1,0 +1,6 @@
+﻿l_japanese:
+ GDP_CHART_TITLE: "GDPの構成"
+ GDP_CHART_SUBTITLE: "図形の大きさは、各商品の国内GDPへの推定寄与度を表します（売り注文数 × 市場価格）"
+ GDP_CHART_PIETOOLTIP: "#header [Goods.GetName]#!\n年間価値：@money![Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice)|K]#!\nGDPに占める割合：[Divide_CFixedPoint(Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice), Market.GetMarketGDPValue)|%0]\n市場価格：@money![Goods.GetMarketPrice|v1]#!\n売り注文数：[Goods.GetMarketSellOrders|v0]"
+ GDP_CHART_SHOW_MORE: "さらに表示"
+ GDP_CHART_SHOW_LESS: "折りたたむ"

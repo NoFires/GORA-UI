@@ -1,0 +1,28 @@
+﻿l_japanese:
+
+  # ==== Panel chrome ====
+  ipg_panel_title:0 "議会"
+  ipg_expand:0 "展開"
+  ipg_collapse:0 "折りたたむ"
+  ipg_view_power:0 "権力構造"
+  ipg_view_alignment:0 "政治的傾向"
+  ipg_view_electoral:0 "政党構造"
+  ipg_power_desc:0 "すべての利益集団の政治的影響力。"
+  ipg_alignment_desc:0 "利益集団ごとの人口の政治的傾向。"
+  ipg_electoral_desc:0 "前回選挙の結果を表示します。"
+  ipg_other_aligned:0 "その他の支持勢力"
+  ipg_unaligned:0 "政治的に無関心"
+  ipg_other_minor:0 "その他の政党・グループ"
+  ipg_independent:0 "無所属"
+  ipg_last_election:0 "前回の選挙"
+  ipg_seats_unit:0 "議席"
+
+  # ==== Power Structure tooltip (clout share) ====
+
+  # ==== Political Alignment tooltip (population share) ====
+  ipg_alignment_unaligned_desc:0 "$ipg_unaligned$: #variable [GetPlayer.MakeScope.Var('ipg_alignment_unaligned_share').GetValue|1]%#!"
+
+  # ==== Party Structure tooltip ====
+  ipg_power_list_item:0 "[InterestGroup.GetName]: #variable [InterestGroup.MakeScope.Var('power_seats').GetValue|v0]#! $ipg_seats_unit$ ([InterestGroup.MakeScope.Var('power_share').GetValue|1]%)"
+  ipg_alignment_list_item:0 "[InterestGroup.GetName]: #variable [InterestGroup.MakeScope.Var('alignment_share').GetValue|1]%#!"
+  ipg_electoral_list_item:0 "[Party.GetName]: #variable [Party.MakeScope.Var('electoral_seats').GetValue|v0]#! $ipg_seats_unit$ ($ipg_last_election$: [Party.MakeScope.Var('ipg_last_election_vote_share').GetValue|%1])"

@@ -1,0 +1,593 @@
+﻿# GORA UI+ — construction_panel (partial type override)
+# ─────────────────────────────────────────────────────────────────────────────
+# Vanilla 1.13.9 baseline: gui/construction_panel.gui.
+# type construction_panel (line 848+, inside types construction_panel).
+# Other vanilla types in that file (construction_panel_ships_content,
+# ship_construction_*, supply_ship_*) inherited from vanilla unchanged.
+#
+# GORA delta: two `button_select_arrow` widgets per arrow row (prev/next)
+# wrapping 10 onclick chained calls inside `onclick_prev`/`onclick_next`
+# block slots. Skips the government-construction queue by 10 pages at a
+# time. Block-slot placement is required — direct-property onclick chains
+# only fire the first call (see v3_gui_quirks memory).
+#
+# Re-sync recipe: diff vanilla type construction_panel, replace this
+# file's type body with new vanilla, re-insert fenced deltas (2 locations).
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Parser-level @constants are file-scoped in V3. Redeclare every @ referenced
+# in the extracted body; values match vanilla 1.13.9 exactly.
+@panel_width_minus_10 = 530
+@panel_width_plus_14 = 554
+@foreign_invest_icon_size = 30
+
+types gora_construction_panel {
+
+    type construction_panel = default_block_window_two_lines {
+        name = "construction_panel"
+
+        blockoverride "window_header_name"
+        {
+            text = "CONSTRUCTION"
+        }
+
+        blockoverride "window_header_container_line_two"
+        {
+
+        }
+
+        #TOP
+        blockoverride "fixed_top"
+        {
+            #TABS
+            tab_buttons = {
+                blockoverride "first_button"
+                {
+                    text = "CONSTRUCTION_TAB_DOMESTIC"
+                }
+                blockoverride "first_button_tooltip" {
+                    tooltip = "CONSTRUCTION_TAB_DOMESTIC"
+                }
+                blockoverride "first_button_click"
+                {
+                    onclick = "[InformationPanel.SelectTab('default')]"
+                }
+                blockoverride "first_button_visibility"
+                {
+                    visible = "[InformationPanel.IsTabSelected('default')]"
+                }
+                blockoverride "first_button_visibility_checked"
+                {
+                    visible = "[Not( InformationPanel.IsTabSelected('default') )]"
+                }
+                blockoverride "first_button_selected"
+                {
+                    text = "CONSTRUCTION_TAB_DOMESTIC"
+                }
+
+                blockoverride "second_button"
+                {
+                    text = "CONSTRUCTION_TAB_FOREIGN"
+                }
+                blockoverride "second_button_tooltip" {
+                    tooltip = "CONSTRUCTION_TAB_FOREIGN"
+                }
+                blockoverride "second_button_click"
+                {
+                    onclick = "[InformationPanel.SelectTab('foreign_queues')]"
+                }
+                blockoverride "second_button_visibility"
+                {
+                    visible = "[InformationPanel.IsTabSelected('foreign_queues')]"
+                }
+                blockoverride "second_button_visibility_checked"
+                {
+                    visible = "[Not( InformationPanel.IsTabSelected('foreign_queues') )]"
+                }
+                blockoverride "second_button_selected"
+                {
+                    text = "CONSTRUCTION_TAB_FOREIGN"
+                }
+
+                blockoverride "third_button" {
+                    text = "SHIPS"
+                }
+                blockoverride "third_button_tooltip" {
+                    tooltip = "SHIPS"
+                }
+                blockoverride "third_button_click" {
+                    onclick = "[InformationPanel.SelectTab('ships')]"
+                }
+                blockoverride "third_button_visibility" {
+                    visible = "[InformationPanel.IsTabSelected('ships')]"
+                }
+                blockoverride "third_button_visibility_checked" {
+                    visible = "[Not(InformationPanel.IsTabSelected('ships'))]"
+                }
+                blockoverride "third_button_selected" {
+                    text = "SHIPS"
+                }
+            }
+
+            widget = { size = { 1 10 }}
+        }
+
+        blockoverride "scrollarea_content" {
+            # DOMESTIC QUEUE TAB CONTENTS
+            flowcontainer = {
+                name = "domestic_queue"
+                visible = "[InformationPanel.IsTabSelected('default')]"
+                direction = vertical
+
+                flowcontainer = {
+                    using = default_list_position
+                    direction = vertical
+
+
+                    flowcontainer = {
+                        name = "construction_sector_or_no_sector"
+                        parentanchor = hcenter
+                        margin_top = 10
+                        margin_bottom = 10
+
+
+                        datacontext_from_model = {
+                            datamodel = "[ConstructionPanel.GetConstructionEntries]"
+                            index = 0
+                        }
+
+                        # Construction Sector
+                        old_buildings_production_method_item = {
+                            #visible check in type
+                        }
+
+                        # No Construction Sector
+                        widget = {
+                            size = { @panel_width_plus_14 95 }
+                            visible = "[IsDataModelEmpty(BuildingProductionMethodsEntry.GetBuildings)]"
+                            datacontext = "[GetBuildingType('building_construction_sector')]"
+
+
+                            ### building icon
+                            icon = {
+                                texture = "[BuildingType.GetIcon]"
+                                enabled = no
+                                size = { 100 100 }
+                                position = { 7 0 }
+                                parentanchor = vcenter
+                            }
+
+                            ### DROPDOWN / EXPAND
+                            textbox = {
+                                position = { 110 0 }
+                                size = { 440 38 }
+
+                                raw_text = "CONSTRUCTION_QUEUE_NO_CONSTRUCTION_SECTOR"
+
+                                align = nobaseline
+                                margin = {10 0}
+
+                                using = empty_state_text_properties
+                                using = fontsize_large
+
+                                background = {
+                                    using = entry_bg_simple
+                                }
+                            }
+
+                            # INFO AREA BELOW THE DROPDOWN
+                            widget = {
+                                position = { 110 38 }
+                                size = { 440 57 }
+
+                                construction_queue_sector_actions = {
+                                    layoutpolicy_horizontal = expanding
+                                    layoutpolicy_vertical = expanding
+                                }
+
+                            }
+                        }
+                    }
+
+
+                    datacontext = "[AccessPlayer]"
+
+                    construction_queue = {}
+                }
+            }
+
+            # FOREIGN QUEUE TAB CONTENTS
+            flowcontainer = {
+                visible = "[InformationPanel.IsTabSelected('foreign_queues')]"
+
+                parentanchor = hcenter
+                datamodel = "[AccessPlayer.GetPotentialInvestors]"
+                direction = vertical
+
+                textbox = {
+                    parentanchor = hcenter
+                    align = hcenter|nobaseline
+                    autoresize = yes
+                    multiline = yes
+                    margin = { 10 10 }
+                    max_width = @panel_width_minus_10
+                    using = empty_state_text_properties
+                    visible = "[IsDataModelEmpty(AccessPlayer.GetPotentialInvestors)]"
+                    text = "FOREIGN_QUEUE_NO_INVESTORS_EMPTY_STATE"
+                }
+
+                item = { # ITEM FOR EACH COUNTRY
+                    flowcontainer = {
+                        parentanchor = hcenter
+                        direction = vertical
+
+                        default_header_2texts = {
+                            blockoverride "text1" {
+                                text = "FOREIGN_QUEUE_COUNTRY_HEADER"
+                            }
+                            blockoverride "right" {
+                                flowcontainer = {
+                                    position = { -12 0 }
+                                    parentanchor = right|vcenter
+                                    datacontext = "[Country]"
+
+                                    icon = {
+                                        visible = "[GetPlayer.IsAnySubjectOf( Country.Self )]"
+                                        name = "overlord"
+                                        texture = "gfx/interface/icons/lens_toolbar_icons/overlord.dds"
+                                        size = { @foreign_invest_icon_size @foreign_invest_icon_size }
+                                        tooltip = FOREIGN_QUEUE_COUNTRY_OVERLORD_TT
+
+                                    }
+
+                                    icon = {
+                                        visible = "[GetPlayer.HasDiplomaticPactWith( Country.Self, 'foreign_investment_agreement' )]"
+                                        name = "mutual_pact"
+                                        texture = "gfx/interface/icons/lens_toolbar_icons/foreign_investment_agreement.dds"
+                                        size = { @foreign_invest_icon_size @foreign_invest_icon_size }
+                                        tooltip = FOREIGN_QUEUE_COUNTRY_MUTUAL_PACT_TT
+                                    }
+                                    icon = {
+                                        visible = "[GetPlayer.HasDiplomaticPactWith( Country.Self, 'foreign_investment_rights' )]"
+                                        name = "one_way_pact"
+                                        texture = "gfx/interface/icons/lens_toolbar_icons/foreign_investment_rights.dds"
+                                        size = { @foreign_invest_icon_size @foreign_invest_icon_size }
+                                        tooltip = FOREIGN_QUEUE_COUNTRY_ONE_WAY_PACT_TT
+                                    }
+                                }
+                            }
+                        }
+
+
+                        fixedgridbox = {
+                            datamodel = "[Country.GetConstructionsInCountry(AccessPlayer.Self)]"
+
+                            addcolumn = 540
+                            addrow = 40
+
+                            parentanchor = hcenter
+
+                            item = { # ITEM FOR EACH QUEUED CONSTRUCTION
+                                construction_queue_item = {}
+                            }
+                        }
+
+                        textbox = {
+                            parentanchor = hcenter
+                            margin = { 10 10 }
+                            align = hcenter|nobaseline
+                            autoresize = yes
+                            multiline = yes
+                            max_width = @panel_width_minus_10
+                            using = empty_state_text_properties
+                            visible = "[IsDataModelEmpty(Country.GetConstructionsInCountry(AccessPlayer.Self))]"
+                            text = "FOREIGN_QUEUE_NO_CONSTRUCTION_EMPTY_STATE"
+                        }
+                    }
+                }
+            }
+
+            ### Ship construction tab content
+            construction_panel_ships_content = {
+                visible = "[InformationPanel.IsTabSelected('ships')]"
+                using = default_content_fade
+            }
+        }
+
+        blockoverride "fixed_bottom" {
+            # DOMESTIC QUEUE PAGE BUTTONS
+            vbox = {
+                name = "construction_queue_pages"
+                layoutpolicy_horizontal = expanding
+                visible = "[InformationPanel.IsTabSelected('default')]"
+
+
+                divider_clean = {
+                    visible = "[Or(And(ConstructionPanel.IsShowingGovernmentConstructions, GreaterThan_int32(ConstructionPanel.GetNumGovernmentConstructionQueuePages(GetMetaPlayer.GetPlayedOrObservedCountry), '(int32)1')), And(ConstructionPanel.IsShowingPrivateConstructions,GreaterThan_int32(ConstructionPanel.GetNumPrivateConstructionQueuePages(GetMetaPlayer.GetPlayedOrObservedCountry), '(int32)1')))]"
+                    size = { @panel_width_plus_14 2 }
+                }
+
+                flowcontainer = {
+                    margin_top = 10
+                    margin_bottom = 5
+                    flowcontainer = {
+                        visible = "[And(ConstructionPanel.IsShowingGovernmentConstructions, GreaterThan_int32(ConstructionPanel.GetNumGovernmentConstructionQueuePages(GetMetaPlayer.GetPlayedOrObservedCountry), '(int32)1'))]"
+                        spacing = 20
+
+                        ### GORA UI+ - government queue: jump back 10 pages
+                        button_select_arrow = {
+                            size = { 25 25 }
+                            mirror = horizontal
+                            parentanchor = vcenter
+                            using = decrease_button_sound
+                            using = tooltip_above
+
+                            block "tooltip_left_arrow" {
+                                tooltip = "GO_PREV_10_PAGES"
+                            }
+
+                            block "onclick_prev"
+                            {
+                                onclick = "[ConstructionPanel.PrevGovernmentConstructionQueuePage(GetMetaPlayer.GetPlayedOrObservedCountry)]"
+                                onclick = "[ConstructionPanel.PrevGovernmentConstructionQueuePage(GetMetaPlayer.GetPlayedOrObservedCountry)]"
+                                onclick = "[ConstructionPanel.PrevGovernmentConstructionQueuePage(GetMetaPlayer.GetPlayedOrObservedCountry)]"
+                                onclick = "[ConstructionPanel.PrevGovernmentConstructionQueuePage(GetMetaPlayer.GetPlayedOrObservedCountry)]"
+                                onclick = "[ConstructionPanel.PrevGovernmentConstructionQueuePage(GetMetaPlayer.GetPlayedOrObservedCountry)]"
+                                onclick = "[ConstructionPanel.PrevGovernmentConstructionQueuePage(GetMetaPlayer.GetPlayedOrObservedCountry)]"
+                                onclick = "[ConstructionPanel.PrevGovernmentConstructionQueuePage(GetMetaPlayer.GetPlayedOrObservedCountry)]"
+                                onclick = "[ConstructionPanel.PrevGovernmentConstructionQueuePage(GetMetaPlayer.GetPlayedOrObservedCountry)]"
+                                onclick = "[ConstructionPanel.PrevGovernmentConstructionQueuePage(GetMetaPlayer.GetPlayedOrObservedCountry)]"
+                                onclick = "[ConstructionPanel.PrevGovernmentConstructionQueuePage(GetMetaPlayer.GetPlayedOrObservedCountry)]"
+                            }
+                        }
+                        ### /GORA UI+
+
+                        button_select_arrow = {
+                            size = { 25 25 }
+                            mirror = horizontal
+                            parentanchor = vcenter
+                            using = decrease_button_sound
+                            using = tooltip_above
+
+                            block "tooltip_left_arrow" {
+                                tooltip = "PREVIOUS_PAGE"
+                            }
+
+                            block "onclick_prev"
+                            {
+                                onclick = "[ConstructionPanel.PrevGovernmentConstructionQueuePage(GetMetaPlayer.GetPlayedOrObservedCountry)]"
+                            }
+                        }
+
+                        text_single = {
+                            text = "CONSTRUCTION_CURRENT_PAGE"
+                            parentanchor = vcenter
+                            align = nobaseline
+                        }
+
+                        button_select_arrow = {
+                            size = { 25 25 }
+                            parentanchor = vcenter
+                            using = increase_button_sound
+                            using = tooltip_above
+
+                            block "tooltip_right_arrow" {
+                                tooltip = "NEXT_PAGE"
+                            }
+
+                            block "onclick_next"
+                            {
+                                onclick = "[ConstructionPanel.NextGovernmentConstructionQueuePage(GetMetaPlayer.GetPlayedOrObservedCountry)]"
+                            }
+                        }
+
+                        ### GORA UI+ - government queue: jump forward 10 pages
+                        button_select_arrow = {
+                            size = { 25 25 }
+                            parentanchor = vcenter
+                            using = increase_button_sound
+                            using = tooltip_above
+
+                            block "tooltip_right_arrow" {
+                                tooltip = "GO_NEXT_10_PAGES"
+                            }
+
+                            block "onclick_next"
+                            {
+                                onclick = "[ConstructionPanel.NextGovernmentConstructionQueuePage(GetMetaPlayer.GetPlayedOrObservedCountry)]"
+                                onclick = "[ConstructionPanel.NextGovernmentConstructionQueuePage(GetMetaPlayer.GetPlayedOrObservedCountry)]"
+                                onclick = "[ConstructionPanel.NextGovernmentConstructionQueuePage(GetMetaPlayer.GetPlayedOrObservedCountry)]"
+                                onclick = "[ConstructionPanel.NextGovernmentConstructionQueuePage(GetMetaPlayer.GetPlayedOrObservedCountry)]"
+                                onclick = "[ConstructionPanel.NextGovernmentConstructionQueuePage(GetMetaPlayer.GetPlayedOrObservedCountry)]"
+                                onclick = "[ConstructionPanel.NextGovernmentConstructionQueuePage(GetMetaPlayer.GetPlayedOrObservedCountry)]"
+                                onclick = "[ConstructionPanel.NextGovernmentConstructionQueuePage(GetMetaPlayer.GetPlayedOrObservedCountry)]"
+                                onclick = "[ConstructionPanel.NextGovernmentConstructionQueuePage(GetMetaPlayer.GetPlayedOrObservedCountry)]"
+                                onclick = "[ConstructionPanel.NextGovernmentConstructionQueuePage(GetMetaPlayer.GetPlayedOrObservedCountry)]"
+                                onclick = "[ConstructionPanel.NextGovernmentConstructionQueuePage(GetMetaPlayer.GetPlayedOrObservedCountry)]"
+                            }
+                        }
+                        ### /GORA UI+
+                    }
+
+                    flowcontainer = {
+                        visible = "[And(ConstructionPanel.IsShowingPrivateConstructions,GreaterThan_int32(ConstructionPanel.GetNumPrivateConstructionQueuePages(GetMetaPlayer.GetPlayedOrObservedCountry), '(int32)1'))]"
+                        spacing = 20
+
+                        button_select_arrow = {
+                            size = { 25 25 }
+                            mirror = horizontal
+                            parentanchor = vcenter
+                            using = decrease_button_sound
+                            using = tooltip_above
+
+                            block "tooltip_left_arrow" {
+                                tooltip = "PREVIOUS_PAGE"
+                            }
+
+                            block "onclick_prev"
+                            {
+                                onclick = "[ConstructionPanel.PrevPrivateConstructionQueuePage(GetMetaPlayer.GetPlayedOrObservedCountry)]"
+                            }
+                        }
+
+                        text_single = {
+                            text = "CONSTRUCTION_CURRENT_PAGE_PRIVATE"
+                            parentanchor = vcenter
+                            align = nobaseline
+                        }
+
+                        button_select_arrow = {
+                            size = { 25 25 }
+                            parentanchor = vcenter
+                            using = increase_button_sound
+                            using = tooltip_above
+
+                            block "tooltip_right_arrow" {
+                                tooltip = "NEXT_PAGE"
+                            }
+
+                            block "onclick_next"
+                            {
+                                onclick = "[ConstructionPanel.NextPrivateConstructionQueuePage(GetMetaPlayer.GetPlayedOrObservedCountry)]"
+                            }
+                        }
+                    }
+                }
+            }
+
+            # SHIP QUEUE PAGE BUTTONS
+            vbox = {
+                name = "ship_construction_queue_pages"
+                layoutpolicy_horizontal = expanding
+                visible = "[InformationPanel.IsTabSelected('ships')]"
+
+                divider_clean = {
+                    visible = "[Or(And(ConstructionPanel.IsShowingMilitaryShipConstructions, GreaterThan_int32(ConstructionPanel.GetNumMilitaryShipConstructionQueuePages, '(int32)1')), And(ConstructionPanel.IsShowingSupplyShipConstructions, GreaterThan_int32(ConstructionPanel.GetNumSupplyShipConstructionQueuePages, '(int32)1')))]"
+                    size = { @panel_width_plus_14 2 }
+                }
+
+                flowcontainer = {
+                    margin_top = 10
+                    margin_bottom = 5
+
+                    # MILITARY SHIPS
+                    flowcontainer = {
+                        visible = "[And(ConstructionPanel.IsShowingMilitaryShipConstructions, GreaterThan_int32(ConstructionPanel.GetNumMilitaryShipConstructionQueuePages, '(int32)1'))]"
+                        spacing = 20
+
+                        ### GORA UI+ — 军舰向后跳 10 页
+                        button_select_arrow = {
+                            size = { 25 25 }
+                            mirror = horizontal
+                            parentanchor = vcenter
+                            using = decrease_button_sound
+                            using = tooltip_above
+
+                            block "tooltip_left_arrow" {
+                                tooltip = "GO_PREV_10_PAGES"
+                            }
+
+                            block "onclick_prev"
+                            {
+                                onclick = "[ConstructionPanel.PrevMilitaryShipConstructionQueuePage]"
+                                onclick = "[ConstructionPanel.PrevMilitaryShipConstructionQueuePage]"
+                                onclick = "[ConstructionPanel.PrevMilitaryShipConstructionQueuePage]"
+                                onclick = "[ConstructionPanel.PrevMilitaryShipConstructionQueuePage]"
+                                onclick = "[ConstructionPanel.PrevMilitaryShipConstructionQueuePage]"
+                                onclick = "[ConstructionPanel.PrevMilitaryShipConstructionQueuePage]"
+                                onclick = "[ConstructionPanel.PrevMilitaryShipConstructionQueuePage]"
+                                onclick = "[ConstructionPanel.PrevMilitaryShipConstructionQueuePage]"
+                                onclick = "[ConstructionPanel.PrevMilitaryShipConstructionQueuePage]"
+                                onclick = "[ConstructionPanel.PrevMilitaryShipConstructionQueuePage]"
+                            }
+                        }
+                        ### /GORA UI+
+
+                        button_select_arrow = {
+                            size = { 25 25 }
+                            mirror = horizontal
+                            parentanchor = vcenter
+                            using = decrease_button_sound
+                            using = tooltip_above
+                            tooltip = "PREVIOUS_PAGE"
+                            onclick = "[ConstructionPanel.PrevMilitaryShipConstructionQueuePage]"
+                        }
+
+                        text_single = {
+                            text = "CONSTRUCTION_CURRENT_PAGE_MILITARY_SHIP"
+                            parentanchor = vcenter
+                            align = nobaseline
+                        }
+
+                        button_select_arrow = {
+                            size = { 25 25 }
+                            parentanchor = vcenter
+                            using = increase_button_sound
+                            using = tooltip_above
+                            tooltip = "NEXT_PAGE"
+                            onclick = "[ConstructionPanel.NextMilitaryShipConstructionQueuePage]"
+                        }
+
+                        ### GORA UI+ — 军舰向前跳 10 页
+                        button_select_arrow = {
+                            size = { 25 25 }
+                            parentanchor = vcenter
+                            using = increase_button_sound
+                            using = tooltip_above
+
+                            block "tooltip_right_arrow" {
+                                tooltip = "GO_NEXT_10_PAGES"
+                            }
+
+                            block "onclick_next"
+                            {
+                                onclick = "[ConstructionPanel.NextMilitaryShipConstructionQueuePage]"
+                                onclick = "[ConstructionPanel.NextMilitaryShipConstructionQueuePage]"
+                                onclick = "[ConstructionPanel.NextMilitaryShipConstructionQueuePage]"
+                                onclick = "[ConstructionPanel.NextMilitaryShipConstructionQueuePage]"
+                                onclick = "[ConstructionPanel.NextMilitaryShipConstructionQueuePage]"
+                                onclick = "[ConstructionPanel.NextMilitaryShipConstructionQueuePage]"
+                                onclick = "[ConstructionPanel.NextMilitaryShipConstructionQueuePage]"
+                                onclick = "[ConstructionPanel.NextMilitaryShipConstructionQueuePage]"
+                                onclick = "[ConstructionPanel.NextMilitaryShipConstructionQueuePage]"
+                                onclick = "[ConstructionPanel.NextMilitaryShipConstructionQueuePage]"
+                            }
+                        }
+                        ### /GORA UI+
+                    }
+
+                    # SUPPLY SHIPS (保留原版样式，无跳 10 页功能)
+                    flowcontainer = {
+                        visible = "[And(ConstructionPanel.IsShowingSupplyShipConstructions, GreaterThan_int32(ConstructionPanel.GetNumSupplyShipConstructionQueuePages, '(int32)1'))]"
+                        spacing = 20
+
+                        button_select_arrow = {
+                            size = { 25 25 }
+                            mirror = horizontal
+                            parentanchor = vcenter
+                            using = decrease_button_sound
+                            using = tooltip_above
+                            tooltip = "PREVIOUS_PAGE"
+                            onclick = "[ConstructionPanel.PrevSupplyShipConstructionQueuePage]"
+                        }
+
+                        text_single = {
+                            text = "CONSTRUCTION_CURRENT_PAGE_SUPPLY_SHIP"
+                            parentanchor = vcenter
+                            align = nobaseline
+                        }
+
+                        button_select_arrow = {
+                            size = { 25 25 }
+                            parentanchor = vcenter
+                            using = increase_button_sound
+                            using = tooltip_above
+                            tooltip = "NEXT_PAGE"
+                            onclick = "[ConstructionPanel.NextSupplyShipConstructionQueuePage]"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

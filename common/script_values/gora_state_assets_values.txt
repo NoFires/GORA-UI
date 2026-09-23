@@ -1,0 +1,77 @@
+﻿# GORA UI+ — State Assets: script values
+#
+# Reused by both domestic gov counting (Assets tab) and national asset counting
+# (Capital tab). country_ownership_fraction scopes to ROOT, so these work for
+# both domestic and foreign buildings.
+#
+# Construction cost tiers (mirrors vanilla building_values.txt, 1.13.4):
+#   very_low  (100): trade centers
+#   low       (200): agriculture, ranching, plantations, logging, rubber, fishing, whaling
+#   medium    (400): mines, oil rigs, ports, arts academies, power plants
+#   high      (600): light industry
+#   very_high (800): heavy industry, military industry, railways
+
+# Building-scope: returns nationally-owned levels for this building.
+# level * country_ownership_fraction, rounded to nearest integer.
+gora_sa_gov_owned_levels_value = {
+	value = level
+	multiply = country_ownership_fraction
+	round = yes
+}
+
+# Building-scope: returns privatization cost of government-owned levels.
+# Formula: cost_tier * PRIVATIZATION_PER_LEVEL_COST(250) * gov_levels
+# gov_levels comes from gora_sa_gov_owned_levels_value (already rounded), so
+# the result is always a clean multiple of the cost tier.
+gora_sa_gov_owned_value_per_building = {
+	value = 0
+
+	# Cost tier
+	if = {
+		limit = { is_building_group = bg_trade }
+		add = 100
+	}
+	else_if = {
+		limit = {
+			OR = {
+				is_building_group = bg_agriculture
+				is_building_group = bg_ranching
+				is_building_group = bg_plantations
+				is_building_group = bg_logging
+				is_building_group = bg_rubber
+				is_building_group = bg_fishing
+				is_building_group = bg_whaling
+			}
+		}
+		add = 200
+	}
+	# Railway must be matched before bg_private_infrastructure medium tier.
+	else_if = {
+		limit = { is_building_type = building_railway }
+		add = 800
+	}
+	else_if = {
+		limit = {
+			OR = {
+				is_building_group = bg_mining
+				is_building_group = bg_oil_extraction
+				is_building_group = bg_power
+				is_building_group = bg_arts
+				is_building_type = building_port
+			}
+		}
+		add = 400
+	}
+	else_if = {
+		limit = { is_building_group = bg_light_industry }
+		add = 600
+	}
+	else = {
+		# heavy/military industry and any unmatched group
+		add = 800
+	}
+
+	# Apply privatization cost: tier * 250 * gov_levels
+	multiply = 250
+	multiply = gora_sa_gov_owned_levels_value
+}

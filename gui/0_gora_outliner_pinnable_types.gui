@@ -1,0 +1,325 @@
+﻿# Gora Mod — outliner_markets (partial type override)
+# ─────────────────────────────────────────────────────────────────────────────
+# Vanilla 1.13.9 baseline: gui/outliner_pinnable_types.gui.
+# The divergences from vanilla are intentional: the pinned market row is taller
+# (120px) and richer - four goods with price labels and a market tooltip.
+# type outliner_markets & market_item (inside types pinnable_outliner_items).
+#
+# Gora delta:
+# 1. outliner_markets: addrow and entry_size heightened from 60 to 120.
+# 2. market_item: completely overhauled layout. Displays 4 goods instead of 3
+#    for both highest and lowest balances. Changes goods display from simple
+#    icons to detailed buttons (75x23) showing balance numbers and price icons.
+#    Adds a divider_gold. Re-formats shortage display to match the new buttons.
+#
+# Re-sync recipe: diff vanilla type outliner_markets and market_item, replace this
+# file's type body with new vanilla, re-insert Gora layout overhauls (height increases,
+# vertical stacking flowcontainers, custom goods datamodels, and custom goods buttons).
+# Ensure tiny_flag_no_interact updates from vanilla are kept.
+# ─────────────────────────────────────────────────────────────────────────────
+
+@entry_width = 350
+@entry_height = 30
+
+types gora_pinnable_outliner_items {
+
+	type outliner_markets = pinnable_outliner_group {
+		datacontext = "[Outliner.AccessCategory('markets')]"
+
+		blockoverride "entry_size" {
+			size = { @entry_width @entry_height }
+		}
+
+		blockoverride "fixedgridbox_cell_size" {
+			addcolumn = @entry_width
+			addrow = 120
+		}
+
+		blockoverride "item" {
+			blockoverride "entry_size" {
+				size = { @entry_width 120 }
+			}
+
+			market_item = {}
+		}
+	}
+
+	type market_item = pinnable_outliner_entry {
+		datacontext = "[OutlinerEntry.AccessScope.AccessMarket]"
+
+		tooltipwidget = {
+			FancyTooltip_Market = {}
+		}
+
+		blockoverride "widget" {
+			flowcontainer = {
+				position = { 5 0 }
+				direction = vertical
+				parentanchor = vcenter
+				spacing = 4
+				
+				flowcontainer = {
+					direction = vertical
+				
+					flowcontainer = {
+						direction = horizontal
+
+						flowcontainer = {
+							parentanchor = vcenter
+							margin_right = 7
+							margin_left = 3
+
+							tiny_flag_no_interact = {
+								parentanchor = vcenter
+								datacontext = "[Market.GetOwner]"
+
+								blockoverride "tooltip" {}
+								blockoverride "is_player_glow" {
+									visible = no
+								}
+							}
+						}
+
+						textbox = {
+							text = "[Market.GetNameNoFormatting]"
+							
+							tooltipwidget = {
+								FancyTooltip_Market = {}
+							}
+
+							align = left|nobaseline
+							autoresize = yes
+							elide = right
+							parentanchor = vcenter
+							fontsize_min = 14
+
+							minimumsize = { 135 -1 }
+							maximumsize = { 135 -1 }
+							block "expand_buttons_margin" {}
+						}
+					}
+					
+					flowcontainer = {
+
+						# ─────────────────────────────────────────────────────────────────
+						# 需求最高 / 价格最高区 (Lowest Balance)
+						# ─────────────────────────────────────────────────────────────────
+						flowcontainer = {
+							spacing = 11
+							maximumsize = { @entry_width -1 }
+							datamodel = "[Market.GetTopGoodsByLowestBalance('(int32)4')]"
+
+							item = {
+								button = {
+									size = { 70 23 }
+									visible = "[Not(Goods.IsLocal)]"
+
+									flowcontainer = {
+										spacing = 4
+										parentanchor = vcenter
+
+										icon = {
+											size = { 23 23 }
+											texture = "[Goods.GetTexture]"
+										}
+
+										textbox = {
+											text = "MARKET_PANEL_GOODS_PRICE_GOLD"
+											visible = "[GreaterThanOrEqualTo_CFixedPoint(Goods.GetPercentageDeltaAgainstBasePrice(Goods.GetMarketPrice), '(CFixedPoint)0.01')]"
+											
+											autoresize = yes
+											parentanchor = vcenter
+											align = nobaseline
+										}
+
+										textbox = {
+											text = "MARKET_PANEL_GOODS_PRICE"
+											visible = "[And( Not(LessThanOrEqualTo_CFixedPoint(Goods.GetPercentageDeltaAgainstBasePrice(Goods.GetMarketPrice), '(CFixedPoint)-0.01')), Not(GreaterThanOrEqualTo_CFixedPoint(Goods.GetPercentageDeltaAgainstBasePrice(Goods.GetMarketPrice), '(CFixedPoint)0.01')))]"
+											
+											autoresize = yes
+											parentanchor = vcenter
+											align = nobaseline
+										}
+
+										textbox = {
+											text = "MARKET_PANEL_GOODS_PRICE_BLUE"
+											visible = "[LessThanOrEqualTo_CFixedPoint(Goods.GetPercentageDeltaAgainstBasePrice(Goods.GetMarketPrice), '(CFixedPoint)-0.01')]"
+											
+											autoresize = yes
+											parentanchor = vcenter
+											align = nobaseline
+										}
+									}
+
+									onclick = "[InformationPanelBar.OpenGoodsPanel( Market.Self, Goods.Self )]"
+									onrightclick = "[RightClickMenuManager.ShowForGoods( Goods.AccessSelf )]"
+									tooltipwidget = {
+										FancyTooltip_Goods = {}
+									}
+								}
+							}
+						}
+					}
+						
+					flowcontainer = {
+						# ─────────────────────────────────────────────────────────────────
+						# 供给最高 / 价格最低区 (Highest Balance)
+						# ─────────────────────────────────────────────────────────────────
+						spacing = 11
+						maximumsize = { @entry_width -1 }
+						datamodel = "[Market.GetTopGoodsByHighestBalance('(int32)4')]"
+
+						item = {
+							button = {
+								visible = "[Not(Goods.IsLocal)]"
+								size = { 70 23 }
+
+								flowcontainer = {
+									spacing = 4
+									parentanchor = vcenter
+
+									icon = {
+										size = { 23 23 }
+										texture = "[Goods.GetTexture]"
+									}
+
+									textbox = {
+											text = "MARKET_PANEL_GOODS_PRICE_GOLD"
+											visible = "[GreaterThanOrEqualTo_CFixedPoint(Goods.GetPercentageDeltaAgainstBasePrice(Goods.GetMarketPrice), '(CFixedPoint)0.01')]"
+											
+											autoresize = yes
+											parentanchor = vcenter
+											align = nobaseline
+									}
+
+									textbox = {
+										text = "MARKET_PANEL_GOODS_PRICE"
+										visible = "[And( Not(LessThanOrEqualTo_CFixedPoint(Goods.GetPercentageDeltaAgainstBasePrice(Goods.GetMarketPrice), '(CFixedPoint)-0.01')), Not(GreaterThanOrEqualTo_CFixedPoint(Goods.GetPercentageDeltaAgainstBasePrice(Goods.GetMarketPrice), '(CFixedPoint)0.01')))]"
+										
+										autoresize = yes
+										parentanchor = vcenter
+										align = nobaseline
+									}
+
+									textbox = {
+										text = "MARKET_PANEL_GOODS_PRICE_BLUE"
+										visible = "[LessThanOrEqualTo_CFixedPoint(Goods.GetPercentageDeltaAgainstBasePrice(Goods.GetMarketPrice), '(CFixedPoint)-0.01')]"
+										
+										autoresize = yes
+										parentanchor = vcenter
+										align = nobaseline
+									}
+								}
+								onclick = "[InformationPanelBar.OpenGoodsPanel( Market.Self, Goods.Self )]"
+								onrightclick = "[RightClickMenuManager.ShowForGoods( Goods.AccessSelf )]"
+								tooltipwidget = {
+									FancyTooltip_Goods = {}
+								}
+							}
+						}
+					}
+				}
+				
+				divider_gold = {
+					size = { @entry_width 1 }
+				}
+
+				flowcontainer = {
+					# ─────────────────────────────────────────────────────────────────
+					# 真正严重短缺区 (Shortages)
+					# ─────────────────────────────────────────────────────────────────
+					spacing = 5
+					margin_left = 3
+
+					icon = {
+						size = { 25 25 }
+						texture = "gfx/interface/icons/generic_icons/goods_shortage.dds"
+						parentanchor = bottom
+						alpha = "[TransparentIfFalse(Market.HasAnyGoodsShortage)]"
+					}
+
+					flowcontainer = {
+						datamodel = "[Market.GetGoodsWithShortage]"
+						righttoleft = yes
+						spacing = 10
+						visible = "[Market.HasAnyGoodsShortage]"
+						margin_left = 5
+						parentanchor = vcenter
+
+						item = {
+							button = {
+								visible = "[Goods.HasGoodsShortage]"
+								size = { 70 23 }
+
+								flowcontainer = {
+									spacing = 4
+									parentanchor = vcenter
+
+									icon = {
+										size = { 23 23 }
+										texture = "[Goods.GetTexture]"
+									}
+
+									textbox = {
+											text = "MARKET_PANEL_GOODS_PRICE_GOLD"
+											visible = "[GreaterThanOrEqualTo_CFixedPoint(Goods.GetPercentageDeltaAgainstBasePrice(Goods.GetMarketPrice), '(CFixedPoint)0.01')]"
+											
+											autoresize = yes
+											parentanchor = vcenter
+											align = nobaseline
+									}
+
+									textbox = {
+										text = "MARKET_PANEL_GOODS_PRICE"
+										visible = "[And( Not(LessThanOrEqualTo_CFixedPoint(Goods.GetPercentageDeltaAgainstBasePrice(Goods.GetMarketPrice), '(CFixedPoint)-0.01')), Not(GreaterThanOrEqualTo_CFixedPoint(Goods.GetPercentageDeltaAgainstBasePrice(Goods.GetMarketPrice), '(CFixedPoint)0.01')))]"
+										
+										autoresize = yes
+										parentanchor = vcenter
+										align = nobaseline
+									}
+
+									textbox = {
+										text = "MARKET_PANEL_GOODS_PRICE_BLUE"
+										visible = "[LessThanOrEqualTo_CFixedPoint(Goods.GetPercentageDeltaAgainstBasePrice(Goods.GetMarketPrice), '(CFixedPoint)-0.01')]"
+										
+										autoresize = yes
+										parentanchor = vcenter
+										align = nobaseline
+									}
+								}
+								onclick = "[InformationPanelBar.OpenGoodsPanel( Market.Self, Goods.Self )]"
+								onrightclick = "[RightClickMenuManager.ShowForGoods( Goods.AccessSelf )]"
+								tooltipwidget = {
+									FancyTooltip_Goods = {}
+								}
+							}
+						}
+					}
+
+					textbox = {
+						visible = "[Not(Market.HasAnyGoodsShortage)]"
+						autoresize = yes
+						text = "NO_MARKET_SHORTAGES"
+						align = nobaseline
+						margin_left = 5
+						alpha = "[TransparentIfFalse('(bool)no')]"
+						parentanchor = vcenter
+					}
+				}
+			}
+		}
+
+		blockoverride  "onrightclick" {
+			onrightclick = "[RightClickMenuManager.ShowForMarket(Market.AccessSelf)]"
+		}
+
+		blockoverride "onclick" {
+			onclick = "[InformationPanelBar.OpenMarketPanel(Market.Self)]"
+		}
+
+		blockoverride "onhover" {
+			onmousehierarchyenter = "[AccessHighlightManager.HighlightMarket(Market.Self)]"
+			onmousehierarchyleave = "[AccessHighlightManager.RemoveHighlight]"
+		}
+	}
+}

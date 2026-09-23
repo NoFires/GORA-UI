@@ -1,0 +1,2 @@
+﻿l_english:
+ ADD_CONSUMPTION_TAX_ENTRY_COST:0 "@consumption_tax!#U #b [Multiply_CFixedPoint(Divide_CFixedPoint(Goods.CalcPotentialConsumptionTaxAmount(GetPlayer), Goods.CalcConsumptionTaxAuthorityCost(GetPlayer)),'(CFixedPoint)100')|=D]#!#!   |  @money!#v [Goods.CalcPotentialConsumptionTaxAmount(GetPlayer)|+=D]#! ( @aut! [Multiply_CFixedPoint(Goods.CalcConsumptionTaxAuthorityCost(GetPlayer),'(CFixedPoint)-1')|0+])"

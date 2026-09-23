@@ -1,0 +1,28 @@
+﻿l_turkish:
+ # GORA UI — Bulk tariff button labels & cooldown tooltips.
+ # Original mod credit: "Set All Tariffs" (workshop 3720145399).
+
+ gora_tariffs_all_imports:0 "Tüm İthalat"
+ gora_tariffs_all_exports:0 "Tüm İhracat"
+
+ gora_tariffs_individual_cooldown_note:0 "\n\n@information! Gümrük vergisi yakın zamanda değiştirilen mallar bireysel bekleme süresindedir ve atlanır — bekleme süreleri dolduğunda elle değiştirilmeleri gerekir."
+
+ gora_tariffs_import_max_tariffs_tt:0      "Tüm malların ithalat ayarını azami gümrük vergisine getirir.$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_import_high_tariffs_tt:0     "Tüm malların ithalat ayarını yüksek gümrük vergisine getirir.$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_import_low_tariffs_tt:0      "Tüm malların ithalat ayarını düşük gümrük vergisine getirir.$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_import_none_tt:0             "Tüm malların ithalat ayarını gümrük vergisi ve sübvansiyon olmayacak şekilde düzenler.$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_import_low_subventions_tt:0  "Tüm malların ithalat ayarını düşük sübvansiyona getirir.$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_import_high_subventions_tt:0 "Tüm malların ithalat ayarını yüksek sübvansiyona getirir.$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_import_max_subventions_tt:0  "Tüm malların ithalat ayarını azami sübvansiyona getirir.$gora_tariffs_individual_cooldown_note$"
+
+ gora_tariffs_export_max_tariffs_tt:0      "Tüm malların ihracat ayarını azami gümrük vergisine getirir.$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_export_high_tariffs_tt:0     "Tüm malların ihracat ayarını yüksek gümrük vergisine getirir.$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_export_low_tariffs_tt:0      "Tüm malların ihracat ayarını düşük gümrük vergisine getirir.$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_export_none_tt:0             "Tüm malların ihracat ayarını gümrük vergisi ve sübvansiyon olmayacak şekilde düzenler.$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_export_low_subventions_tt:0  "Tüm malların ihracat ayarını düşük sübvansiyona getirir.$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_export_high_subventions_tt:0 "Tüm malların ihracat ayarını yüksek sübvansiyona getirir.$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_export_max_subventions_tt:0  "Tüm malların ihracat ayarını azami sübvansiyona getirir.$gora_tariffs_individual_cooldown_note$"
+
+ gora_tariffs_import_cooldown_tt:0 "Toplu ithalat gümrük vergileri şu tarihe kadar tekrar değiştirilemez: #v [TimeKeeper.GetCurrentDateWithDiff( GetVarTimeRemaining( GetPlayer.MakeScope, 'gora_tariffs_import_cooldown') )]#!"
+ gora_tariffs_export_cooldown_tt:0 "Toplu ihracat gümrük vergileri şu tarihe kadar tekrar değiştirilemez: #v [TimeKeeper.GetCurrentDateWithDiff( GetVarTimeRemaining( GetPlayer.MakeScope, 'gora_tariffs_export_cooldown') )]#!"
+

@@ -1,0 +1,49 @@
+﻿# GORA UI+ — Less Clicks: button-handler scripted GUIs
+#
+# Each `execute*` SGUI fires the matching event from gora_build_*_events.txt
+# (see Faz 4K). The `check_if_*` SGUIs gate buttons on tech availability so
+# the GUI can disable them grayed-out with a tooltip explanation.
+#
+# Identifier names preserved from legacy GORA (`executelessclicks*`,
+# `executebuildpowerplants`, `check_if_has_researched_*`) because
+# gui/zz_gora_construction_queue.gui references them directly. Treat these
+# names as reserved by GORA UI+ Less Clicks.
+
+# ─── Tech gates ───────────────────────────────────────────────────────────
+check_if_has_researched_railways = {
+	scope = country
+	is_valid = { has_technology_researched = railways }
+}
+
+check_if_has_researched_electrical_generation = {
+	scope = country
+	is_valid = { has_technology_researched = electrical_generation }
+}
+
+# ─── Action handlers — railways ───────────────────────────────────────────
+executelessclicksrailways = {
+	scope = country
+	effect = { trigger_event = { id = gora_build_railways_events.1 } }
+}
+
+executelessclicktransportation = {
+	scope = country
+	effect = { trigger_event = { id = gora_build_railways_events.2 } }
+}
+
+# ─── Action handlers — government administrations ─────────────────────────
+executelessclicksgovadmin = {
+	scope = country
+	effect = { trigger_event = { id = gora_build_administrations_events.1 } }
+}
+
+executelessclicksreducegovadmin = {
+	scope = country
+	effect = { trigger_event = { id = gora_build_administrations_events.2 } }
+}
+
+# ─── Action handlers — power plants ───────────────────────────────────────
+executebuildpowerplants = {
+	scope = country
+	effect = { trigger_event = { id = gora_build_powerplants_events.1 } }
+}

@@ -1,0 +1,320 @@
+﻿# GORA UI+ — Advanced GDP Tracker: scripted effects
+#
+# Tracks 12 monthly GDP snapshots per country and derives:
+#   - GDPGR_past_month_diff / _rate          — change between two latest months
+#   - GDPGR_past_year_avg_diff / _rate       — average across the rolling year
+#   - GDPGR_rolling_difference / _rate       — current GDP minus same-month-last-year
+#   - gdp_growth_rate                        — annual diff (Jan-to-Jan, classic)
+#   - GDPGR_annl_growth_leaderboard_pos      — leaderboard rank among major powers
+
+# ─── Initialization ───────────────────────────────────────────────────────
+GDPGR_initialize_all = {
+	set_global_variable = { name = GDPGR_year value = year }
+	every_country = {
+		limit = { NOT = { is_country_type = decentralized } }
+		# Preserve the legacy game-start placeholder rank for genuinely new
+		# records, but never overwrite an existing save's rank or snapshots.
+		GDPGR_initialize_country_if_needed = { INITIAL_RANK = 1 }
+	}
+}
+
+GDPGR_initialize_country = {
+	if = {
+		limit = { NOT = { is_country_type = decentralized } }
+		# Later-created countries begin unranked until the next quarterly pass.
+		GDPGR_initialize_country_if_needed = { INITIAL_RANK = 0 }
+	}
+}
+
+# Idempotent initializer and save migration. Legacy saves already contain the
+# month_0 slot but predate GDPGR_initialized; adopt those records in place.
+GDPGR_initialize_country_if_needed = {
+	if = {
+		limit = { NOT = { has_variable = GDPGR_initialized } }
+		if = {
+			limit = { has_variable = GDPGR_gdp_month_0 }
+			set_variable = { name = GDPGR_initialized value = 1 }
+		}
+		else = {
+			GDPGR_initialize_monthly_records = yes
+			set_variable = { name = GDPGR_rolling_difference         value = 0 }
+			set_variable = { name = GDPGR_rolling_gdp_growth_rate    value = 0 }
+			set_variable = { name = GDPGR_past_year_avg_diff         value = 0 }
+			set_variable = { name = GDPGR_past_year_avg_rate         value = 0 }
+			set_variable = { name = GDPGR_past_month_diff            value = 0 }
+			set_variable = { name = GDPGR_past_month_rate            value = 0 }
+			set_variable = { name = gdp_growth_rate                   value = 0 }
+			set_variable = { name = GDPGR_annl_growth_leaderboard_pos value = $INITIAL_RANK$ }
+			set_variable = { name = before_gdp                       value = gdp }
+			set_variable = { name = current_gdp                      value = gdp }
+			set_variable = { name = GDPGR_initialized                 value = 1 }
+		}
+	}
+}
+
+# ─── Monthly snapshot table ───────────────────────────────────────────────
+# Variable lists don't allow duplicate values and there's no array type, so
+# we keep 12 individually-named slots: GDPGR_gdp_month_0 … GDPGR_gdp_month_11.
+GDPGR_initialize_monthly_records = {
+	GDPGR_set_month_gdp_record = { MONTH = 0 }
+	GDPGR_set_month_gdp_record = { MONTH = 1 }
+	GDPGR_set_month_gdp_record = { MONTH = 2 }
+	GDPGR_set_month_gdp_record = { MONTH = 3 }
+	GDPGR_set_month_gdp_record = { MONTH = 4 }
+	GDPGR_set_month_gdp_record = { MONTH = 5 }
+	GDPGR_set_month_gdp_record = { MONTH = 6 }
+	GDPGR_set_month_gdp_record = { MONTH = 7 }
+	GDPGR_set_month_gdp_record = { MONTH = 8 }
+	GDPGR_set_month_gdp_record = { MONTH = 9 }
+	GDPGR_set_month_gdp_record = { MONTH = 10 }
+	GDPGR_set_month_gdp_record = { MONTH = 11 }
+}
+
+GDPGR_set_month_gdp_record = {
+	set_variable = { name = GDPGR_gdp_month_$MONTH$ value = gdp }
+}
+
+# ─── Monthly update routines ───────────────────────────────────────────────
+# CUR  = this calendar month's slot (still contains same-month-last-year GDP)
+# PREV = previous calendar month's slot
+# NEXT = next calendar month's slot (the oldest record after CUR is replaced)
+#
+# The null-scope dispatcher selects these names once. Countries therefore run
+# one fixed update rather than seven independent 12-way month lookups.
+GDPGR_update_all_countries_for_current_month = {
+	if = {
+		limit = { month = 0 }
+		GDPGR_update_all_countries_for_month = { CUR = 0 PREV = 11 NEXT = 1 }
+	}
+	else_if = {
+		limit = { month = 1 }
+		GDPGR_update_all_countries_for_month = { CUR = 1 PREV = 0 NEXT = 2 }
+	}
+	else_if = {
+		limit = { month = 2 }
+		GDPGR_update_all_countries_for_month = { CUR = 2 PREV = 1 NEXT = 3 }
+	}
+	else_if = {
+		limit = { month = 3 }
+		GDPGR_update_all_countries_for_month = { CUR = 3 PREV = 2 NEXT = 4 }
+	}
+	else_if = {
+		limit = { month = 4 }
+		GDPGR_update_all_countries_for_month = { CUR = 4 PREV = 3 NEXT = 5 }
+	}
+	else_if = {
+		limit = { month = 5 }
+		GDPGR_update_all_countries_for_month = { CUR = 5 PREV = 4 NEXT = 6 }
+	}
+	else_if = {
+		limit = { month = 6 }
+		GDPGR_update_all_countries_for_month = { CUR = 6 PREV = 5 NEXT = 7 }
+	}
+	else_if = {
+		limit = { month = 7 }
+		GDPGR_update_all_countries_for_month = { CUR = 7 PREV = 6 NEXT = 8 }
+	}
+	else_if = {
+		limit = { month = 8 }
+		GDPGR_update_all_countries_for_month = { CUR = 8 PREV = 7 NEXT = 9 }
+	}
+	else_if = {
+		limit = { month = 9 }
+		GDPGR_update_all_countries_for_month = { CUR = 9 PREV = 8 NEXT = 10 }
+	}
+	else_if = {
+		limit = { month = 10 }
+		GDPGR_update_all_countries_for_month = { CUR = 10 PREV = 9 NEXT = 11 }
+	}
+	else = {
+		GDPGR_update_all_countries_for_month = { CUR = 11 PREV = 10 NEXT = 0 }
+	}
+}
+
+GDPGR_update_all_countries_for_month = {
+	every_country = {
+		limit = { NOT = { is_country_type = decentralized } }
+		# Covers edge-case country births and adopts pre-sentinel legacy saves
+		# without overwriting their existing monthly records.
+		GDPGR_initialize_country_if_needed = { INITIAL_RANK = 0 }
+		GDPGR_update_country_for_month = { CUR = $CUR$ PREV = $PREV$ NEXT = $NEXT$ }
+	}
+}
+
+# Single-country dispatcher retained for the public gora_agdp.3 wrapper.
+# It is not used by the monthly all-country path.
+GDPGR_update_country_for_current_month = {
+	# Public compatibility path intentionally accepts any country scope, just as
+	# gora_agdp.3 did before the internal pulse gained a decentralized filter.
+	GDPGR_initialize_country_if_needed = { INITIAL_RANK = 0 }
+	if = {
+		limit = { month = 0 }
+		GDPGR_update_country_for_month = { CUR = 0 PREV = 11 NEXT = 1 }
+	}
+	else_if = {
+		limit = { month = 1 }
+		GDPGR_update_country_for_month = { CUR = 1 PREV = 0 NEXT = 2 }
+	}
+	else_if = {
+		limit = { month = 2 }
+		GDPGR_update_country_for_month = { CUR = 2 PREV = 1 NEXT = 3 }
+	}
+	else_if = {
+		limit = { month = 3 }
+		GDPGR_update_country_for_month = { CUR = 3 PREV = 2 NEXT = 4 }
+	}
+	else_if = {
+		limit = { month = 4 }
+		GDPGR_update_country_for_month = { CUR = 4 PREV = 3 NEXT = 5 }
+	}
+	else_if = {
+		limit = { month = 5 }
+		GDPGR_update_country_for_month = { CUR = 5 PREV = 4 NEXT = 6 }
+	}
+	else_if = {
+		limit = { month = 6 }
+		GDPGR_update_country_for_month = { CUR = 6 PREV = 5 NEXT = 7 }
+	}
+	else_if = {
+		limit = { month = 7 }
+		GDPGR_update_country_for_month = { CUR = 7 PREV = 6 NEXT = 8 }
+	}
+	else_if = {
+		limit = { month = 8 }
+		GDPGR_update_country_for_month = { CUR = 8 PREV = 7 NEXT = 9 }
+	}
+	else_if = {
+		limit = { month = 9 }
+		GDPGR_update_country_for_month = { CUR = 9 PREV = 8 NEXT = 10 }
+	}
+	else_if = {
+		limit = { month = 10 }
+		GDPGR_update_country_for_month = { CUR = 10 PREV = 9 NEXT = 11 }
+	}
+	else = {
+		GDPGR_update_country_for_month = { CUR = 11 PREV = 10 NEXT = 0 }
+	}
+}
+
+GDPGR_update_country_for_month = {
+	# Cache the four values once. GDP and country-variable accessors otherwise
+	# repeat across every derivative below for every tracked country.
+	set_local_variable = { name = GDPGR_tmp_current  value = gdp }
+	set_local_variable = { name = GDPGR_tmp_old_cur  value = var:GDPGR_gdp_month_$CUR$ }
+	set_local_variable = { name = GDPGR_tmp_previous value = var:GDPGR_gdp_month_$PREV$ }
+	set_local_variable = { name = GDPGR_tmp_oldest   value = var:GDPGR_gdp_month_$NEXT$ }
+
+	# Preserve legacy order: compare against CUR before overwriting it.
+	set_variable = {
+		name = GDPGR_rolling_difference
+		value = {
+			add      = local_var:GDPGR_tmp_current
+			subtract = local_var:GDPGR_tmp_old_cur
+		}
+	}
+	set_variable = {
+		name = GDPGR_rolling_gdp_growth_rate
+		value = {
+			add    = var:GDPGR_rolling_difference
+			divide = { value = local_var:GDPGR_tmp_current min = 1 }
+		}
+	}
+
+	set_variable = {
+		name = GDPGR_past_month_diff
+		value = {
+			add      = local_var:GDPGR_tmp_current
+			subtract = local_var:GDPGR_tmp_previous
+		}
+	}
+	set_variable = {
+		name = GDPGR_past_month_rate
+		value = {
+			add      = local_var:GDPGR_tmp_current
+			subtract = local_var:GDPGR_tmp_previous
+			divide   = { value = local_var:GDPGR_tmp_previous min = 1 }
+		}
+	}
+
+	set_variable = {
+		name = GDPGR_past_year_avg_diff
+		value = {
+			value    = local_var:GDPGR_tmp_current
+			subtract = local_var:GDPGR_tmp_oldest
+			divide   = 12
+		}
+	}
+	set_variable = {
+		name = GDPGR_past_year_avg_rate
+		value = {
+			value    = local_var:GDPGR_tmp_current
+			subtract = local_var:GDPGR_tmp_oldest
+			divide   = { value = local_var:GDPGR_tmp_oldest min = 1 }
+			divide   = 12
+		}
+	}
+
+	# Commit the current slot last, after every derived value has read the
+	# previous rolling table. This also keeps compatibility wrappers atomic.
+	set_variable = { name = GDPGR_gdp_month_$CUR$ value = local_var:GDPGR_tmp_current }
+}
+
+# Direct annual updater used by the yearly on_action and the public .1 event.
+GDPGR_update_annual_growth = {
+	if = {
+		limit = { has_variable = current_gdp }
+		set_variable = { name = before_gdp value = var:current_gdp }
+	}
+	else = {
+		set_variable = { name = before_gdp value = gdp }
+	}
+	set_variable = { name = current_gdp value = gdp }
+	set_variable = {
+		name = gdp_growth_rate
+		value = {
+			add      = gdp
+			subtract = var:before_gdp
+			divide   = { value = var:before_gdp min = 1 }
+		}
+	}
+}
+
+# ─── Annual-growth leaderboard ────────────────────────────────────────────
+# Null scope. Ranks countries by past-year average growth rate, filtering
+# out decentralized tribes, insignificant powers, unrecognized minors,
+# revolutionaries and secessionists (so the rank numbers stay meaningful).
+GDPGR_calculate_annl_growth_leaderboard = {
+	set_local_variable = { name = counter value = 1 }
+	ordered_country = {
+		limit = {
+			has_variable = GDPGR_past_year_avg_rate
+			NOT = { is_country_type = decentralized }
+			NOT = { country_rank   = rank_value:insignificant_power }
+			NOT = { country_rank   = rank_value:unrecognized_power }
+		}
+		order_by = { add = var:GDPGR_past_year_avg_rate }
+		min = 0  # Required, otherwise the iterator silently skips countries.
+		if = {
+			limit = {
+				is_revolutionary = no
+				is_secessionist  = no
+				NOT = {
+					any_enemy_in_diplo_play = {
+						civil_war_origin_country ?= PREV
+					}
+				}
+			}
+			set_variable = {
+				name  = GDPGR_annl_growth_leaderboard_pos
+				value = local_var:counter
+			}
+			set_local_variable = {
+				name  = counter
+				value = { value = local_var:counter add = 1 }
+			}
+		}
+		else = {
+			set_variable = { name = GDPGR_annl_growth_leaderboard_pos value = 0 }
+		}
+	}
+}

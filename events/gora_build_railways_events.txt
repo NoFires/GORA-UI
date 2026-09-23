@@ -1,0 +1,328 @@
+﻿namespace = gora_build_railways_events
+
+# ════════════════════════════════════════════════════════════════════════════
+# GORA UI+ — One-click railway builder
+# ════════════════════════════════════════════════════════════════════════════
+# .1 — Closes infrastructure deficits.
+# .2 — Closes transportation goods deficits.
+# Per-state and per-country caps live in script_values/gora_less_clicks_values.txt.
+# Both events use the same caps (gora_lc_country_railway_cap, gora_lc_state_railway_cap).
+# ════════════════════════════════════════════════════════════════════════════
+
+# ───────────────────────────────────────────────────────────────────────────
+# .1  Build railways to close infrastructure deficits
+# ───────────────────────────────────────────────────────────────────────────
+gora_build_railways_events.1 = {
+	type = country_event
+	hidden = yes
+	trigger = { always = yes }
+
+	immediate = {
+		set_variable = { name = total_queued value = 0 }
+		# Country-constant infrastructure output.  Computing this once avoids
+		# repeating the same technology chain for every incorporated state.
+		set_variable = {
+			name = infra_per_level
+			value = {
+				value = 20
+				if = {
+					limit = { has_technology_researched = compression_ignition }
+					add = 20
+				}
+				else_if = {
+					limit = { has_technology_researched = electric_railway }
+					add = 10
+				}
+				else_if = {
+					limit = { has_technology_researched = steel_railway_cars }
+					add = 5
+				}
+			}
+		}
+
+		every_scope_state = {
+			# Once the country cap is full, remaining states only pay this cheap
+			# limit check and never scan their buildings.
+			limit = {
+				is_incorporated = yes
+				root.var:total_queued < gora_lc_country_railway_cap
+				state_infrastructure_balance < 0
+				sg:engines = { state_goods_has_local_goods_shortage = no }
+			}
+
+			# One railway collection pass replaces three any_scope_building scans.
+			set_variable = { name = gora_lc_has_railway value = 0 }
+			set_variable = { name = gora_lc_railway_occupied value = 0 }
+			set_variable = { name = gora_lc_railway_queued value = 0 }
+			every_scope_building = {
+				limit = { is_building_type = building_railway }
+				prev = { set_variable = { name = gora_lc_has_railway value = 1 } }
+				if = {
+					limit = { occupancy > 0.80 }
+					prev = { set_variable = { name = gora_lc_railway_occupied value = 1 } }
+				}
+				if = {
+					limit = { is_under_construction = yes }
+					prev = { set_variable = { name = gora_lc_railway_queued value = 1 } }
+				}
+			}
+
+			if = {
+				limit = {
+					# Infrastructure deficit
+					state_infrastructure_balance < 0
+
+					# Engines available — don't queue if a shortage would block construction
+					sg:engines = { state_goods_has_local_goods_shortage = no }
+
+					# Existing railways are at high occupancy, OR there are none yet
+					OR = {
+						var:gora_lc_railway_occupied > 0
+						var:gora_lc_has_railway = 0
+					}
+
+					# Spam-protection: nothing already under construction
+					var:gora_lc_railway_queued = 0
+				}
+
+				# Required levels = ceil(deficit / per_level), with a minimum of 1.
+				set_variable = {
+					name = levels_to_build
+					value = {
+						value = state_infrastructure_balance
+						multiply = -1
+						divide = root.var:infra_per_level
+						ceiling = yes
+					}
+				}
+				if = {
+					limit = { var:levels_to_build < 1 }
+					set_variable = { name = levels_to_build value = 1 }
+				}
+
+				# Per-state cap
+				if = {
+					limit = { var:levels_to_build > gora_lc_state_railway_cap }
+					set_variable = { name = levels_to_build value = gora_lc_state_railway_cap }
+				}
+
+				# Per-country cap (with remaining-quota clamp)
+				if = {
+					limit = {
+						var:levels_to_build > 0
+						owner.var:total_queued < gora_lc_country_railway_cap
+					}
+					set_variable = {
+						name = remaining_quota
+						value = {
+							value = gora_lc_country_railway_cap
+							subtract = owner.var:total_queued
+						}
+					}
+					if = {
+						limit = { var:levels_to_build > var:remaining_quota }
+						set_variable = { name = levels_to_build value = var:remaining_quota }
+					}
+
+					while = {
+						count = var:levels_to_build
+						start_building_construction = building_railway
+					}
+
+					owner = {
+						change_variable = {
+							name = total_queued
+							add = prev.var:levels_to_build
+						}
+					}
+				}
+
+				# Per-state scratch cleanup
+				remove_variable = levels_to_build
+				if = {
+					limit = { has_variable = remaining_quota }
+					remove_variable = remaining_quota
+				}
+			}
+
+			remove_variable = gora_lc_has_railway
+			remove_variable = gora_lc_railway_occupied
+			remove_variable = gora_lc_railway_queued
+		}
+
+		remove_variable = infra_per_level
+		remove_variable = total_queued
+	}
+}
+
+# ───────────────────────────────────────────────────────────────────────────
+# .2  Build railways to close transportation-goods deficits
+# ───────────────────────────────────────────────────────────────────────────
+# transport_per_level is the sum of train PM + passenger-carriage PM
+# goods_output_transportation_add on each level (vanilla 1.13.4):
+#   Base (early trains + wooden carriages):           20 + 10 = 30
+#   steel_railway_cars  (steam trains  + steel cars): 25 + 15 = 40
+#   electric_railway    (electric      + steel):      35 + 15 = 50
+#   compression_ignition (diesel       + steel):      40 + 15 = 55
+# ───────────────────────────────────────────────────────────────────────────
+gora_build_railways_events.2 = {
+	type = country_event
+	hidden = yes
+	trigger = { always = yes }
+
+	immediate = {
+		set_variable = { name = total_queued value = 0 }
+		# Country-constant transportation output per railway level.
+		set_variable = {
+			name = transport_per_level
+			value = {
+				value = 20
+				# Train PM
+				if = {
+					limit = { has_technology_researched = compression_ignition }
+					add = 20
+				}
+				else_if = {
+					limit = { has_technology_researched = electric_railway }
+					add = 15
+				}
+				else_if = {
+					limit = { has_technology_researched = steel_railway_cars }
+					add = 5
+				}
+				# Passenger-carriage PM
+				if = {
+					limit = { has_technology_researched = steel_railway_cars }
+					add = 15
+				}
+				else = { add = 10 }
+			}
+		}
+
+		every_scope_state = {
+			limit = {
+				is_incorporated = yes
+				root.var:total_queued < gora_lc_country_railway_cap
+				sg:transportation = { state_goods_delta < 0 }
+				sg:transportation = { state_goods_pricier > 0.25 }
+				sg:engines = { state_goods_has_local_goods_shortage = no }
+			}
+
+			# One railway pass supplies every eligibility flag used below.
+			set_variable = { name = gora_lc_has_railway value = 0 }
+			set_variable = { name = gora_lc_railway_occupied value = 0 }
+			set_variable = { name = gora_lc_railway_viable value = 0 }
+			set_variable = { name = gora_lc_railway_queued value = 0 }
+			every_scope_building = {
+				limit = { is_building_type = building_railway }
+				prev = { set_variable = { name = gora_lc_has_railway value = 1 } }
+				if = {
+					limit = { occupancy > 0.90 }
+					prev = { set_variable = { name = gora_lc_railway_occupied value = 1 } }
+				}
+				if = {
+					limit = {
+						OR = {
+							weekly_profit >= 0
+							is_subsidized = yes
+						}
+					}
+					prev = { set_variable = { name = gora_lc_railway_viable value = 1 } }
+				}
+				if = {
+					limit = { is_under_construction = yes }
+					prev = { set_variable = { name = gora_lc_railway_queued value = 1 } }
+				}
+			}
+
+			if = {
+				limit = {
+					# Transportation goods deficit & price pressure
+					sg:transportation = { state_goods_delta < 0 }
+					sg:transportation = { state_goods_pricier > 0.25 }
+
+					# Engines available
+					sg:engines = { state_goods_has_local_goods_shortage = no }
+
+					# Existing railways near saturation, or none built yet
+					OR = {
+						var:gora_lc_railway_occupied > 0
+						var:gora_lc_has_railway = 0
+					}
+
+					# Profitable, subsidised, or no railways yet
+					OR = {
+						var:gora_lc_railway_viable > 0
+						var:gora_lc_has_railway = 0
+					}
+
+					# Spam-protection
+					var:gora_lc_railway_queued = 0
+				}
+
+				set_variable = {
+					name = levels_to_build
+					value = {
+						value = sg:transportation.state_goods_delta
+						multiply = -1
+						divide = root.var:transport_per_level
+						ceiling = yes
+					}
+				}
+				if = {
+					limit = { var:levels_to_build < 1 }
+					set_variable = { name = levels_to_build value = 1 }
+				}
+
+				if = {
+					limit = { var:levels_to_build > gora_lc_state_railway_cap }
+					set_variable = { name = levels_to_build value = gora_lc_state_railway_cap }
+				}
+
+				if = {
+					limit = {
+						var:levels_to_build > 0
+						owner.var:total_queued < gora_lc_country_railway_cap
+					}
+					set_variable = {
+						name = remaining_quota
+						value = {
+							value = gora_lc_country_railway_cap
+							subtract = owner.var:total_queued
+						}
+					}
+					if = {
+						limit = { var:levels_to_build > var:remaining_quota }
+						set_variable = { name = levels_to_build value = var:remaining_quota }
+					}
+
+					while = {
+						count = var:levels_to_build
+						start_building_construction = building_railway
+					}
+
+					owner = {
+						change_variable = {
+							name = total_queued
+							add = prev.var:levels_to_build
+						}
+					}
+				}
+
+				remove_variable = levels_to_build
+				if = {
+					limit = { has_variable = remaining_quota }
+					remove_variable = remaining_quota
+				}
+			}
+
+			remove_variable = gora_lc_has_railway
+			remove_variable = gora_lc_railway_occupied
+			remove_variable = gora_lc_railway_viable
+			remove_variable = gora_lc_railway_queued
+		}
+
+		remove_variable = transport_per_level
+		remove_variable = total_queued
+	}
+}

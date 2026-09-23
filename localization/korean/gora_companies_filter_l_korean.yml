@@ -1,0 +1,12 @@
+﻿l_korean:
+ # GORA UI+ — companies filter labels.
+ # Used by the companies panel
+
+  charter_filter: "Industry Rights"
+  GORA_COMPANIES_COMPACT_LIST: "간결한 목록"
+  GORA_COMPANIES_FULL_CARDS: "전체 카드"
+  GORA_COMPANIES_COMPACT_LIST_HINT: "간결한 목록: 회사를 선택하면 실시간 세부 정보를 표시합니다"
+  GORA_COMPANIES_FULL_CARDS_HINT: "전체 카드: CPU 사용량 증가"
+  GORA_COMPANIES_CLOSE_DETAILS: "세부 정보 닫기"
+  GORA_COMPANIES_INDUSTRIES_LABEL: "산업:"
+  GORA_COMPANIES_PRESTIGE_GOODS_LABEL: "명품:"

@@ -1,0 +1,20 @@
+﻿l_spanish:
+ # GORA UI+ — Advanced GDP Tracker: vanilla tooltip overrides
+ # Adds GDP-growth, LARP fractions and per-state GDP breakdowns to vanilla
+ # tooltips. Verified against vanilla 1.13.4 keys (RADICALS_TOOLTIP,
+ # LOYALISTS_TOOLTIP, NEUTRALS_TOOLTIP, POP_TOOLTIP, GDP_TOOLTIP,
+ # CURRENT_GDP_STATE).
+
+ # ─── LARP-extended population & GDP tooltips ────────────────────────────
+ RADICALS_TOOLTIP:1 "#tooltip_header $RADICALS$#!\nHay #v [Country.GetNumRadicals|D]#! ([Country.MakeScope.ScriptValue('larp_radicals_percent')|%v1]) $RADICALS$ entre la población total de #v [Country.GetTotalPopulation|D]#! en [Country.GetName]\n$TOOLTIP_DELIMITER$\nEl número de $RADICALS$ ha cambiado en #v #tooltippable #tooltip:[Country.GetTooltipTag],RADICALS_CHANGE_TOOLTIP [Country.GetTotalNumRadicalsChange|D=-]#!#!#! desde [Country.GetRadicalsLoyalistsChangeStartDate|v].\nLos factores de mayor impacto son [Country.GetRadicalsChangeSummary]\n\n[Country.GetRadicalsSummaryDesc][ConcatIfNeitherEmpty('\n\n',SelectLocalization( GreaterThan_int32(Country.CalcNumStatesInTurmoil, '(int32)0'), 'STATES_IN_TURMOIL', '' ))][ConcatIfNeitherEmpty('\n\n',SelectLocalization( Country.HasIGApprovalFromRadicals, 'RADICALS_IG_APPROVAL', '' ))]"
+
+ LOYALISTS_TOOLTIP:1 "#tooltip_header $LOYALISTS$#!\nHay #v [Country.GetNumLoyalists|D]#! ([Country.MakeScope.ScriptValue('larp_loyalists_percent')|%v1]) $LOYALISTS$ entre la población total de #v [Country.GetTotalPopulation|D]#! en [Country.GetName]\n$TOOLTIP_DELIMITER$\nEl número de $LOYALISTS$ ha cambiado en #v #tooltippable #tooltip:[Country.GetTooltipTag],LOYALISTS_CHANGE_TOOLTIP [Country.GetTotalNumLoyalistsChange|D=+]#!#!#! desde [Country.GetRadicalsLoyalistsChangeStartDate|v]\nLos factores de mayor impacto son [Country.GetLoyalistsChangeSummary]\n\n[Country.GetLoyalistsSummaryDesc][ConcatIfNeitherEmpty('\n\n',SelectLocalization( Country.HasIGApprovalFromLoyalists, 'LOYALISTS_IG_APPROVAL', '' ))]"
+
+ NEUTRALS_TOOLTIP: "#tooltip_header $NEUTRALS$#!\nHay #v [Country.GetNumNeutrals|*2]#! ([Country.MakeScope.ScriptValue('larp_neutrals_percent')|%v1]) $NEUTRALS$ entre la población total de #v [Country.GetTotalPopulation|*2]#! en [Country.GetName]"
+
+ POP_TOOLTIP:2 "#tooltip_header [Concept('concept_pop','$concept_population$')]#!\nActual: [Country.GetTotalPopulation|*2v] ([Country.GetPopulationRanking])\n[Country.GetPopGrowthDesc]$POP_TOOLTIP_DELAYED$\n$TOOLTIP_DELIMITER$\nLa población [Country.GetAdjective] representa [Country.MakeScope.ScriptValue('larp_global_pop_percent')|%v1] de la población mundial\nPoblación mundial: [Country.MakeScope.ScriptValue('larp_global_pop')|*2v]"
+
+ GDP_TOOLTIP:1 "#header [concept_gdp] [Country.GetAdjective]#!\n[Country.GetGDP|Dv] @money! (#u #tooltippable #tooltip:[Country.GetTooltipTag],COUNTRY_GDP_OWNERSHIP_TOOLTIP [Country.GetDomesticallyOwnedGDPFraction|%1b]#!#!#!) del $concept_gdp_short$ de propiedad nacional ([Country.GetGDPRanking])\n[Country.GetGDPPerCapita|2*v] @money! [Concept('concept_gdp_per_capita', '$concept_gdp_per_capita_short$')] ([Country.GetGDPPerCapitaRanking])\n$GDPGR_growth_text$\n$TOOLTIP_DELIMITER$\nEl $concept_gdp_short$ [Country.GetAdjective] representa [Country.MakeScope.ScriptValue('larp_global_gdp_percent')|%v2] del PIB mundial\nPIB mundial: @money![Country.MakeScope.ScriptValue('larp_global_gdp')|Dv]"
+
+ # ─── Per-state GDP breakdown ────────────────────────────────────────────
+ CURRENT_GDP_STATE:2 "#header [concept_gdp] [State.GetOwner.GetAdjectiveNoFormatting] de [State.GetName]#!\n$TOOLTIP_DELIMITER$\nContribución anual al PIB: #variable [State.GetGDPContribution|K] @money!#!\n\n[State.GetName] aporta un #variable [State.GetGDPContributionPercentage|%1]#! del $GDP_SHORT$ [State.GetOwner.GetAdjectiveNoFormatting]\n\n[State.GetGDPGoodsContributionBreakdown]"

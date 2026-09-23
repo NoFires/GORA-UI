@@ -1,0 +1,18 @@
+﻿l_english:
+ # GORA UI+ — Map-list panel filter labels (used by zz_gora_map_list_panel.gui).
+ # Vanilla key prefix `mod_filter_` preserved because the GUI references it directly.
+
+ mod_filter_status:0              "Status"
+ mod_filter_all_status:0          "All"
+ mod_filter_all_status_desc:0     "Shows all states regardless of their status."
+ mod_filter_incorporated:0        "Incorporated"
+ mod_filter_incorporated_desc:0   "Shows only incorporated states."
+ mod_filter_unincorporated:0      "Unincorporated"
+ mod_filter_unincorporated_desc:0 "Shows only unincorporated states."
+ mod_filter_vassals:0             "Subjects"
+ mod_filter_vassals_desc:0        "Shows construction areas only in states owned by your subjects."
+ mod_filter_efficient:0           "Efficient Regions"
+ mod_filter_efficient_desc:0      "Hides problematic states with worse than 0% construction efficiency (due to Turmoil, Devastation, or Infrastructure deficit), showing only highly efficient regions."
+ # NOTE: SORT_TRAITS_TOOLTIP is defined in vanilla `interfaces_l_english.yml`
+ # ("The number of State Traits in this State") and is reused as-is by
+ # `gui/map_list_panel.gui` — do NOT redefine here, would duplicate the key.

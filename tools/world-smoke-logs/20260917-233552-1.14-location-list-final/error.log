@@ -1,0 +1,151 @@
+[23:36:03][pdx_localize.cpp:199]: Duplicate localization key. Key 'TOOLTIP_BUILDING_EMPLOYMENT' is defined in both 'localization/english/gora_companies_filter_l_english.yml' and 'localization/english/interfaces_l_english.yml'.
+[23:36:04][pdx_localize.cpp:199]: Duplicate localization key. Key 'TOOLTIP_BUILDING_EMPLOYMENT' is defined in both 'localization/simp_chinese/gora_companies_filter_l_simp_chinese.yml' and 'localization/simp_chinese/interfaces_l_simp_chinese.yml'.
+[23:36:04][pdx_localize.cpp:199]: Duplicate localization key. Key 'TOOLTIP_BUILDING_EMPLOYMENT' is defined in both 'localization/english/gora_companies_filter_l_english.yml' and 'localization/english/interfaces_l_english.yml'.
+[23:36:05][pdx_localize.cpp:199]: Duplicate localization key. Key 'TOOLTIP_BUILDING_EMPLOYMENT' is defined in both 'localization/simp_chinese/gora_companies_filter_l_simp_chinese.yml' and 'localization/simp_chinese/interfaces_l_simp_chinese.yml'.
+[23:36:09][pdx_gui_localize.cpp:182]: Unlocalized text 'DSI_TRAITS_HEADER_TOOLTIP' at gui/0_gora_decree_map_list_panel.gui:95, either localize it or use the raw_text property instead of text
+[23:36:09][pdx_gui_localize.cpp:182]: Unlocalized text 'DSI_TRAITS_HEADER_TOOLTIP' at gui/0_gora_decree_map_list_panel.gui:95, either localize it or use the raw_text property instead of text
+[23:36:09][pdx_gui_localize.cpp:182]: Unlocalized text 'DSI_VAL_POP_MID' at gui/0_gora_decree_map_list_panel.gui:282, either localize it or use the raw_text property instead of text
+[23:36:09][pdx_gui_localize.cpp:182]: Unlocalized text 'DSI_VAL_POP_MID' at gui/0_gora_decree_map_list_panel.gui:282, either localize it or use the raw_text property instead of text
+[23:36:10][pdx_gui_localize.cpp:182]: Unlocalized text 'WAR_GOAL_ENFORCEMENT_PROGRESS' at gui/add_wargoal_panel.gui:360, either localize it or use the raw_text property instead of text
+[23:36:10][pdx_gui_localize.cpp:182]: Unlocalized text 'WAR_GOAL_ENFORCEMENT_PROGRESS' at gui/add_wargoal_panel.gui:360, either localize it or use the raw_text property instead of text
+[23:36:10][pdx_gui_localize.cpp:182]: Unlocalized text 'FILLED_SHIP_ASSIGNMENTS_TOOLTIP' at gui/building_details_panel.gui:1380, either localize it or use the raw_text property instead of text
+[23:36:10][pdx_gui_localize.cpp:182]: Unlocalized text 'FILLED_SHIP_ASSIGNMENTS_TOOLTIP' at gui/building_details_panel.gui:1380, either localize it or use the raw_text property instead of text
+[23:36:10][pdx_gui_localize.cpp:182]: Unlocalized text 'SHIP_GROUP_INSUFFICIENT_SAILORS_TOOLTIP' at gui/combat_unit_types.gui:499, either localize it or use the raw_text property instead of text
+[23:36:10][pdx_gui_localize.cpp:182]: Unlocalized text 'SHIP_GROUP_INSUFFICIENT_SAILORS_TOOLTIP' at gui/combat_unit_types.gui:499, either localize it or use the raw_text property instead of text
+[23:36:10][pdx_gui_localize.cpp:182]: Unlocalized text 'SHIP_CREW_BAR_VALUE' at gui/custom_tooltip.gui:7719, either localize it or use the raw_text property instead of text
+[23:36:10][pdx_gui_localize.cpp:182]: Unlocalized text 'SHIP_CREW_BAR_VALUE' at gui/custom_tooltip.gui:7719, either localize it or use the raw_text property instead of text
+[23:36:10][pdx_gui_localize.cpp:182]: Unlocalized text 'COASTAL_BUILDING_MARKER_THROUGHPUT' at gui/custom_tooltip.gui:8797, either localize it or use the raw_text property instead of text
+[23:36:10][pdx_gui_localize.cpp:182]: Unlocalized text 'COASTAL_BUILDING_MARKER_THROUGHPUT' at gui/custom_tooltip.gui:8797, either localize it or use the raw_text property instead of text
+[23:36:10][pdx_gui_localize.cpp:182]: Unlocalized text 'COASTAL_BUILDING_MARKER_HEADER_STATUS' at gui/custom_tooltip.gui:8805, either localize it or use the raw_text property instead of text
+[23:36:10][pdx_gui_localize.cpp:182]: Unlocalized text 'COASTAL_BUILDING_MARKER_HEADER_STATUS' at gui/custom_tooltip.gui:8805, either localize it or use the raw_text property instead of text
+[23:36:10][pdx_gui_localize.cpp:182]: Unlocalized text 'COASTAL_BUILDING_MARKER_SUBHEADER_BLOCKADE' at gui/custom_tooltip.gui:8815, either localize it or use the raw_text property instead of text
+[23:36:10][pdx_gui_localize.cpp:182]: Unlocalized text 'COASTAL_BUILDING_MARKER_SUBHEADER_BLOCKADE' at gui/custom_tooltip.gui:8815, either localize it or use the raw_text property instead of text
+[23:36:10][pdx_gui_localize.cpp:182]: Unlocalized text 'COASTAL_BUILDING_MARKER_COL_THROUGHPUT' at gui/custom_tooltip.gui:8858, either localize it or use the raw_text property instead of text
+[23:36:10][pdx_gui_localize.cpp:182]: Unlocalized text 'COASTAL_BUILDING_MARKER_COL_THROUGHPUT' at gui/custom_tooltip.gui:8858, either localize it or use the raw_text property instead of text
+[23:36:10][pdx_gui_localize.cpp:182]: Unlocalized text 'STRATEGIC_REGION_AI_STANCE_BEHAVIOR_TITLE' at gui/custom_tooltip.gui:10471, either localize it or use the raw_text property instead of text
+[23:36:10][pdx_gui_localize.cpp:182]: Unlocalized text 'STRATEGIC_REGION_AI_STANCE_BREAKDOWN' at gui/custom_tooltip.gui:10494, either localize it or use the raw_text property instead of text
+[23:36:10][pdx_gui_localize.cpp:182]: Unlocalized text 'STRATEGIC_REGION_AI_STANCE_ATTENTION_ELSEWHERE_TITLE' at gui/custom_tooltip.gui:10507, either localize it or use the raw_text property instead of text
+[23:36:10][pdx_gui_localize.cpp:182]: Unlocalized text 'STRATEGIC_REGION_AI_STANCE_ATTENTION_ELSEWHERE_ENTRY' at gui/custom_tooltip.gui:10529, either localize it or use the raw_text property instead of text
+[23:36:10][pdx_gui_localize.cpp:182]: Unlocalized text 'STRATEGIC_REGION_AI_STANCE_BEHAVIOR_TITLE' at gui/custom_tooltip.gui:10471, either localize it or use the raw_text property instead of text
+[23:36:10][pdx_gui_localize.cpp:182]: Unlocalized text 'STRATEGIC_REGION_AI_STANCE_BREAKDOWN' at gui/custom_tooltip.gui:10494, either localize it or use the raw_text property instead of text
+[23:36:10][pdx_gui_localize.cpp:182]: Unlocalized text 'STRATEGIC_REGION_AI_STANCE_ATTENTION_ELSEWHERE_TITLE' at gui/custom_tooltip.gui:10507, either localize it or use the raw_text property instead of text
+[23:36:10][pdx_gui_localize.cpp:182]: Unlocalized text 'STRATEGIC_REGION_AI_STANCE_ATTENTION_ELSEWHERE_ENTRY' at gui/custom_tooltip.gui:10529, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'INVASION_PLANNER_SUPPLY_SHIP_PREDICTION' at gui/invasion_planner.gui:273, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'INVASION_PLANNER_FINISHED_BEHAVIOR_HEADER' at gui/invasion_planner.gui:363, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'INVASION_PLANNER_RETURN_TO_HOME_HQ_TOOLTIP' at gui/invasion_planner.gui:373, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'INVASION_PLANNER_RETURN_TO_HOME_HQ' at gui/invasion_planner.gui:381, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'INVASION_PLANNER_NEAREST_FRIENDLY_HQ_TOOLTIP' at gui/invasion_planner.gui:392, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'INVASION_PLANNER_NEAREST_FRIENDLY_HQ' at gui/invasion_planner.gui:400, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'INVASION_PLANNER_PROTECT_SUPPLY_ROUTE_TOOLTIP' at gui/invasion_planner.gui:411, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'INVASION_PLANNER_PROTECT_SUPPLY_ROUTE' at gui/invasion_planner.gui:419, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'INVASION_PLANNER_SUPPLY_SHIP_PREDICTION' at gui/invasion_planner.gui:273, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'INVASION_PLANNER_FINISHED_BEHAVIOR_HEADER' at gui/invasion_planner.gui:363, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'INVASION_PLANNER_RETURN_TO_HOME_HQ_TOOLTIP' at gui/invasion_planner.gui:373, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'INVASION_PLANNER_RETURN_TO_HOME_HQ' at gui/invasion_planner.gui:381, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'INVASION_PLANNER_NEAREST_FRIENDLY_HQ_TOOLTIP' at gui/invasion_planner.gui:392, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'INVASION_PLANNER_NEAREST_FRIENDLY_HQ' at gui/invasion_planner.gui:400, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'INVASION_PLANNER_PROTECT_SUPPLY_ROUTE_TOOLTIP' at gui/invasion_planner.gui:411, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'INVASION_PLANNER_PROTECT_SUPPLY_ROUTE' at gui/invasion_planner.gui:419, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'MAP_LIST_STATE_VALUE' at gui/map_list_panel.gui:4457, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'STATE_STATE_VALUE' at gui/map_list_panel.gui:4462, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'MAP_LIST_STATE_INFAMY' at gui/map_list_panel.gui:4470, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'STATE_STATE_INFAMY' at gui/map_list_panel.gui:4475, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'MAP_LIST_STATE_VALUE' at gui/map_list_panel.gui:4457, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'STATE_STATE_VALUE' at gui/map_list_panel.gui:4462, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'MAP_LIST_STATE_INFAMY' at gui/map_list_panel.gui:4470, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'STATE_STATE_INFAMY' at gui/map_list_panel.gui:4475, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'STATE_MILITARY_WORLD_MARKET_ACCESS_DESC' at gui/map_markers.gui:578, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'STATE_MILITARY_WORLD_MARKET_ACCESS_DESC' at gui/map_markers.gui:578, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'INTEREST_TIER_MARKER_STRATEGIC_REGION' at gui/map_markers.gui:1110, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'INTEREST_TIER_MARKER_STRATEGIC_REGION' at gui/map_markers.gui:1110, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_data_factory.cpp:1466]: Could not find data system function 'GetAllFailedHiresDesc' in 'Building.GetAllFailedHiresDesc'.
+[23:36:11][pdx_data_factory.cpp:1112]: Failed to convert statement for argument '1' for call 'ConcatIfNeitherEmpty' in 'ConcatIfNeitherEmpty('
+
+',Building.GetAllFailedHiresDesc)'
+[23:36:11][pdx_data_factory.cpp:1092]: Failed converting statement for 'ConcatIfNeitherEmpty('
+
+',Building.GetAllFailedHiresDesc)'
+[23:36:11][pdx_gui_localize.cpp:302]: gui/map_markers.gui:1800 - Failed parsing localized text: TOOLTIP_BUILDING_HIRING
+[23:36:11][pdx_gui_factory.cpp:275]: failed reading property, at gui/map_markers.gui:1800
+[23:36:11][pdx_data_factory.cpp:1466]: Could not find data system function 'GetAllFailedHiresDesc' in 'Building.GetAllFailedHiresDesc'.
+[23:36:11][pdx_data_factory.cpp:1112]: Failed to convert statement for argument '1' for call 'ConcatIfNeitherEmpty' in 'ConcatIfNeitherEmpty('
+
+',Building.GetAllFailedHiresDesc)'
+[23:36:11][pdx_data_factory.cpp:1092]: Failed converting statement for 'ConcatIfNeitherEmpty('
+
+',Building.GetAllFailedHiresDesc)'
+[23:36:11][pdx_gui_localize.cpp:302]: gui/map_markers.gui:1800 - Failed parsing localized text: TOOLTIP_BUILDING_HIRING
+[23:36:11][pdx_gui_factory.cpp:275]: failed reading property, at gui/map_markers.gui:1800
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_RAID_CHANCE' at gui/military_formation_panel.gui:1834, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_RAID_CHANCE_TOOLTIP' at gui/military_formation_panel.gui:1835, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_RAID_CHANCE' at gui/military_formation_panel.gui:1834, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_RAID_CHANCE_TOOLTIP' at gui/military_formation_panel.gui:1835, either localize it or use the raw_text property instead of text
+t
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_PROTECT_CONVOY_SHIPS' at gui/military_formation_panel.gui:1933, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_RAID_PROTECTORS_HEADER' at gui/military_formation_panel.gui:1946, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_RAID_FORMATIONS_HEADER' at gui/military_formation_panel.gui:1885, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_RAID_PROTECTOR_SHIPS' at gui/military_formation_panel.gui:1994, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_PROTECT_CONVOY_SHIPS' at gui/military_formation_panel.gui:1933, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_RAID_PROTECTORS_HEADER' at gui/military_formation_panel.gui:1946, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_RAID_PROTECTOR_SHIPS' at gui/military_formation_panel.gui:1994, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_PROTECT_COUNT_TOOLTIP' at gui/military_formation_panel.gui:2031, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_PROTECT_COUNT' at gui/military_formation_panel.gui:2032, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_PROTECT_FORMATIONS_HEADER' at gui/military_formation_panel.gui:2082, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_PROTECT_RAIDERS_HEADER' at gui/military_formation_panel.gui:2143, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_PROTECT_RAIDER_POWER' at gui/military_formation_panel.gui:2191, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_PROTECT_COUNT_TOOLTIP' at gui/military_formation_panel.gui:2031, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_PROTECT_COUNT' at gui/military_formation_panel.gui:2032, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_PROTECT_FORMATIONS_HEADER' at gui/military_formation_panel.gui:2082, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_PROTECT_RAIDERS_HEADER' at gui/military_formation_panel.gui:2143, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_PROTECT_RAIDER_POWER' at gui/military_formation_panel.gui:2191, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_NO_INTERCEPT_TARGETS' at gui/military_formation_panel.gui:2621, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_NO_INTERCEPT_TARGETS' at gui/military_formation_panel.gui:2621, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'MILITARY_FORMATION_CREW_BAR_VALUE' at gui/military_formation_panel.gui:6515, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'MILITARY_FORMATION_CREW_BAR_VALUE' at gui/military_formation_panel.gui:6515, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'COUNTRY_SAILORS_TOOLTIP' at gui/panel_military.gui:178, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'COUNTRY_SAILORS_LABEL' at gui/panel_military.gui:222, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_data_factory.cpp:1466]: Could not find data system function 'HasInsufficientMaxSailors' in 'Country.HasInsufficientMaxSailors'.
+[23:36:11][pdx_data_factory.cpp:1112]: Failed to convert statement for argument '0' for call 'AddLocalizationIf' in 'AddLocalizationIf( Country.HasInsufficientMaxSailors, 'COUNTRY_SAILORS_VALUE_NEED_MORE_THAN_MAX' )'
+[23:36:11][pdx_data_factory.cpp:1092]: Failed converting statement for 'AddLocalizationIf( Country.HasInsufficientMaxSailors, 'COUNTRY_SAILORS_VALUE_NEED_MORE_THAN_MAX' )'
+[23:36:11][pdx_gui_localize.cpp:302]: gui/panel_military.gui:229 - Failed parsing localized text: COUNTRY_SAILORS_VALUE
+[23:36:11][pdx_gui_factory.cpp:275]: failed reading property, at gui/panel_military.gui:229
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'COUNTRY_SAILORS_TOOLTIP' at gui/panel_military.gui:178, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'COUNTRY_SAILORS_LABEL' at gui/panel_military.gui:222, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_data_factory.cpp:1466]: Could not find data system function 'HasInsufficientMaxSailors' in 'Country.HasInsufficientMaxSailors'.
+[23:36:11][pdx_data_factory.cpp:1112]: Failed to convert statement for argument '0' for call 'AddLocalizationIf' in 'AddLocalizationIf( Country.HasInsufficientMaxSailors, 'COUNTRY_SAILORS_VALUE_NEED_MORE_THAN_MAX' )'
+[23:36:11][pdx_data_factory.cpp:1092]: Failed converting statement for 'AddLocalizationIf( Country.HasInsufficientMaxSailors, 'COUNTRY_SAILORS_VALUE_NEED_MORE_THAN_MAX' )'
+[23:36:11][pdx_gui_localize.cpp:302]: gui/panel_military.gui:229 - Failed parsing localized text: COUNTRY_SAILORS_VALUE
+[23:36:11][pdx_gui_factory.cpp:275]: failed reading property, at gui/panel_military.gui:229
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'PEACE_POPUP_OUTCOME_IMPACT' at gui/popups.gui:4430, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'PEACE_POPUP_OUTCOME_IMPACT' at gui/popups.gui:4430, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'PEACE_POPUP_OCCUPATION_TIMER_HEADER' at gui/popups.gui:4686, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'PEACE_POPUP_OCCUPATION_TIMER_HEADER' at gui/popups.gui:4686, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'STATE_VALUE_CLICK_MENU_TITLE' at gui/right_click_menu.gui:7392, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'STATE_VALUE_CLICK_MENU_OPEN_STATE_TOOLTIP' at gui/right_click_menu.gui:7398, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'STATE_VALUE_CLICK_MENU_OPEN_STATE' at gui/right_click_menu.gui:7407, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'STATE_VALUE_CLICK_MENU_SET_PERSPECTIVE_TOOLTIP' at gui/right_click_menu.gui:7415, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'STATE_VALUE_CLICK_MENU_SET_PERSPECTIVE' at gui/right_click_menu.gui:7424, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'STATE_VALUE_CLICK_MENU_OPEN_STATE_TOOLTIP' at gui/right_click_menu.gui:7398, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'STATE_VALUE_CLICK_MENU_OPEN_STATE' at gui/right_click_menu.gui:7407, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'STATE_VALUE_CLICK_MENU_SET_PERSPECTIVE_TOOLTIP' at gui/right_click_menu.gui:7415, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'STATE_VALUE_CLICK_MENU_SET_PERSPECTIVE' at gui/right_click_menu.gui:7424, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'TREATY_DRAFT_ACCEPTANCE_WITH_LABEL_SHIP' at gui/right_click_menu.gui:9719, either localize it or use the raw_text property instead of text
+[23:36:11][pdx_gui_localize.cpp:182]: Unlocalized text 'TREATY_DRAFT_ACCEPTANCE_WITH_LABEL_SHIP' at gui/right_click_menu.gui:9719, either localize it or use the raw_text property instead of text
+[23:36:12][virtualfilesystem.cpp:569]: Could not find texture due to 'VFSOpen Error: gfx/interface/icons/alert_icons/repairing.dds not found'
+[23:36:12][virtualfilesystem.cpp:569]: Could not find texture due to 'VFSOpen Error: gfx/interface/icons/alert_icons/repairing.dds not found'
+[23:36:12][pdx_gui_localize.cpp:182]: Unlocalized text 'TRANSPORT_PLANNER_RETURN_BEHAVIOR_HEADER' at gui/transport_planner.gui:180, either localize it or use the raw_text property instead of text
+[23:36:12][pdx_gui_localize.cpp:182]: Unlocalized text 'TRANSPORT_PLANNER_RETURN_TO_HOME_HQ_TOOLTIP' at gui/transport_planner.gui:190, either localize it or use the raw_text property instead of text
+[23:36:12][pdx_gui_localize.cpp:182]: Unlocalized text 'TRANSPORT_PLANNER_RETURN_TO_HOME_HQ' at gui/transport_planner.gui:198, either localize it or use the raw_text property instead of text
+[23:36:12][pdx_gui_localize.cpp:182]: Unlocalized text 'TRANSPORT_PLANNER_STAY_AT_DESTINATION_TOOLTIP' at gui/transport_planner.gui:209, either localize it or use the raw_text property instead of text
+[23:36:12][pdx_gui_localize.cpp:182]: Unlocalized text 'TRANSPORT_PLANNER_STAY_AT_DESTINATION' at gui/transport_planner.gui:217, either localize it or use the raw_text property instead of text
+[23:36:12][pdx_gui_localize.cpp:182]: Unlocalized text 'TRANSPORT_PLANNER_RETURN_BEHAVIOR_HEADER' at gui/transport_planner.gui:180, either localize it or use the raw_text property instead of text
+[23:36:12][pdx_gui_localize.cpp:182]: Unlocalized text 'TRANSPORT_PLANNER_RETURN_TO_HOME_HQ_TOOLTIP' at gui/transport_planner.gui:190, either localize it or use the raw_text property instead of text
+[23:36:12][pdx_gui_localize.cpp:182]: Unlocalized text 'TRANSPORT_PLANNER_RETURN_TO_HOME_HQ' at gui/transport_planner.gui:198, either localize it or use the raw_text property instead of text
+[23:36:12][pdx_gui_localize.cpp:182]: Unlocalized text 'TRANSPORT_PLANNER_STAY_AT_DESTINATION_TOOLTIP' at gui/transport_planner.gui:209, either localize it or use the raw_text property instead of text
+[23:36:12][pdx_gui_localize.cpp:182]: Unlocalized text 'TRANSPORT_PLANNER_STAY_AT_DESTINATION' at gui/transport_planner.gui:217, either localize it or use the raw_text property instead of text
+[23:36:13][pdx_gui_localize.cpp:182]: Unlocalized text 'WAR_PANEL_START_DATE_HEADER' at gui/war_panel.gui:27, either localize it or use the raw_text property instead of text
+[23:36:13][pdx_gui_localize.cpp:182]: Unlocalized text 'WAR_PANEL_START_DATE_HEADER' at gui/war_panel.gui:27, either localize it or use the raw_text property instead of text
+[23:36:14][pdx_gui_factory.cpp:611]: gui/0_gora_construction_queue.gui:209 - 'advisor_construction_quick_actions' is not a valid widget/type/property
+[23:36:14][pdx_gui_factory.cpp:611]: gui/0_gora_construction_queue.gui:209 - 'advisor_construction_quick_actions' is not a valid widget/type/property
+[23:36:16][pdx_gui_factory.cpp:909]: gui/0_gora_construction_queue.gui:209 - advisor_construction_quick_actions is not a valid type
+[23:36:16][pdx_gui_factory.cpp:909]: gui/0_gora_construction_queue.gui:209 - advisor_construction_quick_actions is not a valid type

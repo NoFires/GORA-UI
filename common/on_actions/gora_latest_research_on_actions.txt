@@ -1,0 +1,52 @@
+﻿# GORA UI+ — Latest Research indicator: on-action hook
+#
+# Maintains a rolling 3-slot stack of the player's most recently acquired
+# technologies (var1 = newest, var3 = oldest). Read back by the indicator
+# widget in gui/tech_tree.gui under `### GORA UI+ — Latest Research`.
+#
+# Player-only: AI countries don't display this widget, so tracking their
+# research would waste savegame space and trigger unnecessary effect work
+# on every AI tech unlock.
+
+on_acquired_technology = {
+	on_actions = { gora_latest_research_push }
+}
+
+gora_latest_research_push = {
+	effect = {
+		# Player-only guard: AI countries do not display this widget, so
+		# tracking their research would waste savegame space and trigger
+		# unnecessary effect work on every AI tech unlock.
+		if = {
+			limit = { is_player = yes }
+			if = {
+				limit = { has_variable = gora_latest_research_3 }
+				# All three slots already filled — shift each down, replace slot 1.
+				set_variable = { name = gora_latest_research_3 value = var:gora_latest_research_2 }
+				set_variable = { name = gora_latest_research_2 value = var:gora_latest_research_1 }
+				set_variable = { name = gora_latest_research_1 value = scope:technology }
+				set_variable = { name = gora_latest_research_count value = 3 }
+			}
+			else_if = {
+				limit = { has_variable = gora_latest_research_2 }
+				# Two slots filled — this push fills slot 3.
+				set_variable = { name = gora_latest_research_3 value = var:gora_latest_research_2 }
+				set_variable = { name = gora_latest_research_2 value = var:gora_latest_research_1 }
+				set_variable = { name = gora_latest_research_1 value = scope:technology }
+				set_variable = { name = gora_latest_research_count value = 3 }
+			}
+			else_if = {
+				limit = { has_variable = gora_latest_research_1 }
+				# One slot filled — this push fills slot 2.
+				set_variable = { name = gora_latest_research_2 value = var:gora_latest_research_1 }
+				set_variable = { name = gora_latest_research_1 value = scope:technology }
+				set_variable = { name = gora_latest_research_count value = 2 }
+			}
+			else = {
+				# First-ever research.
+				set_variable = { name = gora_latest_research_1 value = scope:technology }
+				set_variable = { name = gora_latest_research_count value = 1 }
+			}
+		}
+	}
+}

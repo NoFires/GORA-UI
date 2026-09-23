@@ -1,0 +1,293 @@
+﻿# GORA UI+ — commander_and_formation_orders (partial type override)
+# ─────────────────────────────────────────────────────────────────────────────
+# Vanilla baseline: gui/military_panel_characters.gui (or military_formation_panel).
+# The copied body tracks vanilla `commander_and_formation_orders` inside
+# types MilitaryPanelCharacters, overridden here under types gora_MilitaryPanelCharacters.
+# Other vanilla types in that file (rank_icon, hit_points_bar, morale_bar,
+# military_panel_formation_entry, military_formation_supply_ships, retrofit_all_ships,
+# military_formation_list) inherited from vanilla unchanged.
+#
+# GORA deltas (2 performance/cleanup clusters inside commander_and_formation_orders):
+#   (1) Army Station in State: dropped/commented out action_selection_number badge;
+#       changed `enabled = yes` to bypass expensive Army CanStation pre-validation (MP v11.2).
+#   (2) Fleet Station in State: dropped/commented out action_selection_number badge;
+#       changed `enabled = yes` to bypass expensive Fleet CanStation pre-validation (MP v11.2).
+# All clusters fenced by `### GORA UI+` markers (search the file for re-sync).
+#
+# Re-sync recipe: diff vanilla type commander_and_formation_orders, keep marked
+# performance shortcuts, drop the rest, and port any upstream vanilla fixes as needed.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# COPY-PASTED FOR NOW
+@panel_width_minus_30 = 510
+@panel_width_minus_20 = 520			# used to be 450
+@panel_width_minus_10 = 530			# used to be 450
+@panel_width = 540  				# used to be 460
+@panel_width_half = 270				# used to be 230
+@panel_width_plus_10 = 550  		# used to be 470
+@panel_width_plus_14 = 554			# used to be 474
+@panel_width_plus_14_half = 277		# used to be 237
+@panel_width_plus_20 = 560			# used to be 480
+@panel_width_plus_30 = 570			# used to be 490
+@panel_width_plus_70 = 610			# used to be 530
+
+types gora_MilitaryPanelCharacters {
+	type commander_and_formation_orders = widget {
+		parentanchor = hcenter
+		size = { 510 53 }
+
+		hbox = {
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = expanding
+
+			### If not Player and no commanders - Show empty state
+			empty_state_dynamic_width = {
+				visible = "[And(Not(MilitaryFormation.HasCommander), Not(MilitaryFormation.GetCountry.IsPlayer))]"
+				margin = { 0 10 }
+				autoresize = yes
+				max_width = 330
+				text = "NO_COMMANDERS_IN_MILITARY_FORMATION"
+			}
+
+			### COMMANDER
+			military_formation_commander_small = {
+				visible = "[MilitaryFormation.HasCommander]"
+				datacontext = "[MilitaryFormation.GetCommander]"
+				blockoverride "button_size" {
+					size = { 265 45 }
+				}
+			}
+
+			widget = {
+				visible = "[And(Not(MilitaryFormation.HasCommander), MilitaryFormation.GetCountry.IsLocalPlayer)]"
+				size = { 10 10 }
+			}
+			
+			add_character_button_long = {
+				visible = "[And3(Not(MilitaryFormation.HasCommander), MilitaryFormation.GetCountry.IsLocalPlayer, MilitaryFormation.IsFleet)]"
+				
+				blockoverride "tooltip" {
+					tooltip = "ASSIGN_OR_RECRUIT_CHARACTER"
+				}
+
+				blockoverride "onclick" {
+					onclick = "[RightClickMenuManager.ShowForAssignCommander(MilitaryFormation.AccessSelf, PdxGuiWidget.AccessSelf)]"
+				}
+
+				blockoverride "recruit_character_text" {
+					visible = "[MilitaryFormation.IsFleet]"
+					text = "RECRUIT_ADMIRAL_BUTTON"
+				}
+			}
+
+			add_character_button_long = {
+				visible = "[And3(Not(MilitaryFormation.HasCommander), MilitaryFormation.GetCountry.IsLocalPlayer, MilitaryFormation.IsArmy)]"
+				
+				blockoverride "tooltip" {
+					tooltip = "ASSIGN_OR_RECRUIT_CHARACTER"
+				}
+
+				blockoverride "onclick" {
+					onclick = "[RightClickMenuManager.ShowForAssignCommander(MilitaryFormation.AccessSelf, PdxGuiWidget.AccessSelf)]"
+				}
+			}
+
+			expand = {}
+
+			# FORMATION ORDERS
+			flowcontainer = {
+				visible = "[MilitaryFormation.IsArmy]"
+				spacing = 2
+
+				commander_order_button = {
+					visible = "[MilitaryFormation.GetCommander.IsValid]"
+					datacontext = "[MilitaryFormation.GetCommander]"
+					size = { 45 45 }
+					
+					blockoverride "parentanchor" {}
+				}
+
+				### STRATEGIC OBJECTIVE
+				button_icon_round_map_interaction = {
+					size = { 45 45 }
+					parentanchor = vcenter
+					tooltip = "MILITARY_FORMATION_SET_STRATEGIC_OBJECTIVE_TOOLTIP"
+					onclick = "[MilitaryFormation.OnSetStrategicObjectiveClicked]"
+					using = tooltip_ne
+					
+					blockoverride "icon_size" {
+						size = { 75% 75% }
+					}
+
+					blockoverride "icon" {
+						texture = "gfx/interface/icons/formation_order_icons/strategic_objective.dds"
+					}
+
+					action_selection_number = {
+						blockoverride "text" {
+							text = "[MilitaryFormation.GetNumStrategicObjectiveSelections|+]"
+						}
+					}
+
+					action_selection_number = {
+						parentanchor = right
+
+						blockoverride "position" {
+					        position = { -5 0 }
+					    }
+
+						blockoverride "text" {
+							text = "[MilitaryFormation.GetNumStrategicObjectiveActive|;]"
+						}
+					}
+				}
+
+				### Station in State
+				### GORA UI+ [Delta 1: Bypass expensive CanStation pre-validation & drop badge]
+				button_icon_round_map_interaction = {
+					size = { 45 45 }
+					parentanchor = vcenter
+					tooltip = "STATION_MILITARY_FORMATION_TOOLTIP"
+					using = tooltip_ne
+					onclick = "[MilitaryFormation.OnStationClicked]"
+					# MP v11.2: avoid expensive Army CanStation pre-validation; actual click behavior remains original.
+					enabled = yes
+					
+					blockoverride "icon_size" {
+						size = { 75% 75% } }
+
+					blockoverride "icon" {
+						texture = "gfx/interface/icons/formation_order_icons/station_armies.dds"
+					}
+
+					#action_selection_number = {
+					#	blockoverride "text" {
+					#		text = "[MilitaryFormation.GetNumStationSelections|+]"
+					#	}
+					#}
+				}
+				### GORA UI+ END
+
+				### Deploy to Front
+				button_icon_round_map_interaction = {
+					size = { 45 45 }
+					tooltip = "DEPLOY_MILITARY_FORMATION_TO_FRONT_TOOLTIP"
+					using = tooltip_ne
+					onclick = "[MilitaryFormation.OnDeployToFrontClicked]"
+					enabled = "[MilitaryFormation.IsMobilized]"
+
+					blockoverride "icon_size" {
+						size = { 75% 75% }
+					}
+
+					blockoverride "icon" {
+						texture = "gfx/interface/icons/formation_order_icons/send_to_front.dds"
+					}
+
+					#action_selection_number = {
+					#	blockoverride "text" {
+					#		text = "[MilitaryFormation.GetNumDeployToFrontSelections|+]"
+					#	}
+					#}
+				}
+
+				### Additional Actions Army
+				button_icon_round = {
+					size = { 45 45 }
+					parentanchor = vcenter
+					tooltip = "ADDITIONAL_ACTIONS_MILITARY_FORMATION"
+					onclick = "[RightClickMenuManager.ToggleArmyAdditionalActions( MilitaryFormation.AccessSelf, PdxGuiWidget.AccessSelf )]"
+					using = tooltip_nw
+					
+					blockoverride "icon_size" {
+						size = { 75% 75% }
+					}
+
+					blockoverride "icon" {
+						texture = "gfx/interface/buttons/button_icons/menu.dds"
+					}
+				}
+			}
+
+			# FORMATION ORDERS
+			flowcontainer = {
+				visible = "[MilitaryFormation.IsFleet]"
+				spacing = 2
+
+				### TRANSFER UNITS
+				button_icon_round = {
+					size = { 45 45 }
+					tooltip = "MILITARY_FORMATION_TRANSFER_UNIT_TOOLTIP"
+					onclick = "[PopupManager.ShowTransferFormation( MilitaryFormation.AccessSelf )]"
+					using = tooltip_ne
+
+					blockoverride "icon_size" {
+						size = { 75% 75% }
+					}
+
+					blockoverride "icon" {
+						texture = "gfx/interface/icons/formation_order_icons/transfer.dds"
+					}
+				}
+
+				### Station in State
+				### GORA UI+ [Delta 2: Bypass expensive Fleet CanStation pre-validation & drop badge]
+				button_icon_round_map_interaction = {
+					size = { 45 45 }
+					tooltip = "STATION_MILITARY_FORMATION_TOOLTIP"
+					using = tooltip_ne
+					# MP v11.2: avoid expensive Fleet CanStation pre-validation; actual click behavior remains original.
+					enabled = yes
+					onclick = "[MilitaryFormation.OnStationClicked]"
+
+					blockoverride "icon_size" {
+						size = { 75% 75% }
+					}
+
+					blockoverride "icon" {
+						texture = "gfx/interface/icons/formation_order_icons/station_fleet.dds"
+					}
+
+					#action_selection_number = {
+					#	blockoverride "text" {
+					#		text = "[MilitaryFormation.GetNumStationSelections|+]"
+					#	}
+					#}
+				}
+				### GORA UI+ END
+
+				naval_mission_button_small = {}
+
+				# edit mission sea regions
+				button_icon_round_map_interaction = {
+					blockoverride "icon_size" { size = { 75% 75% } }
+					size = { 45 45 }
+					datacontext = "[MilitaryFormation]" # needed for the tooltip
+					tooltip = "EDIT_NAVAL_MISSION_SEA_REGIONS_TOOLTIP"
+					onclick = "[MilitaryFormation.OnEditMissionSeaRegionsClicked]"
+					enabled = "[MilitaryFormation.CanEditMissionSeaRegions]"
+					using = tooltip_ne
+
+					blockoverride "icon" {
+						texture = "gfx/interface/icons/generic_icons/edit_sea_nodes.dds"
+					}
+				}
+
+				### Additional actions Fleet
+				button_icon_round = {
+					blockoverride "icon_size" { size = { 75% 75% } }
+					size = { 45 45 }
+					parentanchor = vcenter
+					tooltip = "ADDITIONAL_ACTIONS_MILITARY_FORMATION"
+					onclick = "[RightClickMenuManager.ToggleFleetAdditionalActions( MilitaryFormation.AccessSelf, PdxGuiWidget.AccessSelf )]"
+					using = tooltip_nw
+
+					blockoverride "icon" {
+						texture = "gfx/interface/buttons/button_icons/menu.dds"
+					}
+				}
+			}
+		}
+	}
+
+}

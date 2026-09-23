@@ -1,0 +1,5 @@
+﻿l_turkish:
+ POP_ACCEPTANCE_CHART_HEADER:0 "Dağılım"
+ POP_ACCEPTANCE_MINORITIES_HEADER:0 "#header @movement_category_cultural! En büyük kültürler#!"
+ POP_ACCEPTANCE_TOTAL_POP_HEADER:0 "#header @population! Nüfus [GetPlayer.GetTotalPopulation|Kv]#!"
+ POP_ACCEPTANCE_STATUS_TOOLTIP:0 "#tooltip_header [AcceptanceStatus.GetName]#!\n[AcceptanceStatusSegment.GetPopulationDesc][ConcatIfNeitherEmpty('\n', AddLocalizationIf(GreaterThan_int64(AcceptanceStatusSegment.GetTotalPopulationIncreasingInAcceptance, '(int64)0'), 'ACCEPTANCE_STATUS_SEGMENT_POPULATION_DECREASING'))]\n\n[AcceptanceStatus.GetEffectsDescIn(GetPlayer.Self)]"

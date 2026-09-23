@@ -1,0 +1,911 @@
+﻿# GORA UI — pops_overview (partial type override; compacted from full-file copy)
+# ─────────────────────────────────────────────────────────────────────────────
+# Vanilla 1.13.9 baseline: gui/pops_overview.gui
+#
+# Types redeclared by GORA (3 vanilla + 1 additive — only those with real deltas):
+#   - pop_strata_summary   : GORA compact strata card redesign (always-visible tax/needs
+#                            rows instead of vanilla collapsible section_header_buttons;
+#                            portrait repositioned; heights reserved so strata columns align).
+#   - strata_pop_need_item : companion sizing tweaks for the compact card.
+#   - pop_list             : GORA expanded pop list (workforce/wage/radical-loyalist columns).
+#   - vpn_good_tile        : additive (Visible Pop Needs tile) — no vanilla counterpart.
+#
+# Types intentionally NOT redeclared (inherited from vanilla 1.13.9 unchanged):
+#   pops_overview_panel, strata_taxation_item, pop_overview_category_entry,
+#   thin_show_more_button, all *_piechart types, pops_overview_statistics,
+#   pop_list_summary_widget, pop_list_summary_section_item_vbox, character_panel_item,
+#   character_filter, character_list_sort_header.
+#   (Only types that actually diverge from vanilla are redeclared here; all
+#   byte-identical copies were removed so vanilla remains the single source.)
+#
+# Filename is 0_gora_-prefixed on purpose: no filename match with vanilla means the vanilla
+# file still loads for the inherited types; 0_ sorts before pops_overview.gui so these
+# 4 types win the first-load-wins type registry.
+#
+# Parser-level @constants are file-scoped; redeclare only those referenced here
+# (values match vanilla 1.13.9 exactly).
+#
+# Re-sync recipe: per type, diff vanilla body vs this file; vanilla evolutions get merged
+# around the GORA deltas described above. resync_check.py --audit flags it automatically.
+# ─────────────────────────────────────────────────────────────────────────────
+
+@panel_width = 540
+@panel_width_plus_10 = 550
+
+types pops_overview
+{
+
+	type pop_strata_summary = flowcontainer {
+		minimumsize = { 180 -1 }
+		maximumsize = { 180 -1 }
+		direction = vertical
+		using = entry_bg_fancy
+
+		# portrait and summary
+		# height covers portrait area (ends at y=200) plus SOL row below it
+		widget = {
+			parentanchor = hcenter
+			size = { 180 235 }
+
+			widget = {
+				size = { 170 190 }
+				scissor = yes
+				parentanchor = hcenter
+				position = { 0 10 }
+
+				pop_portrait_base = {
+					parentanchor = center
+					# push portrait down so the head sits below the strata name + population count
+					position = { 0 40 }
+
+					block "strata_portrait_properties" {}
+					size = { -1 185 }
+					blockoverride "portrait_size" {
+						size = { 200 200 }
+					}
+					
+					blockoverride "pop_portrait_texture" {
+						portrait_texture = "[Pop.GetAnimatedTypedPortrait('environment_standard', 'camera_body', 'idle', GetPortraitRenderSize(PdxGuiWidget.Self), 'random_adult', '(int32)-1')]"
+					}
+
+					visible = "[Pop.IsValid]"
+					blockoverride "portrait_button" {}
+					tooltipwidget = { FancyTooltip_Pop = {} }
+				}
+
+
+			}
+
+			flowcontainer = {
+				direction = vertical
+				parentanchor = hcenter
+				margin_top = 15
+
+				flowcontainer = {
+					parentanchor = hcenter
+					icon = {
+						block "strata_icon" {}
+						size = { 28 28 }
+						parentanchor = vcenter
+					}
+					textbox = {
+						parentanchor = vcenter
+						block "strata_label" {}
+						align = nobaseline
+						autoresize = yes
+						margin_left = 5
+					}
+				}
+
+				textbox = {
+					block "population_summary" {}
+					autoresize = yes
+					parentanchor = hcenter
+					using = fontsize_large
+					default_format = "#variable"
+					align = nobaseline
+				}
+			}
+
+
+			flowcontainer = {
+				parentanchor = bottom|hcenter
+				direction = vertical
+
+				textbox = {
+					block "sol_summary" {}
+					autoresize = yes
+					maximumsize = { 180 -1 }
+					multiline = yes
+					align = hcenter
+				}
+				margin_bottom = 15
+			}
+		}
+
+		# breakdown
+		flowcontainer = {
+			direction = vertical
+			minimumsize = { 180 -1 }
+			maximumsize = { 180 -1 }
+			margin_bottom = 8
+
+			divider_clean = {}
+
+			textbox = {
+				block "average_income" {}
+				margin_top = 10
+				margin_bottom = 10
+				
+				autoresize = yes
+				minimumsize = { 180 -1 }
+				maximumsize = { 180 -1 }
+				using = fontsize_large
+				align = hcenter|nobaseline
+			}
+
+			flowcontainer = {
+				# reserve height for 3 tax rows (23px each) so strata columns stay aligned
+				# when one column has fewer taxes than the others
+				minimumsize = { 180 79 }
+				maximumsize = { 180 -1 }
+				direction = vertical
+				parentanchor = hcenter
+				margin_top = 5
+				margin_bottom = 5
+
+				block "tax_burden_items" {}
+				item = {
+					strata_taxation_item = {}
+				}
+			}
+
+			textbox = {
+				block "goods_expenses" {}
+				block "goods_expenses_tooltip" {}
+				minimumsize = { 180 30 }
+				maximumsize = { 180 30 }
+				parentanchor = hcenter
+				align = hcenter|nobaseline
+				elide = right
+				margin_top = 6
+				margin_bottom = 2
+			}
+
+			textbox = {
+				autoresize = yes
+
+				block "remainder" {}
+				parentanchor = hcenter
+				maximumsize = { 160 -1 }
+				minimumsize = { 160 -1 }
+				margin_top = 2
+				margin_bottom = 8
+				align = hcenter|nobaseline
+				multiline = yes
+			}
+
+			flowcontainer = {
+				direction = vertical
+				parentanchor = hcenter
+
+				block "goods_expense_items" {}
+				item = {
+					strata_pop_need_item = {}
+				}
+			}
+		}
+	}
+
+	type strata_pop_need_item = button {
+		size = { 170 40 }
+		using = default_button
+		datacontext = "[GoodsExpenseItem.GetGoods]"
+		onclick = "[InformationPanelBar.OpenGoodsPanel(AccessPlayer.AccessFirstMarket.Self, Goods.Self)]"
+		onrightclick = "[RightClickMenuManager.ShowForGoods(Goods.AccessSelf)]"
+		using = tooltip_above
+
+		tooltipwidget = {
+			FancyTooltip_Goods = {}
+		}
+
+		icon = {
+			texture = "[Goods.GetTexture]"
+			size = { 30 30 }
+			parentanchor = vcenter
+			position = { 10 0 }
+		}
+
+		textbox = {
+			visible = "[GreaterThanOrEqualTo_CFixedPoint(Goods.GetPercentageDeltaAgainstBasePrice(Goods.GetMarketPrice), '(CFixedPoint)0.01')]"
+			text = "MARKET_PANEL_GOODS_PRICE_GOLD"
+			using = fontsize_large
+			autoresize = yes
+			parentanchor = vcenter
+			position = { 45 -2 }
+			tooltip = "GOODS_EXPENSE_ITEM_TOOLTIP"
+		}
+		textbox = {
+			visible = "[And( Not(LessThanOrEqualTo_CFixedPoint(Goods.GetPercentageDeltaAgainstBasePrice(Goods.GetMarketPrice), '(CFixedPoint)-0.01')), Not(GreaterThanOrEqualTo_CFixedPoint(Goods.GetPercentageDeltaAgainstBasePrice(Goods.GetMarketPrice), '(CFixedPoint)0.01')) )]"
+			text = "MARKET_PANEL_GOODS_PRICE"
+			using = fontsize_large
+			autoresize = yes
+			parentanchor = vcenter
+			position = { 45 -2 }
+			tooltip = "GOODS_EXPENSE_ITEM_TOOLTIP"
+		}
+		textbox = {
+			visible = "[LessThanOrEqualTo_CFixedPoint(Goods.GetPercentageDeltaAgainstBasePrice(Goods.GetMarketPrice), '(CFixedPoint)-0.01')]"
+			text = "MARKET_PANEL_GOODS_PRICE_BLUE"
+			using = fontsize_large
+			autoresize = yes
+			parentanchor = vcenter
+			position = { 45 -2 }
+			tooltip = "GOODS_EXPENSE_ITEM_TOOLTIP"
+		}
+
+		textbox = {
+			text = "GOODS_EXPENSE_ITEM_LABEL"
+			autoresize = yes
+			align = right|nobaseline
+			parentanchor = right|vcenter
+			position = { -10 0 }
+			tooltip = "GOODS_EXPENSE_ITEM_TOOLTIP"
+		}
+	}
+
+	type vpn_good_tile = button {
+		datacontext = "[PopConsumptionGoods.GetGoods]"
+		size = { 46 64 }
+		parentanchor = center
+		using = default_button
+		using = select_button_sound
+		onclick = "[InformationPanelBar.OpenGoodsPanel(Goods.GetMarket, Goods.Self)]"
+		onrightclick = "[RightClickMenuManager.ShowForGoods(Goods.AccessSelf)]"
+
+		tooltipwidget = {
+			FancyTooltip_Goods_Pop_Consumption = {}
+		}
+
+		icon = {
+			position = { 0 -3 }
+			parentanchor = bottom|hcenter
+			size = { 34 34 }
+			texture = "[Goods.GetTexture]"
+		}
+
+		textbox = {
+			parentanchor = top|hcenter
+			position = { 0 1 }
+			align = center|nobaseline
+			size = { 100% 16 }
+			elide = right
+			fontsize_min = 11
+			raw_text = "#v [PopConsumptionGoods.GetConsumptionRatio|1%v]#!"
+			background = {
+				using = dark_area
+				margin = { -4 0 }
+			}
+		}
+
+		icon = {
+			visible = "[Goods.HasGoodsShortage]"
+			parentanchor = bottom|left
+			size = { 16 16 }
+			position = { -4 3 }
+			texture = "gfx/interface/icons/generic_icons/goods_shortage.dds"
+			tooltip = "GOODS_SHORTAGE_TOOLTIP"
+		}
+
+		textbox = {
+			parentanchor = bottom|right
+			position = { 5 3 }
+			autoresize = yes
+			using = fontsize_large
+			text = "[Goods.GetCompareIconAgainstBasePrice(Goods.GetStatePrice)]"
+		}
+	}
+
+	type pop_list = flowcontainer {
+		direction = vertical
+		using = default_list_position
+		spacing = 5
+		margin_bottom = 15
+		
+		block "pop_list_context" {}
+		
+		datamodel = "[PopList.GetItems]"
+
+		item = {
+			flowcontainer = {
+				direction = vertical
+				spacing = 0
+
+				background = {
+					using = entry_bg
+				}
+
+				### EXPANDABLE ENTRY
+				widget = {
+					size = { @panel_width_plus_10 132 }
+					datacontext = "[PopListItem.GetPopType]"
+
+					flowcontainer = {
+						datacontext = "[PopListItem.GetFirstPop]"
+						margin_left = 5
+						parentanchor = vcenter
+						
+						pop_portrait_simple = {
+
+							blockoverride "portrait_button" {}
+							
+							size = { 100 100 }
+							
+							background = {
+								using = pop_bg
+							}
+							
+							blockoverride "portrait_size" {
+								size = { 125 125 }
+							}
+						}
+					}
+
+					### DROPDOWN / EXPAND
+					section_header_button = {
+						parentanchor = right
+						position = { 0 2 }
+						size = { 440 38 }
+						
+						blockoverride "left_text" {
+							text = "POP_LIST_TITLE_LABEL"
+						}
+
+						blockoverride "left_textbox_default_format" {}
+
+						blockoverride "right_text" {
+							section_header_right_text = {
+								block "right_text_text" {
+									text = "[PopListItem.GetTotalPopSize|vD]"
+									tooltip = "POP_LIST_TOTAL_TOOLTIP"
+								}
+								margin_right = 70
+							}
+						}
+						
+						blockoverride "onclick" {
+							onclick = "[PopListItem.ToggleExpand]"
+						}
+						
+						blockoverride "onclick_showmore" {
+							visible = "[Not(PopListItem.IsExpanded)]"
+						}
+
+						blockoverride "onclick_showless" {
+							visible = "[PopListItem.IsExpanded]"
+						}
+						
+						icon = {
+							size = { 45 45 }
+							position = { -15 -1 }
+							parentanchor = right|vcenter
+							texture = "[PopListItem.GetPopType.GetTexture]"
+						}
+
+						### SOL in header bar
+						textbox = {
+							visible = "[GreaterThan_int64( PopListItem.GetWorkingAdultsPopSize, '(int64)0' )]"
+							text = "POPS_LIST_SOL"
+							autoresize = yes
+							align = nobaseline
+							tooltip = "POPS_LIST_SOL_TOOLTIP"
+							parentanchor = right|vcenter
+							position = { -160 0 }
+							max_width = 130
+							fontsize_min = 12
+							elide = right
+						}
+
+						widget = {
+							size = { 100% 100% }
+							datacontext = "[PopListItem]"
+
+							block "tooltipwidget" {
+							
+								tooltipwidget = {
+									FancyTooltip_PopType = {}
+								}
+							}
+						}
+					}		
+					
+					widget = {
+						parentanchor = right
+						size = { 440 88 }
+						position = { -1 42 }
+
+						# left info
+						flowcontainer = {
+							position = { -1 -1 }
+							parentanchor = left|vcenter
+							
+							### LARGEST INTEREST GROUPS
+							block "largest_IGs" {
+								flowcontainer = {
+									parentanchor = vcenter
+									visible = "[Not(PopList.HasBuildingContext)]"
+									datamodel = "[PopListItem.AccessTwoLargestIGs]"
+									direction = vertical
+									spacing = 2
+									minimumsize = { 50 45 }
+
+									item = {
+										ig_button = {
+											parentanchor = hcenter
+										}
+									}
+								}
+							}
+							
+							### INFO FOR WORKFORCE IN BUILDINGS
+							flowcontainer = {
+								direction = vertical
+								visible = "[PopList.HasBuildingContext]"
+								datacontext = "[PopList.GetBuildingContext]"
+								margin_right = 10 
+
+								### WAGE
+								textbox = {
+									visible = "[And(PopListItem.GetPopType.IsPaidWages(Building.Self),Not(Building.IsRoleFullyReplacedByAnotherPopType(PopListItem.GetPopType)))]"
+									text = "AVG_WAGE_POP_LIST"
+									align = left|nobaseline
+									autoresize = yes
+									tooltip = "ANNUAL_WAGE_TOOLTIP"
+									alpha = "[TransparentIfFalse(GreaterThan_CFixedPoint(PopListItem.GetAverageAnnualWage, '(CFixedPoint)0'))]"
+								}
+								
+								### WORKERS
+								flowcontainer = {
+									direction = vertical
+									tooltip = "[PopListItem.GetEmploymentDesc()]"
+									spacing = 4
+									margin_top = 4
+									margin_bottom = 10
+
+									textbox = {
+										text = "[Building.GetPopTypeFullyReplacedDesc(PopListItem.GetPopType)]"
+										align = left|nobaseline
+										autoresize = yes
+									}
+
+									default_progressbar_horizontal = {
+										size = { 120 23 }
+										visible = "[Not(Building.IsRoleFullyReplacedByAnotherPopType(PopListItem.GetPopType))]"
+										blockoverride "values" {
+											min = -1    # Set to -1, otherwise zero slaves bar (before starts hiring) will be constantly filling up
+											max = "[IntToFloat(Building.GetMaxPopSize(PopListItem.GetPopType))]"
+											value = "[IntToFloat(PopListItem.GetWorkingAdultsPopSize)]"
+										}
+										
+										flowcontainer = {
+											parentanchor = vcenter
+											margin_left = 10
+											textbox = {
+												raw_text = "#bold [PopListItem.GetWorkingAdultsPopSize|D]#!"
+												autoresize = yes
+												align = center|nobaseline
+												parentanchor = vcenter
+											}
+
+											textbox = {
+												visible = "[LessThan_int64(PopListItem.GetWorkingAdultsPopSize, Building.GetMaxPopSize(PopListItem.GetPopType))]"
+												margin_left = 7
+												raw_text = "/ #maximum [Building.GetMaxPopSize(PopListItem.GetPopType)|D]#!"
+												autoresize = yes
+												align = center|nobaseline
+												parentanchor = vcenter
+											}
+										}
+									}
+								}
+							}							
+
+							flowcontainer = {
+								direction = vertical
+								margin_left = 5
+								margin_bottom = 10
+								parentanchor = vcenter
+
+								flowcontainer = {
+									spacing = 2
+									icon = {
+										texture = "gfx/interface/icons/generic_icons/population_radical.dds"
+										size = { 26 26 }
+										parentanchor = vcenter
+									}
+									textbox = {
+										parentanchor = vcenter
+										raw_text = "#variable [PopListItem.GetNumRadicals|D]#!"
+										autoresize = yes
+										align = left|nobaseline
+										tooltip = "RADICALS_TOOLTIP_POP_LIST"
+										alpha = "[TransparentIfZero_int64(PopListItem.GetNumRadicals)]"
+									}
+								}
+
+								flowcontainer = {
+									spacing = 2
+									icon = {
+										texture = "gfx/interface/icons/generic_icons/population_loyalist.dds"
+										size = { 26 26 }
+										parentanchor = vcenter
+									}
+									textbox = {
+										parentanchor = vcenter
+										raw_text = "#variable [PopListItem.GetNumLoyalists|D]#!"
+										autoresize = yes
+										align = left|nobaseline
+										tooltip = "LOYALISTS_TOOLTIP_POP_LIST"
+										alpha = "[TransparentIfZero_int64(PopListItem.GetNumLoyalists)]"
+									}
+								}
+							}
+						}
+
+						flowcontainer = {
+							parentanchor = left|vcenter
+							position = { 150 0 }
+							direction = vertical
+							margin_bottom = 10
+
+							flowcontainer = {
+								datacontext = "[PopListItem.GetFirstPop]"
+								datamodel = "[Pop.GetTopGoodsConsumption]"
+								tooltip = "[Pop.GetAdditionalSOLFactorsDesc]"
+								spacing = 2
+
+								item = {
+									vpn_good_tile = {}
+								}
+							}
+						}
+					}
+				}
+				
+				### EXPANDED
+				fixedgridbox = {
+					datamodel = "[PopListItem.GetPops]"
+					visible = "[PopListItem.IsExpanded]"
+					parentanchor = hcenter
+					
+					addcolumn = @panel_width
+					addrow = 165
+
+					minimumsize = { @panel_width -1 }
+					maximumsize = { @panel_width -1 }
+					
+					using = expanded_list_bg
+					using = default_content_fade
+						
+					item = {
+						container = {
+							parentanchor = hcenter
+							name = "tutorial_highlight_pop"
+							
+							widget = {
+								size = { @panel_width 165 }
+								visible = "[Pop.IsValid]"
+								
+								background = {
+									using = entry_bg_simple
+								}
+								
+								### portrait + size
+								button = {
+									size = { 95 110 }
+									position = { 5 0 }
+									parentanchor = vcenter
+									using = default_button
+									onclick = "[InformationPanelBar.OpenPopDetailsPanel(Pop.AccessSelf)]"
+									onmousehierarchyenter = "[AccessHighlightManager.HighlightState(Pop.GetState.Self)]"
+									onmousehierarchyleave = "[AccessHighlightManager.RemoveHighlight]"
+
+									tooltipwidget = {
+										FancyTooltip_Pop = {}
+									}
+									pop_portrait_simple = {
+										position = { 0 0 }
+										parentanchor = bottom|hcenter
+										blockoverride "portrait_button" {
+											alwaystransparent = yes
+										}
+									}
+									textbox = {
+										position = { 0 4 }
+										block "pop_size_info" {
+											text = "[Pop.GetTotalSize|Dv]"
+										}
+										using = pop_population_tooltip_with_graph
+										size = { 100% 25 }
+										align = center|nobaseline
+										using = fontsize_large
+										parentanchor = top|hcenter
+										
+										background = {
+											using = dark_area
+											margin = { -5 0 }
+										}
+									}
+								}
+
+								### right side
+								flowcontainer = {								
+									position = { 105 0 }
+									parentanchor = vcenter
+									direction = vertical
+
+									# buttons
+									flowcontainer = {
+										
+										#total size info (for workforce panel)
+										block "total_info" {}
+
+										# first column (culture and religion)
+										flowcontainer = {
+											datacontext = "[Pop.GetCountry]"
+											direction = vertical
+											
+											#culture
+											button = {
+												size = { 210 27 }
+												using = clean_button
+												onclick = "[InformationPanelBar.OpenCultureInfoPanel(Pop.AccessCulture)]"
+												datacontext = "[Pop.AccessCulture]"
+
+												tooltipwidget = {
+													FancyTooltip_Culture = {}
+												}
+												
+												textbox = {
+													size = { 100% 100% }
+													text = "[Culture.GetNameNoFormatting]"
+													elide = right
+													align = left|nobaseline
+													margin = { 10 0 }
+												}
+											}
+											
+											#religion
+											button = {
+												size = { 210 27 }
+												using = clean_button
+												onclick = "[InformationPanelBar.OpenReligionInfoPanel(Pop.AccessReligion)]"
+												datacontext = "[Pop.AccessReligion]"
+
+												tooltipwidget = {
+													FancyTooltip_Religion = {}
+												}
+												
+												icon = {
+													size = { 25 25 }
+													texture = "[Religion.GetTexture]"
+													parentanchor = right|vcenter
+													position = { -3 0 }
+												}
+														
+												textbox = {
+													size = { 100% 100% }
+													text = "[Religion.GetNameNoFormatting]"
+													elide = right
+													align = left|nobaseline
+													margin = { 10 0 }
+													margin_right = 30
+													
+												}
+											}
+										}
+									
+										# second column (building and state)
+										block "building_and_state" {
+											flowcontainer = {
+												direction = vertical
+												button = {
+													size = { 220 27 }
+													using = clean_button
+													onclick = "[InformationPanelBar.OpenStatePanel(Pop.AccessState)]"
+													datacontext = "[Pop.AccessState]"
+
+													tooltipwidget = {
+														FancyTooltip_State = {}
+													}
+															
+													textbox = {
+														size = { 100% 100% }
+														text = "[State.GetNameNoFormatting]"
+														elide = right
+														align = left|nobaseline
+														margin = { 10 0 }
+													}
+												}
+													
+												button = {
+													visible = "[Pop.IsEmployed]"
+													size = { 220 27 }
+													using = clean_button
+													onclick = "[InformationPanelBar.OpenBuildingDetailsPanel(Pop.AccessBuilding)]"
+													datacontext = "[Pop.AccessBuilding]"
+
+													tooltipwidget = {
+														FancyTooltip_Building = {}
+													}
+													
+													textbox = {
+														margin_right = 35
+														margin_left = 10
+														text = "[Building.GetNameNoFormatting]"
+														size = { 100% 100% }
+														align = nobaseline
+														elide = right
+														parentanchor = vcenter
+													}
+
+													icon = {
+														position = { -5 0 }
+														size = { 22 22 }
+														texture = "[Building.GetIcon]"
+														tooltip = "[Building.GetTooltip]"
+														parentanchor = right|vcenter
+													}
+												}
+												
+												textbox = {
+													size = { 200 27 }
+													text = "UNEMPLOYED"
+													align = left|nobaseline
+													visible = "[Not(Pop.IsEmployed)]"
+													margin = { 10 0 }
+													alpha = 0.5
+													elide = right
+												}
+											}
+										}
+									}
+
+									# bottom half information
+									widget = {
+										size = { 430 55 }
+										flowcontainer = {
+											parentanchor = vcenter
+											spacing = 5
+
+											#acceptance icon
+											widget = {
+												parentanchor = vcenter
+												size = { 40 40 }
+
+												pop_acceptance_icon = {
+													parentanchor = center
+												}
+											}
+
+											# IG icon
+											ig_button = {
+												visible = "[Not(PopList.HasInterestGroupContext)]"
+												size = { 40 40 }
+												datacontext = "[Pop.GetLargestInterestGroup]"
+
+												parentanchor = vcenter
+
+												blockoverride "powerful_visibility" {
+													visible = "[Pop.GetLargestInterestGroup.IsPowerful]"
+												}
+
+												blockoverride "onclick" {
+													onclick = "[InformationPanelBar.OpenInterestGroupPanel(Pop.AccessLargestInterestGroup)]"
+												}
+
+												blockoverride "tooltip" {
+													tooltip = POP_IG_ATTRACTION_HEADER
+												}
+											}
+
+											# Spacing to align Radicals and Loyalists
+											widget = {
+												size = { 108 10 }
+												visible = "[PopList.HasBuildingContext]"
+											}
+
+											flowcontainer = {
+												direction = vertical
+												margin_left = 15
+												parentanchor = vcenter
+
+												flowcontainer = {
+													spacing = 2
+													visible = "[GreaterThan_int64(Pop.GetNumRadicals, '(int64)0')]"
+													tooltip = "RADICALS_TOOLTIP_POP"
+													
+													icon = {
+														texture = "gfx/interface/icons/generic_icons/population_radical.dds"
+														size = { 26 26 }
+														parentanchor = vcenter
+													}
+													textbox = {
+														parentanchor = vcenter
+														raw_text = "#variable [Pop.GetNumRadicals|D]#!"
+														autoresize = yes
+														align = left|nobaseline
+													}
+												}
+
+												flowcontainer = {
+													spacing = 2
+													visible = "[GreaterThan_int64(Pop.GetNumLoyalists, '(int64)0')]"
+													tooltip = "LOYALISTS_TOOLTIP_POP"
+													
+													icon = {
+														texture = "gfx/interface/icons/generic_icons/population_loyalist.dds"
+														size = { 26 26 }
+														parentanchor = vcenter
+													}
+													textbox = {
+														parentanchor = vcenter
+														raw_text = "#variable [Pop.GetNumLoyalists|D]#!"
+														autoresize = yes
+														align = left|nobaseline
+													}
+												}
+											}
+										}
+
+										flowcontainer = {
+											direction = vertical
+											parentanchor = right|vcenter
+											spacing = 3
+
+											# Standard of Living
+											textbox = {
+												raw_text = "[Pop.GetFormattedStandardOfLivingLabel|v] ([Pop.GetFormattedStandardOfLiving|v])"
+												using = pop_sol_tooltip_with_graph
+												autoresize = yes
+												align = nobaseline
+												margin_right = 2
+												parentanchor = right
+											}
+
+											flowcontainer = {
+												datamodel = "[Pop.GetTopGoodsConsumption]"
+												parentanchor = right
+												tooltip = "[Pop.GetAdditionalSOLFactorsDesc]" 
+
+												item = {
+													vpn_good_tile = {}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+
+				textbox = {
+					visible = "[And(Not(PopListItem.IsAllPopsShown), PopListItem.IsExpanded)]"
+					parentanchor = hcenter
+					text = "POP_LIST_NOT_ALL_POPS_SHOWN"
+					autoresize = yes
+					align = left|nobaseline
+					margin_top = 8
+					margin_bottom = 2
+				}
+			
+				widget = {
+					visible = "[PopListItem.IsExpanded]" 
+					size = { 8 8 }
+				}
+			}
+		}
+	}
+
+}

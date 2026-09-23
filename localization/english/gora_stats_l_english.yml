@@ -1,0 +1,24 @@
+﻿l_english:
+ # GORA UI+ — State / building labor-pressure stats panel strings.
+ # Referenced from the budget-panel and state-panel patches in Faz 3.
+
+ STATS_LABOR_PRESSURE:0                  "Labor Status"
+ STATS_LABOR_PRESSURE_LOW:0              "#P Low#!"
+ STATS_LABOR_PRESSURE_MEDIUM:0           "#gold Caution#!"
+ STATS_LABOR_PRESSURE_HIGH:0             "#N High#!"
+ STATS_LABOR_PRESSURE_AVG_WAGE_LABEL:0   "Avg. wage:"
+ STATS_LABOR_PRESSURE_AVG_WAGE_VALUE:0   "#variable @money![State.GetAverageAnnualWage|vD]#!"
+ STATS_LABOR_PRESSURE_TOOLTIP:0          "#header Labor Status#!\nAvailable labor, qualifications, and average wage in the state.\n$TOOLTIP_DELIMITER$\nAverage annual wage: #variable @money![State.GetAverageAnnualWage|vD]#!\nQualifications: [SelectLocalization(State.HasInsufficientQualificationsForAvailablePositions, 'STATS_LABOR_PRESSURE_QUAL_BAD', 'STATS_LABOR_PRESSURE_QUAL_OK')]"
+ STATS_LABOR_PRESSURE_WAGE_TOOLTIP:0     "#header Average Annual Wage#!\nAverage annual wage for employees in this state: #variable @money![State.GetAverageAnnualWage|vD]#!\n$TOOLTIP_DELIMITER$\nHigh wages may indicate wage pressure when available labor is low or buildings cannot fill open positions."
+ STATS_LABOR_PRESSURE_LOW_TOOLTIP:0      "Available labor is present and no qualifications shortage is apparent."
+ STATS_LABOR_PRESSURE_MEDIUM_TOOLTIP:0   "Available labor is declining or a qualifications shortage is present."
+ STATS_LABOR_PRESSURE_HIGH_TOOLTIP:0     "Available labor is low and a qualifications shortage is present."
+ STATS_LABOR_PRESSURE_QUAL_OK:0          "#P sufficient#!"
+ STATS_LABOR_PRESSURE_QUAL_BAD:0         "#N insufficient#!"
+ STATS_LABOR_PRESSURE_QUAL_OK_ICON:0     "@green_checkmark!"
+ STATS_LABOR_PRESSURE_QUAL_BAD_ICON:0    "@red_cross!"
+ STATS_BUILDING_LABOR_PRESSURE_TOOLTIP:0 "#header Understaffed#!\nThis building is not fully staffed.\n$TOOLTIP_DELIMITER$\nEmployment: #variable [Building.GetEmploymentPercentage|%1v]#!\nAverage earnings per employee: #variable @money![Building.GetAverageAnnualEarningsPerEmployeeFormatted|+]#!\nWage expenses: #variable @money![Building.GetLastWagesExpenses|K]#!\n[AddLocalizationIf(Building.HasAnyInputShortage, 'STATS_BUILDING_INPUT_SHORTAGE_NOTE')]"
+ STATS_BUILDING_INPUT_SHORTAGE_NOTE:0    "\n#N This building has an input shortage.#!"
+ STATS_BUDGET_LABOR:0                    "Labor"
+ STATS_BUDGET_LABOR_TOOLTIP:0            "#header Free Labor#!\nShows the largest available labor pool in the state.\n$TOOLTIP_DELIMITER$\n@peasants! Peasants\n@unemployed_icon! Unemployed\n\n@green_checkmark! Sufficient Qualifications\n@red_cross! Insufficient Qualifications"
+ STATS_BUDGET_LABOR_ROW_TOOLTIP:0        "#header [State.GetName] Labor#!\nPeasants: #variable [State.GetNumSubsistenceWorkingAdults|D]#!\nUnemployed: #variable [State.GetNumUnemployedWorkingAdults|D]#!\nQualifications: [SelectLocalization(State.HasInsufficientQualificationsForAvailablePositions, 'STATS_LABOR_PRESSURE_QUAL_BAD', 'STATS_LABOR_PRESSURE_QUAL_OK')]"

@@ -1,0 +1,10 @@
+﻿l_turkish:
+ gora_zero_level_railway_all_states_tooltip:0 "[GetPlayer.GetCustom('gora_zero_level_railway_all_states_tooltip')]"
+ gora_zero_level_railway_all_states_ready:0 "#header İlk Demiryolu Seviyesini İnşa Et#!\nİnşa edilebildiği ve mevcut seviyesi sıfır olduğu her sahip olunan eyalette #bold 1 Demiryolu seviyesi#! kuyruğa ekler. Demiryolu bulunan veya Demiryolu inşası zaten sürmekte olan eyaletler atlanır."
+ gora_zero_level_railway_all_states_locked:0 "#header İlk Demiryolu Seviyesini İnşa Et#!\n$TOOLTIP_DELIMITER$\n#R #italic #bold #gold $railways$#! teknolojisi [GetPlayer.GetName] tarafından henüz araştırılmadı.#!#!#!"
+ gora_zero_level_power_plant_all_states_tooltip:0 "[GetPlayer.GetCustom('gora_zero_level_power_plant_all_states_tooltip')]"
+ gora_zero_level_power_plant_all_states_ready:0 "#header İlk Elektrik Santrali Seviyesini İnşa Et#!\nİnşa edilebildiği ve mevcut seviyesi sıfır olduğu her sahip olunan eyalette #bold 1 Elektrik Santrali seviyesi#! kuyruğa ekler. Elektrik Santrali bulunan veya inşası zaten sürmekte olan eyaletler atlanır."
+ gora_zero_level_power_plant_all_states_locked:0 "#header İlk Elektrik Santrali Seviyesini İnşa Et#!\n$TOOLTIP_DELIMITER$\n#R #italic #bold #gold $electrical_generation$#! teknolojisi [GetPlayer.GetName] tarafından henüz araştırılmadı.#!#!#!"
+ gora_zero_level_university_all_states_tooltip:0 "[GetPlayer.GetCustom('gora_zero_level_university_all_states_tooltip')]"
+ gora_zero_level_university_all_states_ready:0 "#header İlk Üniversite Seviyesini İnşa Et#!\nİnşa edilebildiği ve mevcut seviyesi sıfır olduğu her sahip olunan eyalette #bold 1 Üniversite seviyesi#! kuyruğa ekler. Üniversite bulunan veya Üniversite inşası zaten sürmekte olan eyaletler atlanır."
+ gora_zero_level_university_all_states_locked:0 "#header İlk Üniversite Seviyesini İnşa Et#!\n$TOOLTIP_DELIMITER$\n#R #italic #bold #gold $academia$#! teknolojisi [GetPlayer.GetName] tarafından henüz araştırılmadı.#!#!#!"

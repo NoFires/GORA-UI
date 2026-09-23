@@ -1,0 +1,31 @@
+﻿l_simp_chinese:
+ # GORA UI+ — Bulk tariff button labels & cooldown tooltips.
+ # Original mod credit: "Set All Tariffs" (workshop 3720145399).
+
+ gora_tariffs_all_imports:0 "所有进口"
+ gora_tariffs_all_exports:0 "所有出口"
+
+ gora_tariffs_individual_cooldown_note:0 "\n\n@information! 最近更改过关税的商品处于独立冷却期，将被跳过——冷却结束后必须手动进行更改。"
+
+ # ─── Import button tooltips ───────────────────────────────────────────
+ gora_tariffs_import_max_tariffs_tt:0 "将所有商品的进口设置改为最高关税。$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_import_high_tariffs_tt:0 "将所有商品的进口设置改为高关税。$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_import_low_tariffs_tt:0 "将所有商品的进口设置改为低关税。$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_import_none_tt:0 "将所有商品的进口设置改为无关税或补贴。$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_import_low_subventions_tt:0 "将所有商品的进口设置改为低额补贴。$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_import_high_subventions_tt:0 "将所有商品的进口设置改为高额补贴。$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_import_max_subventions_tt:0 "将所有商品的进口设置改为最高补贴。$gora_tariffs_individual_cooldown_note$"
+
+ # ─── Export button tooltips ───────────────────────────────────────────
+ gora_tariffs_export_max_tariffs_tt:0 "将所有商品的出口设置改为最高关税。$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_export_high_tariffs_tt:0 "将所有商品的出口设置改为高关税。$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_export_low_tariffs_tt:0 "将所有商品的出口设置改为低关税。$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_export_none_tt:0 "将所有商品的出口设置改为无关税或补贴。$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_export_low_subventions_tt:0 "将所有商品的出口设置改为低额补贴。$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_export_high_subventions_tt:0 "将所有商品的出口设置改为高额补贴。$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_export_max_subventions_tt:0 "将所有商品的出口设置改为最高补贴。$gora_tariffs_individual_cooldown_note$"
+
+ # ─── Cooldown messages ────────────────────────────────────────────────
+ gora_tariffs_import_cooldown_tt:0 "在 #v [TimeKeeper.GetCurrentDateWithDiff( GetVarTimeRemaining( GetPlayer.MakeScope, 'gora_tariffs_import_cooldown') )]#! 之前无法再次批量更改进口关税。"
+ gora_tariffs_export_cooldown_tt:0 "在 #v [TimeKeeper.GetCurrentDateWithDiff( GetVarTimeRemaining( GetPlayer.MakeScope, 'gora_tariffs_export_cooldown') )]#! 之前无法再次批量更改出口关税。"
+

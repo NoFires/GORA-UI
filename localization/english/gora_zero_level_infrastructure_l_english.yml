@@ -1,0 +1,10 @@
+﻿l_english:
+ gora_zero_level_railway_all_states_tooltip:0 "[GetPlayer.GetCustom('gora_zero_level_railway_all_states_tooltip')]"
+ gora_zero_level_railway_all_states_ready:0 "#header Build the First Railway Level#!\nQueues #bold 1 Railway level#! in every owned state where it can be built and its current level is zero. States with an existing Railway or a Railway already under construction are skipped."
+ gora_zero_level_railway_all_states_locked:0 "#header Build the First Railway Level#!\n$TOOLTIP_DELIMITER$\n#R #italic #bold #gold $railways$#! has not yet been researched by [GetPlayer.GetName].#!#!#!"
+ gora_zero_level_power_plant_all_states_tooltip:0 "[GetPlayer.GetCustom('gora_zero_level_power_plant_all_states_tooltip')]"
+ gora_zero_level_power_plant_all_states_ready:0 "#header Build the First Power Plant Level#!\nQueues #bold 1 Power Plant level#! in every owned state where it can be built and its current level is zero. States with an existing Power Plant or a Power Plant already under construction are skipped."
+ gora_zero_level_power_plant_all_states_locked:0 "#header Build the First Power Plant Level#!\n$TOOLTIP_DELIMITER$\n#R #italic #bold #gold $electrical_generation$#! has not yet been researched by [GetPlayer.GetName].#!#!#!"
+ gora_zero_level_university_all_states_tooltip:0 "[GetPlayer.GetCustom('gora_zero_level_university_all_states_tooltip')]"
+ gora_zero_level_university_all_states_ready:0 "#header Build the First University Level#!\nQueues #bold 1 University level#! in every owned state where it can be built and its current level is zero. States with an existing University or a University already under construction are skipped."
+ gora_zero_level_university_all_states_locked:0 "#header Build the First University Level#!\n$TOOLTIP_DELIMITER$\n#R #italic #bold #gold $academia$#! has not yet been researched by [GetPlayer.GetName].#!#!#!"

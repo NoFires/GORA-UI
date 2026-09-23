@@ -1,0 +1,179 @@
+﻿# GORA UI+ performance schema cleanup helpers.
+# Latest null-scope entry point: gora_perf_migrate_schema_v3.
+
+gora_perf_remove_sa_series = {
+	remove_variable = $var$_current
+	remove_variable = $var$_year_0
+	remove_variable = $var$_year_1
+	remove_variable = $var$_year_2
+	remove_variable = $var$_year_3
+	remove_variable = $var$_year_4
+	remove_variable = $var$_year_5
+	remove_variable = $var$_delta_y1
+	remove_variable = $var$_delta_y2
+	remove_variable = $var$_delta_y5
+}
+
+# Deep history was removed when the Capital tables were compacted to
+# Current + Previous Year. Keep current/year_0/year_1/delta_y1 intact.
+gora_perf_remove_sa_deep_history_series = {
+	remove_variable = $var$_year_2
+	remove_variable = $var$_year_3
+	remove_variable = $var$_year_4
+	remove_variable = $var$_year_5
+	remove_variable = $var$_delta_y2
+	remove_variable = $var$_delta_y5
+}
+
+gora_perf_remove_state_assets_deep_history = {
+	gora_perf_remove_sa_deep_history_series = { var = gov_levels }
+	gora_perf_remove_sa_deep_history_series = { var = gov_value }
+	gora_perf_remove_sa_deep_history_series = { var = treasury }
+	gora_perf_remove_sa_deep_history_series = { var = total }
+	gora_perf_remove_sa_deep_history_series = { var = nat_dom_levels }
+	gora_perf_remove_sa_deep_history_series = { var = nat_for_levels }
+	gora_perf_remove_sa_deep_history_series = { var = nat_sum_levels }
+	gora_perf_remove_sa_deep_history_series = { var = nat_dom_value }
+	gora_perf_remove_sa_deep_history_series = { var = nat_for_value }
+	gora_perf_remove_sa_deep_history_series = { var = nat_sum_value }
+	gora_perf_remove_sa_deep_history_series = { var = ipool }
+	gora_perf_remove_sa_deep_history_series = { var = natcap }
+
+	remove_variable = snap_year_2
+	remove_variable = snap_year_3
+	remove_variable = snap_year_4
+	remove_variable = snap_year_5
+	remove_variable = snap_age_2
+	remove_variable = snap_age_5
+}
+
+gora_perf_remove_all_state_assets = {
+	gora_perf_remove_sa_series = { var = gov_levels }
+	gora_perf_remove_sa_series = { var = gov_value }
+	gora_perf_remove_sa_series = { var = treasury }
+	gora_perf_remove_sa_series = { var = total }
+	gora_perf_remove_sa_series = { var = nat_dom_levels }
+	gora_perf_remove_sa_series = { var = nat_for_levels }
+	gora_perf_remove_sa_series = { var = nat_sum_levels }
+	gora_perf_remove_sa_series = { var = nat_dom_value }
+	gora_perf_remove_sa_series = { var = nat_for_value }
+	gora_perf_remove_sa_series = { var = nat_sum_value }
+	gora_perf_remove_sa_series = { var = ipool }
+	gora_perf_remove_sa_series = { var = natcap }
+
+	remove_variable = snap_year_0
+	remove_variable = snap_year_1
+	remove_variable = snap_year_2
+	remove_variable = snap_year_3
+	remove_variable = snap_year_4
+	remove_variable = snap_year_5
+	remove_variable = snap_age_1
+	remove_variable = snap_age_2
+	remove_variable = snap_age_5
+	remove_variable = gora_sa_initialized
+}
+
+gora_perf_remove_obsolete_state_asset_scratch = {
+	# The legacy ownership staircase explicitly wrote both accumulators to
+	# ROOT, so these are country variables (never building variables).
+	remove_variable = temp_bldg_nat_levels
+	remove_variable = temp_bldg_nat_value
+
+	# Legacy derived slots that predate the compact snapshot schema.
+	remove_variable = total_year_3
+	remove_variable = total_year_4
+	remove_variable = nat_sum_levels_year_3
+	remove_variable = nat_sum_levels_year_4
+	remove_variable = nat_sum_value_year_3
+	remove_variable = nat_sum_value_year_4
+	remove_variable = natcap_year_3
+	remove_variable = natcap_year_4
+}
+
+gora_perf_remove_agdp_country_data = {
+	remove_variable = GDPGR_initialized
+	remove_variable = GDPGR_gdp_month_0
+	remove_variable = GDPGR_gdp_month_1
+	remove_variable = GDPGR_gdp_month_2
+	remove_variable = GDPGR_gdp_month_3
+	remove_variable = GDPGR_gdp_month_4
+	remove_variable = GDPGR_gdp_month_5
+	remove_variable = GDPGR_gdp_month_6
+	remove_variable = GDPGR_gdp_month_7
+	remove_variable = GDPGR_gdp_month_8
+	remove_variable = GDPGR_gdp_month_9
+	remove_variable = GDPGR_gdp_month_10
+	remove_variable = GDPGR_gdp_month_11
+	remove_variable = GDPGR_rolling_difference
+	remove_variable = GDPGR_rolling_gdp_growth_rate
+	remove_variable = GDPGR_past_month_diff
+	remove_variable = GDPGR_past_month_rate
+	remove_variable = GDPGR_past_year_avg_diff
+	remove_variable = GDPGR_past_year_avg_rate
+	remove_variable = GDPGR_annl_growth_leaderboard_pos
+	remove_variable = gdp_growth_rate
+	remove_variable = before_gdp
+	remove_variable = current_gdp
+}
+
+gora_perf_migrate_schema_v2 = {
+	every_country = {
+		# All obsolete State Assets scratch and derived values are country
+		# variables. Keep this on country scope: building scope has no variables.
+		gora_perf_remove_obsolete_state_asset_scratch = yes
+
+		# State Assets is a player-facing UI feature.  Preserve every human
+		# player's history, while removing legacy AI save data.
+		if = {
+			limit = { is_player = no }
+			gora_perf_remove_all_state_assets = yes
+		}
+
+		if = {
+			limit = { has_variable_list = trade_partners_all_markets_import }
+			clear_variable_list = trade_partners_all_markets_import
+		}
+		if = {
+			limit = { has_variable_list = trade_partners_all_markets_export }
+			clear_variable_list = trade_partners_all_markets_export
+		}
+
+		if = {
+			limit = { is_country_type = decentralized }
+			gora_perf_remove_agdp_country_data = yes
+		}
+	}
+
+	# The State panel now reads StatesPanel.AccessLocalGoods directly.
+	every_state = {
+		if = {
+			limit = { has_variable_list = com_local_goods }
+			clear_variable_list = com_local_goods
+		}
+	}
+
+	set_global_variable = { name = gora_perf_schema_version value = 2 }
+	set_global_variable = { name = gora_perf_schema_v2_complete value = 1 }
+}
+
+# Schema v3 removes only obsolete deep-history slots. Current, year_0,
+# year_1 and delta_y1 remain untouched, preserving visible history in saves.
+gora_perf_migrate_schema_v3 = {
+	if = {
+		limit = { NOT = { has_global_variable = gora_perf_schema_v2_complete } }
+		gora_perf_migrate_schema_v2 = yes
+	}
+
+	every_country = {
+		limit = { is_player = yes }
+		gora_perf_remove_state_assets_deep_history = yes
+	}
+
+	set_global_variable = { name = gora_perf_schema_version value = 3 }
+	set_global_variable = { name = gora_perf_schema_v3_complete value = 1 }
+}
+
+# Compatibility wrapper for integrations that queued the original name.
+gora_perf_migrate_schema_v1 = {
+	gora_perf_migrate_schema_v3 = yes
+}

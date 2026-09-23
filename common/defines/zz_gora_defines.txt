@@ -1,0 +1,11 @@
+﻿# GORA UI+ — Vanilla define overrides
+#
+# Single dump file for all GORA UI+ define tweaks. Each entry below is a
+# minimal delta over vanilla 1.13.4. zz_ prefix forces late load order so
+# our values win over plain mod defines.
+
+NEconomy = {
+	# Default 10 — bump so the goods-leaderboard popup shows the top 20
+	# producers/consumers, matching the wider columns the budget panel uses.
+	GOODS_LEADERBOARD_SIZE = 20
+}

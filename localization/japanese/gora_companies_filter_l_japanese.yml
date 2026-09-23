@@ -1,0 +1,12 @@
+﻿l_japanese:
+ # GORA UI+ — companies filter labels.
+ # Used by the companies panel
+
+  charter_filter: "Industry Rights"
+  GORA_COMPANIES_COMPACT_LIST: "コンパクトリスト"
+  GORA_COMPANIES_FULL_CARDS: "フルカード"
+  GORA_COMPANIES_COMPACT_LIST_HINT: "コンパクトリスト：会社を選択するとリアルタイムの詳細を表示します"
+  GORA_COMPANIES_FULL_CARDS_HINT: "フルカード：CPU使用率が高くなります"
+  GORA_COMPANIES_CLOSE_DETAILS: "詳細を閉じる"
+  GORA_COMPANIES_INDUSTRIES_LABEL: "産業："
+  GORA_COMPANIES_PRESTIGE_GOODS_LABEL: "高級品："

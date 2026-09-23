@@ -1,0 +1,14 @@
+﻿l_spanish:
+ # GORA UI+ — Misc strings consolidated from several legacy files.
+
+ # Building-browser sector filter (referenced from gui/building_browser_panel.gui)
+ GORA_SECTOR_FILTER_LABEL:0       "Sector"
+ GORA_COMPACT_BUILDING_TYPE_NAME:0 "#v [BuildingType.GetNameNoFormatting]#!"
+ GORA_COMPACT_PRODUCTION_METHOD_COUNT:0 "#bold [ProductionMethodGroup.GetNumAvailableOptionsForBuildingType(BuildingBrowserBuildingTypeItem.GetBuildingType.AccessSelf)]#!"
+ GORA_COMPACT_BUILDING_TOTAL_SIZE:0 "#v [BuildingBrowserBuildingTypeItem.GetTotalFilteredSizeDesc]#!"
+
+ # Latest research indicator (referenced from gui/tech_tree.gui)
+ GORA_LATEST_RESEARCH_HEADER:0    "Latest Research:"
+
+ # Advanced Officer Info (legacy `aoi` module marker)
+ gora_aoi_mod_name:0              "Advanced Officer Info"

@@ -1,0 +1,184 @@
+﻿l_turkish:
+ com_topbar_base_game_source: "Victoria 3"
+ com_topbar_base_game_source_tooltip: "Bu öğe, Expanded Topbar Framework'ün varsayılan parçasıdır."
+
+ # Prestige
+ com_topbar_element_prestige: "com_topbar_element_prestige"
+ com_topbar_element_prestige_icon: "@prestige!"
+ com_topbar_element_prestige_value: "[GetPlayer.GetPrestige|v]"
+ com_topbar_element_prestige_tooltip: "[GetPlayer.GetRankTooltip]"
+ com_topbar_element_prestige_source: "$com_topbar_base_game_source$"
+ com_topbar_element_prestige_source_tooltip: "$com_topbar_base_game_source_tooltip$"
+ com_topbar_element_prestige_map_mode: "mm_country_attitude"
+ com_topbar_element_prestige_window: "com_topbar_prestige"
+
+ # Power Bloc Prestige
+ com_topbar_element_bloc_prestige: "com_topbar_element_bloc_prestige"
+ com_topbar_element_bloc_prestige_icon: "@com_power_bloc_prestige!"
+ com_topbar_element_bloc_prestige_value: "[GetPlayer.GetPowerBloc.GetTotalPrestige|v]"
+ com_topbar_element_bloc_prestige_tooltip: "#header [GetPlayer.GetPowerBloc.GetName] [concept_prestige] değeri#!\nToplam: @prestige![GetPlayer.GetPowerBloc.GetTotalPrestige|v]\n$TOOLTIP_DELIMITER$\n[AccessPlayer.AccessPowerBloc.GetPrestigeDesc]"
+ com_topbar_element_bloc_prestige_source: "$com_topbar_base_game_source$"
+ com_topbar_element_bloc_prestige_source_tooltip: "$com_topbar_base_game_source_tooltip$"
+ com_topbar_element_bloc_prestige_map_mode: "mm_power_blocs"
+ com_topbar_element_bloc_prestige_window: "com_topbar_power_bloc"
+
+ # Power Bloc Cohesion
+ com_topbar_element_bloc_cohesion: "com_topbar_element_bloc_cohesion"
+ com_topbar_element_bloc_cohesion_icon: "@cohesion!"
+ com_topbar_element_bloc_cohesion_value: "[GetPlayer.GetPowerBloc.GetCohesion|v0]"
+ com_topbar_element_bloc_cohesion_tooltip: "#header [GetPlayer.GetPowerBloc.GetCohesionLevel.GetNameNoFormatting]#! $COHESION_LEVEL_ACTIVE$\nMevcut [concept_power_bloc_cohesion] değeri: [SelectLocalization(EqualTo_CFixedPoint(GetPlayer.GetPowerBloc.GetCohesion, GetPlayer.GetPowerBloc.GetCohesionTarget), 'com_topbar_element_bloc_cohesion_tooltip_value_without', 'com_topbar_element_bloc_cohesion_tooltip_value_with')]\nHedefe doğru haftalık değişim: #v [GetPlayer.GetPowerBloc.GetCohesionWeeklyChange|+=1]#!\n$TOOLTIP_DELIMITER$\n#indent_newline:3 #title Etkiler:\n[GetPlayer.GetPowerBloc.GetCohesionLevel.GetEffects]#!#!\n\n#title Bunun nedeni:#!#indent_newline:3 \n[GetPlayer.GetPowerBloc.GetCohesionDesc]"
+ com_topbar_element_bloc_cohesion_tooltip_value_with: "[GetPlayer.GetPowerBloc.GetCohesion|v0] @arrow_right! [GetPlayer.GetPowerBloc.GetCohesionTarget|v0]"
+ com_topbar_element_bloc_cohesion_tooltip_value_without: "[GetPlayer.GetPowerBloc.GetCohesion|v0]"
+ com_topbar_element_bloc_cohesion_source: "$com_topbar_base_game_source$"
+ com_topbar_element_bloc_cohesion_source_tooltip: "$com_topbar_base_game_source_tooltip$"
+ com_topbar_element_bloc_cohesion_map_mode: "mm_power_blocs"
+ com_topbar_element_bloc_cohesion_window: "com_topbar_power_bloc"
+
+ # Power Bloc Size
+ com_topbar_element_bloc_size: "com_topbar_element_bloc_size"
+ com_topbar_element_bloc_size_icon: "@com_power_bloc_size!"
+ com_topbar_element_bloc_size_value: "#v [GetPlayer.GetPowerBloc.GetNumMembers]#!"
+ com_topbar_element_bloc_size_tooltip: "#header [GetPlayer.GetPowerBloc.GetName] içinde [GetPlayer.GetPowerBloc.GetNumMembers] [Concept('concept_country','$concept_countries$')]#!\n$TOOLTIP_DELIMITER$\n[GetPlayer.GetPowerBloc.GetMembersBreakdown]"
+ com_topbar_element_bloc_size_source: "$com_topbar_base_game_source$"
+ com_topbar_element_bloc_size_source_tooltip: "$com_topbar_base_game_source_tooltip$"
+ com_topbar_element_bloc_size_map_mode: "mm_power_blocs"
+ com_topbar_element_bloc_size_window: "com_topbar_power_bloc"
+
+ # Government Legitimacy
+ com_topbar_element_legitimacy: "com_topbar_element_legitimacy"
+ com_topbar_element_legitimacy_icon: "@legitimacy_icon!"
+ com_topbar_element_legitimacy_value: "[GetPlayer.GetGovernmentLegitimacy|v]"
+ com_topbar_element_legitimacy_tooltip: "#header [GetPlayer.GetGovernmentLegitimacyLevel.GetNameNoFormatting]#! $LEGITIMACY_LEVEL_ACTIVE$\n[GetPlayer.GetGovernmentLegitimacyLevel.GetLowerBound|v] ile [GetPlayer.GetGovernmentLegitimacyLevel.GetUpperBound|v] [concept_legitimacy] arasında geçerlidir\n$LEGITIMACY_LEVEL_CURRENT_LEGITIMACY_DESC$\n$TOOLTIP_DELIMITER$\n#title Etkiler:#!#indent_newline:2 \n[GetPlayer.GetGovernmentLegitimacyLevel.GetEffectsWithLoyaltiesGain(GetPlayer.Self)]#!\n\n#title Bunun nedeni:#!#indent_newline:2 \n[GetPlayer.GetGovernmentLegitimacyDesc]#!"
+ com_topbar_element_legitimacy_source: "$com_topbar_base_game_source$"
+ com_topbar_element_legitimacy_source_tooltip: "$com_topbar_base_game_source_tooltip$"
+ com_topbar_element_legitimacy_map_mode: "mm_political"
+ com_topbar_element_legitimacy_window: "com_topbar_politics"
+
+ # Country Innovation
+ com_topbar_element_innovation: "com_topbar_element_innovation"
+ com_topbar_element_innovation_icon: "@innovation!"
+ com_topbar_element_innovation_value: "[GetPlayer.GetWeeklyInnovation|0v]"
+ com_topbar_element_innovation_tooltip: "#header [concept_innovation]#!\n[GetPlayer.GetName] her hafta #v @innovation![GetPlayer.GetWeeklyInnovation|+2]#! [concept_innovation] üretiyor:\n[GetPlayer.GetWeeklyInnovationDesc]\n\nHer hafta etkin araştırmaya en fazla @innovation![GetPlayer.GetWeeklyMaxInnovation|v2] [concept_innovation] yatırılabilir:\n[GetPlayer.GetWeeklyMaxInnovationDesc]\n\nYatırım sınırı veya etkin araştırma eksikliği nedeniyle harcanmayan [concept_innovation], ülkemize [concept_technology_spread] hızını artırır."
+ com_topbar_element_innovation_source: "$com_topbar_base_game_source$"
+ com_topbar_element_innovation_source_tooltip: "$com_topbar_base_game_source_tooltip$"
+ com_topbar_element_innovation_map_mode: "mm_literacy"
+ com_topbar_element_innovation_window: "com_topbar_innovation"
+
+ # Number of Companies
+ com_topbar_element_companies: "com_topbar_element_companies"
+ com_topbar_element_companies_icon: "@com_company!"
+ com_topbar_element_companies_value: "[GetPlayer.GetNumCompanies|v] / [GetPlayer.GetMaxNumCompanies|v]"
+ com_topbar_element_companies_tooltip: "#header [Concept('concept_company','$concept_companies$')]#!\n[GetPlayer.GetMaxNumCompaniesDesc]"
+ com_topbar_element_companies_source: "$com_topbar_base_game_source$"
+ com_topbar_element_companies_source_tooltip: "$com_topbar_base_game_source_tooltip$"
+ com_topbar_element_companies_window: "com_topbar_companies"
+
+ # Number of Company Charters
+ com_topbar_element_charters: "com_topbar_element_charters"
+ com_topbar_element_charters_icon: "@com_company_charters!"
+ com_topbar_element_charters_value: "[GetPlayer.GetUsedFreeCharters|v] / [GetPlayer.GetModifier.GetValueFor('country_free_charters_add')]"
+ com_topbar_element_charters_tooltip: "#header [Concept('concept_company_charter','$concept_company_charters$')]#!\nKullanılan ücretsiz [Concept('concept_company_charter','$concept_company_charters$')]: [GetPlayer.GetUsedFreeCharters|v] / [GetPlayer.GetModifier.GetValueWithBreakdownFor('country_free_charters_add')]"
+ com_topbar_element_charters_source: "$com_topbar_base_game_source$"
+ com_topbar_element_charters_source_tooltip: "$com_topbar_base_game_source_tooltip$"
+ com_topbar_element_charters_window: "com_topbar_companies"
+
+ # Army Size
+ com_topbar_element_army_size: "com_topbar_element_army_size"
+ com_topbar_element_army_size_icon: "@battalions!"
+ com_topbar_element_army_size_value: "[GetPlayer.GetRegularBattalions|v] + [GetPlayer.CalcConscriptableBattalions|v]"
+ com_topbar_element_army_size_tooltip: "#header [GetPlayer.GetAdjective] [Concept('concept_battalion', '$concept_battalions$')]#!\nMevcut: @battalions![GetPlayer.GetBattalions|v] ([GetPlayer.GetBattalionsRanking])\n$TOOLTIP_DELIMITER$\n[GetPlayer.GetName] şu anda @battalions!#v [GetPlayer.GetBattalions]#! taburuna sahip (#v [GetPlayer.GetMobilizationRatio|0%]#!@mobilization! [Concept('concept_mobilize_battalion', '$concept_mobilize_battalion_mobilized$')])\n[GetPlayer.GetAdjective] [Concept('concept_battalion', '$concept_battalions$')] toplam sayısı ve teknolojik gelişmişliği, #tooltippable #tooltip:[GetPlayer.GetTooltipTag],PANEL_MILITARY_ARMY_POWER_PROJECTION_TOOLTIP [GetPlayer.GetArmyPowerProjection|v0]#!#! değerinde bir Kara Ordusu [concept_power_projection] sağlar\n\n[Concept('concept_army','$concept_armies$')]:\n[SelectLocalization(IsDataModelEmpty(AccessPlayer.GetMilitaryFormationsArmy), 'com_topbar_element_army_size_tooltip_no_army', 'com_topbar_element_army_size_tooltip_armies')]"
+ com_topbar_element_army_size_tooltip_armies: "[AccessPlayer.GetArmiesBreakdown]"
+ com_topbar_element_army_size_tooltip_no_army: "[GetPlayer.GetName] ülkesinde [Concept('concept_army','$concept_armies$')] yok"
+ com_topbar_element_army_size_source: "$com_topbar_base_game_source$"
+ com_topbar_element_army_size_source_tooltip: "$com_topbar_base_game_source_tooltip$"
+ com_topbar_element_army_size_map_mode: "mm_military_formation"
+ com_topbar_element_army_size_window: "com_topbar_army"
+
+ # Navy Size
+ com_topbar_element_navy_size: "com_topbar_element_navy_size"
+ com_topbar_element_navy_size_icon: "@ships!"
+ com_topbar_element_navy_size_value: "[GetPlayer.GetNumShips|0v]"
+ com_topbar_element_navy_size_tooltip: "#header [GetPlayer.GetAdjective] [Concept('concept_fleet','$concept_fleets$')]#!\nMevcut: @ships! [GetPlayer.GetNumShips|0v] ([GetPlayer.GetShipsRanking])\n$TOOLTIP_DELIMITER$\n[GetPlayer.GetAdjective] [Concept('concept_fleet', '$concept_fleets$')] toplam sayısı ve teknolojik gelişmişliği, #tooltippable #tooltip:[GetPlayer.GetTooltipTag],PANEL_MILITARY_NAVY_POWER_PROJECTION_TOOLTIP [GetPlayer.GetNavyPowerProjection|v0]#!#! değerinde bir Donanma [concept_power_projection] sağlar\n\n[Concept('concept_fleet','$concept_fleets$')]:\n[SelectLocalization(IsDataModelEmpty(AccessPlayer.GetMilitaryFormationsFleet), 'com_topbar_element_navy_size_tooltip_no_fleets', 'com_topbar_element_navy_size_tooltip_fleets')]"
+ com_topbar_element_navy_size_tooltip_fleets: "[AccessPlayer.GetFleetsBreakdown]"
+ com_topbar_element_navy_size_tooltip_no_fleets: "[GetPlayer.GetName] ülkesinde [Concept('concept_fleet','$concept_fleets$')] yok"
+ com_topbar_element_navy_size_source: "$com_topbar_base_game_source$"
+ com_topbar_element_navy_size_source_tooltip: "$com_topbar_base_game_source_tooltip$"
+ com_topbar_element_navy_size_map_mode: "mm_military_formation"
+ com_topbar_element_navy_size_window: "com_topbar_navy"
+
+ # Diplomatic Interests
+ com_topbar_element_interests: "com_topbar_element_interests"
+ com_topbar_element_interests_icon: "@com_interests!"
+ com_topbar_element_interests_value: "[GetDataModelSize(AccessPlayer.AccessInterests)|v]"
+ com_topbar_element_interests_tooltip: "#header [concept_interest]#!\n$concept_interest_desc$"
+ com_topbar_element_interests_source: "$com_topbar_base_game_source$"
+ com_topbar_element_interests_source_tooltip: "$com_topbar_base_game_source_tooltip$"
+ com_topbar_element_interests_map_mode: "mm_strategic_region"
+ com_topbar_element_interests_window: "com_topbar_interests"
+
+ # Unemployed Pops
+ com_topbar_element_unemployed_pops: "com_topbar_element_unemployed_pops"
+ com_topbar_element_unemployed_pops_icon: "@unemployed_icon!"
+ com_topbar_element_unemployed_pops_value: "[GetPlayer.GetUnemployedWorkingAdults|*v]"
+ com_topbar_element_unemployed_pops_tooltip: "#header [concept_unemployed]#!\n$concept_unemployed_desc$"
+ com_topbar_element_unemployed_pops_source: "$com_topbar_base_game_source$"
+ com_topbar_element_unemployed_pops_source_tooltip: "$com_topbar_base_game_source_tooltip$"
+ com_topbar_element_unemployed_pops_window: "com_topbar_census"
+
+ # Subsistence Pops
+ com_topbar_element_subsistence_pops: "com_topbar_element_subsistence_pops"
+ com_topbar_element_subsistence_pops_icon: "@peasants!"
+ com_topbar_element_subsistence_pops_value: "[GetPlayer.MakeScope.Var('com_topbar_subsistence_pops').GetValue|kv]"
+ com_topbar_element_subsistence_pops_tooltip: "#header [GetPopType('peasants').GetName]#!\n[GetPopType('peasants').GetDesc]\n\n#b [GetPlayer.GetName] ülkesindeki [GetPopType('peasants').GetName]#!:\nNüfus: [GetPopType('peasants').GetPopulation(GetPlayer.Self)|kv]\n[concept_political_strength]: [GetPopType('peasants').GetPolStr(GetPlayer.Self)|kv]\n\n[GetPopType('peasants').GetStrataBreakdownInCountry(GetPlayer.Self)]\n\n[GetPopType('peasants').GetInterestGroupSupportDesc( GetPlayer.Self )][ConcatIfNeitherEmpty('\n$TOOLTIP_DELIMITER$\n', GetPopType('peasants').GetQualificationsGrowthDesc)]"
+ com_topbar_element_subsistence_pops_source: "$com_topbar_base_game_source$"
+ com_topbar_element_subsistence_pops_source_tooltip: "$com_topbar_base_game_source_tooltip$"
+ com_topbar_element_subsistence_pops_window: "com_topbar_census"
+
+ # Unrealized Taxes
+ com_topbar_element_unrealized_taxes: "com_topbar_element_unrealized_taxes"
+ com_topbar_element_unrealized_taxes_icon: "@com_unrealized_taxes!"
+ com_topbar_element_unrealized_taxes_value: "[GetPlayer.GetUnrealizedTaxes|*v0]"
+ com_topbar_element_unrealized_taxes_tooltip: "$UNREALIZED_TAXES_BREAKDOWN$"
+ com_topbar_element_unrealized_taxes_source: "$com_topbar_base_game_source$"
+ com_topbar_element_unrealized_taxes_source_tooltip: "$com_topbar_base_game_source_tooltip$"
+ com_topbar_element_unrealized_taxes_window: "com_topbar_taxes"
+
+ # Agitators
+ com_topbar_element_agitators: "com_topbar_element_agitators"
+ com_topbar_element_agitators_icon: "@activism!"
+ com_topbar_element_agitators_value: "[GetPlayer.GetUsedAgitatorSlots|v] / [GetPlayer.GetTotalAgitatorSlots|v]"
+ com_topbar_element_agitators_tooltip: "#header [Concept('concept_agitator','$concept_agitators$')]#!\nŞu anda [GetPlayer.GetTotalAgitatorSlots|v] olası [Concept('concept_agitator','$concept_agitators$')] yerinin [GetPlayer.GetUsedAgitatorSlots|v] tanesini kullanıyoruz."
+ com_topbar_element_agitators_source: "$com_topbar_base_game_source$"
+ com_topbar_element_agitators_source_tooltip: "$com_topbar_base_game_source_tooltip$"
+ com_topbar_element_agitators_map_mode: "mm_political"
+ com_topbar_element_agitators_window: "com_topbar_politics"
+
+ # Market Balance
+ com_topbar_element_market_balance: "com_topbar_element_market_balance"
+ com_topbar_element_market_balance_icon: "@market_balance!"
+ com_topbar_element_market_balance_value: "[GetPlayer.GetMarket.GetBalance|+=D]"
+ com_topbar_element_market_balance_tooltip: "[GetPlayer.GetMarket.GetBalanceDesc]"
+ com_topbar_element_market_balance_source: "$com_topbar_base_game_source$"
+ com_topbar_element_market_balance_source_tooltip: "$com_topbar_base_game_source_tooltip$"
+ com_topbar_element_market_balance_map_mode: "mm_market_areas"
+ com_topbar_element_market_balance_window: "com_topbar_market"
+
+ # Market GDP_balance
+ com_topbar_element_market_gdp: "com_topbar_element_market_gdp"
+ com_topbar_element_market_gdp_icon: "@market_production!"
+ com_topbar_element_market_gdp_value: "[GetPlayer.GetMarket.GetMarketGDPValue|*v2]"
+ com_topbar_element_market_gdp_tooltip: "#header Pazar $concept_gdp$#!\n[GetPlayer.GetMarket.GetName], @money![GetPlayer.GetMarket.GetMarketGDPValue|*v2] değerinde bir [concept_gdp] üretiyor.\nBu, [GetPlayer.GetName] [concept_gdp] değerinin [GetPlayer.GetMarket.GetGDPContributionPercentage(GetPlayer)|v%0] kadarına karşılık geliyor."
+ com_topbar_element_market_gdp_source: "$com_topbar_base_game_source$"
+ com_topbar_element_market_gdp_source_tooltip: "$com_topbar_base_game_source_tooltip$"
+ com_topbar_element_market_gdp_map_mode: "mm_market_areas"
+ com_topbar_element_market_gdp_window: "com_topbar_market"
+
+ # Trade Capacity
+ com_topbar_element_trade_capacity: "com_topbar_element_trade_capacity"
+ com_topbar_element_trade_capacity_icon: "@com_trade_capacity!"
+ com_topbar_element_trade_capacity_value: "[GetPlayer.GetMarket.GetCountryTradeCapacity(GetPlayer.Self)|*v2]"
+ com_topbar_element_trade_capacity_tooltip: "[GetPlayer.GetMarket.GetCountryTradeCapacityDesc(GetPlayer.Self)]."
+ com_topbar_element_trade_capacity_source: "$com_topbar_base_game_source$"
+ com_topbar_element_trade_capacity_source_tooltip: "$com_topbar_base_game_source_tooltip$"
+ com_topbar_element_trade_capacity_map_mode: "mm_market_areas"
+ com_topbar_element_trade_capacity_window: "com_topbar_market"

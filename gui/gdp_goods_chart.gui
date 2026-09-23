@@ -1,0 +1,232 @@
+# ============================================================================
+# GDP Composition Chart - reusable chart widget
+# This file defines gdp_goods_chart only.
+# ============================================================================
+
+@gdp_chart_panel_width = 600
+@gdp_chart_panel_height = 230
+@gdp_chart_legend_width = 322
+# Leave 20 px beside the single column for the scrollbar and edge spacing.
+@gdp_chart_legend_column_width = 302
+
+types gdp_chart_market
+{
+	type gdp_goods_chart = container {
+		minimumsize = { @gdp_chart_panel_width -1 }
+		maximumsize = { @gdp_chart_panel_width -1 }
+		onmousehierarchyenter = "[PdxGuiWidget.FindChild('gdp_chart_button').InterruptThenTriggerAnimation('hide_chart_button','show_chart_button')]"
+		onmousehierarchyleave = "[PdxGuiWidget.FindChild('gdp_chart_button').InterruptThenTriggerAnimation('show_chart_button','hide_chart_button')]"
+		alwaystransparent = no
+
+		widget = {
+			size = { @gdp_chart_panel_width @gdp_chart_panel_height }
+
+			background = {
+				using = entry_bg
+			}
+
+			# Left: retain the 200 px chart without reserving a toolbar row above it.
+			widget = {
+				size = { 250 230 }
+				position = { 8 0 }
+
+				v3_piechart = {
+					visible = "[GetVariableSystem.Exists('piecharts')]"
+					blockoverride "chart_anchor" {
+						parentanchor = center
+					}
+
+					blockoverride "datamodel" {
+						datamodel = "[Market.AccessMarketGoods( MarketPanel.GetFilters )]"
+					}
+
+					blockoverride "piechartsize" {
+						size = { 200 200 }
+					}
+
+					blockoverride "pieslice" {
+						value = "[FixedPointToFloat(Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice))]"
+					}
+
+					blockoverride "color" {
+						color = "[Goods.GetColor]"
+					}
+
+					blockoverride "tooltip" {
+						tooltip = "GDP_CHART_PIETOOLTIP"
+					}
+				}
+
+				v3_treemapchart = {
+					visible = "[Not(GetVariableSystem.Exists('piecharts'))]"
+					blockoverride "chart_anchor" {
+						parentanchor = center
+					}
+
+					blockoverride "datamodel" {
+						datamodel = "[Market.AccessMarketGoods( MarketPanel.GetFilters )]"
+					}
+
+					blockoverride "piechartsize" {
+						size = { 200 200 }
+					}
+
+					blockoverride "pieslice" {
+						value = "[FixedPointToFloat(Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice))]"
+					}
+
+					blockoverride "color" {
+						color = "[Goods.GetColor]"
+					}
+
+					blockoverride "tooltip" {
+						tooltip = "GDP_CHART_PIETOOLTIP"
+					}
+				}
+			}
+
+			# Nine complete 23 px rows, aligned with the chart's visible height.
+			scrollarea = {
+				size = { @gdp_chart_legend_width 207 }
+				position = { 270 12 }
+				scrollbarpolicy_horizontal = always_off
+				alwaystransparent = no
+
+				scrollwidget = {
+					fixedgridbox = {
+						parentanchor = hcenter
+						addrow = 23
+						addcolumn = @gdp_chart_legend_column_width
+						flipdirection = yes
+						datamodel_wrap = 1
+
+						datamodel = "[Market.AccessMarketGoods( MarketPanel.GetFilters )]"
+
+						item = {
+							widget = {
+								size = { @gdp_chart_legend_column_width 23 }
+								tooltip = "GDP_CHART_PIETOOLTIP"
+
+								hbox = {
+									margin = { 6 0 }
+
+									icon = {
+										texture = "/gfx/interface/piechart/piechart_legend.dds"
+										size = { 18 18 }
+										color = "[Goods.GetColor]"
+									}
+
+									textbox = {
+										layoutpolicy_horizontal = expanding
+										size = { 0 18 }
+										align = nobaseline
+										raw_text = "[Goods.GetName]"
+										margin_left = 3
+										fontsize_min = 14
+										elide = right
+									}
+
+									textbox = {
+										visible = "[EqualTo_string(Localize('WNY_UNIT_WAN'), 'WNY_UNIT_WAN')]"
+										autoresize = yes
+										align = right|nobaseline
+										raw_text = "[Divide_CFixedPoint(Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice), Market.GetMarketGDPValue)|%0]（[Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice)|K]）"
+										margin_right = 5
+										fontsize_min = 14
+									}
+
+									textbox = {
+										visible = "[Not(EqualTo_string(Localize('WNY_UNIT_WAN'), 'WNY_UNIT_WAN'))]"
+										autoresize = yes
+										align = right|nobaseline
+										raw_text = "[Divide_CFixedPoint(Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice), Market.GetMarketGDPValue)|%0]（[Select_CFixedPoint(GreaterThanOrEqualTo_CFixedPoint(Abs_CFixedPoint(Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice)), '(CFixedPoint)100000000'), Divide_CFixedPoint(Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice), '(CFixedPoint)100000000'), Select_CFixedPoint(GreaterThanOrEqualTo_CFixedPoint(Abs_CFixedPoint(Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice)), '(CFixedPoint)10000'), Divide_CFixedPoint(Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice), '(CFixedPoint)10000'), Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice)))|v1][Select_CString(GreaterThanOrEqualTo_CFixedPoint(Abs_CFixedPoint(Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice)), '(CFixedPoint)100000000'), Localize('WNY_UNIT_YI'), Select_CString(GreaterThanOrEqualTo_CFixedPoint(Abs_CFixedPoint(Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice)), '(CFixedPoint)10000'), Localize('WNY_UNIT_WAN'), ''))]）"
+										margin_right = 5
+										fontsize_min = 14
+									}
+								}
+							}
+						}
+					}
+				}
+
+				scrollbar_vertical = {
+					using = vertical_scrollbar
+				}
+			}
+
+		}
+
+		# The engine cannot sort on the custom value expression used by the chart.
+		# Sell orders are the closest native numeric sort and keep every view in sync.
+		sort_button = {
+			name = "gdp_chart_sort_button"
+			parentanchor = left|top
+			position = { 5 20 }
+			size = { 30 30 }
+			margin_left = 0
+			margin_right = 0
+			tooltip = "SORT_BY_SELL_ORDERS"
+
+			onclick = "[Market.Sort('sell')]"
+			onclick = "[Market.RestoreSort]"
+
+			button = {
+				texture = "gfx/interface/buttons/sort_button_icons/sort_sell_orders.dds"
+				size = { 25 25 }
+				parentanchor = center
+				alwaystransparent = yes
+			}
+		}
+
+		# Keep both controls level, clear of the scrolling list.
+		widget = {
+			name = "gdp_chart_button"
+			parentanchor = left|top
+			size = { 30 30 }
+
+			position = { 230 20 }
+
+			state = {
+				name = hide_chart_button
+				trigger_on_create = yes
+				alpha = 0
+				duration = 0.2
+			}
+
+			state = {
+				name = show_chart_button
+				alpha = 1
+				duration = 0.15
+			}
+
+			# pie/treemap toggle
+			button_icon_round_toggle = {
+				size = { 29 29 }
+				parentanchor = right|vcenter
+				position = { -10 0 }
+
+				blockoverride "on_click" {
+					onclick = "[GetVariableSystem.Toggle('piecharts')]"
+				}
+				blockoverride "view_1" {
+					visible = "[Not(GetVariableSystem.Exists('piecharts'))]"
+				}
+				blockoverride "view_2" {
+					visible = "[GetVariableSystem.Exists('piecharts')]"
+				}
+				blockoverride "icon_1" {
+					texture = "gfx/interface/buttons/button_icons/piecharts.dds"
+				}
+				blockoverride "icon_2" {
+					texture = "gfx/interface/buttons/button_icons/areacharts.dds"
+				}
+				blockoverride "tooltip_1" {
+					tooltip = "TOOLTIP_PIE_CHART"
+				}
+				blockoverride "tooltip_2" {
+					tooltip = "TOOLTIP_AREA_CHART"
+				}
+			}
+		}
+	}
+}

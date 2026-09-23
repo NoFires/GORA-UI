@@ -1,0 +1,20 @@
+﻿l_polish:
+ # GORA UI+ — Advanced GDP Tracker: vanilla tooltip overrides
+ # Adds GDP-growth, LARP fractions and per-state GDP breakdowns to vanilla
+ # tooltips. Verified against vanilla 1.13.4 keys (RADICALS_TOOLTIP,
+ # LOYALISTS_TOOLTIP, NEUTRALS_TOOLTIP, POP_TOOLTIP, GDP_TOOLTIP,
+ # CURRENT_GDP_STATE).
+
+ # ─── LARP-extended population & GDP tooltips ────────────────────────────
+ RADICALS_TOOLTIP:1 "#tooltip_header $RADICALS$#!\n[Country.GetName] – $RADICALS$ występują w tym państwie w liczbie #v [Country.GetNumRadicals|D]#! ([Country.MakeScope.ScriptValue('larp_radicals_percent')|%v1]), podczas gdy cała populacja składa się z następującej liczby osób: #v [Country.GetTotalPopulation|D]#!\n$TOOLTIP_DELIMITER$\n$RADICALS$ – liczba osób należących do tej grupy zmieniła się o #v #tooltippable #tooltip:[Country.GetTooltipTag],RADICALS_CHANGE_TOOLTIP [Country.GetTotalNumRadicalsChange|D=-]#!#!#! od następującej daty: [Country.GetRadicalsLoyalistsChangeStartDate|v].\nGłównymi czynnikami odpowiadającymi za tę sytuację są: [Country.GetRadicalsChangeSummary]\n\n[Country.GetRadicalsSummaryDesc][ConcatIfNeitherEmpty('\n\n',SelectLocalization( GreaterThan_int32(Country.CalcNumStatesInTurmoil, '(int32)0'), 'STATES_IN_TURMOIL', '' ))][ConcatIfNeitherEmpty('\n\n',SelectLocalization( Country.HasIGApprovalFromRadicals, 'RADICALS_IG_APPROVAL', '' ))]"
+
+ LOYALISTS_TOOLTIP:1 "#tooltip_header $LOYALISTS$#!\n[Country.GetName] – $LOYALISTS$ występują w tym państwie w liczbie #v [Country.GetNumLoyalists|D]#! ([Country.MakeScope.ScriptValue('larp_loyalists_percent')|%v1]), podczas gdy cała populacja składa się z następującej liczby osób: #v [Country.GetTotalPopulation|D]#!\n$TOOLTIP_DELIMITER$\n$LOYALISTS$ – liczba osób należących do tej grupy zmieniła się o #v #tooltippable #tooltip:[Country.GetTooltipTag],LOYALISTS_CHANGE_TOOLTIP [Country.GetTotalNumLoyalistsChange|D=+]#!#!#! od następującej daty: [Country.GetRadicalsLoyalistsChangeStartDate|v].\nGłównymi czynnikami odpowiadającymi za tę sytuację są: [Country.GetLoyalistsChangeSummary]\n\n[Country.GetLoyalistsSummaryDesc][ConcatIfNeitherEmpty('\n\n',SelectLocalization( Country.HasIGApprovalFromLoyalists, 'LOYALISTS_IG_APPROVAL', '' ))]"
+
+ NEUTRALS_TOOLTIP: "#tooltip_header $NEUTRALS$#!\n$NEUTRALS$ – liczba w całej populacji państwa o nazwie [Country.GetName] (#v [Country.GetTotalPopulation|*2]#!): #v [Country.GetNumNeutrals|*2]#! ([Country.MakeScope.ScriptValue('larp_neutrals_percent')|%v1])"
+
+ POP_TOOLTIP:2 "#tooltip_header [Concept('concept_pop', '$concept_population$')]#!\nObecnie: [Country.GetTotalPopulation|*2v] ([Country.GetPopulationRanking])\n[Country.GetPopGrowthDesc]$POP_TOOLTIP_DELAYED$\n$TOOLTIP_DELIMITER$\nPopulacja [Country.GetAdjective] stanowi [Country.MakeScope.ScriptValue('larp_global_pop_percent')|%v1] globalnej populacji\nGlobalna populacja: [Country.MakeScope.ScriptValue('larp_global_pop')|*2v]"
+
+ GDP_TOOLTIP:1 "#header [concept_gdp] państwa o nazwie [Country.GetName]#!\n[Country.GetGDP|Dv] @money! (#u #tooltippable #tooltip:[Country.GetTooltipTag],COUNTRY_GDP_OWNERSHIP_TOOLTIP [Country.GetDomesticallyOwnedGDPFraction|%1b]#!#!#!) to wartość $concept_gdp_short$ będąca własnością rodzimą ([Country.GetGDPRanking])\n[Country.GetGDPPerCapita|2*v] @money! [Concept('concept_gdp_per_capita', '$concept_gdp_per_capita_short$')] ([Country.GetGDPPerCapitaRanking])\n$GDPGR_growth_text$\n$TOOLTIP_DELIMITER$\nPKB [Country.GetAdjective] stanowi [Country.MakeScope.ScriptValue('larp_global_gdp_percent')|%v2] globalnego PKB\nGlobalne PKB: @money![Country.MakeScope.ScriptValue('larp_global_gdp')|Dv]"
+
+ # ─── Per-state GDP breakdown ────────────────────────────────────────────
+ CURRENT_GDP_STATE:2 "#header [State.GetOwner.GetNameNoFormatting] – [concept_gdp|l] w następującym obszarze administracyjnym: [State.GetName]#!\n$TOOLTIP_DELIMITER$\nBieżący roczny udział w PKB: #variable [State.GetGDPContribution|K] @money!#!\n\nObszar administracyjny [State.GetName] generuje #variable [State.GetGDPContributionPercentage|%1]#! $GDP_SHORT$ państwa o nazwie [State.GetOwner.GetNameNoFormatting]\n\n[State.GetGDPGoodsContributionBreakdown]"

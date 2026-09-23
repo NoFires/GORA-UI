@@ -1,0 +1,50 @@
+﻿# GORA UI+ — Advanced GDP Tracker: scripted GUIs (leaderboard tooltips)
+#
+# These two SGUIs are invoked from GDPGR_leaderboard_tooltip in the locale
+# file via [GetScriptedGui(...).ExecuteTooltip(...)]. They iterate the top
+# 10 countries by leaderboard rank and by raw GDP, respectively.
+
+# ─── Top 10 by annual growth rate ─────────────────────────────────────────
+GDPGR_sg_annl_growth_leaderboard = {
+	scope = country
+	effect = {
+		ordered_country = {
+			limit = {
+				has_variable = GDPGR_annl_growth_leaderboard_pos
+				var:GDPGR_annl_growth_leaderboard_pos > 0
+
+				# Drop decentralized tribes, single-state insignificant powers,
+				# and unrecognized minors so the leaderboard reads as a
+				# Great-Powers-style ranking.
+				NOT = { is_country_type = decentralized }
+				NOT = { country_rank    = rank_value:insignificant_power }
+				NOT = { country_rank    = rank_value:unrecognized_power }
+			}
+			max = 10
+			order_by = {
+				add = var:GDPGR_annl_growth_leaderboard_pos
+				multiply = -1
+			}
+			custom_tooltip = GDPGR_tt_leaderboard_line
+		}
+	}
+}
+
+# ─── Top 10 by raw GDP ────────────────────────────────────────────────────
+GDPGR_sg_annl_growth_leaderboard_top_gdps = {
+	scope = country
+	effect = {
+		ordered_country = {
+			limit = {
+				has_variable = GDPGR_annl_growth_leaderboard_pos
+				var:GDPGR_annl_growth_leaderboard_pos > 0
+				# For "biggest economies" we only filter out tribes; minor
+				# nations are still interesting if they happen to have GDP.
+				NOT = { is_country_type = decentralized }
+			}
+			max = 10
+			order_by = { add = gdp }
+			custom_tooltip = GDPGR_tt_leaderboard_line_top_gdps
+		}
+	}
+}

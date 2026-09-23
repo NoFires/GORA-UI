@@ -1,0 +1,417 @@
+﻿# =============================================================================
+# Improved ParliamentGraph - Parliament Panel Widget
+# -----------------------------------------------------------------------------
+# `parliament_item` is the single entry point used by the override of
+# politics_panel_government - drop it into the Opposition column and the
+# whole subsystem renders from country variables populated by
+# common/scripted_effects/ipg_seat_allocation.txt.
+#
+# Three sub-widgets back the three tabs; only the visible one renders.
+# State is held in two VariableSystem keys:
+#   ipg_parl_collapsed   (presence -> panel is collapsed to a header row)
+#   ipg_parl_view        (value: 'power' | 'alignment' | 'electoral')
+# =============================================================================
+
+types politics_panel_types
+{
+	# -------------------------------------------------------------------------
+	# Top-level container: header + three tab buttons + currently-selected view
+	# -------------------------------------------------------------------------
+	type parliament_item = vbox {
+		layoutpolicy_horizontal = expanding
+		layoutpolicy_vertical = preferred
+		spacing = 6
+
+		# --- Collapsed state: a single bar with an "Expand" button ---
+		hbox = {
+			size = { 100% 34 }
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = preferred
+			spacing = 8
+			visible = "[GetVariableSystem.Exists('ipg_parl_collapsed')]"
+			using = entry_bg_fancy
+
+			textbox = {
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+				text = "ipg_panel_title"
+				using = fontsize_medium
+				align = left|nobaseline
+				margin_left = 12
+			}
+
+			button = {
+				size = { 110 28 }
+				using = default_button
+				onclick = "[GetVariableSystem.Toggle('ipg_parl_collapsed')]"
+				text = "ipg_expand"
+				using = fontsize_medium
+			}
+		}
+
+		# --- Expanded state: tab strip + selected view ---
+		vbox = {
+			size = { 100% 270 }
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = preferred
+			spacing = 6
+			visible = "[Not(GetVariableSystem.Exists('ipg_parl_collapsed'))]"
+
+			# --- Tab strip ---
+			hbox = {
+				spacing = 8
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = preferred
+
+				widget = {
+					size = { 0 1 }
+					layoutpolicy_horizontal = expanding
+				}
+
+				# Party Structure tab (default view).
+				# Always enabled - the chart is clout-based, not tied to
+				# actual elections, so franchise / party existence is not a
+				# meaningful gate.
+				widget = {
+					size = { 200 30 }
+
+					# Active state: when the variable is unset (default), or
+					# when it is explicitly set to 'electoral'.
+					button = {
+						size = { 200 30 }
+						using = default_button_primary
+						enabled = no
+						visible = "[Or(Not(GetVariableSystem.Exists('ipg_parl_view')), GetVariableSystem.HasValue('ipg_parl_view', 'electoral'))]"
+						text = "ipg_view_electoral"
+						using = fontsize_medium
+					}
+					# Inactive state (clickable): variable is set to something else.
+					button = {
+						size = { 200 30 }
+						using = default_button
+						visible = "[And(GetVariableSystem.Exists('ipg_parl_view'), Not(GetVariableSystem.HasValue('ipg_parl_view', 'electoral')))]"
+						onclick = "[GetVariableSystem.Set('ipg_parl_view', 'electoral')]"
+						text = "ipg_view_electoral"
+						using = fontsize_medium
+					}
+				}
+
+				# Power Structure tab
+				widget = {
+					size = { 200 30 }
+
+					button = {
+						size = { 200 30 }
+						using = default_button_primary
+						enabled = no
+						visible = "[GetVariableSystem.HasValue('ipg_parl_view', 'power')]"
+						text = "ipg_view_power"
+						using = fontsize_medium
+					}
+					button = {
+						size = { 200 30 }
+						using = default_button
+						visible = "[Not(GetVariableSystem.HasValue('ipg_parl_view', 'power'))]"
+						onclick = "[GetVariableSystem.Set('ipg_parl_view', 'power')]"
+						text = "ipg_view_power"
+						using = fontsize_medium
+					}
+				}
+
+				# Political Alignment tab
+				widget = {
+					size = { 200 30 }
+
+					button = {
+						size = { 200 30 }
+						using = default_button_primary
+						enabled = no
+						visible = "[GetVariableSystem.HasValue('ipg_parl_view', 'alignment')]"
+						text = "ipg_view_alignment"
+						using = fontsize_medium
+					}
+					button = {
+						size = { 200 30 }
+						using = default_button
+						visible = "[Not(GetVariableSystem.HasValue('ipg_parl_view', 'alignment'))]"
+						onclick = "[GetVariableSystem.Set('ipg_parl_view', 'alignment')]"
+						text = "ipg_view_alignment"
+						using = fontsize_medium
+					}
+				}
+
+				# Collapse button on the right
+				widget = {
+					size = { 110 30 }
+
+					button = {
+						size = { 110 30 }
+						using = default_button
+						onclick = "[GetVariableSystem.Toggle('ipg_parl_collapsed')]"
+						text = "ipg_collapse"
+						using = fontsize_medium
+					}
+				}
+			}
+
+			# --- Selected sub-view (only one visible at a time) ---
+			# Party Structure (electoral) is the default view: visible when
+			# the variable is unset OR explicitly 'electoral'.
+			ipg_view_electoral = {
+				visible = "[Or(Not(GetVariableSystem.Exists('ipg_parl_view')), GetVariableSystem.HasValue('ipg_parl_view', 'electoral'))]"
+			}
+			ipg_view_power = {
+				visible = "[GetVariableSystem.HasValue('ipg_parl_view', 'power')]"
+			}
+			ipg_view_alignment = {
+				visible = "[GetVariableSystem.HasValue('ipg_parl_view', 'alignment')]"
+			}
+		}
+	}
+
+
+	# -------------------------------------------------------------------------
+	# View 1: Power Structure
+	# -------------------------------------------------------------------------
+	type ipg_view_power = widget {
+		size = { 100% 230 }
+		layoutpolicy_horizontal = expanding
+		layoutpolicy_vertical = preferred
+		using = tooltip_below
+		using = entry_bg_fancy
+		tooltipwidget = { ipg_tooltip_power_dynamic = {} }
+
+		textbox = {
+			autoresize = yes
+			text = "ipg_view_power"
+			using = fontsize_large
+			align = left|nobaseline
+			position = { 18 12 }
+		}
+		# Inline description with constrained width + multiline wrap. The
+		# hemicycle's left curve leaves ~180px of empty space at y=40..70,
+		# so 200x60 keeps the text safely outside the chart even when it
+		# wraps to two or three lines.
+		textbox = {
+			size = { 200 60 }
+			multiline = yes
+			autoresize = no
+			text = "ipg_power_desc"
+			using = fontsize_small
+			align = left|nobaseline
+			position = { 18 40 }
+			alpha = 0.8
+		}
+
+		hbox = {
+			size = { 100% 230 }
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = preferred
+
+			widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+
+			widget = {
+				size = { 600 230 }
+
+				# The country list is already in descending clout order. Every item
+				# receives its InterestGroup datacontext and overlays the same chart.
+				overlappingitembox = {
+					size = { 600 230 }
+					datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+					item = {
+						ipg_seats_ig_power = {}
+					}
+				}
+			}
+
+			widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+		}
+	}
+
+
+	# -------------------------------------------------------------------------
+	# View 2: Political Alignment
+	# -------------------------------------------------------------------------
+	type ipg_view_alignment = widget {
+		size = { 100% 230 }
+		layoutpolicy_horizontal = expanding
+		layoutpolicy_vertical = preferred
+		using = tooltip_below
+		using = entry_bg_fancy
+		tooltipwidget = { ipg_tooltip_alignment_dynamic = {} }
+
+		textbox = {
+			autoresize = yes
+			text = "ipg_view_alignment"
+			using = fontsize_large
+			align = left|nobaseline
+			position = { 18 12 }
+		}
+		# Inline description (see ipg_view_power for the geometry rationale).
+		textbox = {
+			size = { 200 60 }
+			multiline = yes
+			autoresize = no
+			text = "ipg_alignment_desc"
+			using = fontsize_small
+			align = left|nobaseline
+			position = { 18 40 }
+			alpha = 0.8
+		}
+
+		hbox = {
+			size = { 100% 230 }
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = preferred
+
+			widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+
+			widget = {
+				size = { 600 230 }
+
+				# Ordered population-share list built by ipg_calc_political_alignment.
+				overlappingitembox = {
+					size = { 600 230 }
+					datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]"
+					item = {
+						ipg_seats_ig_alignment = {}
+					}
+				}
+
+				# Country-scoped politically unaligned slot
+				ipg_seats_alignment_unaligned = {}
+			}
+
+			widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+		}
+	}
+
+
+	# -------------------------------------------------------------------------
+	# View 3: Electoral Parliament
+	# -------------------------------------------------------------------------
+	type ipg_view_electoral = widget {
+		size = { 100% 230 }
+		layoutpolicy_horizontal = expanding
+		layoutpolicy_vertical = preferred
+		using = tooltip_below
+		using = entry_bg_fancy
+		tooltipwidget = { ipg_tooltip_electoral_dynamic = {} }
+
+		textbox = {
+			autoresize = yes
+			text = "ipg_view_electoral"
+			using = fontsize_large
+			align = left|nobaseline
+			position = { 18 12 }
+		}
+		# Inline description (see ipg_view_power for the geometry rationale).
+		textbox = {
+			size = { 200 60 }
+			multiline = yes
+			autoresize = no
+			text = "ipg_electoral_desc"
+			using = fontsize_small
+			align = left|nobaseline
+			position = { 18 40 }
+			alpha = 0.8
+		}
+
+		hbox = {
+			size = { 100% 230 }
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = preferred
+
+			widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+
+			widget = {
+				size = { 600 230 }
+
+				# Ordered real-vote list built by ipg_calc_electoral_from_votes.
+				overlappingitembox = {
+					size = { 600 230 }
+					datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]"
+					item = {
+						ipg_seats_party_electoral = {}
+					}
+				}
+			}
+
+			widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+		}
+	}
+}
+
+
+# Dynamic tooltips consume the same unbounded variable lists as the chart.
+# This avoids a second rank/pointer representation and keeps every displayed
+# entity in the tooltip automatically.
+types TooltipTypes
+{
+	type ipg_tooltip_power_dynamic = FancyTooltipWidgetType {
+		blockoverride "whole_icon" {}
+		blockoverride "header_text_margin_left" { margin_left = 18 }
+		blockoverride "name" { text = "ipg_view_power" }
+		blockoverride "type" {}
+		blockoverride "text" {}
+		blockoverride "tooltip_content_after" {
+			fixedgridbox = {
+				addcolumn = 500
+				addrow = 22
+				datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+				item = {
+					custom_tooltip_textbox_fixed_width = {
+						datacontext = "[Scope.GetInterestGroup]"
+						text = "ipg_power_list_item"
+					}
+				}
+			}
+		}
+	}
+
+	type ipg_tooltip_alignment_dynamic = FancyTooltipWidgetType {
+		blockoverride "whole_icon" {}
+		blockoverride "header_text_margin_left" { margin_left = 18 }
+		blockoverride "name" { text = "ipg_view_alignment" }
+		blockoverride "type" {}
+		blockoverride "text" {}
+		blockoverride "tooltip_content_after" {
+			fixedgridbox = {
+				addcolumn = 500
+				addrow = 22
+				datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]"
+				item = {
+					custom_tooltip_textbox_fixed_width = {
+						datacontext = "[Scope.GetInterestGroup]"
+						text = "ipg_alignment_list_item"
+					}
+				}
+			}
+			custom_tooltip_textbox_fixed_width = {
+				visible = "[GreaterThan_CFixedPoint(Country.MakeScope.Var('ipg_alignment_unaligned_seats').GetValue, '(CFixedPoint)0')]"
+				text = "ipg_alignment_unaligned_desc"
+			}
+		}
+	}
+
+	type ipg_tooltip_electoral_dynamic = FancyTooltipWidgetType {
+		blockoverride "whole_icon" {}
+		blockoverride "header_text_margin_left" { margin_left = 18 }
+		blockoverride "name" { text = "ipg_view_electoral" }
+		blockoverride "type" {}
+		blockoverride "text" {}
+		blockoverride "tooltip_content_after" {
+			fixedgridbox = {
+				addcolumn = 500
+				addrow = 22
+				datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]"
+				item = {
+					custom_tooltip_textbox_fixed_width = {
+						datacontext = "[Scope.GetParty]"
+						text = "ipg_electoral_list_item"
+					}
+				}
+			}
+		}
+	}
+}

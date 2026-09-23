@@ -1,0 +1,3 @@
+﻿l_simp_chinese:
+ STATE_PANEL_BUILDINGS_COLLAPSE: "#instruction 点击#!折叠此栏\n#instruction $SHORTCUT_KEY_MOD_shift$点击#!折叠#b 所有#!栏"
+ STATE_PANEL_BUILDINGS_EXPAND: "#instruction 点击#!展开此栏\n#instruction $SHORTCUT_KEY_MOD_shift$点击#!展开#b 所有#!栏"

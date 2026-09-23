@@ -1,0 +1,6 @@
+﻿l_korean:
+ GDP_CHART_TITLE: "GDP 구성"
+ GDP_CHART_SUBTITLE: "도형의 크기는 각 상품이 국가 GDP에 기여하는 추정 비중을 나타냅니다(판매 주문량 × 시장 가격)"
+ GDP_CHART_PIETOOLTIP: "#header [Goods.GetName]#!\n연간 가치: @money![Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice)|K]#!\nGDP 비중: [Divide_CFixedPoint(Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice), Market.GetMarketGDPValue)|%0]\n시장 가격: @money![Goods.GetMarketPrice|v1]#!\n판매 주문량: [Goods.GetMarketSellOrders|v0]"
+ GDP_CHART_SHOW_MORE: "더 보기"
+ GDP_CHART_SHOW_LESS: "접기"

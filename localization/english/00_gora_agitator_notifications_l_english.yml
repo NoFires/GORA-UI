@@ -1,0 +1,17 @@
+﻿l_english:
+ # GORA UI+ — Detailed Agitator/Ruler/Heir notification helpers.
+ # These are reusable text fragments referenced by
+ # `replace/00_gora_agitator_notifications_overrides_l_english.yml`
+ # via $...$ substitution. Keys are namespaced gora_dan_* (Detailed Agitator Notification).
+
+ gora_dan_agitator_interest_group: "[concept_interest_group]: [SCOPE.sCharacter('exile_scope').GetInterestGroup.GetName]"
+ gora_dan_agitator_ideology:       "[concept_ideology]: [SCOPE.sCharacter('exile_scope').GetIdeology.GetName]"
+ gora_dan_agitator_traits:         "[Concept('concept_character_trait', '$concept_character_traits$')]: [SCOPE.sCharacter('exile_scope').GetTraitsDesc]"
+
+ gora_dan_ruler_interest_group:    "[concept_interest_group]: [SCOPE.GetRootScope.GetCharacter.GetInterestGroup.GetName]"
+ gora_dan_ruler_ideology:          "[concept_ideology]: [SCOPE.GetRootScope.GetCharacter.GetIdeology.GetTexture] [SCOPE.GetRootScope.GetCharacter.GetIdeology.GetName]"
+ gora_dan_ruler_traits:            "[Concept('concept_character_trait', '$concept_character_traits$')]: [SCOPE.GetRootScope.GetCharacter.GetTraitsDesc]"
+
+ gora_dan_spawn_interest_group:    "[concept_interest_group]: [SCOPE.sCha('character').GetInterestGroup.GetName]"
+ gora_dan_spawn_ideology:          "[concept_ideology]: [SCOPE.sCha('character').GetIdeology.GetName]"
+ gora_dan_spawn_traits:            "[Concept('concept_character_trait', '$concept_character_traits$')]: [SCOPE.sCha('character').GetTraitsDesc]"

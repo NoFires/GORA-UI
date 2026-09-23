@@ -1,0 +1,124 @@
+[22:27:28][pdx_font.cpp:88]: Loading Font File fonts/NotoSans/NotoSansSC-Regular.otf
+[22:27:28][pdx_font.cpp:88]: Loading Font File fonts/Open_Sans/OpenSans-Regular.ttf
+[22:27:28][pdx_font.cpp:88]: Loading Font File fonts/NotoSans/NotoSansJP-Regular.otf
+[22:27:28][pdx_font.cpp:88]: Loading Font File fonts/NotoSans/NotoSansKR-Regular.otf
+[22:27:28][pdx_font.cpp:88]: Loading Font File fonts/NotoSans/NotoSans-Regular.ttf
+[22:27:28][pdx_font.cpp:88]: Loading Font File fonts/NotoSans/NotoSansSC-Light.otf
+[22:27:28][pdx_font.cpp:88]: Loading Font File fonts/Open_Sans/OpenSans-Italic.ttf
+[22:27:28][pdx_font.cpp:88]: Loading Font File fonts/NotoSans/NotoSansJP-Light.otf
+[22:27:28][pdx_font.cpp:88]: Loading Font File fonts/NotoSans/NotoSansKR-Light.otf
+[22:27:28][pdx_font.cpp:88]: Loading Font File fonts/NotoSans/NotoSans-Italic.ttf
+[22:27:28][pdx_font.cpp:88]: Loading Font File fonts/NotoSans/NotoSansSC-Bold.otf
+[22:27:28][pdx_font.cpp:88]: Loading Font File fonts/Open_Sans/OpenSans-Bold.ttf
+[22:27:28][pdx_font.cpp:88]: Loading Font File fonts/NotoSans/NotoSansJP-Bold.otf
+[22:27:28][pdx_font.cpp:88]: Loading Font File fonts/NotoSans/NotoSansKR-Bold.otf
+[22:27:28][pdx_font.cpp:88]: Loading Font File fonts/NotoSans/NotoSans-Bold.ttf
+[22:27:28][pdx_font.cpp:88]: Loading Font File fonts/NotoSans/NotoSansSC-Medium.otf
+[22:27:28][pdx_font.cpp:88]: Loading Font File fonts/Open_Sans/OpenSans-BoldItalic.ttf
+[22:27:28][pdx_font.cpp:88]: Loading Font File fonts/NotoSans/NotoSansJP-Medium.otf
+[22:27:28][pdx_font.cpp:88]: Loading Font File fonts/NotoSans/NotoSansKR-Medium.otf
+[22:27:28][pdx_font.cpp:88]: Loading Font File fonts/NotoSans/NotoSans-BoldItalic.ttf
+[22:27:28][pdx_font.cpp:88]: Loading Font File fonts/NotoSans/NotoSansSC-Black.otf
+[22:27:28][pdx_font.cpp:88]: Loading Font File fonts/Open_Sans/OpenSans-ExtraBold.ttf
+[22:27:28][pdx_font.cpp:88]: Loading Font File fonts/NotoSans/NotoSansJP-Black.otf
+[22:27:28][pdx_font.cpp:88]: Loading Font File fonts/NotoSans/NotoSansKR-Black.otf
+[22:27:28][pdx_font.cpp:88]: Loading Font File fonts/Open_Sans/OpenSans-ExtraBoldItalic.ttf
+[22:27:28][pdx_font.cpp:88]: Loading Font File fonts/NotoSerif/NotoSerifSC-Black.otf
+[22:27:28][pdx_font.cpp:88]: Loading Font File fonts/PlayfairDisplay/PlayfairDisplay-Regular.ttf
+[22:27:29][pdx_font.cpp:88]: Loading Font File fonts/ZenOldMincho/ZenOldMincho-Regular.ttf
+[22:27:29][pdx_font.cpp:88]: Loading Font File fonts/SB-Aggro/SB-Aggro-M.ttf
+[22:27:29][pdx_font.cpp:88]: Loading Font File fonts/NotoSerif/NotoSerifSC-Bold.otf
+[22:27:29][pdx_font.cpp:88]: Loading Font File fonts/PlayfairDisplay/PlayfairDisplay-Bold.ttf
+[22:27:29][pdx_font.cpp:88]: Loading Font File fonts/ZenOldMincho/ZenOldMincho-Bold.ttf
+[22:27:29][pdx_font.cpp:88]: Loading Font File fonts/SB-Aggro/SB-Aggro-B.ttf
+[22:27:29][pdx_font.cpp:88]: Loading Font File fonts/NotoSerif/NotoSerifSC-Light.otf
+[22:27:29][pdx_font.cpp:88]: Loading Font File fonts/PlayfairDisplay/PlayfairDisplay-Italic.ttf
+[22:27:29][pdx_font.cpp:88]: Loading Font File fonts/ZenOldMincho/ZenOldMincho-Black.ttf
+[22:27:29][pdx_font.cpp:88]: Loading Font File fonts/NotoSerif/NotoSerifSC-Regular.otf
+[22:27:29][pdx_font.cpp:88]: Loading Font File fonts/EBGaramond/EBGaramond-Medium.ttf
+[22:27:29][pdx_font.cpp:88]: Loading Font File fonts/NotoSerif/NotoSerifJP-Regular.otf
+[22:27:29][pdx_font.cpp:88]: Loading Font File fonts/MaruBuri/MaruBuri-SemiBold.ttf
+[22:27:29][pdx_font.cpp:88]: Loading Font File fonts/NotoSerif/NotoSerif-Regular.ttf
+[22:27:29][pdx_font.cpp:88]: Loading Font File fonts/EBGaramond/EBGaramond-Bold.ttf
+[22:27:29][pdx_font.cpp:88]: Loading Font File fonts/NotoSerif/NotoSerifJP-Bold.otf
+[22:27:29][pdx_font.cpp:88]: Loading Font File fonts/MaruBuri/MaruBuri-Bold.ttf
+[22:27:29][pdx_font.cpp:88]: Loading Font File fonts/NotoSerif/NotoSerif-Bold.ttf
+[22:27:29][pdx_font.cpp:88]: Loading Font File fonts/EBGaramond/EBGaramond-Italic.ttf
+[22:27:29][pdx_font.cpp:88]: Loading Font File fonts/NotoSerif/NotoSerifJP-Light.otf
+[22:27:29][pdx_font.cpp:88]: Loading Font File fonts/NotoSerif/NotoSansKR-Medium.otf
+[22:27:29][pdx_font.cpp:88]: Loading Font File fonts/ParadoxVictorian/ParadoxVictorian-Condensed.otf
+[22:27:29][pdx_font.cpp:88]: Loading Font File fonts/SawarabiMincho/SawarabiMincho-Regular.ttf
+[22:27:29][pdx_font.cpp:88]: Loading Font File fonts/GunglipbakmulgwanClassicM/GunglipbakmulgwanClassicM.ttf
+[22:27:30][pdx_font.cpp:88]: Loading Font File fonts/NotoSerif/NotoSansKR-Medium.otf
+[22:27:30][pdx_gui_localize.cpp:302]: gui/000_gora_map_list_panel.gui:200 - Failed parsing localized text: TOOLTIP_BUILDING_EMPLOYMENT
+[22:27:30][pdx_gui_factory.cpp:275]: failed reading property, at gui/000_gora_map_list_panel.gui:200
+[22:27:31][pdx_gui_factory.cpp:1293]: gui/add_wargoal_panel.gui:3 - Type 'add_wargoal_panel' already registered at 'gui/0_gora_add_wargoal_panel.gui:34'
+[22:27:31][pdx_gui_factory.cpp:1293]: gui/add_wargoal_panel.gui:419 - Type 'small_wargoal_item_with_checkmark' already registered at 'gui/0_gora_add_wargoal_panel.gui:179'
+[22:27:31][pdx_gui_factory.cpp:1293]: gui/add_wargoal_panel.gui:424 - Type 'small_wargoal_item_with_executed_checkmark' already registered at 'gui/0_gora_add_wargoal_panel.gui:184'
+[22:27:31][pdx_gui_factory.cpp:1293]: gui/budget_panel.gui:14 - Type 'budget_panel' already registered at 'gui/0_gora_budget_panel.gui:32'
+[22:27:31][pdx_gui_factory.cpp:1293]: gui/building_browser_panel.gui:23 - Type 'building_browser_panel' already registered at 'gui/0_gora_building_browser_panel.gui:42'
+[22:27:31][pdx_gui_factory.cpp:1293]: gui/building_browser_panel.gui:2304 - Type 'compact_building_browser_panel' already registered at 'gui/0_gora_building_browser_panel.gui:2296'
+[22:27:31][pdx_gui_factory.cpp:1293]: gui/companies_panel.gui:116 - Type 'companies_panel' already registered at 'gui/0_gora_companies_panel.gui:24'
+[22:27:31][pdx_gui_factory.cpp:1293]: gui/companies_panel.gui:971 - Type 'potential_company_item' already registered at 'gui/0_gora_companies_panel.gui:1074'
+[22:27:31][pdx_gui_factory.cpp:1293]: gui/companies_panel.gui:1278 - Type 'company_type_building_item' already registered at 'gui/0_gora_companies_panel.gui:1046'
+[22:27:31][pdx_gui_factory.cpp:1293]: gui/companies_panel.gui:1340 - Type 'company_filter' already registered at 'gui/0_gora_companies_panel.gui:664'
+[22:27:31][pdx_gui_factory.cpp:1293]: gui/company_panel.gui:15 - Type 'company_panel' already registered at 'gui/00_nuanced_charts_company_panel.gui:15'
+[22:27:31][pdx_gui_factory.cpp:1293]: gui/company_panel.gui:325 - Type 'company_info_item' already registered at 'gui/00_nuanced_charts_company_panel.gui:325'
+[22:27:31][pdx_gui_factory.cpp:1293]: gui/company_panel.gui:393 - Type 'company_panel_overview_tab' already registered at 'gui/00_nuanced_charts_company_panel.gui:393'
+[22:27:31][pdx_gui_factory.cpp:1293]: gui/company_panel.gui:1228 - Type 'company_panel_assets_tab' already registered at 'gui/00_nuanced_charts_company_panel.gui:1228'
+[22:27:31][pdx_gui_factory.cpp:1293]: gui/company_panel.gui:1403 - Type 'independent_company_country_item' already registered at 'gui/00_nuanced_charts_company_panel.gui:1403'
+[22:27:31][pdx_gui_factory.cpp:1293]: gui/company_panel.gui:1506 - Type 'company_hq_assets_item' already registered at 'gui/00_nuanced_charts_company_panel.gui:1506'
+[22:27:31][pdx_gui_factory.cpp:1293]: gui/company_panel.gui:1719 - Type 'company_panel_statistics_tab' already registered at 'gui/00_nuanced_charts_company_panel.gui:1719'
+[22:27:31][pdx_gui_factory.cpp:1293]: gui/company_panel.gui:2048 - Type 'company_charter_button_horizontal' already registered at 'gui/00_nuanced_charts_company_panel.gui:2048'
+[22:27:31][pdx_gui_factory.cpp:1293]: gui/company_panel.gui:2207 - Type 'company_charter_active_widget_horizontal' already registered at 'gui/00_nuanced_charts_company_panel.gui:2207'
+[22:27:31][pdx_gui_factory.cpp:1293]: gui/company_panel.gui:2322 - Type 'company_charter_button' already registered at 'gui/00_nuanced_charts_company_panel.gui:2322'
+[22:27:31][pdx_gui_factory.cpp:1293]: gui/company_panel.gui:2480 - Type 'company_charter_active_widget' already registered at 'gui/00_nuanced_charts_company_panel.gui:2480'
+[22:27:31][pdx_gui_factory.cpp:1293]: gui/construction_panel.gui:881 - Type 'construction_panel' already registered at 'gui/0_gora_construction_panel.gui:26'
+[22:27:31][pdx_gui_factory.cpp:1293]: gui/construction_queue.gui:16 - Type 'construction_queue' already registered at 'gui/0_gora_construction_queue.gui:31'
+[22:27:31][pdx_gui_factory.cpp:1293]: gui/country_panel.gui:379 - Type 'country_panel_information_content' already registered at 'gui/0_gora_country_panel_capital_state.gui:22'
+[22:27:31][pdx_gui_factory.cpp:1293]: gui/culture_panel.gui:18 - Type 'society_panel' already registered at 'gui/0_gora_society_panel.gui:26'
+[22:27:31][pdx_gui_factory.cpp:1293]: gui/culture_panel.gui:1542 - Type 'clickable_population_acceptance_status_chart' already registered at 'gui/0_gora_society_panel.gui:1085'
+[22:27:31][pdx_gui_factory.cpp:1293]: gui/custom_tooltip.gui:3776 - Type 'fancytooltip_market' already registered at 'gui/00_trade_partners_custom_tooltip.gui:218'
+[22:27:31][pdx_gui_factory.cpp:1293]: gui/generate_character.gui:87 - Type 'generate_character_type' already registered at 'gui/0_gora_generate_character.gui:34'
+[22:27:31][pdx_gui_factory.cpp:1293]: gui/goods_panel.gui:14 - Type 'goods_panel' already registered at 'gui/0_gora_goods_panel.gui:10'
+[22:27:32][pdx_gui_factory.cpp:1445]: gui/graph_tooltips.gui:1 - Template 'GDP_tooltip_with_graph' already registered at 'gui/00_nuanced_charts_gdp.gui:2'
+[22:27:32][pdx_gui_factory.cpp:1445]: gui/graph_tooltips.gui:25 - Template 'population_tooltip_with_graph' already registered at 'gui/00_nuanced_charts_population.gui:2'
+[22:27:32][pdx_gui_factory.cpp:1445]: gui/graph_tooltips.gui:97 - Template 'average_standard_of_living_tooltip_with_graph' already registered at 'gui/00_nuanced_charts_sol.gui:2'
+[22:27:32][pdx_gui_factory.cpp:1293]: gui/map_list_panel.gui:1091 - Type 'build_building_map_list_panel' already registered at 'gui/000_gora_map_list_panel.gui:60'
+[22:27:32][pdx_gui_factory.cpp:1293]: gui/map_list_panel.gui:1124 - Type 'construction_interaction_item_condensed' already registered at 'gui/000_gora_map_list_panel.gui:97'
+[22:27:32][pdx_gui_factory.cpp:1293]: gui/map_list_panel.gui:2044 - Type 'construction_headers_condensed' already registered at 'gui/000_gora_map_list_panel.gui:386'
+[22:27:32][pdx_gui_factory.cpp:1293]: gui/map_list_panel.gui:2218 - Type 'construction_headers_full' already registered at 'gui/000_gora_map_list_panel.gui:576'
+[22:27:32][pdx_gui_factory.cpp:1293]: gui/map_list_panel.gui:2433 - Type 'construction_filters' already registered at 'gui/000_gora_map_list_panel.gui:791'
+[22:27:32][pdx_gui_factory.cpp:1293]: gui/map_list_panel.gui:3031 - Type 'decree_map_list_panel' already registered at 'gui/0_gora_decree_map_list_panel.gui:25'
+[22:27:32][pdx_gui_localize.cpp:302]: gui/map_markers.gui:1800 - Failed parsing localized text: TOOLTIP_BUILDING_HIRING
+[22:27:32][pdx_gui_factory.cpp:275]: failed reading property, at gui/map_markers.gui:1800
+[22:27:32][pdx_gui_factory.cpp:1293]: gui/market_panel.gui:14 - Type 'market_panel' already registered at 'gui/0_gora_market_panel.gui:49'
+[22:27:32][pdx_gui_factory.cpp:1293]: gui/market_panel.gui:863 - Type 'market_panel_details_content' already registered at 'gui/0_gora_market_panel.gui:1380'
+[22:27:32][pdx_gui_factory.cpp:1293]: gui/market_panel.gui:964 - Type 'goods_filters' already registered at 'gui/0_gora_market_panel.gui:1483'
+[22:27:32][pdx_gui_factory.cpp:1293]: gui/market_panel.gui:1174 - Type 'goods_entry_button' already registered at 'gui/0_gora_market_panel.gui:1788'
+[22:27:32][pdx_gui_factory.cpp:1293]: gui/market_panel.gui:1632 - Type 'state_goods_entry_button' already registered at 'gui/0_gora_market_panel.gui:2153'
+[22:27:32][pdx_gui_factory.cpp:1293]: gui/market_panel.gui:1889 - Type 'market_world_market_goods_list_item' already registered at 'gui/0_gora_market_panel.gui:2341'
+[22:27:32][pdx_gui_factory.cpp:1445]: gui/market_panel.gui:2115 - Template 'goods_list_item' already registered at 'gui/0_gora_market_panel.gui:2716'
+[22:27:32][pdx_gui_factory.cpp:1293]: gui/military_formation_panel.gui:6757 - Type 'military_formation_panel_default_footer' already registered at 'gui/0_gora_military_formation_panel.gui:45'
+[22:27:32][pdx_gui_factory.cpp:1293]: gui/military_panel_formations.gui:1187 - Type 'commander_and_formation_orders' already registered at 'gui/0_gora_military_panel_formations.gui:35'
+[22:27:32][pdx_gui_factory.cpp:1293]: gui/outliner_pinnable_types.gui:1685 - Type 'market_item' already registered at 'gui/0_gora_outliner_pinnable_types.gui:47'
+[22:27:32][pdx_gui_factory.cpp:1293]: gui/outliner_pinnable_types.gui:1846 - Type 'outliner_markets' already registered at 'gui/0_gora_outliner_pinnable_types.gui:26'
+[22:27:32][pdx_gui_localize.cpp:302]: gui/panel_military.gui:229 - Failed parsing localized text: COUNTRY_SAILORS_VALUE
+[22:27:32][pdx_gui_factory.cpp:275]: failed reading property, at gui/panel_military.gui:229
+[22:27:33][pdx_gui_factory.cpp:1293]: gui/politics_panel_reform_government.gui:222 - Type 'politics_panel_government_details' already registered at 'gui/0_gora_politics_panel_government_details.gui:19'
+[22:27:33][pdx_gui_factory.cpp:1293]: gui/politics_panel_types.gui:1369 - Type 'v3_plotline_gdp' already registered at 'gui/0_gora_politics_panel_types.gui:11'
+[22:27:33][pdx_gui_factory.cpp:1293]: gui/pops_overview.gui:595 - Type 'pop_strata_summary' already registered at 'gui/0_gora_pops_overview.gui:38'
+[22:27:33][pdx_gui_factory.cpp:1293]: gui/pops_overview.gui:822 - Type 'strata_pop_need_item' already registered at 'gui/0_gora_pops_overview.gui:200'
+[22:27:33][pdx_gui_factory.cpp:1293]: gui/pops_overview.gui:1575 - Type 'pop_list' already registered at 'gui/0_gora_pops_overview.gui:309'
+[22:27:33][pdx_gui_factory.cpp:1293]: gui/states_panel.gui:1020 - Type 'state_panel_overview_content' already registered at 'gui/0_gora_state_panel_overview.gui:30'
+[22:27:33][pdx_gui_factory.cpp:1293]: gui/states_panel.gui:2190 - Type 'state_panel_population_content' already registered at 'gui/0_gora_states_panel.gui:12'
+[22:27:33][pdx_gui_factory.cpp:1293]: gui/states_panel_buildings.gui:14 - Type 'state_panel_buildings_fixed_bottom' already registered at 'gui/000_gora_states_panel_buildings.gui:67'
+[22:27:33][pdx_gui_factory.cpp:1293]: gui/states_panel_buildings.gui:147 - Type 'state_panel_buildings_content' already registered at 'gui/000_gora_states_panel_buildings.gui:314'
+[22:27:33][pdx_gui_factory.cpp:1293]: gui/sway_country_panel.gui:3 - Type 'sway_country_panel' already registered at 'gui/0_gora_sway_country_panel.gui:28'
+[22:27:33][pdx_gui_factory.cpp:1293]: gui/tech_tree.gui:18 - Type 'tech_tree_panel' already registered at 'gui/0_gora_tech_tree_panel.gui:29'
+[22:27:34][pdx_gui_factory.cpp:1293]: gui/world_market_panel.gui:14 - Type 'world_market_panel' already registered at 'gui/0_gora_world_market_panel.gui:17'
+[22:27:34][pdx_gui_factory.cpp:1293]: gui/world_market_panel.gui:409 - Type 'world_market_panel_details_content' already registered at 'gui/0_gora_world_market_panel.gui:568'
+[22:27:34][pdx_gui_factory.cpp:1293]: gui/world_market_panel.gui:678 - Type 'world_market_goods_entry_button' already registered at 'gui/0_gora_world_market_panel.gui:656'
+[22:27:34][pdx_gui_factory.cpp:1445]: gui/world_market_panel.gui:1035 - Template 'world_market_goods_list_item' already registered at 'gui/0_gora_world_market_panel.gui:969'
+[22:27:35][pdx_gui_factory.cpp:611]: gui/0_gora_construction_queue.gui:209 - 'advisor_construction_quick_actions' is not a valid widget/type/property
+[22:27:37][pdx_gui_factory.cpp:909]: gui/0_gora_construction_queue.gui:209 - advisor_construction_quick_actions is not a valid type

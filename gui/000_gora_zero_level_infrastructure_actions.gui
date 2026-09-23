@@ -1,0 +1,79 @@
+﻿### GORA+ — compact zero-level infrastructure actions
+### Kept as a separate type so Advisor can own its quick-action strip without
+### either mod redefining the other's GUI type.
+
+@gora_zero_level_actions_width = 540
+@gora_zero_level_action_button_size = 36
+
+types gora_zero_level_infrastructure_action_types
+{
+	type gora_zero_level_infrastructure_actions = flowcontainer {
+		parentanchor = hcenter
+		direction = vertical
+		minimumsize = { @gora_zero_level_actions_width -1 }
+		maximumsize = { @gora_zero_level_actions_width -1 }
+		margin = { 8 2 }
+		spacing = 4
+
+		# These actions affect every eligible state, unlike the Advisor
+		# recommendation buttons above; keep the two groups visually distinct.
+		divider_clean = {
+			parentanchor = hcenter
+			size = { 516 2 }
+		}
+
+		flowcontainer = {
+			parentanchor = hcenter
+			direction = horizontal
+			spacing = 5
+
+			button_icon_round_action = {
+				size = { @gora_zero_level_action_button_size @gora_zero_level_action_button_size }
+				using = confirm_button_sound
+				using = tooltip_above
+				tooltip = "gora_zero_level_railway_all_states_tooltip"
+				enabled = "[GetScriptedGui('gora_queue_first_railway_all_states_sgui').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+				onclick = "[GetScriptedGui('gora_queue_first_railway_all_states_sgui').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+
+				blockoverride "icon" {
+					texture = "gfx/interface/icons/building_icons/building_railway.dds"
+				}
+				blockoverride "icon_size" {
+					size = { 72% 72% }
+				}
+			}
+
+			button_icon_round_action = {
+				size = { @gora_zero_level_action_button_size @gora_zero_level_action_button_size }
+				using = confirm_button_sound
+				using = tooltip_above
+				tooltip = "gora_zero_level_power_plant_all_states_tooltip"
+				enabled = "[GetScriptedGui('gora_queue_first_power_plant_all_states_sgui').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+				onclick = "[GetScriptedGui('gora_queue_first_power_plant_all_states_sgui').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+
+				blockoverride "icon" {
+					texture = "gfx/interface/icons/building_icons/power_plant.dds"
+				}
+				blockoverride "icon_size" {
+					size = { 72% 72% }
+				}
+			}
+
+			button_icon_round_action = {
+				size = { @gora_zero_level_action_button_size @gora_zero_level_action_button_size }
+				using = confirm_button_sound
+				using = tooltip_above
+				tooltip = "gora_zero_level_university_all_states_tooltip"
+				enabled = "[GetScriptedGui('gora_queue_first_university_all_states_sgui').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+				onclick = "[GetScriptedGui('gora_queue_first_university_all_states_sgui').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+
+				blockoverride "icon" {
+					texture = "gfx/interface/icons/building_icons/building_university.dds"
+				}
+				blockoverride "icon_size" {
+					size = { 72% 72% }
+				}
+			}
+		}
+	}
+}

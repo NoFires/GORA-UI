@@ -1,0 +1,28 @@
+﻿l_korean:
+
+  # ==== Panel chrome ====
+  ipg_panel_title:0 "의회"
+  ipg_expand:0 "확장"
+  ipg_collapse:0 "축소"
+  ipg_view_power:0 "권력 구조"
+  ipg_view_alignment:0 "정치적 성향"
+  ipg_view_electoral:0 "정당 구조"
+  ipg_power_desc:0 "모든 이익 집단의 정치적 실세입니다."
+  ipg_alignment_desc:0 "이익 집단별 인구 성향입니다."
+  ipg_electoral_desc:0 "지난 선거 결과를 표시합니다."
+  ipg_other_aligned:0 "기타 성향"
+  ipg_unaligned:0 "정치적 무소속"
+  ipg_other_minor:0 "기타 정당/단체"
+  ipg_independent:0 "독립"
+  ipg_last_election:0 "지난 선거"
+  ipg_seats_unit:0 "의석"
+
+  # ==== Power Structure tooltip (clout share) ====
+
+  # ==== Political Alignment tooltip (population share) ====
+  ipg_alignment_unaligned_desc:0 "$ipg_unaligned$: #variable [GetPlayer.MakeScope.Var('ipg_alignment_unaligned_share').GetValue|1]%#!"
+
+  # ==== Party Structure tooltip ====
+  ipg_power_list_item:0 "[InterestGroup.GetName]: #variable [InterestGroup.MakeScope.Var('power_seats').GetValue|v0]#! $ipg_seats_unit$ ([InterestGroup.MakeScope.Var('power_share').GetValue|1]%)"
+  ipg_alignment_list_item:0 "[InterestGroup.GetName]: #variable [InterestGroup.MakeScope.Var('alignment_share').GetValue|1]%#!"
+  ipg_electoral_list_item:0 "[Party.GetName]: #variable [Party.MakeScope.Var('electoral_seats').GetValue|v0]#! $ipg_seats_unit$ ($ipg_last_election$: [Party.MakeScope.Var('ipg_last_election_vote_share').GetValue|%1])"

@@ -1,0 +1,33 @@
+﻿namespace = gora_agdp
+
+# ════════════════════════════════════════════════════════════════════════════
+# GORA UI+ — Advanced GDP Tracker: events
+# ════════════════════════════════════════════════════════════════════════════
+# Compatibility wrappers retained for saves or submods that call these IDs.
+# Internal pulses now invoke scripted effects directly and do not fan out one
+# hidden event per country.
+# .1 — Annual: refresh the Jan-to-Jan values for this country.
+# .3 — Monthly: dispatch this country's current calendar-month update.
+# ════════════════════════════════════════════════════════════════════════════
+
+gora_agdp.1 = {
+	type = country_event
+	hidden = yes
+	orphan = yes
+	trigger = {}
+
+	immediate = {
+		GDPGR_update_annual_growth = yes
+	}
+}
+
+gora_agdp.3 = {
+	type = country_event
+	hidden = yes
+	orphan = yes
+	trigger = {}
+
+	immediate = {
+		GDPGR_update_country_for_current_month = yes
+	}
+}

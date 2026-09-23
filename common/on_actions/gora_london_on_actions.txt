@@ -1,0 +1,36 @@
+﻿# GORA UI+ — London Conference flag icons
+#
+# Saves Great-Power references as global variables so the Conference of
+# London journal-entry tooltip can display flag icons next to each power's
+# "favours" / "compromise" line. Variables (tlcm_ref_*) are referenced from
+# localization/english/replace/00_gora_london_overrides_l_english.yml.
+#
+# Ref setup runs at game start AND on yearly pulse so late-formed countries
+# (DEU, ITA) get a valid ref once they exist. `?=` guards each block, so a
+# missing country just leaves its ref unset (locale falls through to
+# tlcm_no_loc and renders empty).
+
+on_game_started_after_lobby = {
+	on_actions = { gora_london_country_refs_setup }
+}
+
+on_yearly_pulse_country = {
+	on_actions = { gora_london_country_refs_yearly_refresh }
+}
+
+gora_london_country_refs_setup = {
+	effect = { gora_london_save_country_refs = yes }
+}
+
+gora_london_country_refs_yearly_refresh = {
+	# Only the player runs the refresh; the global vars are world-state so
+	# one pass per pulse is enough. Keeps performance overhead negligible.
+	# (Top-level `trigger` on scripted_effects is silently ignored — gate
+	# inside the effect with if/limit instead.)
+	effect = {
+		if = {
+			limit = { is_player = yes }
+			gora_london_save_country_refs = yes
+		}
+	}
+}

@@ -1,0 +1,15 @@
+﻿INJECT:defend_dig_in = {
+	texture = "gfx/interface/icons/commander_order_icons/zw_defend_adamant_defense.dds"
+}
+
+INJECT:defend_desperate_charge = {
+	texture = "gfx/interface/icons/commander_order_icons/zw_defend_counter_charge.dds"
+}
+
+INJECT:defend_last_stand = {
+	texture = "gfx/interface/icons/commander_order_icons/zw_defend_last_stand.dds"
+}
+
+INJECT:defend_guerilla_warfare = {
+	texture = "gfx/interface/icons/commander_order_icons/zw_defend_delaying_tatics.dds"
+}

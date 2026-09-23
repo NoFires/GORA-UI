@@ -1,0 +1,18 @@
+﻿l_english:
+ # GORA UI+ — Override vanilla notification descriptions to include character details
+ # (interest group, ideology, traits). Uses helper fragments from
+ # `localization/english/00_gora_agitator_notifications_l_english.yml`.
+ # Keys verified against vanilla 1.13.4:
+ #   character_interactions_l_english.yml:40  — notification_exile_notification_desc
+ #   interfaces_l_english.yml:7544            — notification_agitator_spawned_desc
+ #   interfaces_l_english.yml:7580            — notification_heir_born_notification_desc
+ #   interfaces_l_english.yml:10514           — notification_new_ruler_desc
+ # File lives in localization/english/replace/ so it overrides the vanilla string.
+
+ notification_exile_notification_desc:    "[SCOPE.sCharacter('exile_scope').GetFullName] has been sent into [concept_exile] by [SCOPE.sCountry('exiling_country_scope').GetName].\n$gora_dan_agitator_interest_group$\n$gora_dan_agitator_ideology$\n$gora_dan_agitator_traits$"
+
+ notification_new_ruler_desc:             "The time of [SCOPE.sCharacter('previous').GetFullName] as a [concept_ruler] has ended. [SCOPE.GetRootScope.GetCharacter.GetFullName] is the new [Concept('concept_ruler', SCOPE.GetRootScope.GetCharacter.GetPrimaryRoleTitle)] of [SCOPE.GetRootScope.GetCharacter.GetCountry.GetName]\n$gora_dan_ruler_interest_group$\n$gora_dan_ruler_ideology$\n$gora_dan_ruler_traits$"
+
+ notification_heir_born_notification_desc:0 "[SCOPE.GetRootScope.GetCharacter.GetFullName], [concept_heir] to the throne of [SCOPE.GetRootScope.GetCharacter.GetCountry.GetName] has been born\n$gora_dan_ruler_interest_group$\n$gora_dan_ruler_ideology$\n$gora_dan_ruler_traits$"
+
+ notification_agitator_spawned_desc:1     "[SCOPE.sCha('character').GetAgitatorSpawnedNotificationText]\n$gora_dan_spawn_interest_group$\n$gora_dan_spawn_ideology$\n$gora_dan_spawn_traits$"

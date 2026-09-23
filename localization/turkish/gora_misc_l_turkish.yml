@@ -1,0 +1,9 @@
+﻿l_turkish:
+ # GORA UI — Misc strings consolidated from several legacy files.
+
+ GORA_SECTOR_FILTER_LABEL:0       "Sektör"
+ GORA_COMPACT_BUILDING_TYPE_NAME:0 "#v [BuildingType.GetNameNoFormatting]#!"
+ GORA_COMPACT_PRODUCTION_METHOD_COUNT:0 "#bold [ProductionMethodGroup.GetNumAvailableOptionsForBuildingType(BuildingBrowserBuildingTypeItem.GetBuildingType.AccessSelf)]#!"
+ GORA_COMPACT_BUILDING_TOTAL_SIZE:0 "#v [BuildingBrowserBuildingTypeItem.GetTotalFilteredSizeDesc]#!"
+ GORA_LATEST_RESEARCH_HEADER:0    "Son Araştırma:"
+ gora_aoi_mod_name:0              "Gelişmiş Subay Bilgisi"

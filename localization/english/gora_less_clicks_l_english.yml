@@ -1,0 +1,34 @@
+﻿l_english:
+ # GORA UI+ — Less Clicks button labels & tooltips
+ # `gora_lc_*_tooltip` keys are referenced by the GUI button widgets.
+ # `gora_lc_build_*_ready` / `_locked` keys are returned by the matching
+ # customizable_localization in gora_less_clicks_custom_loc.txt.
+
+ # ─── Railways ────────────────────────────────────────────────────────────
+ gora_lc_build_railways:0          "Build railways"
+ gora_lc_build_railways_desc:0     "Adds just enough railways everywhere to ensure full market access."
+ gora_lc_build_railways_tooltip:0  "[GetPlayer.GetCustom('gora_lc_railways_tooltip')]"
+ gora_lc_build_railways_ready:0    "#header Maximize Market Access#!\n$TOOLTIP_DELIMITER$\nClick to add as many railways as needed to the construction queue to maximize market access."
+ gora_lc_build_railways_locked:0   "#header Maximize Market Access#!\n$TOOLTIP_DELIMITER$\n#R #italic #bold #gold Railways#! has not yet been researched by [GetPlayer.GetName]"
+
+ # ─── Government administrations ─────────────────────────────────────────
+ gora_lc_build_administrations:0          "Build government administrations"
+ gora_lc_build_administrations_desc:0     "Adds just enough government administrations everywhere to ensure taxation capacity."
+ gora_lc_build_administrations_tooltip:0  "#header Maximize Taxation Capacity#!\n$TOOLTIP_DELIMITER$\nClick to add as many government administration buildings as needed to maximize taxation capacity in incorporated states."
+ gora_lc_reduce_administrations_tooltip:0 "#header Reduce Excess Government Administration#!\n$TOOLTIP_DELIMITER$\nOnly trims safe excess. Will not reduce the country below #v +200#! bureaucracy, will not downsize a state without at least a #v 2-level tax-capacity surplus#!, and removes at most #v 1 level#! per state per click."
+
+ # ─── Power plants ───────────────────────────────────────────────────────
+ gora_lc_build_powerplants:0          "Build power plants"
+ gora_lc_build_powerplants_desc:0     "Adds just enough power plants everywhere to cover electricity demand."
+ gora_lc_build_powerplants_tooltip:0  "[GetPlayer.GetCustom('gora_lc_powerplants_tooltip')]"
+ gora_lc_build_powerplants_ready:0    "#header Build Power Plants#!\n$TOOLTIP_DELIMITER$\nAdds just enough power plants everywhere to cover electricity demand."
+ gora_lc_build_powerplants_locked:0   "#header Build Power Plants#!\n$TOOLTIP_DELIMITER$\n#R #italic #bold #gold Electrical Generation#! has not yet been researched by [GetPlayer.GetName]"
+
+ # ─── Reduce-transportation-shortage variant of the railway button ───────
+ gora_lc_build_transportation_tooltip:0 "[GetPlayer.GetCustom('gora_lc_transportation_tooltip')]"
+ gora_lc_build_transportation_ready:0   "#header Reduce Transportation Shortage#!\n$TOOLTIP_DELIMITER$\nClick to add as many railways as needed to reduce transportation goods shortage in incorporated states."
+ gora_lc_build_transportation_locked:0  "#header Reduce Transportation Shortage#!\n$TOOLTIP_DELIMITER$\n#R #italic #bold #gold Railways#! has not yet been researched by [GetPlayer.GetName]"
+
+ # ─── Construction queue helpers ─────────────────────────────────────────
+ GO_PREV_10_PAGES:0                     "Go back 10 pages"
+ GO_NEXT_10_PAGES:0                     "Go forward 10 pages"

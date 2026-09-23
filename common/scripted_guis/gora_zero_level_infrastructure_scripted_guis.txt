@@ -1,0 +1,34 @@
+﻿# GORA+ — zero-level infrastructure bulk construction buttons
+#
+# Player and technology checks remain country-cheap. State eligibility is
+# evaluated only inside the effect, instead of scanning states while the GUI is open.
+
+gora_queue_first_railway_all_states_sgui = {
+	scope = country
+	is_shown = { is_player = yes }
+	is_valid = {
+		is_player = yes
+		has_technology_researched = railways
+	}
+	effect = { gora_queue_first_railway_in_all_eligible_states = yes }
+}
+
+gora_queue_first_power_plant_all_states_sgui = {
+	scope = country
+	is_shown = { is_player = yes }
+	is_valid = {
+		is_player = yes
+		has_technology_researched = electrical_generation
+	}
+	effect = { gora_queue_first_power_plant_in_all_eligible_states = yes }
+}
+
+gora_queue_first_university_all_states_sgui = {
+	scope = country
+	is_shown = { is_player = yes }
+	is_valid = {
+		is_player = yes
+		has_technology_researched = academia
+	}
+	effect = { gora_queue_first_university_in_all_eligible_states = yes }
+}

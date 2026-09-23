@@ -1,0 +1,728 @@
+# GORA UI+ — tech_tree_panel (partial type override)
+# ─────────────────────────────────────────────────────────────────────────────
+# Vanilla 1.13.9 baseline: gui/tech_tree.gui
+# type tech_tree_panel (line 18+, inside types tech_tree).
+# Other vanilla types in that file (tech_tree_graph, technology,
+# queued_technology, techtree_spline) inherited from vanilla unchanged.
+#
+# NOTE: Vanilla tech_tree.gui starts with a UTF-8 BOM at byte 0. This file
+# does NOT — partial overrides ship without BOM (V3 crashes on mid-file BOMs
+# from concatenation; a clean override file is safest).
+#
+# GORA deltas:
+# 1. Latest Research indicator (3-row stack of most recently acquired techs)
+# inserted beside the research queue. Variables
+# `gora_latest_research_1/2/3` maintained by
+# common/on_actions/gora_latest_research_on_actions.txt (gated is_player=yes).
+# Each row uses `IsValid(MakeScope.Var(...))` so unset slots hide cleanly.
+# 2. Compact, stretchable fixed_top sizing keeps the added indicator, weekly
+# innovation, and search controls on-screen at small UI resolutions.
+# Legacy `uboy_*` namespace fully retired.
+#
+# Re-sync recipe: diff vanilla type tech_tree_panel, replace this file's
+# type body with new vanilla, then re-apply both fixed_top deltas above.
+# Original mod credit: Uboy.UI.
+# ─────────────────────────────────────────────────────────────────────────────
+
+types gora_tech_tree_panel {
+
+	type tech_tree_panel = fullscreen_block_window {
+		name = "tech_tree_panel"
+		enabled = yes
+
+		blockoverride "animation_state_block" {
+			state = {
+				name = _show
+				start_sound = {
+					soundeffect = "event:/SFX/UI/SideBar/technology"
+				}
+				start_sound = {
+					soundeffect = "snapshot:/Dynamic/mute_world_80"
+				}
+				start_sound = {
+					soundeffect = "snapshot:/Dynamic/mute_vfx_war_100"
+
+				}
+			}
+
+			state = {
+				name = _hide
+				start_sound = {
+					soundeffect = "event:/SFX/UI/SideBar/technology_stop"
+				}
+			}
+		}
+		
+		blockoverride "window_header_name"
+		{
+			text = "TECH_TREE"
+		}
+
+		blockoverride "fixed_top" {
+			hbox = {
+				# Keep the header below its vanilla minimum width. The research
+				# queue is the largest fixed-width child, so small UI resolutions
+				# used to push innovation and search beyond the right screen edge.
+				spacing = 10
+				margin = { 16 10 }
+				margin_bottom = 15
+				layoutpolicy_horizontal = growing
+				
+				### HAS NO RESEARCH
+				hbox = {
+					layoutpolicy_horizontal = growing
+					layoutstretchfactor_horizontal = 5
+					visible = "[Not(GetPlayer.HasCurrentlyResearchedTechnology)]"
+					margin = { 25 12 }
+					
+					using = entry_bg_fancy
+					
+					vbox = {
+						layoutpolicy_horizontal = growing
+						
+						textbox = {
+							layoutpolicy_horizontal = growing
+							autoresize = yes
+							text = "NO_ACTIVE_RESEARCH"
+							using = fontsize_large
+							align = left|nobaseline
+							alpha = 0.5
+						}
+						textbox = {
+							layoutpolicy_horizontal = growing
+							autoresize = yes
+							text = "RESEARCH_PANEL"
+							using = fontsize_xxl
+							align = left|nobaseline
+							
+							using = look_at_me_text_animation
+						}
+					}
+				}
+				
+				### CURRENT RESEARCH
+				hbox = {
+					layoutpolicy_horizontal = growing
+					layoutstretchfactor_horizontal = 5
+					visible = "[GetPlayer.HasCurrentlyResearchedTechnology]"
+					datacontext = "[AccessPlayer.AccessCurrentlyResearchedTechnology]"
+
+					spacing = 8
+					margin = { 10 7 }
+					margin_right = 10
+
+					background = {
+						using = entry_bg_simple
+					}
+					
+					widget = {
+						size = { 60 80 }
+
+						icon = {
+							parentanchor = center
+							using = rotate_glow_animation_02
+							size = { 150 150 }
+						}
+
+						icon = {
+							size = { 60 60 }
+							parentanchor = center
+							texture = "[Technology.GetTexture]"
+
+							tooltipwidget = {
+								FancyTooltip_Technology = {}
+							}
+
+							### ERA
+							widget = {
+								size = { 25 25 }
+								parentanchor = hcenter|bottom
+							
+								icon = {
+									size = { 100% 100% }
+									texture = "gfx/interface/backgrounds/round_button_bg.dds"
+								}
+								
+								textbox = {
+									text = "TECHNOLOGY_TYPE_DESCRIPTION"
+									align = center|nobaseline
+									parentanchor = center
+								}
+							}
+						}
+
+						button_icon_cancel = {
+							parentanchor = top|right
+							size = { 25 25 }
+							tooltip = "REMOVE_CURRENT_RESEARCH_TECH_FROM_QUEUE"
+							using = tooltip_ne
+							onclick = "[Execute(Technology.RemoveFromQueue(GetPlayer.Self))]"
+							enabled = "[IsValid(Technology.RemoveFromQueue(GetPlayer.Self))]"
+						}
+					}
+				
+					### TEXT + PROGRESS
+					vbox = {
+						layoutpolicy_horizontal = growing
+						minimumsize = { 220 -1 }
+						spacing = 5
+						
+						hbox = {
+							textbox = {
+								layoutstretchfactor_horizontal = 3
+								layoutpolicy_horizontal = growing
+								size = { 0 30 }
+								raw_text = "#variable [Technology.GetNameNoFormatting]#!"
+								using = fontsize_large
+								align = left|nobaseline
+								fontsize_min = 14
+							}
+							
+							textbox = {
+								visible = "[Or(And(GreaterThan_CFixedPoint(Technology.GetProgress(GetPlayer.Self), '(CFixedPoint)0'), Not(Technology.HasResearchedTech(GetPlayer.Self))), GreaterThan_CFixedPoint(GetPlayer.GetMinWeeklyTechnologyProgressForTech(Technology.Self), '(CFixedPoint)0'))]"
+								layoutstretchfactor_horizontal = 2
+								layoutpolicy_horizontal = growing
+								size = { 0 30 }
+								text = "TECHNOLOGY_PROGRESS_WITH_GAIN"
+								align = right|nobaseline
+								using = fontsize_large
+								fontsize_min = 14
+							}
+						}
+
+						### PROGRESS
+						default_progressbar_horizontal = {
+							tooltip = "TECHNOLOGY_GAIN_BREAKDOWN"
+							visible = "[Or(And(GreaterThan_CFixedPoint(Technology.GetProgress(GetPlayer.Self), '(CFixedPoint)0'), Not(Technology.HasResearchedTech(GetPlayer.Self))), GreaterThan_CFixedPoint(GetPlayer.GetMinWeeklyTechnologyProgressForTech(Technology.Self), '(CFixedPoint)0'))]"
+							layoutpolicy_horizontal = growing
+							# Let the bar consume spare room while retaining a usable
+							# 220px minimum through its parent vbox.
+							size = { 0 25 }
+
+							blockoverride "values" {
+								max = "[FixedPointToFloat(Technology.GetCost(GetPlayer.Self))]"
+								value = "[FixedPointToFloat(Technology.GetProgress(GetPlayer.Self))]"
+							}
+
+							textbox = {
+								margin_right = 10
+								text = "TECHNOLOGY_PROGRESS_TIME_LEFT"
+								parentanchor = vcenter|right
+								align = nobaseline
+								autoresize = yes
+
+							}
+						}
+					}
+
+					hbox = {
+						datamodel = "[AccessPlayer.GetResearchQueueTop]"
+						margin_left = 8
+						spacing = 2
+
+						item = {
+							widget = {
+								size = { 60 80 }
+								visible = "[Not(Technology.IsResearching(GetPlayer.Self))]"
+
+								queued_technology = {
+									parentanchor = center
+									scale = 0.75
+								}
+							}
+						}
+					}
+
+					widget = {
+						visible = "[Not(IsDataModelEmpty(AccessPlayer.GetResearchQueueBottom))]"
+						size = { 60 80 }
+
+						button_icon_round = {
+							parentanchor = center
+							size = { 50 50 }
+							onclick = "[RightClickMenuManager.ToggleResearchQueue(PdxGuiWidget.AccessSelf)]"
+
+							textbox = {
+								parentanchor = center
+								align = nobaseline
+								autoresize = yes
+								using = fontsize_xxl
+								text = "REMAINING_RESEARCH_QUEUE"
+							}
+						}
+					}
+
+					expand = {}
+				}
+
+				### GORA UI+ — Latest Research indicator
+				vbox = {
+					layoutpolicy_vertical = growing
+					margin = { 10 5 }
+					background = { using = entry_bg_simple }
+
+					textbox = {
+						layoutpolicy_horizontal = growing
+						using = fontsize_medium
+						size = { 150 15 }
+						text = "GORA_LATEST_RESEARCH_HEADER"
+						elide = right
+						align = left|nobaseline
+					}
+
+					# Rows are gated on `gora_latest_research_count` (set by the
+					# on_action). GetValue returns 0 for an unset variable, so
+					# at game start nothing renders and no pink placeholder
+					# textures appear.
+					hbox = {
+						visible = "[GreaterThanOrEqualTo_CFixedPoint(GetPlayer.MakeScope.Var('gora_latest_research_count').GetValue, '(CFixedPoint)1')]"
+						layoutpolicy_horizontal = growing
+						icon = {
+							size = { 15 15 }
+							texture = "[GetPlayer.MakeScope.Var('gora_latest_research_1').GetTechnology.GetTexture]"
+							raw_tooltip = "[GetPlayer.MakeScope.Var('gora_latest_research_1').GetTechnology.GetName]"
+						}
+						textbox = {
+							layoutpolicy_horizontal = growing
+							using = fontsize_medium
+							size = { 150 15 }
+							raw_text = "[GetPlayer.MakeScope.Var('gora_latest_research_1').GetTechnology.GetName]"
+							elide = right
+							align = left|nobaseline
+						}
+						expand = {}
+					}
+
+					hbox = {
+						visible = "[GreaterThanOrEqualTo_CFixedPoint(GetPlayer.MakeScope.Var('gora_latest_research_count').GetValue, '(CFixedPoint)2')]"
+						layoutpolicy_horizontal = growing
+						icon = {
+							size = { 15 15 }
+							texture = "[GetPlayer.MakeScope.Var('gora_latest_research_2').GetTechnology.GetTexture]"
+							raw_tooltip = "[GetPlayer.MakeScope.Var('gora_latest_research_2').GetTechnology.GetName]"
+						}
+						textbox = {
+							layoutpolicy_horizontal = growing
+							using = fontsize_medium
+							size = { 150 15 }
+							raw_text = "[GetPlayer.MakeScope.Var('gora_latest_research_2').GetTechnology.GetName]"
+							elide = right
+							align = left|nobaseline
+						}
+						expand = {}
+					}
+
+					hbox = {
+						visible = "[GreaterThanOrEqualTo_CFixedPoint(GetPlayer.MakeScope.Var('gora_latest_research_count').GetValue, '(CFixedPoint)3')]"
+						layoutpolicy_horizontal = growing
+						icon = {
+							size = { 15 15 }
+							texture = "[GetPlayer.MakeScope.Var('gora_latest_research_3').GetTechnology.GetTexture]"
+							raw_tooltip = "[GetPlayer.MakeScope.Var('gora_latest_research_3').GetTechnology.GetName]"
+						}
+						textbox = {
+							layoutpolicy_horizontal = growing
+							using = fontsize_medium
+							size = { 150 15 }
+							raw_text = "[GetPlayer.MakeScope.Var('gora_latest_research_3').GetTechnology.GetName]"
+							elide = right
+							align = left|nobaseline
+						}
+						expand = {}
+					}
+				}
+				### GORA UI+ — end Latest Research indicator
+
+				### WEEKLY INNOVATION
+				vbox = {
+					layoutstretchfactor_horizontal = 2
+					layoutpolicy_horizontal = growing
+					margin = { 10 16 }
+					
+					background = {
+						using = entry_bg_simple
+					}
+					
+					textbox = {
+						layoutpolicy_horizontal = growing
+						size = { 0 30 }
+						elide = right
+						datacontext = "[GetPlayer]"
+						align = right|nobaseline
+						text = "INNOVATION_DESCRIPTION"
+						tooltip = "INNOVATION_TOOLTIP"
+						using = fontsize_large
+					}
+
+					textbox = {
+						layoutpolicy_horizontal = growing
+						size = { 0 30 }
+						elide = right
+						datacontext = "[GetPlayer]"
+						align = right|nobaseline
+						text = "TECHNOLOGY_SPREAD_RATE_DESCRIPTION"
+						tooltip = "TECHNOLOGY_SPREAD_RATE_TOOLTIP"
+					}
+				}
+
+				### SEARCH
+				search_bar = {
+					size = { 260 40 }
+					datacontext = "[TechTreePanel.GetSearchBar]"
+				}
+			}
+			
+			### TABS
+			tab_buttons_fullscreen = {
+
+				# Production
+				blockoverride "first_button" {
+					text = "PRODUCTION_NO_CONCEPT"
+				}
+				blockoverride "first_button_tooltip" {
+					tooltip = "PRODUCTION_NO_CONCEPT"
+				}
+				blockoverride "first_button_background" {
+					background = {
+						margin = { 0 -2 }
+						using = fade_bottom_entry_fancy_header_colored
+						using = Color_Orange
+						alpha = 0.5
+					}
+				}
+				blockoverride "first_button_click" {
+					onclick = "[InformationPanel.SelectTab('production')]"
+				}
+				blockoverride "first_button_visibility" {
+					visible = "[InformationPanel.IsTabSelected('production')]"
+				}
+				blockoverride "first_button_visibility_checked" {
+					visible = "[Not( InformationPanel.IsTabSelected('production') )]"
+				}
+				blockoverride "first_button_selected" {
+					text = "PRODUCTION_NO_CONCEPT"
+				}
+
+				blockoverride "first_button_background_selected" {
+					background = {
+						using = fade_bottom_entry_fancy_header_colored
+						using = Color_Orange
+						alpha = 0.5
+					}
+				}
+
+				# Military
+				blockoverride "second_button" {
+					text = "MILITARY"
+				}
+				blockoverride "second_button_tooltip" {
+					tooltip = "MILITARY"
+				}
+				blockoverride "second_button_background" {
+					background = {
+						margin = { 0 -2 }
+						using = fade_bottom_entry_fancy_header_colored
+						using = Color_Red
+						alpha = 0.15
+					}
+				}
+				blockoverride "second_button_click" {
+					onclick = "[InformationPanel.SelectTab('military')]"
+				}
+				blockoverride "second_button_visibility" {
+					visible = "[InformationPanel.IsTabSelected('military')]"
+				}
+				blockoverride "second_button_visibility_checked" {
+					visible = "[Not( InformationPanel.IsTabSelected('military') )]"
+				}
+				blockoverride "second_button_selected" {
+					text = "MILITARY"
+				}
+				blockoverride "second_button_background_selected" {
+					background = {
+						using = fade_bottom_entry_fancy_header_colored
+						using = Color_Red
+						alpha = 0.15
+					}
+				}
+
+				# Society
+				blockoverride "third_button" {
+					text = "SOCIETY"
+				}
+				blockoverride "third_button_tooltip" {
+					tooltip = "SOCIETY"
+				}
+				blockoverride "third_button_background" {
+					background = {
+						margin = { 0 -2 }
+						using = fade_bottom_entry_fancy_header_colored
+						using = Color_Purple
+						alpha = 0.5
+					}
+				}
+				blockoverride "third_button_click" {
+					onclick = "[InformationPanel.SelectTab('society')]"
+				}
+				blockoverride "third_button_visibility" {
+					visible = "[InformationPanel.IsTabSelected('society')]"
+				}
+				blockoverride "third_button_visibility_checked" {
+					visible = "[Not( InformationPanel.IsTabSelected('society') )]"
+				}
+				blockoverride "third_button_selected" {
+					text = "SOCIETY"
+				}
+				blockoverride "third_button_background_selected" {
+					background = {
+						using = fade_bottom_entry_fancy_header_colored
+						using = Color_Purple
+						alpha = 0.5
+					}
+				}
+
+				### ICON SHOWING WHERE TECH IS BEING TECHED.
+				datacontext = "[GetPlayer.GetCurrentlyResearchedTechnology]"
+
+				# production
+				blockoverride "first_button_icon" {
+
+					container = {
+						parentanchor = vcenter
+						# light bulb
+						visible = "[ObjectsEqual(Technology.GetCategoryName, 'Production')]"
+						
+						icon = {
+							using = rotate_glow_animation_02
+							size = { 60 60 }
+							parentanchor = center
+						}
+						icon = {
+							texture = "gfx/interface/icons/generic_icons/innovation.dds"
+							size = { 30 30 }
+							parentanchor = center
+						}
+					}
+				}
+				# military
+				blockoverride "second_button_icon" {
+					
+					container = {
+						parentanchor = vcenter
+						# light bulb
+						visible = "[ObjectsEqual(Technology.GetCategoryName, 'Military')]"
+						
+						icon = {
+							using = rotate_glow_animation_02
+							size = { 60 60 }
+							parentanchor = center
+						}
+						icon = {
+							texture = "gfx/interface/icons/generic_icons/innovation.dds"
+							size = { 30 30 }
+							parentanchor = center
+						}
+					}
+				}
+				# society
+				blockoverride "third_button_icon" {
+					
+					container = {
+						parentanchor = vcenter
+						# light bulb
+						visible = "[ObjectsEqual(Technology.GetCategoryName, 'Society')]"
+						
+						icon = {
+							using = rotate_glow_animation_02
+							size = { 60 60 }
+							parentanchor = center
+						}
+						icon = {
+							texture = "gfx/interface/icons/generic_icons/innovation.dds"
+							size = { 30 30 }
+							parentanchor = center
+						}
+					}
+				}
+			}
+		}
+
+		### SEARCH RESULTS DROPDOWN
+		# Direct child of the derived window type so it is rendered above the tech tree and other buttons
+		search_bar_results = {
+			parentanchor = top|right
+			position = { -73 245 }
+			datacontext = "[TechTreePanel.GetSearchBar]"
+
+			blockoverride "result_tooltip" {
+				visible = "[Not(StringIsEmpty(SearchResult.GetKey))]"
+				datacontext = "[GetTechnology(SearchResult.GetKey)]"
+				tooltipwidget = {
+					FancyTooltip_Technology = {}
+				}
+			}
+		}
+
+		### CONTENT
+		blockoverride "scrollarea_content"
+		{
+			widget = {
+				size = { 100% 100% }
+				
+				### ILLUSTRATIONS
+				background = {
+					using = illu_alpha
+					fittype = center
+					texture = "gfx/interface/illustrations/tech_tree/illustration_tech_production.dds"
+					visible = "[InformationPanel.IsTabSelected('production')]"
+					using = default_content_fade
+				}
+				background = {
+					using = illu_alpha
+					fittype = center
+					texture = "gfx/interface/illustrations/tech_tree/illustration_tech_military.dds"
+					visible = "[InformationPanel.IsTabSelected('military')]"
+					using = default_content_fade
+				}
+				background = {
+					using = illu_alpha
+					fittype = center
+					texture = "gfx/interface/illustrations/tech_tree/illustration_tech_society.dds"
+					visible = "[InformationPanel.IsTabSelected('society')]"
+					using = default_content_fade
+				}
+
+				### TECH TREES
+				tech_tree_graph = {
+					name = "tech_tree_panel_production"
+					visible = "[InformationPanel.IsTabSelected('production')]"
+					using = default_content_fade
+
+					blockoverride "datamodel_lines" {
+						datamodel = "[TechTreePanel.GetProductionTechTreeLines]"
+					}
+
+					blockoverride "datamodel_items" {
+						datamodel = "[TechTreePanel.GetProductionTechTreeItems]"
+					}
+
+					blockoverride "extra_lines" {
+						icon = {
+							using = tech_tree_divider
+							position = { 0 -100 }
+							size = { 200% 1350 }
+						}
+						icon = {
+							using = tech_tree_divider
+							position = { 0 2200 }
+							size = { 200% 950 }
+						}
+						icon = {
+							using = tech_tree_divider
+							position = { 0 4060 }
+							size = { 200% 500 }
+						}
+					}
+
+					blockoverride "starting_pan_position" {
+						pan_position = "[GetDefine('NGUI', 'TECH_TREE_PRODUCTION_INITIAL_POSITION')]"
+					}
+				}
+				tech_tree_graph = {
+					name = "tech_tree_panel_military"
+					visible = "[InformationPanel.IsTabSelected('military')]"
+					using = default_content_fade
+
+					blockoverride "datamodel_lines" {
+						datamodel = "[TechTreePanel.GetMilitaryTechTreeLines]"
+					}
+
+					blockoverride "datamodel_items" {
+						datamodel = "[TechTreePanel.GetMilitaryTechTreeItems]"
+					}
+
+					blockoverride "extra_lines" {
+						icon = {
+							using = tech_tree_divider
+							position = { 0 -100 }
+							size = { 200% 1830 }
+						}
+						icon = {
+							using = tech_tree_divider
+							position = { 0 2650 }
+							size = { 200% 960 }
+						}
+						icon = {
+							using = tech_tree_divider
+							position = { 0 4540 }
+							size = { 200% 950 }
+						}
+					}
+
+					blockoverride "starting_pan_position" {
+						pan_position = "[GetDefine('NGUI', 'TECH_TREE_MILITARY_INITIAL_POSITION')]"
+					}
+				}
+				tech_tree_graph = {
+					name = "tech_tree_panel_society"
+					visible = "[InformationPanel.IsTabSelected('society')]"
+					using = default_content_fade
+
+					blockoverride "datamodel_lines" {
+						datamodel = "[TechTreePanel.GetSocietyTechTreeLines]"
+					}
+
+					blockoverride "datamodel_items" {
+						datamodel = "[TechTreePanel.GetSocietyTechTreeItems]"
+					}
+
+					blockoverride "extra_lines" {
+						icon = {
+							using = tech_tree_divider
+							position = { 0 -100 }
+							size = { 200% 2310 }
+						}
+						icon = {
+							using = tech_tree_divider
+							position = { 0 3120 }
+							size = { 200% 960 }
+						}
+						icon = {
+							using = tech_tree_divider
+							position = { 0 4540 }
+							size = { 200% 500 }
+						}
+					}
+
+					blockoverride "starting_pan_position" {
+						pan_position = "[GetDefine('NGUI', 'TECH_TREE_SOCIETY_INITIAL_POSITION')]"
+					}
+				}
+
+				container = {
+					parentanchor = top|right
+					position = { -10 10 }
+					button_icon_reset = {
+						visible = "[InformationPanel.IsTabSelected('production')]"
+						tooltip = "TOOLTIP_RESET"
+						onclick = "[TechTreePanel.ResetProductionView]"
+						size = { 42 42 }
+					}
+					button_icon_reset = {
+						visible = "[InformationPanel.IsTabSelected('military')]"
+						tooltip = "TOOLTIP_RESET"
+						onclick = "[TechTreePanel.ResetMilitaryView]"
+						size = { 42 42 }
+					}
+					button_icon_reset = {
+						visible = "[InformationPanel.IsTabSelected('society')]"
+						tooltip = "TOOLTIP_RESET"
+						onclick = "[TechTreePanel.ResetSocietyView]"
+						size = { 42 42 }
+					}
+				}
+			}
+		}
+	}
+
+}

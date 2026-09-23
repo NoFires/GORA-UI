@@ -1,0 +1,142 @@
+﻿# GORA UI+ — Bulk tariffs: scripted effects
+#
+# Two parameterized helpers do the heavy lifting (each iterates all 53
+# vanilla goods and sets the matching tariff level), and 7+7 thin wrappers
+# bind a specific LEVEL argument so the scripted_guis can call them by name.
+# A 3-month cooldown variable is set after every bulk change, blocking
+# rapid re-application.
+#
+# Goods list mirrors vanilla 1.13.4 — every entry under common/goods/ that
+# actually appears on the trade panel.
+
+# ─── Master per-direction effects (parameterized over LEVEL) ──────────────
+gora_tariffs_set_all_import_to = {
+	set_import_tariff_level = { goods = g:aeroplanes       level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:ammunition       level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:artillery        level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:automobiles      level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:clippers         level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:clothes          level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:coal             level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:coffee           level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:dye              level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:electricity      level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:engines          level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:explosives       level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:fabric           level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:fertilizer       level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:fine_art         level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:fish             level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:fruit            level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:furniture        level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:glass            level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:gold             level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:grain            level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:groceries        level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:hardwood         level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:iron             level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:ironclads        level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:lead             level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:liquor           level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:luxury_clothes   level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:luxury_furniture level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:manowars         level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:meat             level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:merchant_marine  level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:oil              level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:opium            level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:paper            level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:porcelain        level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:radios           level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:rubber           level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:services         level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:silk             level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:small_arms       level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:steamers         level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:steel            level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:sugar            level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:sulfur           level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:tanks            level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:tea              level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:telephones       level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:tobacco          level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:tools            level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:transportation   level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:wine             level = $LEVEL$ }
+	set_import_tariff_level = { goods = g:wood             level = $LEVEL$ }
+	set_variable = { name = gora_tariffs_import_cooldown months = 3 }
+}
+
+gora_tariffs_set_all_export_to = {
+	set_export_tariff_level = { goods = g:aeroplanes       level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:ammunition       level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:artillery        level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:automobiles      level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:clippers         level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:clothes          level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:coal             level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:coffee           level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:dye              level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:electricity      level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:engines          level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:explosives       level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:fabric           level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:fertilizer       level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:fine_art         level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:fish             level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:fruit            level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:furniture        level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:glass            level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:gold             level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:grain            level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:groceries        level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:hardwood         level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:iron             level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:ironclads        level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:lead             level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:liquor           level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:luxury_clothes   level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:luxury_furniture level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:manowars         level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:meat             level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:merchant_marine  level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:oil              level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:opium            level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:paper            level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:porcelain        level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:radios           level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:rubber           level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:services         level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:silk             level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:small_arms       level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:steamers         level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:steel            level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:sugar            level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:sulfur           level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:tanks            level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:tea              level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:telephones       level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:tobacco          level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:tools            level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:transportation   level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:wine             level = $LEVEL$ }
+	set_export_tariff_level = { goods = g:wood             level = $LEVEL$ }
+	set_variable = { name = gora_tariffs_export_cooldown months = 3 }
+}
+
+# ─── Per-level wrappers (one per tariff level, both directions) ───────────
+gora_tariffs_set_all_import_max_tariffs      = { gora_tariffs_set_all_import_to = { LEVEL = max_tariffs              } }
+gora_tariffs_set_all_import_high_tariffs     = { gora_tariffs_set_all_import_to = { LEVEL = high_tariffs             } }
+gora_tariffs_set_all_import_low_tariffs      = { gora_tariffs_set_all_import_to = { LEVEL = low_tariffs              } }
+gora_tariffs_set_all_import_none             = { gora_tariffs_set_all_import_to = { LEVEL = no_tariffs_or_subventions } }
+gora_tariffs_set_all_import_low_subventions  = { gora_tariffs_set_all_import_to = { LEVEL = low_subventions          } }
+gora_tariffs_set_all_import_high_subventions = { gora_tariffs_set_all_import_to = { LEVEL = high_subventions         } }
+gora_tariffs_set_all_import_max_subventions  = { gora_tariffs_set_all_import_to = { LEVEL = max_subventions          } }
+
+gora_tariffs_set_all_export_max_tariffs      = { gora_tariffs_set_all_export_to = { LEVEL = max_tariffs              } }
+gora_tariffs_set_all_export_high_tariffs     = { gora_tariffs_set_all_export_to = { LEVEL = high_tariffs             } }
+gora_tariffs_set_all_export_low_tariffs      = { gora_tariffs_set_all_export_to = { LEVEL = low_tariffs              } }
+gora_tariffs_set_all_export_none             = { gora_tariffs_set_all_export_to = { LEVEL = no_tariffs_or_subventions } }
+gora_tariffs_set_all_export_low_subventions  = { gora_tariffs_set_all_export_to = { LEVEL = low_subventions          } }
+gora_tariffs_set_all_export_high_subventions = { gora_tariffs_set_all_export_to = { LEVEL = high_subventions         } }
+gora_tariffs_set_all_export_max_subventions  = { gora_tariffs_set_all_export_to = { LEVEL = max_subventions          } }

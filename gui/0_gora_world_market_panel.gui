@@ -1,0 +1,1000 @@
+﻿# GORA UI — world_market_panel + iliskili tipler (partial type override, VANILLA-TON)
+# ─────────────────────────────────────────────────────────────────────────────
+# Vanilla 1.13.9 baseline: gui/world_market_panel.gui
+# Base type is the vanilla default_block_window (no custom window theme).
+# Carried GORA features: compact/dense goods rows and the adjusted filter layout.
+# Dosya adi 0_gora_ — vanilla dosyasi yuklu kalir, type'lar first-load-wins ile kazanir.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Parser-level @constants (file-scoped; GORA+ genislik degerleri — pencere kirparsa daraltilacak)
+@panel_width = 610
+@panel_width_plus_14 = 624
+@panel_width_plus_70 = 680
+@gora_world_market_window_width = 683 # vanilla root 613 + GORA's 70-width expansion
+
+types world_market_panel
+{
+	type world_market_panel = default_block_window {
+		name = "world_market_panel"
+		# Override default_block_window's literal `size = { 613 0 }` at the root.
+		# Scroll-area child widths do not resize that inherited side-panel widget.
+		size = { @gora_world_market_window_width 0 }
+		
+		blockoverride "animation_state_block" {
+			state = {
+				name = _show
+				start_sound = {
+					soundeffect = "event:/SFX/UI/Market/world_market_panel_open"
+				}
+			}
+
+			state = {
+				name = _hide
+				start_sound = {
+					soundeffect = "event:/SFX/UI/Market/world_market_panel_stop"
+				}
+			}
+		}
+		
+		# Use the same centered fixed-width header as the working market panel.
+		blockoverride "window_header" {
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				widget = { layoutpolicy_horizontal = expanding }
+				widget = {
+					size = { 560 102 }
+					layoutpolicy_horizontal = fixed
+
+					### BG
+					widget = {
+						size = { 570 106 }
+						position = { 0 -4 }
+						parentanchor = hcenter
+
+						using = sidepanel_top_header
+					}
+
+					### TEXT
+					block "header_texts" {
+						flowcontainer = {
+							parentanchor = center
+
+							block "header_texts_before" {}
+
+							textbox = {
+								using = header_font_fancy
+								using = header_font_fancy_size
+
+								block "window_header_name" {
+									raw_text = "Default Window Name"
+								}
+
+									align = hcenter|nobaseline
+
+								autoresize = yes
+
+								block "header_texts_maximum_size" {
+									maximumsize = { 395 70 }
+								}
+
+								multiline = yes
+								fontsize_min = 17
+
+								default_format = "#header"
+							}
+						}
+					}
+
+					block "entire_back_button" {
+						back_button_large = {
+							position = { 8 30 }
+							block "header_back_button" {
+								onclick = "[InformationPanelBar.OpenPreviousPanel]"
+								input_action = "back"
+							}
+						}
+					}
+
+					close_button_large = {
+						position = { -8 30 }
+						parentanchor = right
+						block "header_close_button" {
+							onclick = "[InformationPanelBar.ClosePanel]"
+						}
+						shortcut = "close_window"
+					}
+
+					widget = {
+						block "pin_visibility" {
+							visible = no
+						}
+						size = { 30 30 }
+						position = { -48 59 }
+						parentanchor = right
+
+						button_icon_pin = {
+							size = { 100% 100% }
+							block "pin_properties" {}
+							input_action = "toggle_pin"
+						}
+						button_icon_unpin = {
+							size = { 100% 100% }
+							block "unpin_properties" {}
+							input_action = "toggle_pin"
+						}
+					}
+
+					widget = {
+						block "goto_visibility" {
+							visible = no
+						}
+						size = { 30 30 }
+						position = { -48 16 }
+						parentanchor = right
+
+						block "custom_goto_button" {
+							button_icon_zoom = {
+								size = { 100% 100% }
+								block "goto_properties" {}
+								input_action = "zoom_to"
+							}
+						}
+					}
+
+					widget = {
+						block "edit_visibility" {
+							visible = no
+						}
+
+						block "edit_tooltip" {
+							tooltip = "EDIT"
+						}
+
+						size = { 30 30 }
+						position = { 48 59 }
+
+						button_icon_edit = {
+							size = { 100% 100% }
+							block "edit_properties" {}
+						}
+					}
+
+					widget = {
+						block "top_left_button_visibility" {
+							visible = no
+						}
+
+						block "top_left_button_tooltip" {}
+
+						size = { 30 30 }
+						position = { 48 16 }
+
+						button_icon_round = {
+							size = { 100% 100% }
+
+							block "top_left_button_properties" {}
+
+							blockoverride "icon" {
+								scale = 0.9
+
+								block "top_left_button_texture" {
+									texture = "gfx/interface/icons/generic_icons/home_hq.dds"
+								}
+							}
+						}
+					}
+				}
+				widget = { layoutpolicy_horizontal = expanding }
+			}
+		}
+
+		blockoverride "window_header_name"
+		{
+			raw_text = "WORLD_MARKET_HEADER"
+		}
+		
+		blockoverride "fixed_top"
+		{
+			tab_buttons = {
+				# Overview
+				blockoverride "first_button" {
+					text = "concept_goods"
+				}
+				blockoverride "first_button_tooltip" {
+					tooltip = "concept_goods"
+				}
+				blockoverride "first_button_click" {
+					onclick = "[InformationPanel.SelectTab('default')]"
+				}
+				blockoverride "first_button_visibility" {
+					visible = "[InformationPanel.IsTabSelected('default')]"
+				}
+				blockoverride "first_button_visibility_checked" {
+					visible = "[Not( InformationPanel.IsTabSelected('default') )]"
+				}
+				blockoverride "first_button_selected" {
+					text = "concept_goods"
+				}
+
+				# Details
+				blockoverride "second_button" {
+					text = "PARTICIPANTS"
+				}
+				blockoverride "second_button_tooltip" {
+					tooltip = "PARTICIPANTS"
+				}
+				blockoverride "second_button_click" {
+					onclick = "[InformationPanel.SelectTab('participants')]"
+				}
+				blockoverride "second_button_visibility" {
+					visible = "[InformationPanel.IsTabSelected('participants')]"
+				}
+				blockoverride "second_button_visibility_checked" {
+					visible = "[Not( InformationPanel.IsTabSelected('participants') )]"
+				}
+				blockoverride "second_button_selected" {
+					text = "PARTICIPANTS"
+				}
+			}
+
+			flowcontainer = {
+				visible = "[InformationPanel.IsTabSelected('default')]"
+				direction = vertical
+				minimumsize = { @panel_width_plus_14 -1 }
+				
+
+				section_header_button = {					
+					blockoverride "left_text" {
+						text = "FILTERS"
+						fontsize_min = 12
+						elide = right
+					}
+
+					blockoverride "right_text" {
+						section_header_right_text = {
+							text = "WORLD_MARKET_CURRENT_GOODS_FILTERS"
+						}
+					}
+
+					blockoverride "onclick" {
+						onclick = "[GetVariableSystem.Toggle( 'world_market_filters' )]"
+					}
+					
+					blockoverride "onclick_showmore" {
+						visible = "[Not(GetVariableSystem.Exists( 'world_market_filters' ))]"
+					}
+
+					blockoverride "onclick_showless" {
+						visible = "[GetVariableSystem.Exists( 'world_market_filters' )]"
+					}
+				}
+
+				flowcontainer = {
+					visible = "[GetVariableSystem.Exists( 'world_market_filters' )]"
+					minimumsize = { @panel_width_plus_14 -1 }
+					using = default_list_position
+					margin_bottom = 10
+					margin_top = 5
+					spacing = 10
+
+					background = {
+						using = dark_area
+					}
+
+					### LIST
+					flowcontainer = {
+						direction = vertical
+
+						textbox = {
+							text = "GOODS_CATEGORY"
+							multiline = yes
+							size = { 95 75 }
+							align = right|nobaseline
+							margin_right = 10
+							margin_left = 10
+							using = elide_fontsize_min
+						}
+
+						textbox = {
+							text = "concept_prestige_goods"
+							visible = "[And(InformationPanel.IsTabSelected('default'), HasDlcFeature('mp1_prestige_goods'))]"
+							size = { 95 60 }
+							align = right|nobaseline
+							margin_right = 10
+							margin_left = 10
+							using = elide_fontsize_min
+							multiline = yes
+						}
+					}
+
+					vertical_divider = {
+									parentanchor = vcenter
+									size = {1 35}
+								}
+
+					flowcontainer = {
+						margin_left = 10
+						direction = vertical
+
+						world_market_goods_filters = {}
+
+						flowcontainer = {
+							visible = "[And(InformationPanel.IsTabSelected('default'), HasDlcFeature('mp1_prestige_goods'))]"
+							spacing = 5
+							margin_top = 13
+
+
+							filter_button = {
+								visible = "[GetVariableSystem.Exists( 'hide_prestige_goods' )]"
+
+								blockoverride "text" {
+									text = "SHOW"
+								}
+
+								blockoverride "onclick" {
+									onclick = "[GetVariableSystem.Toggle( 'hide_prestige_goods' )]"
+								}
+							}
+
+							filter_background_selected = {
+								visible = "[Not(GetVariableSystem.Exists( 'hide_prestige_goods' ))]"
+
+								blockoverride "text" {
+									text = "SHOW"
+								}
+							}
+
+							filter_button = {
+								visible = "[Not(GetVariableSystem.Exists( 'hide_prestige_goods' ))]"
+							
+								blockoverride "text" {
+									text = "HIDE"
+								}
+
+								blockoverride "onclick" {
+									onclick = "[GetVariableSystem.Toggle( 'hide_prestige_goods' )]"
+								}
+							}
+
+							filter_background_selected = {
+								visible = "[GetVariableSystem.Exists( 'hide_prestige_goods' )]" 
+
+								blockoverride "text" {
+									text = "HIDE"
+								}
+							}
+
+						}
+					}
+				}
+			}
+		}
+		
+		blockoverride "scrollarea_content"
+		{
+			container = {
+				parentanchor = hcenter
+				
+				world_market_panel_details_content = {
+					
+					visible = "[InformationPanel.IsTabSelected('default')]"
+					using = default_fade_in_out
+				}
+
+				flowcontainer = {
+					visible = "[InformationPanel.IsTabSelected('participants')]"
+					using = default_list_position
+					# The widened Goods layout naturally resolves to panel_width + 70.
+					# Use that same full width here; +14 still leaves Participants 56 px narrower.
+					minimumsize = { @panel_width_plus_70 -1 }
+					maximumsize = { @panel_width_plus_70 -1 }
+					
+					direction = vertical
+
+					container = {
+						using = default_list_position
+						minimumsize = { @panel_width_plus_70 -1 }
+						maximumsize = { @panel_width_plus_70 -1 }
+						background = {
+							using = dark_area
+						}
+
+						flowcontainer = {
+							spacing = 10
+							margin_bottom = 10
+							margin_top = 10
+							parentanchor = hcenter
+
+							market_importers_piechart = {}
+							market_exporters_piechart = {}
+						}
+					}
+
+					flowcontainer = {
+						using = default_list_position
+						margin = { 0 5 }
+
+						sort_button = {
+							text = "concept_market"
+							onclick = "[WorldMarketPanel.SortMarkets('name')]"
+							align = hcenter|nobaseline
+							size = { 170 20 }
+						}
+
+						sort_button = {
+							text = "concept_imports"
+							onclick = "[WorldMarketPanel.SortMarkets('imports')]"
+							align = hcenter|nobaseline
+							size = { 180 20 }
+							margin_right = 7
+						}
+
+						sort_button = {
+							text = "concept_exports"
+							onclick = "[WorldMarketPanel.SortMarkets('exports')]"
+							align = hcenter|nobaseline
+							size = { 180 20 }
+							margin_right = 7
+						}
+
+						sort_button = {
+							raw_text = "@market_balance!"
+							onclick = "[WorldMarketPanel.SortMarkets('trade_deficit_surplus')]"
+							tooltip = "TRADE_DEFICIT_SURPLUS"
+							align = hcenter|nobaseline
+							size = { 70 20 }
+						}
+					}
+
+					flowcontainer = {
+						datamodel = "[WorldMarketPanel.GetMarkets]"
+						direction = vertical
+						using = default_list_position
+
+						item = {
+							flowcontainer = {
+								minimumsize = { @panel_width 30 }
+								background = {
+									using = entry_bg_simple
+								}
+
+								textbox = {
+									text = "[Market.GetOwner.GetFlagTextIcon] [Market.GetName]"
+									autoresize = yes
+									minimumsize = { 140 -1 }
+									maximumsize = { 140 -1 }
+									align = nobaseline
+									parentanchor = vcenter
+									margin_left = 7
+									elide = right
+								}
+								container = {
+									minimumsize = { 30 -1 }
+									parentanchor = vcenter
+
+									button_icon_goto = {
+										onclick = "[InformationPanelBar.OpenMarketPanel(Market.Self)]"
+										tooltip = "GO_TO_BUTTON_MARKET"
+										parentanchor = vcenter|right
+										size = { 23 23 }
+									}
+								}
+
+								textbox = {
+									text = "[Market.GetTotalImportedAmount|vD]"
+									autoresize = yes
+									minimumsize = { 70 -1 }
+									maximumsize = { 70 -1 }
+									margin_right = 5
+									align = right|nobaseline
+									parentanchor = vcenter
+								}
+
+								flowcontainer = {
+									datamodel = "[DataModelFirst(Market.GetImports, '(int32)4')]"
+									parentanchor = vcenter
+									minimumsize = { 110 -1 }
+
+									item = {
+										small_goods_button = {}
+									}
+								}
+
+								vertical_divider = {
+									parentanchor = vcenter
+									size = {1 35}
+								}
+								
+								textbox = {
+									text = "[Market.GetTotalExportedAmount|vD]"
+									autoresize = yes
+									minimumsize = { 70 -1 }
+									maximumsize = { 70 -1 }
+									margin_right = 5
+									align = right|nobaseline
+									parentanchor = vcenter
+								}
+
+								flowcontainer = {
+									datamodel = "[DataModelFirst(Market.GetExports, '(int32)4')]"
+									parentanchor = vcenter
+									minimumsize = { 110 -1 }
+
+									item = {
+										small_goods_button = {}
+									}
+								}
+
+								#DIVIDER FIX?
+								vertical_divider = {
+									parentanchor = vcenter
+									size = {1 35}
+								}
+
+								textbox = {
+									text = "TRADE_DEFICIT_SURPLUS_VALUE"
+									tooltip = "TRADE_SURPLUS_TOOLTIP"
+									visible = "[GreaterThan_CFixedPoint(Market.GetTradeSurplus,'(CFixedPoint)-1')]"
+									autoresize = yes
+									minimumsize = { 70 -1 }
+									maximumsize = { 70 -1 }
+									margin_right = 5
+									align = right|nobaseline
+									parentanchor = vcenter
+									using = elide_fontsize_min
+								}
+								
+								textbox = {
+									text = "NOT_AVAILABLE"
+									alpha = 0.5
+									visible = "[Not(GreaterThan_CFixedPoint(Market.GetTradeSurplus,'(CFixedPoint)-1'))]"
+									autoresize = yes
+									minimumsize = { 70 -1 }
+									maximumsize = { 70 -1 }
+									margin_right = 5
+									align = right|nobaseline
+									parentanchor = vcenter
+									using = elide_fontsize_min
+								}								
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+
+	type world_market_panel_details_content = container {
+		parentanchor = hcenter
+		# Explicitly share the same full width contract with Participants.
+		minimumsize = { @panel_width_plus_70 -1 }
+		maximumsize = { @panel_width_plus_70 -1 }
+		
+		flowcontainer = {
+			direction = vertical
+			using = default_list_position
+			margin_bottom = 20
+
+			flowcontainer = {
+				using = default_list_position
+				margin = { 0 5 }
+
+				sort_button = {
+					onclick = "[WorldMarketPanel.SortGoods('name')]"
+					tooltip = "SORT_BY_MARKET_GOODS"
+					size = { 70 20 }
+					
+					button = {
+						texture = "gfx/interface/buttons/sort_button_icons/sort_icon_good.dds"
+						size = { 25 25 }
+						parentanchor = center
+						alwaystransparent = yes
+					}
+				}
+
+
+				sort_button = {
+					raw_text = "MARKET_PRICE"
+					onclick = "[WorldMarketPanel.SortGoods('price')]"
+					align = hcenter|nobaseline
+					size = { 160 20 }
+				}
+
+				sort_button = {
+					onclick = "[WorldMarketPanel.SortGoods('balance')]"
+					tooltip = "SORT_BY_BALANCE_TOOLTIP"
+					align = hcenter|nobaseline
+					size = { 90 20 }
+					margin_right = 7
+
+					button = {
+						texture = "gfx/interface/buttons/sort_button_icons/sort_balance.dds"
+						size = { 25 25 }
+						parentanchor = center
+						alwaystransparent = yes
+					}
+				}
+
+				sort_button = {
+					text = "concept_exports"
+					tooltip = "SORT_BY_EXPORTS"
+					onclick = "[WorldMarketPanel.SortGoods('exports')]"
+					align = hcenter|nobaseline
+					size = { 150 20 }	
+				}
+
+				sort_button = {
+					text = "concept_imports"
+					tooltip = "SORT_BY_IMPORTS"
+					onclick = "[WorldMarketPanel.SortGoods('imports')]"
+					align = hcenter|nobaseline
+					size = { 150 20 }
+					margin_right = 7
+				}
+			}
+
+			flowcontainer = {
+				using = default_list_position
+				direction = vertical
+				spacing = 20
+				
+				flowcontainer = {
+					datamodel = "[WorldMarketPanel.GetGoods( WorldMarketPanel.GetFilters )]"
+					direction = vertical
+					spacing = 2
+					parentanchor = hcenter
+					
+					item = {
+						world_market_goods_entry_button = {}
+					}
+				}				
+			}
+		}
+	}
+		
+	type world_market_goods_entry_button = flowcontainer {
+		direction = vertical
+
+		button = {
+			onclick = "[InformationPanelBar.OpenGoodsWorldMarketPanel(Goods.Self)]"
+			onrightclick = "[RightClickMenuManager.ShowForGoods(Goods.AccessSelf)]"
+			
+			size = { @panel_width 35 }
+			using = default_button
+			using = select_button_sound
+
+			block "tooltip" {
+			}
+
+			flowcontainer = {
+				parentanchor = left|vcenter
+				widgetanchor = left|vcenter
+				
+				using = world_market_goods_list_item
+
+				widget = {
+					using = world_market_price_tooltip_with_graph
+					size = { 170 55 }
+					
+					textbox = {
+						raw_text = "@money![Goods.GetWorldMarketBasePrice|1v] [Goods.GetCompareIconAgainstBasePriceNoFormatting( Goods.GetWorldMarketBasePrice )]"
+						align = right|nobaseline
+						size = { 90 40 }
+						margin_right = 10
+						parentanchor = vcenter
+					}
+
+					flowcontainer = {
+						
+						direction = vertical
+						minimumsize = { 80 36 }
+						spacing = 3
+						margin_top = 10
+						parentanchor = right
+
+						textbox = {
+							text = "WORLD_MARKET_PANEL_GOODS_PRICE_GOLD"
+							visible = "[GreaterThanOrEqualTo_CFixedPoint(Goods.GetPercentageDeltaAgainstBasePrice(Goods.GetWorldMarketBasePrice), '(CFixedPoint)0.01')]"
+							align = hcenter|nobaseline
+							autoresize = yes
+							parentanchor = hcenter
+						}
+
+						textbox = {
+							text = "WORLD_MARKET_PANEL_GOODS_PRICE"
+							visible = "[And( Not(LessThanOrEqualTo_CFixedPoint(Goods.GetPercentageDeltaAgainstBasePrice(Goods.GetWorldMarketBasePrice), '(CFixedPoint)-0.01')), Not(GreaterThanOrEqualTo_CFixedPoint(Goods.GetPercentageDeltaAgainstBasePrice(Goods.GetWorldMarketBasePrice), '(CFixedPoint)0.01')))]"
+							align = hcenter|nobaseline
+							autoresize = yes
+							parentanchor = hcenter
+						}
+
+						textbox = {
+							text = "WORLD_MARKET_PANEL_GOODS_PRICE_BLUE"
+							visible = "[LessThanOrEqualTo_CFixedPoint(Goods.GetPercentageDeltaAgainstBasePrice(Goods.GetWorldMarketBasePrice), '(CFixedPoint)-0.01')]"
+							align = hcenter|nobaseline
+							autoresize = yes
+							parentanchor = hcenter
+						}
+
+						double_direction_progressbar_gold = {
+							size = { 60 3 }
+							parentanchor = hcenter
+
+							blockoverride "negative_min_max_values" {
+								min = -0.75
+								max = 0
+							}
+
+							blockoverride "positive_min_max_values" {
+								min = 0
+								max = 0.75
+							}
+							
+							blockoverride "value_left" {
+								value = "[FixedPointToFloat(Goods.GetPercentageDeltaAgainstBasePrice(Goods.GetWorldMarketBasePrice))]"
+							}
+							blockoverride "value_right" {
+								value = "[FixedPointToFloat(Goods.GetPercentageDeltaAgainstBasePrice(Goods.GetWorldMarketBasePrice))]"
+							}
+						}
+					}
+				}
+
+				vertical_divider = {
+					parentanchor = vcenter
+					size = {1 35}
+				}
+				
+				flowcontainer = {
+					direction = vertical
+					minimumsize = { 90 52 }
+					margin_top = 10
+					spacing = 3
+
+					textbox = {
+						text = "WORLD_MARKET_PANEL_BALANCE_GOLD"
+						visible = "[GreaterThan_int32(FixedPointToInt(Goods.GetWorldMarketExportsAndImportsBalance), '(int32)0')]"
+						align = hcenter|nobaseline
+						autoresize = yes
+						parentanchor = hcenter
+					}
+
+					textbox = {
+						text = "WORLD_MARKET_PANEL_BALANCE"
+						visible = "[EqualTo_int32(FixedPointToInt(Goods.GetWorldMarketExportsAndImportsBalance), '(int32)0')]"
+						align = hcenter|nobaseline
+						autoresize = yes
+						parentanchor = hcenter
+					}
+
+					textbox = {
+						text = "WORLD_MARKET_PANEL_BALANCE_BLUE"
+						visible = "[LessThan_int32(FixedPointToInt(Goods.GetWorldMarketExportsAndImportsBalance), '(int32)0')]"
+						align = hcenter|nobaseline
+						autoresize = yes
+						parentanchor = hcenter
+					}
+
+					double_direction_progressbar_gold = {
+						size = { 60 3 }
+						parentanchor = hcenter
+
+						blockoverride "negative_min_max_values" {
+							min = "[Negate_float(FixedPointToFloat(WorldMarketPanel.GetMaxImbalanceScaledByBasePrice))]"
+							max = 0
+						}
+
+						blockoverride "positive_min_max_values" {
+							min = 0
+							max = "[FixedPointToFloat(WorldMarketPanel.GetMaxImbalanceScaledByBasePrice)]"
+						}
+						
+						blockoverride "value_left" {
+							value = "[FixedPointToInt(Multiply_CFixedPoint(Goods.GetWorldMarketExportsAndImportsBalance, Goods.GetBasePrice))]"
+						}
+						blockoverride "value_right" {
+							value = "[FixedPointToInt(Multiply_CFixedPoint(Goods.GetWorldMarketExportsAndImportsBalance, Goods.GetBasePrice))]"
+						}
+					}
+				}
+
+				vertical_divider = {
+					parentanchor = vcenter
+					size = {1 35}
+				}
+
+				textbox = {
+					text = "[Goods.GetWorldMarketExportsWithTooltip]"
+					visible = "[GreaterThan_CFixedPoint(Goods.GetWorldMarketExports, '(CFixedPoint)0')]"
+					align = left|nobaseline
+					size = { 60 40 }
+					margin_left = 5
+					parentanchor = vcenter
+				}
+
+				widget = {
+					visible = "[GreaterThan_CFixedPoint(Goods.GetWorldMarketExports, '(CFixedPoint)0')]"
+					size = { 85 40 }
+					parentanchor = vcenter
+					
+				
+					overlappingitembox = {
+						datamodel = "[DataModelFirst(Goods.GetWorldMarketExporters, '(int32)3')]"
+						size = { 80 18 }
+						parentanchor = vcenter
+
+
+						item = {
+							small_market_flag = {}
+						}
+					}
+				}
+
+				textbox = {
+					visible = "[Not(GreaterThan_CFixedPoint(Goods.GetWorldMarketExports, '(CFixedPoint)0'))]"
+					raw_text = "-"
+					align = hcenter|nobaseline
+					alpha = 0.5
+					size = { 150 40 }
+					margin_right = 10
+					parentanchor = vcenter
+				}			
+
+				vertical_divider = {
+									parentanchor = vcenter
+									size = {1 35}
+								}		
+				
+				textbox = {
+					text = "[Goods.GetWorldMarketImportsWithTooltip]"
+					visible = "[GreaterThan_CFixedPoint(Goods.GetWorldMarketImports, '(CFixedPoint)0')]"
+					align = left|nobaseline
+					size = { 60 40 }
+					margin_left = 5
+					parentanchor = vcenter
+				}
+
+				widget = {
+					visible = "[GreaterThan_CFixedPoint(Goods.GetWorldMarketImports, '(CFixedPoint)0')]"
+					size = { 85 40 }
+					parentanchor = vcenter
+				
+					overlappingitembox = {
+						datamodel = "[DataModelFirst(Goods.GetWorldMarketImporters, '(int32)3')]"
+						size = { 80 18 }
+						parentanchor = vcenter
+
+						item = {
+							small_market_flag = {}
+						}
+					}
+				}
+
+				textbox = {
+					visible = "[Not(GreaterThan_CFixedPoint(Goods.GetWorldMarketImports, '(CFixedPoint)0'))]"
+					raw_text = "-"
+					align = right|nobaseline
+					alpha = 0.5
+					size = { 150 40 }
+					margin_right = 10
+					parentanchor = vcenter
+				}
+			}
+		}
+
+		flowcontainer = {
+			visible = "[Not(GetVariableSystem.Exists( 'hide_prestige_goods' ))]"
+			direction = vertical
+
+			flowcontainer = {
+				visible = "[Not(IsDataModelEmpty(Goods.GetWorldMarketPrestigeGoods))]"
+
+				better_goods_prestige_goods_breakdown_list_item = {
+					minimumsize = { 580 -1 }
+					blockoverride "prestige_goods_onclick" {
+						onclick = "[InformationPanelBar.OpenGoodsWorldMarketPanel(Goods.Self)]"
+					}
+
+					blockoverride "prestige_goods_item_text_1" {
+						raw_text = "BETTER_BASE_GOODS_WORLD_MARKET_IMPORTS"
+					}
+
+					blockoverride "prestige_goods_item_text_2" {
+						raw_text = "BETTER_BASE_GOODS_WORLD_MARKET_EXPORTS"
+					}
+
+					
+				}
+				margin_left = 10
+			}
+
+			flowcontainer = {
+				visible = "[Not(IsDataModelEmpty(Goods.GetWorldMarketPrestigeGoods))]"
+				datamodel = "[Goods.GetWorldMarketPrestigeGoods]"
+
+				direction = vertical
+				margin_left = 10
+				margin_bottom = 10
+
+
+				item = {
+					container = {
+						better_goods_prestige_goods_breakdown_list_item = {
+							visible = "[Goods.CanEditName]"
+							size = { 580 35 }
+
+							blockoverride "prestige_goods_onclick" {
+								onclick = "[InformationPanelBar.OpenGoodsWorldMarketPanel(Goods.Self)]"
+							}
+
+							blockoverride "prestige_goods_item_text_1" {
+								raw_text = "BETTER_PRESTIGE_GOODS_WORLD_EXPORTS"
+							}
+
+							blockoverride "prestige_goods_item_text_2" {
+								raw_text = "BETTER_PRESTIGE_GOODS_WORLD_IMPORTS"
+							}
+
+							blockoverride "prestige_goods_item_name_size" {
+								minimumsize = { 114 -1 }
+								maximumsize = { 114 -1 }
+							}
+						}
+
+						better_goods_prestige_goods_breakdown_list_item = {
+							visible = "[Not(Goods.CanEditName)]"
+							size = { 580 35 }
+
+							blockoverride "prestige_goods_onclick" {
+								onclick = "[InformationPanelBar.OpenGoodsWorldMarketPanel(Goods.Self)]"
+							}
+
+							blockoverride "prestige_goods_item_text_1" {
+								raw_text = "BETTER_PRESTIGE_GOODS_WORLD_EXPORTS"
+							}
+
+							blockoverride "prestige_goods_item_text_2" {
+								raw_text = "BETTER_PRESTIGE_GOODS_WORLD_IMPORTS"
+							}
+						}
+					}
+					
+				}
+			}
+		}
+	}
+}
+
+template world_market_goods_list_item {
+	widget = {
+		size = { 55 35 }
+		parentanchor = vcenter
+
+		tooltipwidget = {
+			FancyTooltip_Goods = {}
+		}
+		
+		icon = {
+			texture = "gfx/interface/market_view/trade_good_list_bg.dds"
+			position = { 25 0 }
+			size = { 190 35 }
+			parentanchor = vcenter
+			color = "[Goods.GetCategoryColor]"
+		}
+
+		icon = {
+			texture = "gfx/interface/market_view/trade_good_icon_bg.dds"
+			# Frame matches parent height (35px); the previous 40x40 overflowed
+			# the row. Goods texture sized to vanilla's ~0.73 ratio.
+			size = { 35 35 }
+			color = "[Goods.GetCategoryColor]"
+
+			icon = {
+				texture = "[Goods.GetTexture]"
+				size = { 26 26 }
+				parentanchor = center
+			}
+		}
+	}
+}

@@ -1,0 +1,70 @@
+﻿# GORA UI+ — War-Goal & Treaty country filter
+#
+# Filter selections are stored as country-pointer variables on the player
+# scope so the Add-War-Goal panel and the Sway panel can both read them.
+# Add-War-Goal exposes two filters (target & holder); Sway uses one country
+# filter.
+#
+# Identifier naming: scripted_gui names and player-scope variables keep the
+# legacy `zz_gora_wg_*` / `zz_gora_sway_*` prefix because gui/gora_filter.gui
+# (carried over from legacy GORA) references them directly. The `zz_gora_`
+# namespace is reserved by GORA UI+ — see docs/NAMESPACES.md.
+
+# ─── Add War Goal: target filter ──────────────────────────────────────────
+zz_gora_wg_set_target_filter = {
+	scope = player
+	saved_scopes = { country }
+	effect = {
+		set_variable = {
+			name  = zz_gora_wg_target_filter_country
+			value = scope:country
+		}
+	}
+}
+
+zz_gora_wg_clear_target_filter = {
+	scope = player
+	effect = { remove_variable = zz_gora_wg_target_filter_country }
+}
+
+# ─── Add War Goal: holder filter ──────────────────────────────────────────
+zz_gora_wg_set_holder_filter = {
+	scope = player
+	saved_scopes = { country }
+	effect = {
+		set_variable = {
+			name  = zz_gora_wg_holder_filter_country
+			value = scope:country
+		}
+	}
+}
+
+zz_gora_wg_clear_holder_filter = {
+	scope = player
+	effect = { remove_variable = zz_gora_wg_holder_filter_country }
+}
+
+zz_gora_wg_clear_all_filters = {
+	scope = player
+	effect = {
+		remove_variable = zz_gora_wg_target_filter_country
+		remove_variable = zz_gora_wg_holder_filter_country
+	}
+}
+
+# ─── Sway panel: single country filter ────────────────────────────────────
+zz_gora_sway_set_filter = {
+	scope = player
+	saved_scopes = { country }
+	effect = {
+		set_variable = {
+			name  = zz_gora_sway_filter_country
+			value = scope:country
+		}
+	}
+}
+
+zz_gora_sway_clear_filter = {
+	scope = player
+	effect = { remove_variable = zz_gora_sway_filter_country }
+}

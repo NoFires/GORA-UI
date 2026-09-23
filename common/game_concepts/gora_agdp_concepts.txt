@@ -1,0 +1,9 @@
+﻿# GORA UI+ — Advanced GDP Tracker: game concepts
+#
+# Registers the GDP growth-rate concept so it shows up in loading-tip
+# rotation and tooltips correctly.
+
+concept_gdp_growth_rate = {
+	texture = "gfx/interface/icons/generic_icons/gdp.dds"
+	is_loading_tip = yes
+}

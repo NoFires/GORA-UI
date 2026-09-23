@@ -1,0 +1,24 @@
+{
+	"name" : "GORA UI+",
+	"id" : "3724865565",
+	"version" : "1.0.0",
+	"supported_game_version" : "1.14.*",
+	"short_description" : "Polished UI overhaul for Victoria 3 - a curated bundle of QoL features, built to coexist cleanly with Community Mod Framework and other UI mods.",
+	"tags" : [
+		"UI",
+		"Quality of Life",
+		"1.14"
+	],
+	"relationships" : [
+		{
+		  "rel_type": "dependency",
+		  "id": "com.github.Victoria-3-Modding-Co-op.Community-Mod-Framework",
+		  "display_name": "Community Mod Framework",
+		  "resource_type": "mod",
+		  "version": "1.*"
+		}
+	],
+	"game_custom_data" : {
+		"multiplayer_synchronized" : true
+	}
+}

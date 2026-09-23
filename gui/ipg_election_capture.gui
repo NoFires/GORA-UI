@@ -1,0 +1,31 @@
+﻿# =============================================================================
+# Improved ParliamentGraph - Election result capture bridge
+# -----------------------------------------------------------------------------
+# Party.GetCurrentVotingPowerShare is exposed to GUI but not normal script.
+# During the short country-scoped request window, this invisible global widget
+# enumerates the player's last-election parties and passes each share to a
+# scripted GUI as a fixed-point saved scope.
+# =============================================================================
+
+widget = {
+	layer = top
+	name = ipg_election_capture
+	# Scripted widgets are created on the frontend, where AccessPlayer is not
+	# valid yet. Re-entering visibility after a country becomes available makes
+	# the last-election datamodel build its Party rows before monthly _show use.
+	visible = "[GetMetaPlayer.GetPlayedOrObservedCountry.IsValid]"
+
+	vbox = {
+		datamodel = "[AccessPlayer.AccessLastElectionParties]"
+
+		item = {
+			hbox = {
+				visible = "[GetPlayer.MakeScope.Var('ipg_election_capture_requested').IsSet]"
+				state = {
+					name = _show
+					on_start = "[GetScriptedGui('ipg_capture_election_vote_share_sg').Execute(GuiScope.SetRoot(Party.MakeScope).AddScope('result', MakeScopeValue(Party.GetCurrentVotingPowerShare)).End)]"
+				}
+			}
+		}
+	}
+}

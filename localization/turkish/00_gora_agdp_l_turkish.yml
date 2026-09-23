@@ -1,0 +1,52 @@
+﻿l_turkish:
+ # GORA UI — Advanced GDP Tracker strings.
+
+ concept_gdp_growth_rate:0       "GSYİH Büyüme Oranı"
+ concept_gdp_growth_rate_short:0 "GSYİH Büyümesi"
+ concept_gdp_growth_rate_desc:0  "[concept_country] [concept_gdp] değerindeki yıllıklandırılmış değişim. Tüm [Concept('concept_building','$concept_buildings$')] bünyesinde istihdam edilen [Concept('concept_pop','$concept_pops$')] tarafından üretilen toplam çıktıdaki değişimleri yansıtır; [concept_pop_growth], [concept_construction] yoluyla yapılan yatırımlar ve gelişmiş [Concept('concept_production_method','$concept_production_methods$')] tarafından şekillendirilir. İstikrarlı bir [Concept('concept_gdp_growth_rate','$concept_gdp_growth_rate_short$')], [Concept('concept_loyalist','$concept_loyalists$')] ve [Concept('concept_radical','$concept_radicals$')] sayısını etkileyebilir."
+
+ GDPGR_CONCEPT_CALL:0 "[Concept('concept_gdp_growth_rate', '$concept_gdp_growth_rate_short$')]"
+
+ GDPGR_growth_text:0          "@money! Yıllık Ort. $GDPGR_tt_avg_growth_rate_abs$ ($GDPGR_tt_avg_growth_rate_per$) $GDPGR_CONCEPT_CALL$ $GDPGR_leaderboard_text$"
+
+ GDPGR_tt_avg_growth_rate_per:0 "#tooltippable;tooltip:[Country.GetTooltipTag],GDPGR_GDP_tooltip [Multiply_CFixedPoint('(CFixedPoint)12',Country.MakeScope.Var('GDPGR_past_year_avg_rate').GetValue)|1+=%]#!"
+ GDPGR_tt_avg_growth_rate_abs:0 "#tooltippable;tooltip:[Country.GetTooltipTag],GDPGR_GDP_tooltip [Multiply_CFixedPoint('(CFixedPoint)12',Country.MakeScope.Var('GDPGR_past_year_avg_diff').GetValue)|D+=]#!"
+
+ GDPGR_GDP_tooltip:0 "$GDPGR_GDP_tooltip_h$\n$TOOLTIP_DELIMITER$\n$GDPGR_GDP_tooltip_mp_h$\n#weak $GDPGR_GDP_tooltip_mp_d$#!\n$GDPGR_GDP_tooltip_mp_abs$ ($GDPGR_GDP_tooltip_mp_per$)\n\n$GDPGR_GDP_tooltip_mr_h$\n#weak $GDPGR_GDP_tooltip_mr_d$#!\n$GDPGR_GDP_tooltip_mr_abs$ ($GDPGR_GDP_tooltip_mr_per$)\n\n$GDPGR_GDP_tooltip_r_h$\n#weak $GDPGR_GDP_tooltip_r_d$#!\n$GDPGR_GDP_tooltip_r_abs$ ($GDPGR_GDP_tooltip_r_per$)\n\n$GDPGR_GDP_tooltip_y_h$\n#weak $GDPGR_GDP_tooltip_y_d$#!\n$GDPGR_GDP_tooltip_y_abs$ ($GDPGR_GDP_tooltip_y_per$)"
+
+ GDPGR_GDP_tooltip_h:0     "#header @money! $GDPGR_CONCEPT_CALL$ Eğilimleri#!"
+
+ GDPGR_GDP_tooltip_r_h:0   "#T Son 12 Ay:#!"
+ GDPGR_GDP_tooltip_r_d:0   "Kaydedilen son 12 aylık veri üzerinden net GSYİH değişimi."
+ GDPGR_GDP_tooltip_r_per:0 "[Country.MakeScope.Var('GDPGR_rolling_gdp_growth_rate').GetValue|1+=%]"
+ GDPGR_GDP_tooltip_r_abs:0 "@money![Country.MakeScope.Var('GDPGR_rolling_difference').GetValue|D+=]"
+
+ GDPGR_GDP_tooltip_y_h:0   "#T [Subtract_CFixedPoint(GetGlobalVariable('GDPGR_year').GetValue,'(CFixedPoint)1')|0] Başı ile [GetGlobalVariable('GDPGR_year').GetValue|0] Arası:#!"
+ GDPGR_GDP_tooltip_y_d:0   "Önceki yılın başındaki GSYİH ile içinde bulunulan yılın başındaki GSYİH'yi karşılaştırır."
+ GDPGR_GDP_tooltip_y_per:0 "[Country.MakeScope.Var('gdp_growth_rate').GetValue|1+=%]"
+ GDPGR_GDP_tooltip_y_abs:0 "@money![Subtract_CFixedPoint(Country.MakeScope.Var('current_gdp').GetValue,Country.MakeScope.Var('before_gdp').GetValue)|D+=]"
+
+ GDPGR_GDP_tooltip_mr_h:0   "#T Geçen Yılın Aylık Ortalaması:#!"
+ GDPGR_GDP_tooltip_mr_d:0   "Son 12 ay boyunca aylık ortalama GSYİH kazancı veya kaybı."
+ GDPGR_GDP_tooltip_mr_per:0 "[Country.MakeScope.Var('GDPGR_past_year_avg_rate').GetValue|1+=%]"
+ GDPGR_GDP_tooltip_mr_abs:0 "@money![Country.MakeScope.Var('GDPGR_past_year_avg_diff').GetValue|D+=]"
+
+ GDPGR_GDP_tooltip_mp_h:0   "#T Geçen Ay:#!"
+ GDPGR_GDP_tooltip_mp_d:0   "En son iki aylık GSYİH kaydı arasındaki değişim."
+ GDPGR_GDP_tooltip_mp_per:0 "[Country.MakeScope.Var('GDPGR_past_month_rate').GetValue|1+=%]"
+ GDPGR_GDP_tooltip_mp_abs:0 "@money![Country.MakeScope.Var('GDPGR_past_month_diff').GetValue|D+=]"
+
+ GDPGR_leaderboard_text:0      "(#tooltippable;tooltip:[Country.GetTooltipTag],GDPGR_leaderboard_tooltip #v $GDPGR_leaderboard_pos$#!#!)"
+ GDPGR_leaderboard_norm:0      "##[Country.MakeScope.Var('GDPGR_annl_growth_leaderboard_pos').GetValue|0]"
+ GDPGR_leaderboard_excl:0      "Yok"
+ GDPGR_leaderboard_pos:0       "[SelectLocalization(GreaterThan_CFixedPoint(Country.MakeScope.Var('GDPGR_annl_growth_leaderboard_pos').GetValue,'(CFixedPoint)0'),'GDPGR_leaderboard_norm','GDPGR_leaderboard_excl')]"
+
+ GDPGR_leaderboard_tooltip:0   "$GDPGR_leaderboard_tooltip_h$\n[GetScriptedGui('GDPGR_sg_annl_growth_leaderboard').ExecuteTooltip(GuiScope.SetRoot(GetPlayer.MakeScope).End)]\n$TOOLTIP_DELIMITER$\n$GDPGR_leaderboard_tooltip_h2$\n[GetScriptedGui('GDPGR_sg_annl_growth_leaderboard_top_gdps').ExecuteTooltip(GuiScope.SetRoot(GetPlayer.MakeScope).End)][AddLocalizationIf(EqualTo_CFixedPoint(Country.MakeScope.Var('GDPGR_annl_growth_leaderboard_pos').GetValue,'(CFixedPoint)0'),'GDPGR_leaderboard_rev_warning')]"
+ GDPGR_leaderboard_rev_warning:0      "\n$TOOLTIP_DELIMITER$\n@warning! $GDPGR_leaderboard_rev_warning_text$"
+ GDPGR_leaderboard_rev_warning_text:0 "[Country.GetName] şu anda bir iç savaşta veya yeni kurulmuş bir ülke. Veriler henüz oturmadı."
+
+ GDPGR_leaderboard_tooltip_h:0  "#header @prestige! Yıllık Ortalama $GDPGR_CONCEPT_CALL$ Sıralaması#!"
+ GDPGR_leaderboard_tooltip_h2:0 "#header @gdp! İlk 10 Ekonomide $GDPGR_CONCEPT_CALL$#!"
+
+ GDPGR_tt_leaderboard_line:0          "#v ##[THIS.Var('GDPGR_annl_growth_leaderboard_pos').GetValue]:#! #bold [THIS.GetCountry.GetName]#! - [Multiply_CFixedPoint('(CFixedPoint)12',THIS.Var('GDPGR_past_year_avg_rate').GetValue)|1+=%] (@money![Multiply_CFixedPoint('(CFixedPoint)12',THIS.Var('GDPGR_past_year_avg_diff').GetValue)|D+=])"
+ GDPGR_tt_leaderboard_line_top_gdps:0 "#bold [THIS.GetCountry.GetName]#! (@money![THIS.GetCountry.GetGDP|Dv]) - [Multiply_CFixedPoint('(CFixedPoint)12',THIS.Var('GDPGR_past_year_avg_rate').GetValue)|1+=%] (@money![Multiply_CFixedPoint('(CFixedPoint)12',THIS.Var('GDPGR_past_year_avg_diff').GetValue)|D+=])"

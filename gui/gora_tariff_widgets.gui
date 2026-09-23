@@ -1,0 +1,178 @@
+﻿# GORA UI+ — Bulk-tariff button strip
+# Two custom flowcontainer types referenced from the world-market-trade
+# tab patch (zz_gora_market_panel_tariffs.gui in Faz 3A). Each item is a
+# vanilla `set_level_bar_item` flipped into action mode (not selectable)
+# and wired to one of the gora_tariffs_*_scripted_guis.
+
+types GuiTypes {
+
+	type gora_tariff_button_import = set_level_bar_item {
+		blockoverride "is_selected_visibility" { visible = no }
+	}
+
+	type gora_tariff_button_export = set_level_bar_item {
+		blockoverride "is_selected_visibility" { visible = no }
+	}
+
+	type set_level_bar_import_tariffs_all = flowcontainer {
+		using = set_level_bar_background
+
+		gora_tariff_button_import = {
+			tooltip = "[SelectLocalization( GreaterThan_CFixedPoint( GetPlayer.MakeScope.ScriptValue('gora_tariffs_import_on_cooldown'), '(CFixedPoint)0' ), 'gora_tariffs_import_cooldown_tt', 'gora_tariffs_import_max_tariffs_tt' )]"
+			blockoverride "button_texture" { texture = "gfx/interface/icons/trade_icons/max_tariffs.dds" }
+			blockoverride "click" {
+				enabled = "[GetScriptedGui('gora_tariffs_import_max_tariffs').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+				onclick = "[GetScriptedGui('gora_tariffs_import_max_tariffs').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+			}
+		}
+		gora_tariff_button_import = {
+			tooltip = "[SelectLocalization( GreaterThan_CFixedPoint( GetPlayer.MakeScope.ScriptValue('gora_tariffs_import_on_cooldown'), '(CFixedPoint)0' ), 'gora_tariffs_import_cooldown_tt', 'gora_tariffs_import_high_tariffs_tt' )]"
+			blockoverride "button_texture" { texture = "gfx/interface/icons/trade_icons/high_tariffs.dds" }
+			blockoverride "click" {
+				enabled = "[GetScriptedGui('gora_tariffs_import_high_tariffs').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+				onclick = "[GetScriptedGui('gora_tariffs_import_high_tariffs').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+			}
+		}
+		gora_tariff_button_import = {
+			tooltip = "[SelectLocalization( GreaterThan_CFixedPoint( GetPlayer.MakeScope.ScriptValue('gora_tariffs_import_on_cooldown'), '(CFixedPoint)0' ), 'gora_tariffs_import_cooldown_tt', 'gora_tariffs_import_low_tariffs_tt' )]"
+			blockoverride "button_texture" { texture = "gfx/interface/icons/trade_icons/low_tariffs.dds" }
+			blockoverride "click" {
+				enabled = "[GetScriptedGui('gora_tariffs_import_low_tariffs').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+				onclick = "[GetScriptedGui('gora_tariffs_import_low_tariffs').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+			}
+		}
+		gora_tariff_button_import = {
+			tooltip = "[SelectLocalization( GreaterThan_CFixedPoint( GetPlayer.MakeScope.ScriptValue('gora_tariffs_import_on_cooldown'), '(CFixedPoint)0' ), 'gora_tariffs_import_cooldown_tt', 'gora_tariffs_import_none_tt' )]"
+			blockoverride "button_texture" { texture = "gfx/interface/icons/trade_icons/no_tariffs_no_subvention.dds" }
+			blockoverride "click" {
+				enabled = "[GetScriptedGui('gora_tariffs_import_none').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+				onclick = "[GetScriptedGui('gora_tariffs_import_none').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+			}
+		}
+		gora_tariff_button_import = {
+			tooltip = "[SelectLocalization( GreaterThan_CFixedPoint( GetPlayer.MakeScope.ScriptValue('gora_tariffs_import_on_cooldown'), '(CFixedPoint)0' ), 'gora_tariffs_import_cooldown_tt', 'gora_tariffs_import_low_subventions_tt' )]"
+			blockoverride "button_texture" { texture = "gfx/interface/icons/trade_icons/low_subvention.dds" }
+			blockoverride "click" {
+				enabled = "[GetScriptedGui('gora_tariffs_import_low_subventions').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+				onclick = "[GetScriptedGui('gora_tariffs_import_low_subventions').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+			}
+		}
+		gora_tariff_button_import = {
+			tooltip = "[SelectLocalization( GreaterThan_CFixedPoint( GetPlayer.MakeScope.ScriptValue('gora_tariffs_import_on_cooldown'), '(CFixedPoint)0' ), 'gora_tariffs_import_cooldown_tt', 'gora_tariffs_import_high_subventions_tt' )]"
+			blockoverride "button_texture" { texture = "gfx/interface/icons/trade_icons/high_subvention.dds" }
+			blockoverride "click" {
+				enabled = "[GetScriptedGui('gora_tariffs_import_high_subventions').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+				onclick = "[GetScriptedGui('gora_tariffs_import_high_subventions').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+			}
+		}
+		gora_tariff_button_import = {
+			tooltip = "[SelectLocalization( GreaterThan_CFixedPoint( GetPlayer.MakeScope.ScriptValue('gora_tariffs_import_on_cooldown'), '(CFixedPoint)0' ), 'gora_tariffs_import_cooldown_tt', 'gora_tariffs_import_max_subventions_tt' )]"
+			blockoverride "button_texture" { texture = "gfx/interface/icons/trade_icons/max_subvention.dds" }
+			blockoverride "click" {
+				enabled = "[GetScriptedGui('gora_tariffs_import_max_subventions').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+				onclick = "[GetScriptedGui('gora_tariffs_import_max_subventions').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+			}
+		}
+	}
+
+	type set_level_bar_export_tariffs_all = flowcontainer {
+		using = set_level_bar_background
+
+		gora_tariff_button_export = {
+			tooltip = "[SelectLocalization( GreaterThan_CFixedPoint( GetPlayer.MakeScope.ScriptValue('gora_tariffs_export_on_cooldown'), '(CFixedPoint)0' ), 'gora_tariffs_export_cooldown_tt', 'gora_tariffs_export_max_tariffs_tt' )]"
+			blockoverride "button_texture" { texture = "gfx/interface/icons/trade_icons/max_tariffs.dds" }
+			blockoverride "click" {
+				enabled = "[GetScriptedGui('gora_tariffs_export_max_tariffs').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+				onclick = "[GetScriptedGui('gora_tariffs_export_max_tariffs').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+			}
+		}
+		gora_tariff_button_export = {
+			tooltip = "[SelectLocalization( GreaterThan_CFixedPoint( GetPlayer.MakeScope.ScriptValue('gora_tariffs_export_on_cooldown'), '(CFixedPoint)0' ), 'gora_tariffs_export_cooldown_tt', 'gora_tariffs_export_high_tariffs_tt' )]"
+			blockoverride "button_texture" { texture = "gfx/interface/icons/trade_icons/high_tariffs.dds" }
+			blockoverride "click" {
+				enabled = "[GetScriptedGui('gora_tariffs_export_high_tariffs').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+				onclick = "[GetScriptedGui('gora_tariffs_export_high_tariffs').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+			}
+		}
+		gora_tariff_button_export = {
+			tooltip = "[SelectLocalization( GreaterThan_CFixedPoint( GetPlayer.MakeScope.ScriptValue('gora_tariffs_export_on_cooldown'), '(CFixedPoint)0' ), 'gora_tariffs_export_cooldown_tt', 'gora_tariffs_export_low_tariffs_tt' )]"
+			blockoverride "button_texture" { texture = "gfx/interface/icons/trade_icons/low_tariffs.dds" }
+			blockoverride "click" {
+				enabled = "[GetScriptedGui('gora_tariffs_export_low_tariffs').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+				onclick = "[GetScriptedGui('gora_tariffs_export_low_tariffs').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+			}
+		}
+		gora_tariff_button_export = {
+			tooltip = "[SelectLocalization( GreaterThan_CFixedPoint( GetPlayer.MakeScope.ScriptValue('gora_tariffs_export_on_cooldown'), '(CFixedPoint)0' ), 'gora_tariffs_export_cooldown_tt', 'gora_tariffs_export_none_tt' )]"
+			blockoverride "button_texture" { texture = "gfx/interface/icons/trade_icons/no_tariffs_no_subvention.dds" }
+			blockoverride "click" {
+				enabled = "[GetScriptedGui('gora_tariffs_export_none').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+				onclick = "[GetScriptedGui('gora_tariffs_export_none').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+			}
+		}
+		gora_tariff_button_export = {
+			tooltip = "[SelectLocalization( GreaterThan_CFixedPoint( GetPlayer.MakeScope.ScriptValue('gora_tariffs_export_on_cooldown'), '(CFixedPoint)0' ), 'gora_tariffs_export_cooldown_tt', 'gora_tariffs_export_low_subventions_tt' )]"
+			blockoverride "button_texture" { texture = "gfx/interface/icons/trade_icons/low_subvention.dds" }
+			blockoverride "click" {
+				enabled = "[GetScriptedGui('gora_tariffs_export_low_subventions').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+				onclick = "[GetScriptedGui('gora_tariffs_export_low_subventions').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+			}
+		}
+		gora_tariff_button_export = {
+			tooltip = "[SelectLocalization( GreaterThan_CFixedPoint( GetPlayer.MakeScope.ScriptValue('gora_tariffs_export_on_cooldown'), '(CFixedPoint)0' ), 'gora_tariffs_export_cooldown_tt', 'gora_tariffs_export_high_subventions_tt' )]"
+			blockoverride "button_texture" { texture = "gfx/interface/icons/trade_icons/high_subvention.dds" }
+			blockoverride "click" {
+				enabled = "[GetScriptedGui('gora_tariffs_export_high_subventions').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+				onclick = "[GetScriptedGui('gora_tariffs_export_high_subventions').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+			}
+		}
+		gora_tariff_button_export = {
+			tooltip = "[SelectLocalization( GreaterThan_CFixedPoint( GetPlayer.MakeScope.ScriptValue('gora_tariffs_export_on_cooldown'), '(CFixedPoint)0' ), 'gora_tariffs_export_cooldown_tt', 'gora_tariffs_export_max_subventions_tt' )]"
+			blockoverride "button_texture" { texture = "gfx/interface/icons/trade_icons/max_subvention.dds" }
+			blockoverride "click" {
+				enabled = "[GetScriptedGui('gora_tariffs_export_max_subventions').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+				onclick = "[GetScriptedGui('gora_tariffs_export_max_subventions').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+			}
+		}
+	}
+
+	# Advisor compatibility hook. Advisor owns all automation logic; GORA+
+	# contributes only the market-panel presentation slot. The short-lived
+	# Advisor presence variable keeps this hidden when Advisor is not active.
+	type gora_advisor_auto_export_hook_button = button_icon_round_toggle_action {
+		visible = "[GreaterThan_CFixedPoint(GetPlayer.MakeScope.Var('advisor_auto_export_available').GetValue, '(CFixedPoint)0')]"
+
+		block "size" {
+			size = { 32 32 }
+		}
+
+		block "tooltip" {
+			tooltip = "[SelectLocalization( GreaterThan_CFixedPoint( GetPlayer.MakeScope.Var('gora_auto_export_enabled').GetValue, '(CFixedPoint)0' ), 'advisor_auto_export_enabled_tt', 'advisor_auto_export_disabled_tt' )]"
+		}
+
+		block "enabled" {
+			enabled = "[GetScriptedGui('advisor_auto_export_toggle_sgui').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+		}
+
+		blockoverride "on_click" {
+			onclick = "[GetScriptedGui('advisor_auto_export_toggle_sgui').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+		}
+
+		blockoverride "view_1" {
+			visible = "[Not(GreaterThan_CFixedPoint(GetPlayer.MakeScope.Var('gora_auto_export_enabled').GetValue, '(CFixedPoint)0'))]"
+		}
+
+		blockoverride "view_2" {
+			visible = "[GreaterThan_CFixedPoint(GetPlayer.MakeScope.Var('gora_auto_export_enabled').GetValue, '(CFixedPoint)0')]"
+		}
+
+		blockoverride "icon_1" {
+			texture = "gfx/interface/icons/trade_icons/exports.dds"
+		}
+
+		blockoverride "icon_2" {
+			texture = "gfx/interface/icons/trade_icons/low_subvention.dds"
+		}
+	}
+
+}

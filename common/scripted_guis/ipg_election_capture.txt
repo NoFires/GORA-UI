@@ -1,0 +1,19 @@
+﻿# =============================================================================
+# Improved ParliamentGraph - GUI-to-script election result bridge
+# =============================================================================
+
+ipg_capture_election_vote_share_sg = {
+	scope = party
+	saved_scopes = {
+		result
+	}
+	effect = {
+		random_member = {
+			save_scope_as = ipg_capture_member
+		}
+		save_scope_as = ipg_capture_party
+		scope:ipg_capture_member.owner = {
+			ipg_election_vote_setter = yes
+		}
+	}
+}

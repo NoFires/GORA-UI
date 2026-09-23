@@ -1,0 +1,363 @@
+[22:34:47][virtualfilesystem_physfs.cpp:460]: Mounted Data: C:/Program Files (x86)/Steam/steamapps/common/Victoria 3/clausewitz
+[22:34:47][virtualfilesystem_physfs.cpp:460]: Mounted Data: C:/Program Files (x86)/Steam/steamapps/common/Victoria 3/jomini
+[22:34:47][virtualfilesystem_physfs.cpp:460]: Mounted Data: C:/Program Files (x86)/Steam/steamapps/common/Victoria 3/platform_specific_game_data
+[22:34:47][virtualfilesystem_physfs.cpp:460]: Mounted Data: C:/Program Files (x86)/Steam/steamapps/common/Victoria 3/game
+[22:34:47][jomini_game_setup.cpp:134]: Log system initialized.
+[22:34:47][pdx_task.cpp:87]: Spawning 16 normal worker threads
+[22:34:47][pdx_task.cpp:88]: Spawning 7 below normal worker threads
+[22:34:47][systemsettings.cpp:332]: "default_settings_v1_file" is not defined in path.settings. Default "pdx_default_settings.json" will be used.
+[22:34:47][systemsettings.cpp:332]: "settings_v1_file" is not defined in path.settings. Default "pdx_settings.json" will be used.
+[22:34:47][pdx_json_settings.cpp:343]: [SPdxJsonSettingsIO] Failed to read "language" setting. Reason : ""l_simp_chinese" is not part of enum" 
+[22:34:47][pdx_json_settings.cpp:325]: [SPdxJsonSettingsIO] "pdx_settings.json" file lacks "resolution" setting in "Graphics" category.
+[22:34:47][defines.cpp:230]: Define 'MIN_COMBAT_UNITS_FOR_MULTIPLE_COMMANDERS_ABSOLUTE' defined in 'common/defines/00_ai.txt' not specified. Maybe a define macro is missing
+[22:34:47][defines.cpp:230]: Define 'MIN_COMBAT_UNITS_FOR_MULTIPLE_COMMANDERS_RELATIVE' defined in 'common/defines/00_ai.txt' not specified. Maybe a define macro is missing
+[22:34:47][defines.cpp:230]: Define 'RETIRE_COMMANDER_INTERACTION_KEY' defined in 'common/defines/00_ai.txt' not specified. Maybe a define macro is missing
+[22:34:47][defines.cpp:230]: Define 'COMMANDER_DESIRED_RANK_DISPARITY_IN_ARMY' defined in 'common/defines/00_ai.txt' not specified. Maybe a define macro is missing
+[22:34:47][defines.cpp:230]: Define 'COMMANDER_DESIRED_RANK_DISPARITY_IN_FLEET' defined in 'common/defines/00_ai.txt' not specified. Maybe a define macro is missing
+[22:34:47][defines.cpp:230]: Define 'name' defined in 'common/defines/00_audio_persistent_objects.txt' not specified. Maybe a define macro is missing
+[22:34:47][defines.cpp:230]: Define 'scope' defined in 'common/defines/00_audio_persistent_objects.txt' not specified. Maybe a define macro is missing
+[22:34:47][defines.cpp:230]: Define 'CIVIL_WAR_UPRISING_STATE_EXCESSIVE_ARMY_FRACTION' defined in 'common/defines/00_defines.txt' not specified. Maybe a define macro is missing
+[22:34:47][defines.cpp:230]: Define 'BUILDING_MAX_PROFIT_TO_PAUSE_HIRES' defined in 'common/defines/00_defines.txt' not specified. Maybe a define macro is missing
+[22:34:47][defines.cpp:230]: Define 'WORLD_MARKET_MONOPOLY_MIN_SHARE' defined in 'common/defines/00_defines.txt' not specified. Maybe a define macro is missing
+[22:34:47][defines.cpp:230]: Define 'HIGH_POP_THRESHOLD' defined in 'common/defines/00_defines.txt' not specified. Maybe a define macro is missing
+[22:34:47][defines.cpp:230]: Define 'ROLE_RULER' defined in 'common/defines/00_defines.txt' not specified. Maybe a define macro is missing
+[22:34:47][defines.cpp:230]: Define 'ROLE_HEIR' defined in 'common/defines/00_defines.txt' not specified. Maybe a define macro is missing
+[22:34:47][defines.cpp:230]: Define 'TARGET_NUM_POOL_POLITICIANS_POWERFUL_IG' defined in 'common/defines/00_defines.txt' not specified. Maybe a define macro is missing
+[22:34:47][defines.cpp:230]: Define 'TARGET_NUM_POOL_POLITICIANS_INFLUENTIAL_IG' defined in 'common/defines/00_defines.txt' not specified. Maybe a define macro is missing
+[22:34:47][defines.cpp:230]: Define 'TARGET_NUM_POOL_POLITICIANS_MARGINAL_IG' defined in 'common/defines/00_defines.txt' not specified. Maybe a define macro is missing
+[22:34:47][defines.cpp:230]: Define 'FLAGSHIP_DECORATION_LOCATOR' defined in 'common/defines/00_graphics.txt' not specified. Maybe a define macro is missing
+[22:34:47][pdxfilewatcher_windows.cpp:363]: Invalid path passed in Directories: C:/Users/WhiteAndBlack/Documents/Paradox Interactive/Victoria 3/tools_import
+[22:34:47][main.cpp:564]: Total startup duration: 0.3982528 seconds
+[22:34:47][pdx_account.cpp:600]: Starting up PDX SDK
+[22:34:55][pdx_json_settings.cpp:325]: [SPdxJsonSettingsIO] "pdx_settings.json" file lacks "device" setting in "Graphics" category.
+[22:34:55][gfx_dx11_master_context.cpp:149]: Adapter 0: NVIDIA GeForce RTX 3060 Laptop GPU (5994.00 MB)
+[22:34:55][gfx_dx11_master_context.cpp:149]: Adapter 1: Intel(R) Iris(R) Xe Graphics (128.00 MB)
+[22:34:55][gfx_dx11_master_context.cpp:149]: Adapter 2: Intel(R) Iris(R) Xe Graphics (128.00 MB)
+[22:34:55][gfx_dx11_master_context.cpp:149]: Adapter 3: Intel(R) Iris(R) Xe Graphics (128.00 MB)
+[22:34:55][gfx_dx11_master_context.cpp:149]: Adapter 4: Microsoft Basic Render Driver (0.00 MB)
+[22:34:55][gfx_dx11_master_context.cpp:149]: Selected adapter: NVIDIA GeForce RTX 3060 Laptop GPU (5994.00 MB)
+[22:34:55][gfx_dx11_master_context.cpp:296]: VendorId: 4318
+[22:34:55][gfx_dx11_master_context.cpp:297]: DeviceId: 9568
+[22:34:55][gfx_dx11_master_context.cpp:298]: SubSysId: 190189608
+[22:34:55][gfx_dx11_master_context.cpp:299]: Revision: 161
+[22:34:56][pdx_json_settings.cpp:325]: [SPdxJsonSettingsIO] "pdx_settings.json" file lacks "upscale" setting in "Graphics" category.
+[22:34:56][pdx_json_settings.cpp:325]: [SPdxJsonSettingsIO] "pdx_settings.json" file lacks "upscale_quality" setting in "Graphics" category.
+[22:34:56][pdx_json_settings.cpp:325]: [SPdxJsonSettingsIO] "pdx_settings.json" file lacks "anti_aliasing" setting in "Graphics" category.
+[22:34:56][pdx_json_settings.cpp:325]: [SPdxJsonSettingsIO] "pdx_settings.json" file lacks "portrait_multi_sampling" setting in "Graphics" category.
+[22:34:56][pdx_json_settings.cpp:325]: [SPdxJsonSettingsIO] "pdx_settings.json" file lacks "multi_sampling" setting in "Graphics" category.
+[22:34:56][pdx_json_settings.cpp:325]: [SPdxJsonSettingsIO] "pdx_settings.json" file lacks "anisotropic_filtering" setting in "Graphics" category.
+[22:34:56][pdx_audio2.cpp:540]: Legacy setting: audio_profile_headphones_path, use audio_profiles setting instead
+[22:34:56][pdx_audio2.cpp:547]: Legacy setting: audio_profile_tv_path, use audio_profiles setting instead
+[22:34:56][pdx_audio2.cpp:554]: Legacy setting: audio_profile_nightmode_path, use audio_profiles setting instead
+[22:34:56][pdx_audio2.cpp:614]: Creating FMOD sound engine
+[22:34:56][pdx_json_settings.cpp:325]: [SPdxJsonSettingsIO] "pdx_settings.json" file lacks "audio_device_profile" setting in "Audio" category.
+[22:34:56][jominiapplication.cpp:698]: DLC:
+Voice of the People Preorder|dlc/dlc006_voice_of_the_people_preorder/dlc006.dlc
+Region Pack 1|dlc/dlc008_rp1/dlc008_rp1.dlc
+Sphere of Influence|dlc/dlc010_ep1/dlc010_ep1.dlc
+Dawn of Wonder|dlc/dlc007_ap1/dlc007_ap1.dlc
+Warships Bonus Pack|dlc/dlc017_warships_bonus_pack/dlc017_warships_bonus_pack.dlc
+Pivot of Empire|dlc/dlc011_ip2/dlc011_ip2.dlc
+Voice of the People|dlc/dlc004_voice_of_the_people/dlc004.dlc
+Victoria 2 Remastered Soundtrack|dlc/dlc001_preorder/dlc001.dlc
+National Awakening|dlc/dlc014_ip3/dlc014_ip3.dlc
+Melodies for the Masses|dlc/dlc003_melodies_for_the_masses/dlc003.dlc
+American Buildings Pack|dlc/dlc002_american_buildings/dlc002.dlc
+The Great Wave|dlc/dlc018_ep2/dlc018_ep2.dlc
+Mod:
+GORA UI+|C:\Users\WhiteAndBlack\Documents\Paradox Interactive\Victoria 3\mod\Gora UI +
+
+[22:34:56][virtualfilesystem_physfs.cpp:460]: Mounted Data: C:/Program Files (x86)/Steam/steamapps/common/Victoria 3/game/dlc/dlc017_warships_bonus_pack
+[22:34:56][virtualfilesystem_physfs.cpp:460]: Mounted Data: C:/Program Files (x86)/Steam/steamapps/common/Victoria 3/game/dlc/dlc006_voice_of_the_people_preorder
+[22:34:56][virtualfilesystem_physfs.cpp:460]: Mounted Data: C:/Program Files (x86)/Steam/steamapps/common/Victoria 3/game/dlc/dlc004_voice_of_the_people
+[22:34:56][virtualfilesystem_physfs.cpp:460]: Mounted Data: C:/Program Files (x86)/Steam/steamapps/common/Victoria 3/game/dlc/dlc001_preorder
+[22:34:56][virtualfilesystem_physfs.cpp:460]: Mounted Data: C:/Program Files (x86)/Steam/steamapps/common/Victoria 3/game/dlc/dlc018_ep2
+[22:34:56][virtualfilesystem_physfs.cpp:460]: Mounted Data: C:/Program Files (x86)/Steam/steamapps/common/Victoria 3/game/dlc/dlc010_ep1
+[22:34:56][virtualfilesystem_physfs.cpp:460]: Mounted Data: C:/Program Files (x86)/Steam/steamapps/common/Victoria 3/game/dlc/dlc008_rp1
+[22:34:56][virtualfilesystem_physfs.cpp:460]: Mounted Data: C:/Program Files (x86)/Steam/steamapps/common/Victoria 3/game/dlc/dlc011_ip2
+[22:34:56][virtualfilesystem_physfs.cpp:460]: Mounted Data: C:/Program Files (x86)/Steam/steamapps/common/Victoria 3/game/dlc/dlc014_ip3
+[22:34:56][virtualfilesystem_physfs.cpp:460]: Mounted Data: C:/Program Files (x86)/Steam/steamapps/common/Victoria 3/game/dlc/dlc003_melodies_for_the_masses
+[22:34:56][virtualfilesystem_physfs.cpp:460]: Mounted Data: C:/Program Files (x86)/Steam/steamapps/common/Victoria 3/game/dlc/dlc007_ap1
+[22:34:56][virtualfilesystem_physfs.cpp:460]: Mounted Data: C:/Program Files (x86)/Steam/steamapps/common/Victoria 3/game/dlc/dlc002_american_buildings
+[22:34:56][virtualfilesystem_physfs.cpp:460]: Mounted Data: C:/Users/WhiteAndBlack/Documents/Paradox Interactive/Victoria 3/mod/Gora UI +
+[22:34:56][dlc.cpp:753]: Mod GORA UI+ (3724865565) version 1.13.* does not match game version 1.14.3.
+[22:34:57][pdx_matchmaking.cpp:62]: Matchmaking Interface: Steam
+[22:34:57][defines.cpp:230]: Define 'MIN_COMBAT_UNITS_FOR_MULTIPLE_COMMANDERS_ABSOLUTE' defined in 'common/defines/00_ai.txt' not specified. Maybe a define macro is missing
+[22:34:57][defines.cpp:230]: Define 'MIN_COMBAT_UNITS_FOR_MULTIPLE_COMMANDERS_RELATIVE' defined in 'common/defines/00_ai.txt' not specified. Maybe a define macro is missing
+[22:34:57][defines.cpp:230]: Define 'RETIRE_COMMANDER_INTERACTION_KEY' defined in 'common/defines/00_ai.txt' not specified. Maybe a define macro is missing
+[22:34:57][defines.cpp:230]: Define 'COMMANDER_DESIRED_RANK_DISPARITY_IN_ARMY' defined in 'common/defines/00_ai.txt' not specified. Maybe a define macro is missing
+[22:34:57][defines.cpp:230]: Define 'COMMANDER_DESIRED_RANK_DISPARITY_IN_FLEET' defined in 'common/defines/00_ai.txt' not specified. Maybe a define macro is missing
+[22:34:57][defines.cpp:230]: Define 'name' defined in 'common/defines/00_audio_persistent_objects.txt' not specified. Maybe a define macro is missing
+[22:34:57][defines.cpp:230]: Define 'scope' defined in 'common/defines/00_audio_persistent_objects.txt' not specified. Maybe a define macro is missing
+[22:34:57][defines.cpp:230]: Define 'CIVIL_WAR_UPRISING_STATE_EXCESSIVE_ARMY_FRACTION' defined in 'common/defines/00_defines.txt' not specified. Maybe a define macro is missing
+[22:34:57][defines.cpp:230]: Define 'BUILDING_MAX_PROFIT_TO_PAUSE_HIRES' defined in 'common/defines/00_defines.txt' not specified. Maybe a define macro is missing
+[22:34:57][defines.cpp:230]: Define 'WORLD_MARKET_MONOPOLY_MIN_SHARE' defined in 'common/defines/00_defines.txt' not specified. Maybe a define macro is missing
+[22:34:57][defines.cpp:230]: Define 'HIGH_POP_THRESHOLD' defined in 'common/defines/00_defines.txt' not specified. Maybe a define macro is missing
+[22:34:57][defines.cpp:230]: Define 'ROLE_RULER' defined in 'common/defines/00_defines.txt' not specified. Maybe a define macro is missing
+[22:34:57][defines.cpp:230]: Define 'ROLE_HEIR' defined in 'common/defines/00_defines.txt' not specified. Maybe a define macro is missing
+[22:34:57][defines.cpp:230]: Define 'TARGET_NUM_POOL_POLITICIANS_POWERFUL_IG' defined in 'common/defines/00_defines.txt' not specified. Maybe a define macro is missing
+[22:34:57][defines.cpp:230]: Define 'TARGET_NUM_POOL_POLITICIANS_INFLUENTIAL_IG' defined in 'common/defines/00_defines.txt' not specified. Maybe a define macro is missing
+[22:34:57][defines.cpp:230]: Define 'TARGET_NUM_POOL_POLITICIANS_MARGINAL_IG' defined in 'common/defines/00_defines.txt' not specified. Maybe a define macro is missing
+[22:34:57][defines.cpp:230]: Define 'FLAGSHIP_DECORATION_LOCATOR' defined in 'common/defines/00_graphics.txt' not specified. Maybe a define macro is missing
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'gfx/models'(.asset, , -1)
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'fonts'(.font, , -1)
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'gui'(.gui, , -1)
+[22:34:57][application.cpp:925]: Starting checksum calculation
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'gfx/loadingscreens'(.dds, , 0)
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'gfx/frontend/interface/frontend/startscreen.dds'(.dds, , 0)
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/script_values'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/scripted_effects'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/scripted_triggers'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'gfx/frontend/interface/frontend/startscreen.dds'(.dds, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/scripted_modifiers'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'gfx/loadingscreens'(.dds, , 0) in 0.003 seconds
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/script_values'(.txt, , 0) in 0.002 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/scripted_lists'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/scripted_guis'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/scripted_triggers'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/scripted_rules'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/scripted_modifiers'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/customizable_localization'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/scripted_effects'(.txt, , 0) in 0.003 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/named_colors'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/scripted_lists'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/scripted_guis'(.txt, , 0) in 0.002 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/coat_of_arms/coat_of_arms'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/scripted_rules'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/coat_of_arms/template_lists'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/customizable_localization'(.txt, , 0) in 0.002 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/ethnicities'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/named_colors'(.txt, , 0) in 0.002 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/genes'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/coat_of_arms/coat_of_arms'(.txt, , 0) in 0.002 seconds
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/coat_of_arms/template_lists'(.txt, , 0) in 0.002 seconds
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/ethnicities'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'gfx/portraits/accessory_variations'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/genes'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'gfx/portraits/accessory_variations'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'gfx/portraits/accessories'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'gfx/portraits/portrait_animations'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'gfx/portraits/cameras/'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'gfx/portraits/portrait_animations'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'gfx/portraits/environments/'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'gfx/portraits/portrait_modifiers'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/game_concepts'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'gfx/portraits/environments/'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'gfx/portraits/cameras/'(.txt, , 0) in 0.002 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/ai_strategies'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'gfx/portraits/accessories'(.txt, , 0) in 0.004 seconds
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'gfx/portraits/portrait_modifiers'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/alert_types'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/ai_strategies'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/game_concepts'(.txt, , 0) in 0.002 seconds
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/alert_types'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/buildings'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/building_groups'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/buy_packages'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/buildings'(.txt, , 0) in 0.002 seconds
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/building_groups'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/pop_needs'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/buy_packages'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/cultures'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/pop_needs'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/country_types'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/cultures'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/country_ranks'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/country_types'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/diplomatic_actions'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/diplomatic_plays'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'fonts'(.font, , -1) in 0.026 seconds
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/country_ranks'(.txt, , 0) in 0.002 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/dynamic_country_names'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/game_rules'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/diplomatic_plays'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/diplomatic_actions'(.txt, , 0) in 0.002 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/goods'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/game_rules'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/ideologies'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/goods'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/interest_groups'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/dynamic_country_names'(.txt, , 0) in 0.002 seconds
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/ideologies'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/interest_group_traits'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/interest_groups'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/government_types'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/interest_group_traits'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/on_actions'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/government_types'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/objectives'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/objective_subgoals'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/on_actions'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/objective_subgoal_categories'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/objectives'(.txt, , 0) in 0.002 seconds
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/objective_subgoals'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/objective_subgoal_categories'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/proposal_types'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/proposal_types'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/laws'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/institutions'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/laws'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/journal_entries'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/institutions'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/law_groups'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/pop_types'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/pop_types'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/law_groups'(.txt, , 0) in 0.003 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/religions'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/journal_entries'(.txt, , 0) in 0.006 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/subject_types'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/religions'(.txt, , 0) in 0.002 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/state_traits'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'gui'(.gui, , -1) in 0.045 seconds
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/subject_types'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/strategic_regions'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/state_traits'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/technology/eras'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/strategic_regions'(.txt, , 0) in 0.002 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/character_traits'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/technology/eras'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/character_templates'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/character_traits'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/country_definitions'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/country_formation'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/country_definitions'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/country_creation'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/terrain'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/character_templates'(.txt, , 0) in 0.004 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'events'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/country_formation'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/terrain'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/country_creation'(.txt, , 0) in 0.002 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'map_data/state_regions'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'gfx/map/city_data/city_types'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'gfx/map/spline_network/route_graphics'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'gfx/map/spline_network/military_route_graphics'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'gfx/map/spline_network/route_graphics'(.txt, , 0) in 0.002 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/achievements'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'events'(.txt, , 0) in 0.004 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'gfx/map/gradient_border_settings'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'gfx/map/city_data/city_types'(.txt, , 0) in 0.003 seconds
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'gfx/map/spline_network/military_route_graphics'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'gfx/map/map_modes'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/map_interaction_types'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'map_data/state_regions'(.txt, , 0) in 0.005 seconds
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'gfx/map/map_modes'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'gfx/map/gradient_border_settings'(.txt, , 0) in 0.002 seconds
+[22:34:57][virtualfilesystem.cpp:420]: Starting pre-enumerating 'common/company_charter_types'(.txt, , 0)
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/map_interaction_types'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/company_charter_types'(.txt, , 0) in 0.001 seconds
+[22:34:57][virtualfilesystem.cpp:388]: Done enumerating 'common/achievements'(.txt, , 0) in 0.004 seconds
+[22:34:58][pdx_localize.cpp:231]: Key 'RADICALS_TOOLTIP' defined in multiple files: 'localization/english/interfaces_l_english.yml', 'localization/english/replace/00_gora_agdp_overrides_l_english.yml'
+[22:34:58][pdx_localize.cpp:231]: Key 'LOYALISTS_TOOLTIP' defined in multiple files: 'localization/english/interfaces_l_english.yml', 'localization/english/replace/00_gora_agdp_overrides_l_english.yml'
+[22:34:58][pdx_localize.cpp:231]: Key 'NEUTRALS_TOOLTIP' defined in multiple files: 'localization/english/interfaces_l_english.yml', 'localization/english/replace/00_gora_agdp_overrides_l_english.yml'
+[22:34:58][pdx_localize.cpp:231]: Key 'POP_TOOLTIP' defined in multiple files: 'localization/english/interfaces_l_english.yml', 'localization/english/replace/00_gora_agdp_overrides_l_english.yml'
+[22:34:58][pdx_localize.cpp:231]: Key 'GDP_TOOLTIP' defined in multiple files: 'localization/english/interfaces_l_english.yml', 'localization/english/replace/00_gora_agdp_overrides_l_english.yml'
+[22:34:58][pdx_localize.cpp:231]: Key 'CURRENT_GDP_STATE' defined in multiple files: 'localization/english/interfaces_l_english.yml', 'localization/english/replace/00_gora_agdp_overrides_l_english.yml'
+[22:34:58][pdx_localize.cpp:231]: Key 'notification_exile_notification_desc' defined in multiple files: 'localization/english/character_interactions_l_english.yml', 'localization/english/replace/00_gora_agitator_notifications_overrides_l_english.yml'
+[22:34:58][pdx_localize.cpp:231]: Key 'notification_new_ruler_desc' defined in multiple files: 'localization/english/interfaces_l_english.yml', 'localization/english/replace/00_gora_agitator_notifications_overrides_l_english.yml'
+[22:34:58][pdx_localize.cpp:231]: Key 'notification_heir_born_notification_desc' defined in multiple files: 'localization/english/interfaces_l_english.yml', 'localization/english/replace/00_gora_agitator_notifications_overrides_l_english.yml'
+[22:34:58][pdx_localize.cpp:231]: Key 'notification_agitator_spawned_desc' defined in multiple files: 'localization/english/interfaces_l_english.yml', 'localization/english/replace/00_gora_agitator_notifications_overrides_l_english.yml'
+[22:34:58][pdx_localize.cpp:231]: Key 'je_conference_of_london_reason' defined in multiple files: 'localization/english/sphere_of_influence_persia_l_english.yml', 'localization/english/replace/00_gora_london_overrides_l_english.yml'
+[22:34:58][pdx_localize.cpp:231]: Key 'ADD_CONSUMPTION_TAX_ENTRY_COST' defined in multiple files: 'localization/english/interfaces_l_english.yml', 'localization/english/replace/00_gora_tax_overrides_l_english.yml'
+[22:34:59][pdx_localize.cpp:231]: Key 'RADICALS_TOOLTIP' defined in multiple files: 'localization/simp_chinese/interfaces_l_simp_chinese.yml', 'localization/simp_chinese/replace/00_gora_agdp_overrides_l_simp_chinese.yml'
+[22:34:59][pdx_localize.cpp:231]: Key 'LOYALISTS_TOOLTIP' defined in multiple files: 'localization/simp_chinese/interfaces_l_simp_chinese.yml', 'localization/simp_chinese/replace/00_gora_agdp_overrides_l_simp_chinese.yml'
+[22:34:59][pdx_localize.cpp:231]: Key 'NEUTRALS_TOOLTIP' defined in multiple files: 'localization/simp_chinese/interfaces_l_simp_chinese.yml', 'localization/simp_chinese/replace/00_gora_agdp_overrides_l_simp_chinese.yml'
+[22:34:59][pdx_localize.cpp:231]: Key 'POP_TOOLTIP' defined in multiple files: 'localization/simp_chinese/interfaces_l_simp_chinese.yml', 'localization/simp_chinese/replace/00_gora_agdp_overrides_l_simp_chinese.yml'
+[22:34:59][pdx_localize.cpp:231]: Key 'GDP_TOOLTIP' defined in multiple files: 'localization/simp_chinese/interfaces_l_simp_chinese.yml', 'localization/simp_chinese/replace/00_gora_agdp_overrides_l_simp_chinese.yml'
+[22:34:59][pdx_localize.cpp:231]: Key 'CURRENT_GDP_STATE' defined in multiple files: 'localization/simp_chinese/interfaces_l_simp_chinese.yml', 'localization/simp_chinese/replace/00_gora_agdp_overrides_l_simp_chinese.yml'
+[22:34:59][pdx_localize.cpp:231]: Key 'notification_exile_notification_desc' defined in multiple files: 'localization/simp_chinese/character_interactions_l_simp_chinese.yml', 'localization/simp_chinese/replace/00_gora_agitator_notifications_overrides_l_simp_chinese.yml'
+[22:34:59][pdx_localize.cpp:231]: Key 'notification_new_ruler_desc' defined in multiple files: 'localization/simp_chinese/interfaces_l_simp_chinese.yml', 'localization/simp_chinese/replace/00_gora_agitator_notifications_overrides_l_simp_chinese.yml'
+[22:34:59][pdx_localize.cpp:231]: Key 'notification_heir_born_notification_desc' defined in multiple files: 'localization/simp_chinese/interfaces_l_simp_chinese.yml', 'localization/simp_chinese/replace/00_gora_agitator_notifications_overrides_l_simp_chinese.yml'
+[22:34:59][pdx_localize.cpp:231]: Key 'notification_agitator_spawned_desc' defined in multiple files: 'localization/simp_chinese/interfaces_l_simp_chinese.yml', 'localization/simp_chinese/replace/00_gora_agitator_notifications_overrides_l_simp_chinese.yml'
+[22:34:59][pdx_localize.cpp:231]: Key 'je_conference_of_london_reason' defined in multiple files: 'localization/simp_chinese/sphere_of_influence_persia_l_simp_chinese.yml', 'localization/simp_chinese/replace/00_gora_london_overrides_l_simp_chinese.yml'
+[22:34:59][pdx_localize.cpp:231]: Key 'ADD_CONSUMPTION_TAX_ENTRY_COST' defined in multiple files: 'localization/simp_chinese/interfaces_l_simp_chinese.yml', 'localization/simp_chinese/replace/00_gora_tax_overrides_l_simp_chinese.yml'
+[22:35:00][pdxassetutil.cpp:304]: ThreadedInitTextureLookup: gfx/models
+[22:35:01][virtualfilesystem.cpp:388]: Done enumerating 'gfx/models'(.asset, , -1) in 3.808 seconds
+[22:35:02][pdxassetutil.cpp:313]: ThreadedInitTextureLookup found 5473 files
+[22:35:02][pdx_json_settings.cpp:325]: [SPdxJsonSettingsIO] "pdx_settings.json" file lacks "disabled_categories" setting in "Audio" category.
+[22:35:02][pdx_json_settings.cpp:325]: [SPdxJsonSettingsIO] "pdx_settings.json" file lacks "disabled_tracks" setting in "Audio" category.
+[22:35:02][pdx_json_settings.cpp:325]: [SPdxJsonSettingsIO] "pdx_settings.json" file lacks "volume.vca:/MUSIC" setting in "Audio" category.
+[22:35:02][pdx_json_settings.cpp:325]: [SPdxJsonSettingsIO] "pdx_settings.json" file lacks "volume.vca:/AMBIENT" setting in "Audio" category.
+[22:35:02][pdx_json_settings.cpp:325]: [SPdxJsonSettingsIO] "pdx_settings.json" file lacks "volume.vca:/MUSIC_STINGERS" setting in "Audio" category.
+[22:35:02][pdx_json_settings.cpp:325]: [SPdxJsonSettingsIO] "pdx_settings.json" file lacks "volume.vca:/SOUNDTRACK" setting in "Audio" category.
+[22:35:02][pdx_json_settings.cpp:325]: [SPdxJsonSettingsIO] "pdx_settings.json" file lacks "volume.vca:/UI" setting in "Audio" category.
+[22:35:02][pdx_json_settings.cpp:325]: [SPdxJsonSettingsIO] "pdx_settings.json" file lacks "volume.vca:/SFX" setting in "Audio" category.
+[22:35:02][pdx_json_settings.cpp:325]: [SPdxJsonSettingsIO] "pdx_settings.json" file lacks "volume.vca:/Master" setting in "Audio" category.
+[22:35:02][pdx_json_settings.cpp:325]: [SPdxJsonSettingsIO] "pdx_settings.json" file lacks "volume.bus:/" setting in "Audio" category.
+[22:35:03][pdx_json_settings.cpp:425]: [SPdxJsonSettingsIO] Category:"System" Setting:"common" won't be written 
+[22:35:03][jomini_social.cpp:20]: Created Jomini Social
+[22:35:05][pdx_data_factory.cpp:1466]: Could not find data system function 'GetAllFailedHiresDesc' in 'Building.GetAllFailedHiresDesc'.
+[22:35:05][pdx_data_factory.cpp:1112]: Failed to convert statement for argument '1' for call 'ConcatIfNeitherEmpty' in 'ConcatIfNeitherEmpty('
+
+',Building.GetAllFailedHiresDesc)'
+[22:35:05][pdx_data_factory.cpp:1092]: Failed converting statement for 'ConcatIfNeitherEmpty('
+
+',Building.GetAllFailedHiresDesc)'
+[22:35:05][pdx_gui_localize.cpp:182]: Unlocalized text 'DSI_TRAITS_HEADER_TOOLTIP' at gui/0_gora_decree_map_list_panel.gui:95, either localize it or use the raw_text property instead of text
+[22:35:05][pdx_gui_localize.cpp:182]: Unlocalized text 'DSI_VAL_POP_MID' at gui/0_gora_decree_map_list_panel.gui:282, either localize it or use the raw_text property instead of text
+[22:35:05][pdx_gui_localize.cpp:182]: Unlocalized text 'WAR_GOAL_ENFORCEMENT_PROGRESS' at gui/add_wargoal_panel.gui:360, either localize it or use the raw_text property instead of text
+[22:35:06][pdx_gui_localize.cpp:182]: Unlocalized text 'FILLED_SHIP_ASSIGNMENTS_TOOLTIP' at gui/building_details_panel.gui:1380, either localize it or use the raw_text property instead of text
+[22:35:06][pdx_gui_localize.cpp:182]: Unlocalized text 'SHIP_GROUP_INSUFFICIENT_SAILORS_TOOLTIP' at gui/combat_unit_types.gui:499, either localize it or use the raw_text property instead of text
+[22:35:06][pdx_gui_localize.cpp:182]: Unlocalized text 'SHIP_CREW_BAR_VALUE' at gui/custom_tooltip.gui:7719, either localize it or use the raw_text property instead of text
+[22:35:06][pdx_gui_localize.cpp:182]: Unlocalized text 'COASTAL_BUILDING_MARKER_THROUGHPUT' at gui/custom_tooltip.gui:8797, either localize it or use the raw_text property instead of text
+[22:35:06][pdx_gui_localize.cpp:182]: Unlocalized text 'COASTAL_BUILDING_MARKER_HEADER_STATUS' at gui/custom_tooltip.gui:8805, either localize it or use the raw_text property instead of text
+[22:35:06][pdx_gui_localize.cpp:182]: Unlocalized text 'COASTAL_BUILDING_MARKER_SUBHEADER_BLOCKADE' at gui/custom_tooltip.gui:8815, either localize it or use the raw_text property instead of text
+[22:35:06][pdx_gui_localize.cpp:182]: Unlocalized text 'COASTAL_BUILDING_MARKER_COL_THROUGHPUT' at gui/custom_tooltip.gui:8858, either localize it or use the raw_text property instead of text
+[22:35:06][pdx_gui_localize.cpp:182]: Unlocalized text 'STRATEGIC_REGION_AI_STANCE_BEHAVIOR_TITLE' at gui/custom_tooltip.gui:10471, either localize it or use the raw_text property instead of text
+[22:35:06][pdx_gui_localize.cpp:182]: Unlocalized text 'STRATEGIC_REGION_AI_STANCE_BREAKDOWN' at gui/custom_tooltip.gui:10494, either localize it or use the raw_text property instead of text
+[22:35:06][pdx_gui_localize.cpp:182]: Unlocalized text 'STRATEGIC_REGION_AI_STANCE_ATTENTION_ELSEWHERE_TITLE' at gui/custom_tooltip.gui:10507, either localize it or use the raw_text property instead of text
+[22:35:06][pdx_gui_localize.cpp:182]: Unlocalized text 'STRATEGIC_REGION_AI_STANCE_ATTENTION_ELSEWHERE_ENTRY' at gui/custom_tooltip.gui:10529, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'INVASION_PLANNER_SUPPLY_SHIP_PREDICTION' at gui/invasion_planner.gui:273, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'INVASION_PLANNER_FINISHED_BEHAVIOR_HEADER' at gui/invasion_planner.gui:363, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'INVASION_PLANNER_RETURN_TO_HOME_HQ_TOOLTIP' at gui/invasion_planner.gui:373, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'INVASION_PLANNER_RETURN_TO_HOME_HQ' at gui/invasion_planner.gui:381, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'INVASION_PLANNER_NEAREST_FRIENDLY_HQ_TOOLTIP' at gui/invasion_planner.gui:392, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'INVASION_PLANNER_NEAREST_FRIENDLY_HQ' at gui/invasion_planner.gui:400, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'INVASION_PLANNER_PROTECT_SUPPLY_ROUTE_TOOLTIP' at gui/invasion_planner.gui:411, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'INVASION_PLANNER_PROTECT_SUPPLY_ROUTE' at gui/invasion_planner.gui:419, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'MAP_LIST_STATE_VALUE' at gui/map_list_panel.gui:4457, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'STATE_STATE_VALUE' at gui/map_list_panel.gui:4462, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'MAP_LIST_STATE_INFAMY' at gui/map_list_panel.gui:4470, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'STATE_STATE_INFAMY' at gui/map_list_panel.gui:4475, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'STATE_MILITARY_WORLD_MARKET_ACCESS_DESC' at gui/map_markers.gui:578, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'INTEREST_TIER_MARKER_STRATEGIC_REGION' at gui/map_markers.gui:1110, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_data_factory.cpp:1466]: Could not find data system function 'GetAllFailedHiresDesc' in 'Building.GetAllFailedHiresDesc'.
+[22:35:07][pdx_data_factory.cpp:1112]: Failed to convert statement for argument '1' for call 'ConcatIfNeitherEmpty' in 'ConcatIfNeitherEmpty('
+
+',Building.GetAllFailedHiresDesc)'
+[22:35:07][pdx_data_factory.cpp:1092]: Failed converting statement for 'ConcatIfNeitherEmpty('
+
+',Building.GetAllFailedHiresDesc)'
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_RAID_CHANCE' at gui/military_formation_panel.gui:1834, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_RAID_CHANCE_TOOLTIP' at gui/military_formation_panel.gui:1835, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_RAID_FORMATIONS_HEADER' at gui/military_formation_panel.gui:1885, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_PROTECT_CONVOY_SHIPS' at gui/military_formation_panel.gui:1933, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_RAID_PROTECTORS_HEADER' at gui/military_formation_panel.gui:1946, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_RAID_PROTECTOR_SHIPS' at gui/military_formation_panel.gui:1994, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_PROTECT_COUNT_TOOLTIP' at gui/military_formation_panel.gui:2031, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_PROTECT_COUNT' at gui/military_formation_panel.gui:2032, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_PROTECT_FORMATIONS_HEADER' at gui/military_formation_panel.gui:2082, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_PROTECT_RAIDERS_HEADER' at gui/military_formation_panel.gui:2143, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_SUPPLY_PROTECT_RAIDER_POWER' at gui/military_formation_panel.gui:2191, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'FLEET_NO_INTERCEPT_TARGETS' at gui/military_formation_panel.gui:2621, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'MILITARY_FORMATION_CREW_BAR_VALUE' at gui/military_formation_panel.gui:6515, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'COUNTRY_SAILORS_TOOLTIP' at gui/panel_military.gui:178, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'COUNTRY_SAILORS_LABEL' at gui/panel_military.gui:222, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_data_factory.cpp:1466]: Could not find data system function 'HasInsufficientMaxSailors' in 'Country.HasInsufficientMaxSailors'.
+[22:35:07][pdx_data_factory.cpp:1112]: Failed to convert statement for argument '0' for call 'AddLocalizationIf' in 'AddLocalizationIf( Country.HasInsufficientMaxSailors, 'COUNTRY_SAILORS_VALUE_NEED_MORE_THAN_MAX' )'
+[22:35:07][pdx_data_factory.cpp:1092]: Failed converting statement for 'AddLocalizationIf( Country.HasInsufficientMaxSailors, 'COUNTRY_SAILORS_VALUE_NEED_MORE_THAN_MAX' )'
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'PEACE_POPUP_OUTCOME_IMPACT' at gui/popups.gui:4430, either localize it or use the raw_text property instead of text
+[22:35:07][pdx_gui_localize.cpp:182]: Unlocalized text 'PEACE_POPUP_OCCUPATION_TIMER_HEADER' at gui/popups.gui:4686, either localize it or use the raw_text property instead of text
+[22:35:08][pdx_gui_localize.cpp:182]: Unlocalized text 'STATE_VALUE_CLICK_MENU_TITLE' at gui/right_click_menu.gui:7392, either localize it or use the raw_text property instead of text
+[22:35:08][pdx_gui_localize.cpp:182]: Unlocalized text 'STATE_VALUE_CLICK_MENU_OPEN_STATE_TOOLTIP' at gui/right_click_menu.gui:7398, either localize it or use the raw_text property instead of text
+[22:35:08][pdx_gui_localize.cpp:182]: Unlocalized text 'STATE_VALUE_CLICK_MENU_OPEN_STATE' at gui/right_click_menu.gui:7407, either localize it or use the raw_text property instead of text
+[22:35:08][pdx_gui_localize.cpp:182]: Unlocalized text 'STATE_VALUE_CLICK_MENU_SET_PERSPECTIVE_TOOLTIP' at gui/right_click_menu.gui:7415, either localize it or use the raw_text property instead of text
+[22:35:08][pdx_gui_localize.cpp:182]: Unlocalized text 'STATE_VALUE_CLICK_MENU_SET_PERSPECTIVE' at gui/right_click_menu.gui:7424, either localize it or use the raw_text property instead of text
+[22:35:08][pdx_gui_localize.cpp:182]: Unlocalized text 'TREATY_DRAFT_ACCEPTANCE_WITH_LABEL_SHIP' at gui/right_click_menu.gui:9719, either localize it or use the raw_text property instead of text
+[22:35:08][virtualfilesystem.cpp:569]: Could not find texture due to 'VFSOpen Error: gfx/interface/icons/alert_icons/repairing.dds not found'
+[22:35:08][pdx_gui_localize.cpp:182]: Unlocalized text 'TRANSPORT_PLANNER_RETURN_BEHAVIOR_HEADER' at gui/transport_planner.gui:180, either localize it or use the raw_text property instead of text
+[22:35:08][pdx_gui_localize.cpp:182]: Unlocalized text 'TRANSPORT_PLANNER_RETURN_TO_HOME_HQ_TOOLTIP' at gui/transport_planner.gui:190, either localize it or use the raw_text property instead of text
+[22:35:08][pdx_gui_localize.cpp:182]: Unlocalized text 'TRANSPORT_PLANNER_RETURN_TO_HOME_HQ' at gui/transport_planner.gui:198, either localize it or use the raw_text property instead of text
+[22:35:08][pdx_gui_localize.cpp:182]: Unlocalized text 'TRANSPORT_PLANNER_STAY_AT_DESTINATION_TOOLTIP' at gui/transport_planner.gui:209, either localize it or use the raw_text property instead of text
+[22:35:08][pdx_gui_localize.cpp:182]: Unlocalized text 'TRANSPORT_PLANNER_STAY_AT_DESTINATION' at gui/transport_planner.gui:217, either localize it or use the raw_text property instead of text
+[22:35:09][pdx_gui_localize.cpp:182]: Unlocalized text 'WAR_PANEL_START_DATE_HEADER' at gui/war_panel.gui:27, either localize it or use the raw_text property instead of text

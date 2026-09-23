@@ -1,0 +1,56 @@
+﻿# GORA UI+ — Advanced GDP Tracker: script values (LARP + per-capita)
+#
+# Identifiers preserved from upstream (`larp_*`, `get_*`, `before_gdp`,
+# `current_gdp`, `gdp_growth_rate`, `GDPGR_*`) because they are referenced
+# directly from a wide network of replace-locale tooltips. Treat these names
+# as RESERVED by GORA UI+ AGDP — see docs/NAMESPACES.md.
+
+# ─── Country-wide loyalist / radical / GDP / population fractions ─────────
+larp_radicals_percent = { value = "radical_fraction" }
+larp_loyalists_percent = { value = "loyalist_fraction" }
+
+larp_neutrals_percent = {
+	value = 1
+	subtract = larp_loyalists_percent
+	subtract = larp_radicals_percent
+}
+
+larp_global_gdp = { value = "global_gdp" }
+
+larp_global_gdp_percent = {
+	value = gdp
+	divide = global_gdp
+}
+
+larp_global_pop = { value = global_population }
+
+larp_global_pop_percent = {
+	value = total_population
+	divide = global_population
+}
+
+# ─── State / country / global GDP per capita & relative gaps ──────────────
+get_state_gdp_per = {
+	value = gdp
+	divide = state_population
+}
+
+get_country_gdp_per = {
+	value = gdp
+	divide = total_population
+}
+
+get_global_gdp_per = {
+	value = global_gdp
+	divide = global_population
+}
+
+get_country_state_relative_value = {
+	value = get_state_gdp_per
+	subtract = owner.get_country_gdp_per
+}
+
+get_global_state_relative_value = {
+	value = get_state_gdp_per
+	subtract = get_global_gdp_per
+}

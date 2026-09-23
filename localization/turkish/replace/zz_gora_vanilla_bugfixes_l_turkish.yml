@@ -1,0 +1,3 @@
+﻿l_turkish:
+ TREATY_DRAFT_ARTICLE_FLAG_IS_INVESTMENT_RIGHTS_EFFECT: "• [TARGET_COUNTRY.GetName] ülkesinin [SOURCE_COUNTRY.GetName] topraklarında inşaat yapabilmesine olanak tanır"
+ TREATY_ARTICLE_FLAG_IS_INVESTMENT_RIGHTS_EFFECT: "• [TARGET_COUNTRY.GetName] ülkesinin [SOURCE_COUNTRY.GetName] topraklarında inşaat yapabilmesine olanak tanır"

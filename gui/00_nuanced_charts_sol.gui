@@ -1,0 +1,100 @@
+
+template average_standard_of_living_tooltip_with_graph
+{
+	tooltip = "AVG_STANDARD_OF_LIVING_COUNTRY"
+	tooltipwidget = {
+		TooltipWidgetType = {
+			blockoverride "tooltip_content_after" {
+				v3_plotline_sol = {
+
+					blockoverride "extra_plotlines" {
+
+						widget = {
+							size = { 100% 100% }
+							scissor = yes
+							visible = "[Not(IsEmpty(Country.GetAverageSoLByPopulationTrend))]"
+							progressbar = {
+								size = { 100% 100% }
+								direction = vertical
+								skip_initial_animation = yes
+								progresstexture = "gfx/interface/icons/generic_icons/transparent.dds"
+								noprogresstexture = "gfx/interface/icons/generic_icons/transparent.dds"
+								alwaystransparent = yes
+								min = "[GetMinPadded(Country.GetAverageSoLByPopulationTrend)]"
+								max = "[GetMaxPadded(Country.GetAverageSoLByPopulationTrend)]"
+								value = "[Country.GetAverageSoLByPopulation]"
+								marker = {
+									icon = {
+										texture = "gfx/interface/progressbar/progressbar_white_glow_line_vertical.dds"
+										size = { 100% 3 }
+										color = { 1 0.8 0.25 1 }
+									}
+								}
+							}
+						}
+
+						widget = {
+							size = { 100% 100% }
+							position = { 0 6 }
+							scissor = yes
+							visible = "[Not(IsEmpty(Country.GetAverageSoLByPopulationTrend))]"
+							progressbar = {
+								size = { 100% 100% }
+								direction = vertical
+								skip_initial_animation = yes
+								progresstexture = "gfx/interface/icons/generic_icons/transparent.dds"
+								noprogresstexture = "gfx/interface/icons/generic_icons/transparent.dds"
+								alwaystransparent = yes
+								min = "[GetMinPadded(Country.GetAverageSoLByPopulationTrend)]"
+								max = "[GetMaxPadded(Country.GetAverageSoLByPopulationTrend)]"
+								value = "[Country.GetAverageSoLByPopulation]"
+								marker = {
+									textbox = {
+										widgetanchor = left|top
+										parentanchor = left
+										margin_left = -10
+										size = { 60 14 }
+										align = right|nobaseline
+										using = fontsize_small
+										raw_text = "#bold #yellow [Country.GetAverageSoLByPopulation|1]#!#!"
+									}
+								}
+							}
+						}
+
+						widget = {
+							size = { 100% 100% }
+							position = { 0 22 }
+							scissor = yes
+							visible = "[GreaterThan_CFixedPoint(Subtract_CFixedPoint(GetMax(Country.GetAverageSoLByPopulationTrend), Country.GetAverageSoLByPopulation), '(CFixedPoint)0')]"
+							progressbar = {
+								size = { 100% 100% }
+								direction = vertical
+								skip_initial_animation = yes
+								progresstexture = "gfx/interface/icons/generic_icons/transparent.dds"
+								noprogresstexture = "gfx/interface/icons/generic_icons/transparent.dds"
+								alwaystransparent = yes
+								min = "[GetMinPadded(Country.GetAverageSoLByPopulationTrend)]"
+								max = "[GetMaxPadded(Country.GetAverageSoLByPopulationTrend)]"
+								value = "[Country.GetAverageSoLByPopulation]"
+								marker = {
+									textbox = {
+										widgetanchor = left|top
+										parentanchor = left
+										margin_left = -10
+										size = { 60 14 }
+										align = right|nobaseline
+										using = fontsize_small
+										raw_text = "#bold #red -[Subtract_CFixedPoint(GetMax(Country.GetAverageSoLByPopulationTrend), Country.GetAverageSoLByPopulation)|1]#!#!"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+

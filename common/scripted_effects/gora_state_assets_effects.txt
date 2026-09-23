@@ -1,0 +1,252 @@
+﻿# GORA UI+ — State Assets: monthly counters, snapshots, deltas
+#
+# Tracks five metrics with current and previous-year snapshots:
+#   1. Government-owned domestic building levels + privatization value (Capital tab)
+#   2. Government net worth = treasury + gov asset value (Capital tab)
+#   3. National industry levels:  domestic + foreign + sum (Capital tab)
+#   4. National industry value:   domestic + foreign + sum (Capital tab)
+#   5. National capital = sum_value + treasury + investment_pool (Capital tab)
+#
+# Variables live on the country scope. They are deliberately bare (gov_levels_*,
+# nat_dom_*, treasury_*, ipool_*, natcap_*, snap_*) to keep GUI patches readable.
+# Treat these names as reserved by GORA UI+.
+
+# ─── Domestic government + national counters ──────────────────────────────
+# Country scope.
+gora_sa_count_gov_building_levels_effect = {
+	set_variable = { name = gov_levels_current value = 0 }
+	set_variable = { name = gov_value_current  value = 0 }
+	set_variable = { name = nat_dom_levels_current value = 0 }
+	set_variable = { name = nat_dom_value_current  value = 0 }
+
+	# One domestic pass feeds both tabs. Government ownership uses the native
+	# fraction; national ownership uses the exact binary levels counter.
+	every_scope_building = {
+		limit = {
+			is_government_funded   = no
+			is_subsistence_building = no
+			NOT = { is_building_group = bg_service }
+			NOT = { is_building_group = bg_owner_buildings }
+			NOT = { is_building_group = bg_gold_fields }
+			NOT = { is_building_group = bg_monuments_hidden }
+			level > 0
+		}
+		if = {
+			limit = { country_ownership_fraction > 0 }
+			ROOT = {
+				change_variable = { name = gov_levels_current add = PREV.gora_sa_gov_owned_levels_value }
+				change_variable = { name = gov_value_current  add = PREV.gora_sa_gov_owned_value_per_building }
+			}
+		}
+		if = {
+			limit = { levels_owned_by_country = { target = ROOT value >= 1 } }
+			gora_sa_staircase_nat_levels_effect           = yes
+			gora_sa_compute_nat_value_for_building_effect = yes
+			ROOT = {
+				change_variable = { name = nat_dom_levels_current add = local_var:gora_sa_nat_levels_tmp }
+				change_variable = { name = nat_dom_value_current  add = local_var:gora_sa_nat_value_tmp }
+			}
+		}
+	}
+
+	# Treasury = cash reserves minus debt principal
+	set_variable    = { name = treasury_current value = gold_reserves }
+	change_variable = { name = treasury_current subtract = principal }
+
+	# Net worth = treasury + state asset value
+	set_variable    = { name = total_current value = var:treasury_current }
+	change_variable = { name = total_current add   = var:gov_value_current }
+}
+
+# ─── National asset counters (gov + private + foreign) ────────────────────
+# Country scope. Must be called *after* gora_sa_count_gov_building_levels_effect
+# (relies on treasury_current).
+gora_sa_count_national_assets_effect = {
+	set_variable = { name = nat_for_levels_current value = 0 }
+	set_variable = { name = nat_for_value_current  value = 0 }
+
+	save_scope_as = gora_sa_root
+
+	# Foreign — pre-filtered by gdp_ownership_ratio so we only iterate
+	# countries where ROOT actually has investment.
+	every_country = {
+		limit = {
+			NOT = { this = scope:gora_sa_root }
+			"gdp_ownership_ratio(scope:gora_sa_root)" > 0
+		}
+		every_scope_building = {
+			limit = {
+				is_government_funded   = no
+				is_subsistence_building = no
+				NOT = { is_building_group = bg_service }
+				NOT = { is_building_group = bg_owner_buildings }
+				NOT = { is_building_group = bg_gold_fields }
+				NOT = { is_building_group = bg_monuments_hidden }
+				levels_owned_by_country = { target = ROOT value >= 1 }
+			}
+			gora_sa_staircase_nat_levels_effect           = yes
+			gora_sa_compute_nat_value_for_building_effect = yes
+			scope:gora_sa_root = {
+				change_variable = { name = nat_for_levels_current add = local_var:gora_sa_nat_levels_tmp }
+				change_variable = { name = nat_for_value_current  add = local_var:gora_sa_nat_value_tmp }
+			}
+		}
+	}
+
+	# Sum columns
+	set_variable    = { name = nat_sum_levels_current value = var:nat_dom_levels_current }
+	change_variable = { name = nat_sum_levels_current add   = var:nat_for_levels_current }
+	set_variable    = { name = nat_sum_value_current  value = var:nat_dom_value_current }
+	change_variable = { name = nat_sum_value_current  add   = var:nat_for_value_current }
+
+	# Investment pool & national capital
+	set_variable    = { name = ipool_current  value = investment_pool }
+	set_variable    = { name = natcap_current value = var:nat_sum_value_current }
+	change_variable = { name = natcap_current add   = var:treasury_current }
+	change_variable = { name = natcap_current add   = var:ipool_current }
+}
+
+# ─── Deltas vs. previous-year snapshot ────────────────────────────────────
+# Level deltas: absolute (year_0 - year_X).
+# Money  deltas: percent  ((year_0 / year_X - 1) * 100), guarded against
+# division by zero so the GUI shows a clean 0% rather than a div-by-zero
+# pseudo-value.
+gora_sa_compute_deltas_effect = {
+	# Snapshot ages — used by the GUI to show "—" until at least one full
+	# year of data exists.
+	set_variable    = { name = snap_age_1 value = var:snap_year_0 }
+	change_variable = { name = snap_age_1 subtract = var:snap_year_1 }
+
+	# Level deltas (absolute)
+	gora_sa_level_delta_effect = { var = gov_levels     years = 1 }
+	gora_sa_level_delta_effect = { var = nat_dom_levels years = 1 }
+	gora_sa_level_delta_effect = { var = nat_for_levels years = 1 }
+	gora_sa_level_delta_effect = { var = nat_sum_levels years = 1 }
+
+	# Percent deltas
+	gora_sa_pct_delta_effect = { var = gov_value     years = 1 }
+	gora_sa_pct_delta_effect = { var = treasury      years = 1 }
+	gora_sa_pct_delta_effect = { var = total         years = 1 }
+	gora_sa_pct_delta_effect = { var = nat_dom_value years = 1 }
+	gora_sa_pct_delta_effect = { var = nat_for_value years = 1 }
+	gora_sa_pct_delta_effect = { var = nat_sum_value years = 1 }
+	gora_sa_pct_delta_effect = { var = ipool         years = 1 }
+	gora_sa_pct_delta_effect = { var = natcap        years = 1 }
+}
+
+# delta_yX = year_0 - year_X
+gora_sa_level_delta_effect = {
+	set_variable    = { name = $var$_delta_y$years$ value = var:$var$_year_0 }
+	change_variable = { name = $var$_delta_y$years$ subtract = var:$var$_year_$years$ }
+}
+
+# delta_yX = (year_0 / year_X - 1) * 100, guarded against division by zero
+gora_sa_pct_delta_effect = {
+	if = {
+		limit = { NOT = { var:$var$_year_$years$ = 0 } }
+		set_variable    = { name = $var$_delta_y$years$ value = var:$var$_year_0 }
+		change_variable = { name = $var$_delta_y$years$ divide   = var:$var$_year_$years$ }
+		change_variable = { name = $var$_delta_y$years$ subtract = 1 }
+		change_variable = { name = $var$_delta_y$years$ multiply = 100 }
+	}
+	else = { set_variable = { name = $var$_delta_y$years$ value = 0 } }
+}
+
+# ─── Yearly snapshot roller (called in January) ───────────────────────────
+gora_sa_yearly_snapshot_effect = {
+	gora_sa_roll_snapshot_effect = { var = gov_levels    }
+	gora_sa_roll_snapshot_effect = { var = gov_value     }
+	gora_sa_roll_snapshot_effect = { var = treasury      }
+	gora_sa_roll_snapshot_effect = { var = nat_dom_levels }
+	gora_sa_roll_snapshot_effect = { var = nat_for_levels }
+	gora_sa_roll_snapshot_effect = { var = nat_dom_value  }
+	gora_sa_roll_snapshot_effect = { var = nat_for_value  }
+	gora_sa_roll_snapshot_effect = { var = ipool          }
+
+	# Derived snapshots — only the current January baseline and previous
+	# January are needed by the compact Capital tables.
+	gora_sa_derive_total_effect = { years = 0 }
+	gora_sa_derive_total_effect = { years = 1 }
+
+	# Calendar year stamp
+	set_variable = { name = snap_year_1 value = var:snap_year_0 }
+	set_variable = { name = snap_year_0 value = year }
+}
+
+gora_sa_roll_snapshot_effect = {
+	set_variable = { name = $var$_year_1 value = var:$var$_year_0 }
+	set_variable = { name = $var$_year_0 value = var:$var$_current }
+}
+
+# Recompute total / sum / natcap snapshots after primitives have rolled.
+gora_sa_derive_total_effect = {
+	set_variable    = { name = total_year_$years$ value = var:treasury_year_$years$ }
+	change_variable = { name = total_year_$years$ add   = var:gov_value_year_$years$ }
+
+	set_variable    = { name = nat_sum_levels_year_$years$ value = var:nat_dom_levels_year_$years$ }
+	change_variable = { name = nat_sum_levels_year_$years$ add   = var:nat_for_levels_year_$years$ }
+
+	set_variable    = { name = nat_sum_value_year_$years$  value = var:nat_dom_value_year_$years$ }
+	change_variable = { name = nat_sum_value_year_$years$  add   = var:nat_for_value_year_$years$ }
+
+	set_variable    = { name = natcap_year_$years$ value = var:nat_sum_value_year_$years$ }
+	change_variable = { name = natcap_year_$years$ add   = var:treasury_year_$years$ }
+	change_variable = { name = natcap_year_$years$ add   = var:ipool_year_$years$ }
+}
+
+# ─── First-tick seed ──────────────────────────────────────────────────────
+# On the very first monthly tick of a new game (or first time the gora_sa_
+# system runs in a save), seed every snapshot slot with the freshly-counted
+# current value so the GUI doesn't display zero deltas.
+gora_sa_first_tick_seed_effect = {
+	if = {
+		limit = { NOT = { has_variable = gora_sa_initialized } }
+		gora_sa_seed_effect = { var = gov_levels    }
+		gora_sa_seed_effect = { var = gov_value     }
+		gora_sa_seed_effect = { var = treasury      }
+		gora_sa_seed_derived_effect = { var = total }
+		gora_sa_seed_effect = { var = nat_dom_levels }
+		gora_sa_seed_effect = { var = nat_for_levels }
+		gora_sa_seed_derived_effect = { var = nat_sum_levels }
+		gora_sa_seed_effect = { var = nat_dom_value  }
+		gora_sa_seed_effect = { var = nat_for_value  }
+		gora_sa_seed_derived_effect = { var = nat_sum_value }
+		gora_sa_seed_effect = { var = ipool          }
+		gora_sa_seed_derived_effect = { var = natcap }
+
+		set_variable = { name = snap_year_0 value = year }
+		set_variable = { name = snap_year_1 value = year }
+
+		set_variable = { name = gora_sa_initialized value = 1 }
+	}
+}
+
+gora_sa_seed_effect = {
+	set_variable = { name = $var$_year_0 value = var:$var$_current }
+	set_variable = { name = $var$_year_1 value = var:$var$_current }
+}
+
+# Derived rows keep the same two-slot baseline as the primitive series.
+gora_sa_seed_derived_effect = {
+	set_variable = { name = $var$_year_0 value = var:$var$_current }
+	set_variable = { name = $var$_year_1 value = var:$var$_current }
+}
+
+# ─── Monthly orchestrator (single entry-point from the on_action) ─────────
+gora_sa_monthly_update_effect = {
+	gora_sa_count_gov_building_levels_effect = yes
+	gora_sa_count_national_assets_effect     = yes
+
+	if = {
+		# Seed once. An if/else_if prevents a January first tick from rolling
+		# the just-seeded values immediately.
+		limit = { NOT = { has_variable = gora_sa_initialized } }
+		gora_sa_first_tick_seed_effect = yes
+		gora_sa_compute_deltas_effect = yes
+	}
+	else_if = {
+		limit = { month = 0 } # January
+		gora_sa_yearly_snapshot_effect = yes
+		gora_sa_compute_deltas_effect = yes
+	}
+}

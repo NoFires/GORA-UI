@@ -1,0 +1,31 @@
+﻿l_korean:
+ # GORA UI+ — Bulk tariff button labels & cooldown tooltips.
+ # Original mod credit: "Set All Tariffs" (workshop 3720145399).
+
+ gora_tariffs_all_imports:0 "All Imports"
+ gora_tariffs_all_exports:0 "All Exports"
+
+ gora_tariffs_individual_cooldown_note:0 "\n\n@information! Goods whose tariffs were changed recently are on an individual cooldown and will be skipped — they must be changed manually once their cooldown expires."
+
+ # ─── Import button tooltips ───────────────────────────────────────────
+ gora_tariffs_import_max_tariffs_tt:0      "Set import settings for all goods to maximum tariffs.$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_import_high_tariffs_tt:0     "Set import settings for all goods to high tariffs.$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_import_low_tariffs_tt:0      "Set import settings for all goods to low tariffs.$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_import_none_tt:0             "Set import settings for all goods to no tariffs or subventions.$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_import_low_subventions_tt:0  "Set import settings for all goods to low subventions.$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_import_high_subventions_tt:0 "Set import settings for all goods to high subventions.$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_import_max_subventions_tt:0  "Set import settings for all goods to maximum subventions.$gora_tariffs_individual_cooldown_note$"
+
+ # ─── Export button tooltips ───────────────────────────────────────────
+ gora_tariffs_export_max_tariffs_tt:0      "Set export settings for all goods to maximum tariffs.$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_export_high_tariffs_tt:0     "Set export settings for all goods to high tariffs.$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_export_low_tariffs_tt:0      "Set export settings for all goods to low tariffs.$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_export_none_tt:0             "Set export settings for all goods to no tariffs or subventions.$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_export_low_subventions_tt:0  "Set export settings for all goods to low subventions.$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_export_high_subventions_tt:0 "Set export settings for all goods to high subventions.$gora_tariffs_individual_cooldown_note$"
+ gora_tariffs_export_max_subventions_tt:0  "Set export settings for all goods to maximum subventions.$gora_tariffs_individual_cooldown_note$"
+
+ # ─── Cooldown messages ────────────────────────────────────────────────
+ gora_tariffs_import_cooldown_tt:0 "Cannot change bulk import tariffs again until #v [TimeKeeper.GetCurrentDateWithDiff( GetVarTimeRemaining( GetPlayer.MakeScope, 'gora_tariffs_import_cooldown') )]#!"
+ gora_tariffs_export_cooldown_tt:0 "Cannot change bulk export tariffs again until #v [TimeKeeper.GetCurrentDateWithDiff( GetVarTimeRemaining( GetPlayer.MakeScope, 'gora_tariffs_export_cooldown') )]#!"
+

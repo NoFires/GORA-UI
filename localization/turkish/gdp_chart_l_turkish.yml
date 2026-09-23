@@ -1,0 +1,6 @@
+﻿l_turkish:
+ GDP_CHART_TITLE: "GSYİH Dağılımı"
+ GDP_CHART_SUBTITLE: "Şeklin boyutu, her malın ulusal GSYİH'ye tahmini katkısını temsil eder (satış emirleri × piyasa fiyatı)"
+ GDP_CHART_PIETOOLTIP: "#header [Goods.GetName]#!\nYıllık Değer: @money![Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice)|K]#!\nGSYİH Payı: [Divide_CFixedPoint(Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice), Market.GetMarketGDPValue)|%0]\nPiyasa Fiyatı: @money![Goods.GetMarketPrice|v1]#!\nSatış Emirleri: [Goods.GetMarketSellOrders|v0]"
+ GDP_CHART_SHOW_MORE: "Daha Fazla Göster"
+ GDP_CHART_SHOW_LESS: "Daha Az Göster"

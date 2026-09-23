@@ -1,0 +1,52 @@
+﻿# GORA UI+ — London Conference scripted effects
+#
+# `gora_london_save_country_refs` writes a per-GP global variable
+# (tlcm_ref_*) so the journal-entry tooltip can resolve flag icons via
+# `GetGlobalVariable(...).GetCountry.GetFlagTextIcon`. Each `?=` is
+# null-safe — if the country does not exist yet (e.g. DEU before
+# unification), the corresponding ref simply stays unset and the locale
+# falls through to `tlcm_no_loc` (empty string).
+#
+# Called from on_game_started_after_lobby and on_yearly_pulse_country
+# (see gora_london_on_actions.txt). Yearly refresh is required because
+# DEU / ITA only come into existence after country formation events.
+
+gora_london_save_country_refs = {
+	c:GBR ?= { save_scope_as = tlcm_gbr }
+	set_global_variable = { name = tlcm_ref_gbr value = scope:tlcm_gbr }
+
+	c:FRA ?= { save_scope_as = tlcm_fra }
+	set_global_variable = { name = tlcm_ref_fra value = scope:tlcm_fra }
+
+	c:RUS ?= { save_scope_as = tlcm_rus }
+	set_global_variable = { name = tlcm_ref_rus value = scope:tlcm_rus }
+
+	c:AUS ?= { save_scope_as = tlcm_aus }
+	set_global_variable = { name = tlcm_ref_aus value = scope:tlcm_aus }
+
+	c:PRU ?= { save_scope_as = tlcm_pru }
+	set_global_variable = { name = tlcm_ref_pru value = scope:tlcm_pru }
+
+	c:SPA ?= { save_scope_as = tlcm_spa }
+	set_global_variable = { name = tlcm_ref_spa value = scope:tlcm_spa }
+
+	# Late-game / non-European Great Powers added in Phase 10:
+	c:USA ?= { save_scope_as = tlcm_usa }
+	set_global_variable = { name = tlcm_ref_usa value = scope:tlcm_usa }
+
+	c:TUR ?= { save_scope_as = tlcm_tur }
+	set_global_variable = { name = tlcm_ref_tur value = scope:tlcm_tur }
+
+	c:JAP ?= { save_scope_as = tlcm_jap }
+	set_global_variable = { name = tlcm_ref_jap value = scope:tlcm_jap }
+
+	c:ITA ?= { save_scope_as = tlcm_ita }
+	set_global_variable = { name = tlcm_ref_ita value = scope:tlcm_ita }
+
+	# DEU intentionally omitted: vanilla 1.13.4 has no country_definition for
+	# DEU (unlike ITA), so `c:DEU` resolution logs a "Failed to find country"
+	# warning even with the null-safe `?=` operator. When Germany is formed
+	# at runtime via `change_tag = DEU`, the new country instance falls
+	# through to `tlcm_other_favours_*` ("Other powers"). Flag-icon loss is a
+	# deliberate trade-off for a clean error log.
+}

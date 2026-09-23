@@ -1,0 +1,17 @@
+[21:23:37][game_setup.cpp:219]: Exe Git Version: release/1.13.9 : afea32b87
+[21:23:37][game_setup.cpp:220]: Build Timestamp: 2026-06-24 14:36:18 +0000 long hash: afea32b87c002fe0621f2f732d60a80ba914c14e
+[21:23:37][systemsettings.cpp:205]: CPU Model: AMD Ryzen 5 5600 6-Core Processor              
+[21:23:37][systemsettings.cpp:206]: CPU Speed: 3493MHz
+[21:23:37][systemsettings.cpp:207]: CPU Physical Cores: 6
+[21:23:37][systemsettings.cpp:208]: CPU Logical Cores: 12
+[21:23:37][systemsettings.cpp:209]: RAM Total: 32680
+[21:23:37][systemsettings.cpp:210]: RAM Free: 15652
+[21:23:37][systemsettings.cpp:211]: Swap Total: 52136
+[21:23:37][systemsettings.cpp:212]: Swap Free: 17650
+[21:23:37][systemsettings.cpp:213]: OS Version: Windows 11 (Build 26200)
+[21:23:37][systemsettings.cpp:214]: OS Language: tr
+[21:23:37][contextowner.cpp:868]: GPU Name: AMD Radeon RX 6700 XT
+[21:23:37][contextowner.cpp:869]: GPU Vendor: AMD
+[21:23:37][contextowner.cpp:870]: GPU Id: 29663
+[21:23:37][contextowner.cpp:871]: GPU Dedicated Memory: 12243
+[21:23:42][gameapplication.cpp:1278]: Loading cursors...

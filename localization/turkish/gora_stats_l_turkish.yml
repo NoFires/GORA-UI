@@ -1,0 +1,23 @@
+﻿l_turkish:
+ # GORA UI — State / building labor-pressure stats panel strings.
+
+ STATS_LABOR_PRESSURE:0                  "İşgücü Durumu"
+ STATS_LABOR_PRESSURE_LOW:0              "#P Düşük#!"
+ STATS_LABOR_PRESSURE_MEDIUM:0           "#gold Dikkat#!"
+ STATS_LABOR_PRESSURE_HIGH:0             "#N Yüksek#!"
+ STATS_LABOR_PRESSURE_AVG_WAGE_LABEL:0   "Ort. ücret:"
+ STATS_LABOR_PRESSURE_AVG_WAGE_VALUE:0   "#variable @money![State.GetAverageAnnualWage|vD]#!"
+ STATS_LABOR_PRESSURE_TOOLTIP:0          "#header İşgücü Durumu#!\nEyaletteki mevcut işgücü, nitelikler ve ortalama ücret.\n$TOOLTIP_DELIMITER$\nOrtalama yıllık ücret: #variable @money![State.GetAverageAnnualWage|vD]#!\nNitelikler: [SelectLocalization(State.HasInsufficientQualificationsForAvailablePositions, 'STATS_LABOR_PRESSURE_QUAL_BAD', 'STATS_LABOR_PRESSURE_QUAL_OK')]"
+ STATS_LABOR_PRESSURE_WAGE_TOOLTIP:0     "#header Ortalama Yıllık Ücret#!\nBu eyaletteki çalışanların ortalama yıllık ücreti: #variable @money![State.GetAverageAnnualWage|vD]#!\n$TOOLTIP_DELIMITER$\nMevcut işgücü azaldığında veya binalar açık pozisyonları dolduramadığında yüksek ücretler, ücret baskısına işaret edebilir."
+ STATS_LABOR_PRESSURE_LOW_TOOLTIP:0      "Mevcut işgücü var ve belirgin bir nitelik kıtlığı görünmüyor."
+ STATS_LABOR_PRESSURE_MEDIUM_TOOLTIP:0   "Mevcut işgücü azalıyor veya bir nitelik kıtlığı mevcut."
+ STATS_LABOR_PRESSURE_HIGH_TOOLTIP:0     "Mevcut işgücü düşük ve bir nitelik kıtlığı mevcut."
+ STATS_LABOR_PRESSURE_QUAL_OK:0          "#P yeterli#!"
+ STATS_LABOR_PRESSURE_QUAL_BAD:0         "#N yetersiz#!"
+ STATS_LABOR_PRESSURE_QUAL_OK_ICON:0     "@green_checkmark!"
+ STATS_LABOR_PRESSURE_QUAL_BAD_ICON:0    "@red_cross!"
+ STATS_BUILDING_LABOR_PRESSURE_TOOLTIP:0 "#header Eksik Kadro#!\nBu binanın kadrosu tam dolu değil.\n$TOOLTIP_DELIMITER$\nİstihdam: #variable [Building.GetEmploymentPercentage|%1v]#!\nÇalışan başına ortalama kazanç: #variable @money![Building.GetAverageAnnualEarningsPerEmployeeFormatted|+]#!\nÜcret giderleri: #variable @money![Building.GetLastWagesExpenses|K]#!\n[AddLocalizationIf(Building.HasAnyInputShortage, 'STATS_BUILDING_INPUT_SHORTAGE_NOTE')]"
+ STATS_BUILDING_INPUT_SHORTAGE_NOTE:0    "\n#N Bu binada girdi kıtlığı var.#!"
+ STATS_BUDGET_LABOR:0                    "İşgücü"
+ STATS_BUDGET_LABOR_TOOLTIP:0            "#header Serbest İşgücü#!\nEyaletteki en büyük mevcut işgücü havuzunu gösterir.\n$TOOLTIP_DELIMITER$\n@peasants! Köylüler\n@unemployed_icon! İşsizler\n\n@green_checkmark! Yeterli Nitelik\n@red_cross! Yetersiz Nitelik"
+ STATS_BUDGET_LABOR_ROW_TOOLTIP:0        "#header [State.GetName] İşgücü#!\nKöylüler: #variable [State.GetNumSubsistenceWorkingAdults|D]#!\nİşsizler: #variable [State.GetNumUnemployedWorkingAdults|D]#!\nNitelikler: [SelectLocalization(State.HasInsufficientQualificationsForAvailablePositions, 'STATS_LABOR_PRESSURE_QUAL_BAD', 'STATS_LABOR_PRESSURE_QUAL_OK')]"

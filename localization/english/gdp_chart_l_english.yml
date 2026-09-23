@@ -1,0 +1,6 @@
+﻿l_english:
+ GDP_CHART_TITLE: "GDP Composition"
+ GDP_CHART_SUBTITLE: "Chart size represents each good's estimated contribution to national GDP (sell orders × market price)"
+ GDP_CHART_PIETOOLTIP: "#header [Goods.GetName]#!\nAnnual Value: @money![Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice)|K]#!\nShare of GDP: [Divide_CFixedPoint(Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice), Market.GetMarketGDPValue)|%0]\nMarket Price: @money![Goods.GetMarketPrice|v1]#!\nSell Orders: [Goods.GetMarketSellOrders|v0]"
+ GDP_CHART_SHOW_MORE: "Show More"
+ GDP_CHART_SHOW_LESS: "Show Less"

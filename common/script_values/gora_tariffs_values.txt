@@ -1,0 +1,21 @@
+﻿# GORA UI+ — Bulk tariffs: cooldown gates
+#
+# Each evaluates to 1 if the matching cooldown variable is currently set
+# (i.e. a bulk change happened within the last 3 months), else 0.
+# Used by the widget tooltip to swap label / cooldown messages.
+
+gora_tariffs_import_on_cooldown = {
+	value = 0
+	if = {
+		limit = { has_variable = gora_tariffs_import_cooldown }
+		add = 1
+	}
+}
+
+gora_tariffs_export_on_cooldown = {
+	value = 0
+	if = {
+		limit = { has_variable = gora_tariffs_export_cooldown }
+		add = 1
+	}
+}

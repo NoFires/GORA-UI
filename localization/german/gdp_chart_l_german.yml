@@ -1,0 +1,6 @@
+﻿l_german:
+ GDP_CHART_TITLE: "BIP-Zusammensetzung"
+ GDP_CHART_SUBTITLE: "Die Größe der Figur stellt den geschätzten Beitrag jeder Ware zum nationalen BIP dar (Verkaufsaufträge × Marktpreis)"
+ GDP_CHART_PIETOOLTIP: "#header [Goods.GetName]#!\nJahreswert: @money![Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice)|K]#!\nAnteil am BIP: [Divide_CFixedPoint(Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice), Market.GetMarketGDPValue)|%0]\nMarktpreis: @money![Goods.GetMarketPrice|v1]#!\nVerkaufsaufträge: [Goods.GetMarketSellOrders|v0]"
+ GDP_CHART_SHOW_MORE: "Mehr anzeigen"
+ GDP_CHART_SHOW_LESS: "Weniger anzeigen"

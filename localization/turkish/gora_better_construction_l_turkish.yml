@@ -1,0 +1,15 @@
+﻿l_turkish:
+ # GORA UI — Map-list panel filter labels.
+ # Vanilla key prefix `mod_filter_` preserved because the GUI references it directly.
+
+ mod_filter_status:0              "Durum"
+ mod_filter_all_status:0          "Tümü"
+ mod_filter_all_status_desc:0     "Durumlarından bağımsız olarak tüm eyaletleri gösterir."
+ mod_filter_incorporated:0        "Bütünleşmiş"
+ mod_filter_incorporated_desc:0   "Yalnızca bütünleşmiş eyaletleri gösterir."
+ mod_filter_unincorporated:0      "Bütünleşmemiş"
+ mod_filter_unincorporated_desc:0 "Yalnızca bütünleşmemiş eyaletleri gösterir."
+ mod_filter_vassals:0             "Tabi Devletler"
+ mod_filter_vassals_desc:0        "İnşaat alanlarını yalnızca tabi devletlerinizin eyaletlerinde gösterir."
+ mod_filter_efficient:0           "Verimli Bölgeler"
+ mod_filter_efficient_desc:0      "İnşaat verimliliği %0'ın altına düşmüş sorunlu eyaletleri (Kargaşa, Yıkım veya Altyapı açığı nedeniyle) gizler; yalnızca yüksek verimli bölgeleri gösterir."

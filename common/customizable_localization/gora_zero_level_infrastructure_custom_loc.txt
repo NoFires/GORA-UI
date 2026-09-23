@@ -1,0 +1,41 @@
+﻿# GORA+ — technology-aware tooltips for first-level infrastructure buttons
+# Keep technology checks aligned with the matching country scripted GUIs.
+
+gora_zero_level_railway_all_states_tooltip = {
+	type = country
+	random_valid = no
+
+	text = {
+		trigger = { has_technology_researched = railways }
+		localization_key = gora_zero_level_railway_all_states_ready
+	}
+	text = {
+		localization_key = gora_zero_level_railway_all_states_locked
+	}
+}
+
+gora_zero_level_power_plant_all_states_tooltip = {
+	type = country
+	random_valid = no
+
+	text = {
+		trigger = { has_technology_researched = electrical_generation }
+		localization_key = gora_zero_level_power_plant_all_states_ready
+	}
+	text = {
+		localization_key = gora_zero_level_power_plant_all_states_locked
+	}
+}
+
+gora_zero_level_university_all_states_tooltip = {
+	type = country
+	random_valid = no
+
+	text = {
+		trigger = { has_technology_researched = academia }
+		localization_key = gora_zero_level_university_all_states_ready
+	}
+	text = {
+		localization_key = gora_zero_level_university_all_states_locked
+	}
+}

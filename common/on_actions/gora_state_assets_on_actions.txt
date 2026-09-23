@@ -1,0 +1,20 @@
+﻿# GORA UI+ — State Assets: monthly hook
+#
+# Uses the additive on_action append pattern so we coexist cleanly with
+# vanilla and other mods that hook on_monthly_pulse_country.
+# Snapshot rolling lives inside the monthly update (gated by month=0).
+# Only human-controlled countries need these GUI-facing counters.
+
+on_monthly_pulse_country = {
+	on_actions = { gora_sa_monthly_pulse_action }
+}
+
+gora_sa_monthly_pulse_action = {
+	trigger = {
+		is_player = yes
+	}
+
+	effect = {
+		gora_sa_monthly_update_effect = yes
+	}
+}

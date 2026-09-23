@@ -1,0 +1,115 @@
+### GORA UI+ — better market panel helper types
+### Additive widget types consumed by `gui/market_panel.gui`. Defines
+### `better_goods_prestige_goods_breakdown_list_item` and related
+### list-row layouts used by the prestige-goods breakdown.
+types market_panel
+{
+	type better_goods_prestige_goods_breakdown_list_item = widget {
+		size = { 540 35 }
+
+		hbox = {
+			layoutpolicy_horizontal = expanding
+			spacing = 5
+
+			### Edit prestige good name button
+			button_icon_edit = {
+				visible = "[And(Goods.IsPrestigeGoods, Goods.CanEditName)]"
+				size = { 30 30 }
+				using = tooltip_se
+				tooltip = "CHANGE_NAME_OF_PRESTIGE_GOOD"
+				onclick = "[PopupManager.ShowPrestigeGoodChangeName(Goods.Self)]"
+			}
+
+			button = {
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+				using = default_button
+				using = select_button_sound
+				onrightclick = "[RightClickMenuManager.ShowForGoods(Goods.AccessSelf)]"
+
+				block "prestige_goods_onclick" {
+					onclick = "[InformationPanelBar.OpenGoodsPanel(Goods.GetMarket, Goods.Self)]"
+				}
+
+				tooltipwidget = {
+					FancyTooltip_Goods = {}
+				}
+				
+				hbox = {
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+
+					flowcontainer = {
+						using = goods_list_item
+					}	
+					
+					textbox = {
+						text = "[Goods.GetNameNoFormatting]"
+						autoresize = yes
+						margin_left = 7
+						multiline = yes
+						
+						block "prestige_goods_item_name_size" {
+							minimumsize = { 149 -1 }
+						}
+					}
+
+					textbox = {
+						block "leaderboard_place" {
+							raw_text = ""
+						}
+							minimumsize = { 140 -1 }
+							maximumsize = { 140 -1 }
+						
+					}
+
+					textbox = {
+						autoresize = yes
+						margin_left = 7
+						align = hcenter|nobaseline
+						margin_right = 10
+						multiline = yes
+						
+						block "prestige_goods_item_text_1" {
+							raw_text = "BETTER_PRESTIGE_GOODS_MARKET_SELL_ORDERS"
+							alpha = "[TransparentIfZero(Goods.GetMarketSellOrders)]"
+						}
+						
+						block "prestige_goods_item_text_size" {
+							minimumsize = { 110 -1 }
+							maximumsize = { 110 -1 }
+						}
+					}
+
+					vertical_divider = {
+						blockoverride "size" {
+							layoutpolicy_vertical = expanding
+							size = { 2 0 }
+						}
+					}
+
+					textbox = {
+						block "prestige_goods_item_text_2" {
+							raw_text = "BETTER_PRESTIGE_GOODS_MARKET_BUY_ORDERS"
+							alpha = "[TransparentIfZero(Goods.GetMarketBuyOrders)]"
+						}
+						autoresize = yes
+						margin_left = 7
+
+						block "prestige_goods_item_text_size" {
+							minimumsize = { 110 -1 }
+							maximumsize = { 110 -1 }
+						}
+
+						align = hcenter|nobaseline
+						margin_right = 10
+						multiline = yes
+					}
+				}
+			}
+		}
+	}
+
+
+
+}

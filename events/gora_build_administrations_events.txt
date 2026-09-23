@@ -1,0 +1,267 @@
+﻿namespace = gora_build_administrations_events
+
+# ════════════════════════════════════════════════════════════════════════════
+# GORA UI+ — One-click government-administration manager
+# ════════════════════════════════════════════════════════════════════════════
+# .1 — Adds gov-admin levels where tax capacity is short.
+# .2 — Trims excess gov-admin levels safely (without dropping bureaucracy
+#      under +200 or removing more than 1 level per state per click).
+# Per-state and per-country caps live in script_values/gora_less_clicks_values.txt.
+# ════════════════════════════════════════════════════════════════════════════
+
+# ───────────────────────────────────────────────────────────────────────────
+# .1  Build government administrations to close tax-capacity deficits
+# ───────────────────────────────────────────────────────────────────────────
+gora_build_administrations_events.1 = {
+	type = country_event
+	hidden = yes
+	trigger = { always = yes }
+
+	immediate = {
+		# 1) Country-level: tax capacity per gov-admin building level (mirrors
+		#    vanilla pm_skyscraper / pm_central_planning brackets).
+		if = {
+			limit = { has_technology_researched = central_planning }
+			set_variable = { name = effective_tcp value = 30 }
+		}
+		else_if = {
+			limit = { has_technology_researched = central_archives }
+			set_variable = { name = effective_tcp value = 15 }
+		}
+		else_if = {
+			limit = { has_technology_researched = centralization }
+			set_variable = { name = effective_tcp value = 10 }
+		}
+		else = {
+			set_variable = { name = effective_tcp value = 2 }
+		}
+
+		# 2) Apply the Appointed Bureaucrats +25% capacity bonus once at the
+		#    country level, so the per-state divisions are correct.
+		if = {
+			limit = { has_law = law_type:law_appointed_bureaucrats }
+			change_variable = { name = effective_tcp multiply = 1.25 }
+		}
+
+		# 3) Country-wide build counter (cap from script_values)
+		set_variable = { name = country_build_count value = 0 }
+
+		# 4) Per-state work
+		every_scope_state = {
+			limit = {
+				is_incorporated = yes
+				root.var:country_build_count < gora_lc_country_admin_cap
+			}
+
+			if = {
+				limit = { NOT = { prev.var:country_build_count >= gora_lc_country_admin_cap } }
+
+				set_variable    = { name = tax_deficit value = tax_capacity_usage }
+				change_variable = { name = tax_deficit subtract = tax_capacity }
+
+				if = {
+					limit = { var:tax_deficit > 0 }
+
+					# Tax-capacity checks are cheap. Only deficit states scan their
+					# administrations, and the single pass supplies all flags.
+					set_variable = { name = gora_lc_has_admin value = 0 }
+					set_variable = { name = gora_lc_admin_occupied value = 0 }
+					set_variable = { name = gora_lc_admin_queued value = 0 }
+					every_scope_building = {
+						limit = { is_building_type = building_government_administration }
+						prev = { set_variable = { name = gora_lc_has_admin value = 1 } }
+						if = {
+							limit = { occupancy > 0.85 }
+							prev = { set_variable = { name = gora_lc_admin_occupied value = 1 } }
+						}
+						if = {
+							limit = { is_under_construction = yes }
+							prev = { set_variable = { name = gora_lc_admin_queued value = 1 } }
+						}
+					}
+
+					if = {
+						limit = {
+							OR = {
+								var:gora_lc_admin_occupied > 0
+								var:gora_lc_has_admin = 0
+							}
+							# Spam-protection
+							var:gora_lc_admin_queued = 0
+						}
+
+						# 5) Required levels = ceil(deficit / effective_tcp)
+						set_variable = {
+							name = missing_buildings
+							value = {
+								value = var:tax_deficit
+								divide = prev.var:effective_tcp
+								ceiling = yes
+							}
+						}
+
+						# 6) Per-state cap
+						if = {
+							limit = { var:missing_buildings > gora_lc_state_admin_cap }
+							set_variable = { name = missing_buildings value = gora_lc_state_admin_cap }
+						}
+
+						# 7) Per-country cap (remaining-quota clamp)
+						set_variable    = { name = country_remaining value = gora_lc_country_admin_cap }
+						change_variable = { name = country_remaining subtract = prev.var:country_build_count }
+						if = {
+							limit = { var:missing_buildings > var:country_remaining }
+							set_variable = { name = missing_buildings value = var:country_remaining }
+						}
+
+						# 8) Queue construction & update country counter
+						if = {
+							limit = { var:missing_buildings > 0 }
+							while = {
+								count = var:missing_buildings
+								start_building_construction = building_government_administration
+							}
+							prev = {
+								change_variable = {
+									name = country_build_count
+									add  = prev.var:missing_buildings
+								}
+							}
+						}
+
+						remove_variable = missing_buildings
+						remove_variable = country_remaining
+					}
+
+					remove_variable = gora_lc_has_admin
+					remove_variable = gora_lc_admin_occupied
+					remove_variable = gora_lc_admin_queued
+				}
+
+				remove_variable = tax_deficit
+			}
+		}
+
+		remove_variable = effective_tcp
+		remove_variable = country_build_count
+	}
+}
+
+# ───────────────────────────────────────────────────────────────────────────
+# .2  Trim excess government administrations safely
+# ───────────────────────────────────────────────────────────────────────────
+# Safety rules:
+#   - Never drop the country below +200 bureaucracy.
+#   - Only trim a state with at least a 2-level (effective_tcp x 2) tax-cap surplus.
+#   - At most 1 level removed per state per click.
+# Note: Victoria 3 has no direct "decrement building level" effect; we
+# remove_building + create_building at the new level — closest match to
+# vanilla shrink behaviour.
+gora_build_administrations_events.2 = {
+	type = country_event
+	hidden = yes
+	trigger = { always = yes }
+
+	immediate = {
+		if = {
+			limit = { has_technology_researched = central_planning }
+			set_variable = { name = effective_tcp          value = 30 }
+			set_variable = { name = effective_bureaucracy  value = 100 }
+		}
+		else_if = {
+			limit = { has_technology_researched = central_archives }
+			set_variable = { name = effective_tcp          value = 15 }
+			set_variable = { name = effective_bureaucracy  value = 65 }
+		}
+		else_if = {
+			limit = { has_technology_researched = centralization }
+			set_variable = { name = effective_tcp          value = 10 }
+			set_variable = { name = effective_bureaucracy  value = 50 }
+		}
+		else = {
+			set_variable = { name = effective_tcp          value = 2 }
+			set_variable = { name = effective_bureaucracy  value = 10 }
+		}
+
+		# How much bureaucracy headroom we have above the +200 safety floor.
+		set_variable    = { name = country_bureaucracy_buffer value = bureaucracy }
+		change_variable = { name = country_bureaucracy_buffer subtract = 200 }
+		set_variable    = { name = tax_safety_floor value = var:effective_tcp }
+		change_variable = { name = tax_safety_floor multiply = 2 }
+
+		every_scope_state = {
+			limit = {
+				is_incorporated = yes
+			}
+
+			set_variable    = { name = tax_surplus value = tax_capacity }
+			change_variable = { name = tax_surplus subtract = tax_capacity_usage }
+
+			if = {
+				limit = {
+					# Match the old 2x effective_tcp safety threshold before any
+					# building collection work is performed.
+					var:tax_surplus >= root.var:tax_safety_floor
+					root.var:country_bureaucracy_buffer >= root.var:effective_bureaucracy
+				}
+
+				# A single candidate-only pass both detects administrations and
+				# sums their levels.
+				set_variable = { name = levels_here value = 0 }
+				every_scope_building = {
+					limit = { is_building_type = building_government_administration }
+					prev = { change_variable = { name = levels_here add = prev.level } }
+				}
+
+				set_variable = { name = levels_to_remove value = 0 }
+				if = {
+					limit = {
+						var:levels_here  > 0
+						root.var:country_bureaucracy_buffer >= root.var:effective_bureaucracy
+					}
+					set_variable = { name = levels_to_remove value = 1 }
+				}
+
+				if = {
+					limit = { var:levels_to_remove > 0 }
+					set_variable    = { name = new_level value = var:levels_here }
+					change_variable = { name = new_level subtract = var:levels_to_remove }
+
+					if = {
+						limit = { var:new_level > 0 }
+						remove_building = building_government_administration
+						create_building = {
+							building = "building_government_administration"
+							level    = var:new_level
+						}
+					}
+					else = {
+						remove_building = building_government_administration
+					}
+
+					set_variable    = { name = bureaucracy_to_remove value = var:levels_to_remove }
+					change_variable = { name = bureaucracy_to_remove multiply = root.var:effective_bureaucracy }
+
+					root = {
+						change_variable = {
+							name = country_bureaucracy_buffer
+							subtract = prev.var:bureaucracy_to_remove
+						}
+					}
+				}
+
+				remove_variable = levels_to_remove
+				remove_variable = new_level
+				remove_variable = bureaucracy_to_remove
+				remove_variable = levels_here
+			}
+
+			remove_variable = tax_surplus
+		}
+
+		remove_variable = effective_tcp
+		remove_variable = effective_bureaucracy
+		remove_variable = country_bureaucracy_buffer
+		remove_variable = tax_safety_floor
+	}
+}

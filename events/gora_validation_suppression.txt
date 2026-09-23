@@ -1,0 +1,119 @@
+﻿namespace = gora_validation
+
+# Parser-only compatibility declarations.
+#
+# Jomini's static variable pass cannot see reads made from GUI/localization,
+# nor values that exist only in legacy saves and are consumed by migrations.
+# Vanilla uses orphan events for the same purpose (events/test_events.txt).
+# This event is never dispatched, so it has no tick, save or runtime cost.
+gora_validation.1 = {
+	type = country_event
+	hidden = yes
+	orphan = yes
+
+	trigger = {
+		# Global values read from localization or kept as a schema marker.
+		has_global_variable = tlcm_ref_pru
+		has_global_variable = tlcm_ref_gbr
+		has_global_variable = tlcm_ref_fra
+		has_global_variable = tlcm_ref_usa
+		has_global_variable = tlcm_ref_tur
+		has_global_variable = tlcm_ref_jap
+		has_global_variable = tlcm_ref_ita
+		has_global_variable = tlcm_ref_spa
+		has_global_variable = tlcm_ref_rus
+		has_global_variable = tlcm_ref_aus
+		has_global_variable = GDPGR_year
+		has_global_variable = gora_perf_schema_version
+
+		# Read by the technology-panel data binding.
+		has_variable = gora_latest_research_count
+	}
+
+	immediate = {
+		# Legacy State Assets values removed by the one-shot migrations.
+		set_variable = { name = temp_bldg_nat_levels value = 0 }
+		set_variable = { name = temp_bldg_nat_value value = 0 }
+		set_variable = { name = gov_levels_year_2 value = 0 }
+		set_variable = { name = gov_levels_year_3 value = 0 }
+		set_variable = { name = gov_levels_year_4 value = 0 }
+		set_variable = { name = gov_levels_year_5 value = 0 }
+		set_variable = { name = gov_levels_delta_y2 value = 0 }
+		set_variable = { name = gov_levels_delta_y5 value = 0 }
+		set_variable = { name = gov_value_year_2 value = 0 }
+		set_variable = { name = gov_value_year_3 value = 0 }
+		set_variable = { name = gov_value_year_4 value = 0 }
+		set_variable = { name = gov_value_year_5 value = 0 }
+		set_variable = { name = gov_value_delta_y2 value = 0 }
+		set_variable = { name = gov_value_delta_y5 value = 0 }
+		set_variable = { name = treasury_year_2 value = 0 }
+		set_variable = { name = treasury_year_3 value = 0 }
+		set_variable = { name = treasury_year_4 value = 0 }
+		set_variable = { name = treasury_year_5 value = 0 }
+		set_variable = { name = treasury_delta_y2 value = 0 }
+		set_variable = { name = treasury_delta_y5 value = 0 }
+		set_variable = { name = total_year_2 value = 0 }
+		set_variable = { name = total_year_3 value = 0 }
+		set_variable = { name = total_year_4 value = 0 }
+		set_variable = { name = total_year_5 value = 0 }
+		set_variable = { name = total_delta_y2 value = 0 }
+		set_variable = { name = total_delta_y5 value = 0 }
+		set_variable = { name = nat_dom_levels_year_2 value = 0 }
+		set_variable = { name = nat_dom_levels_year_3 value = 0 }
+		set_variable = { name = nat_dom_levels_year_4 value = 0 }
+		set_variable = { name = nat_dom_levels_year_5 value = 0 }
+		set_variable = { name = nat_dom_levels_delta_y2 value = 0 }
+		set_variable = { name = nat_dom_levels_delta_y5 value = 0 }
+		set_variable = { name = nat_for_levels_year_2 value = 0 }
+		set_variable = { name = nat_for_levels_year_3 value = 0 }
+		set_variable = { name = nat_for_levels_year_4 value = 0 }
+		set_variable = { name = nat_for_levels_year_5 value = 0 }
+		set_variable = { name = nat_for_levels_delta_y2 value = 0 }
+		set_variable = { name = nat_for_levels_delta_y5 value = 0 }
+		set_variable = { name = nat_sum_levels_year_2 value = 0 }
+		set_variable = { name = nat_sum_levels_year_3 value = 0 }
+		set_variable = { name = nat_sum_levels_year_4 value = 0 }
+		set_variable = { name = nat_sum_levels_year_5 value = 0 }
+		set_variable = { name = nat_sum_levels_delta_y2 value = 0 }
+		set_variable = { name = nat_sum_levels_delta_y5 value = 0 }
+		set_variable = { name = nat_dom_value_year_2 value = 0 }
+		set_variable = { name = nat_dom_value_year_3 value = 0 }
+		set_variable = { name = nat_dom_value_year_4 value = 0 }
+		set_variable = { name = nat_dom_value_year_5 value = 0 }
+		set_variable = { name = nat_dom_value_delta_y2 value = 0 }
+		set_variable = { name = nat_dom_value_delta_y5 value = 0 }
+		set_variable = { name = nat_for_value_year_2 value = 0 }
+		set_variable = { name = nat_for_value_year_3 value = 0 }
+		set_variable = { name = nat_for_value_year_4 value = 0 }
+		set_variable = { name = nat_for_value_year_5 value = 0 }
+		set_variable = { name = nat_for_value_delta_y2 value = 0 }
+		set_variable = { name = nat_for_value_delta_y5 value = 0 }
+		set_variable = { name = nat_sum_value_year_2 value = 0 }
+		set_variable = { name = nat_sum_value_year_3 value = 0 }
+		set_variable = { name = nat_sum_value_year_4 value = 0 }
+		set_variable = { name = nat_sum_value_year_5 value = 0 }
+		set_variable = { name = nat_sum_value_delta_y2 value = 0 }
+		set_variable = { name = nat_sum_value_delta_y5 value = 0 }
+		set_variable = { name = ipool_year_2 value = 0 }
+		set_variable = { name = ipool_year_3 value = 0 }
+		set_variable = { name = ipool_year_4 value = 0 }
+		set_variable = { name = ipool_year_5 value = 0 }
+		set_variable = { name = ipool_delta_y2 value = 0 }
+		set_variable = { name = ipool_delta_y5 value = 0 }
+		set_variable = { name = natcap_year_2 value = 0 }
+		set_variable = { name = natcap_year_3 value = 0 }
+		set_variable = { name = natcap_year_4 value = 0 }
+		set_variable = { name = natcap_year_5 value = 0 }
+		set_variable = { name = natcap_delta_y2 value = 0 }
+		set_variable = { name = natcap_delta_y5 value = 0 }
+		set_variable = { name = snap_year_2 value = 0 }
+		set_variable = { name = snap_year_3 value = 0 }
+		set_variable = { name = snap_year_4 value = 0 }
+		set_variable = { name = snap_year_5 value = 0 }
+		set_variable = { name = snap_age_2 value = 0 }
+		set_variable = { name = snap_age_5 value = 0 }
+
+		# Legacy State Local Goods list removed by the one-shot migration.
+		add_to_variable_list = { name = com_local_goods target = this }
+	}
+}

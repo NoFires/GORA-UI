@@ -1,0 +1,189 @@
+﻿# GORA UI+ — add_wargoal_panel + small_wargoal_item_with_checkmark[_executed] (partial type override)
+# ─────────────────────────────────────────────────────────────────────────────
+# Vanilla 1.13.9 baseline: gui/add_wargoal_panel.gui
+#   - type add_wargoal_panel (line 3+)
+#   - type small_wargoal_item_with_checkmark (line 409+)
+#   - type small_wargoal_item_with_executed_checkmark (line 414+)
+# all inside types wargoal_types. Other vanilla types in that file
+# (wargoal_checkmark, wargoal_checkmark_always, wargoal_item, small_wargoal_item,
+# add_wargoal_item, add_wargoal_type_item) are inherited from vanilla unchanged.
+#
+# GORA deltas:
+#   (1) Country-filter strip (`zz_gora_wg_filter`) above the war-goal list, with
+#       target+holder predicates on each `add_wargoal_item` row's `visible`
+#       expression. Target matching also accepts a direct subject of the
+#       selected country, so subject-transfer/liberation goals remain visible
+#       when their overlord is selected. Filter state is stored as player-scope variables
+#       (`zz_gora_wg_target_filter_country`, `zz_gora_wg_holder_filter_country`).
+#       Lives inside add_wargoal_panel (4 fenced delta locations).
+#   (2) `small_wargoal_item_with_checkmark` and `_with_executed_checkmark`
+#       substitute `zz_gora_small_goal_item` (defined in gui/gora_goal_item.gui)
+#       for the compact item row.
+#
+# Bug fix carried from Phase 9: legacy `back_button_large` and `add_wargoal_type_item`
+# each stacked extra `onclick` direct properties (parser only fires the first,
+# silently dead). Removed; filter persists across type switches by design.
+# Top-level `using FILE.gui` directives (not valid V3 syntax) also dropped.
+#
+# Re-sync recipe: diff vanilla type add_wargoal_panel + the two small_wargoal_item
+# checkmark variants, replace this file's type bodies, re-insert fenced deltas.
+# ─────────────────────────────────────────────────────────────────────────────
+
+types gora_add_wargoal_panel {
+
+	type add_wargoal_panel = default_block_window  {
+		name = "add_wargoal_panel"
+		datacontext = "[AddWarGoalPanel.AccessDiplomaticPlay]"
+
+		blockoverride "window_header_name" {
+			text = "ADD_WARGOAL_HEADER"
+		}
+
+		blockoverride "entire_back_button" {
+			back_button_large = {
+				position = { 8 30 }
+				onclick = "[AddWarGoalPanel.ClearSelectedWarGoalType]"
+				input_action = "back"
+				visible = "[AddWarGoalPanel.HasSelectedWarGoalType]"
+			}
+
+			back_button_large = {
+				position = { 8 30 }
+				onclick = "[InformationPanelBar.OpenPreviousPanel]"
+				input_action = "back"
+				visible = "[Not(AddWarGoalPanel.HasSelectedWarGoalType)]"
+			}
+		}
+
+		blockoverride "scrollarea_content" {
+			flowcontainer = {
+				direction = vertical
+				using = default_list_position
+
+				### GORA UI+ — country-filter strip (target + holder) above the list
+				zz_gora_wg_filter = {}
+				### /GORA UI+
+
+				dynamicgridbox = {
+					name = "war_goal_selection_list"
+					visible = "[AddWarGoalPanel.HasSelectedWarGoalType]"
+					datamodel = "[AddWarGoalPanel.AccessShownWarGoals]"
+
+					item = {
+						flowcontainer = {
+							direction = vertical
+
+							### NORMAL WAR GOAL
+							add_wargoal_item = {
+								### GORA UI+ — vanilla eligibility AND target(+selected overlord's subjects)+holder filters
+								visible = "[And(And(Not(WarGoalDraft.HoldsArticle), Or(Not(GetPlayer.MakeScope.Var('zz_gora_wg_target_filter_country').IsSet), Or(ObjectsEqual(WarGoalDraft.GetTarget.MakeScope, GetPlayer.MakeScope.Var('zz_gora_wg_target_filter_country').GetCountry.MakeScope), WarGoalDraft.GetTarget.IsSubjectOf(GetPlayer.MakeScope.Var('zz_gora_wg_target_filter_country').GetCountry.Self)))), Or(Not(GetPlayer.MakeScope.Var('zz_gora_wg_holder_filter_country').IsSet), ObjectsEqual(WarGoalDraft.GetHolder.MakeScope, GetPlayer.MakeScope.Var('zz_gora_wg_holder_filter_country').GetCountry.MakeScope)))]"
+							}
+
+							### ARTICLE TYPE - NO INPUT
+							add_wargoal_item = {
+								### GORA UI+ — vanilla eligibility AND target(+selected overlord's subjects)+holder filters
+								visible = "[And(And(And(WarGoalDraft.HoldsArticle, Not(WarGoalDraft.GetArticleType.RequiresAnyInput)), Or(Not(GetPlayer.MakeScope.Var('zz_gora_wg_target_filter_country').IsSet), Or(ObjectsEqual(WarGoalDraft.GetTarget.MakeScope, GetPlayer.MakeScope.Var('zz_gora_wg_target_filter_country').GetCountry.MakeScope), WarGoalDraft.GetTarget.IsSubjectOf(GetPlayer.MakeScope.Var('zz_gora_wg_target_filter_country').GetCountry.Self)))), Or(Not(GetPlayer.MakeScope.Var('zz_gora_wg_holder_filter_country').IsSet), ObjectsEqual(WarGoalDraft.GetHolder.MakeScope, GetPlayer.MakeScope.Var('zz_gora_wg_holder_filter_country').GetCountry.MakeScope)))]"
+
+								### Overriding tooltip to add the AticleDraft EffectsDesc for no-input Articles
+								blockoverride "war_goal_tooltip" {
+									tooltipwidget = {
+										FancyTooltip_WarGoalDraft = {
+											blockoverride "can_add_text" {
+												custom_tooltip_textbox = {
+													visible = "[Not(StringIsEmpty(AddWarGoalPanel.GetDiplomaticPlay.GetCanAddWarGoalDesc( WarGoalDraft.Self )))]"
+													max_width = 450
+													text = "[AddWarGoalPanel.GetDiplomaticPlay.GetCanAddWarGoalDesc( WarGoalDraft.Self )]"
+												}
+											}
+
+											blockoverride "infamy" {
+												custom_tooltip_textbox = {
+													visible = "[GreaterThan_CFixedPoint(WarGoalDraft.GetInfamyAmount, '(CFixedPoint)0')]"
+													text = "[WarGoalDraft.GetInfamyDesc]"
+												}
+											}
+
+											blockoverride "maneuver_cost" {
+												custom_tooltip_textbox_with_empty_line = {
+													text = "[WarGoalDraft.GetManeuversCostToAddDesc]"
+												}
+											}
+
+											blockoverride "primary_secondary_demand_text_visibility" {
+												visible = no
+											}
+
+											blockoverride "war_goal_desc" {
+												custom_tooltip_textbox = {
+													margin_left = 10
+													text = "[WarGoalDraft.GetArticleDraft.GetEffectsDesc]"
+												}
+											}
+										}
+									}
+								}
+							}
+
+							### ARTICLE TYPE - NEEDS INPUT
+							add_wargoal_item = {
+								### GORA UI+ — vanilla eligibility AND target(+selected overlord's subjects)+holder filters
+								visible = "[And(And(And(WarGoalDraft.HoldsArticle, WarGoalDraft.GetArticleType.RequiresAnyInput), Or(Not(GetPlayer.MakeScope.Var('zz_gora_wg_target_filter_country').IsSet), Or(ObjectsEqual(WarGoalDraft.GetTarget.MakeScope, GetPlayer.MakeScope.Var('zz_gora_wg_target_filter_country').GetCountry.MakeScope), WarGoalDraft.GetTarget.IsSubjectOf(GetPlayer.MakeScope.Var('zz_gora_wg_target_filter_country').GetCountry.Self)))), Or(Not(GetPlayer.MakeScope.Var('zz_gora_wg_holder_filter_country').IsSet), ObjectsEqual(WarGoalDraft.GetHolder.MakeScope, GetPlayer.MakeScope.Var('zz_gora_wg_holder_filter_country').GetCountry.MakeScope)))]"
+
+								blockoverride "war_goal_tooltip" {
+									tooltip = "ARTICLE_WARGOAL_SELECT_INPUT_TOOLTIP"
+								}
+
+								blockoverride "maneuvers_and_infamy" {}
+
+								blockoverride "button_style" {
+									using = default_button
+								}
+
+								blockoverride "onclick_properties" {
+									onclick = "[RightClickMenuManager.Close]"
+									onclick = "[RightClickMenuManager.ToggleWarGoalArticleTypeInput(WarGoalDraft.Self, PdxGuiWidget.AccessSelf, 'article_input_right_click_menu_right')]"
+								}
+							}
+						}
+					}
+				}
+
+				dynamicgridbox = {
+					name = "wargoal_type_selection_list"
+					visible = "[Not(AddWarGoalPanel.HasSelectedWarGoalType)]"
+					datamodel = "[AddWarGoalPanel.AccessShownWarGoalTypes]"
+
+					item = {
+						add_wargoal_type_item = {}
+					}
+				}
+
+				empty_state = {
+					parentanchor = vcenter
+					blockoverride "visible" {
+						visible = "[IsDataModelEmpty(AddWarGoalPanel.AccessShownWarGoalTypes)]"
+					}
+					blockoverride "text" {
+						text = "NO_VALID_WAR_GOALS"
+					}
+				}
+
+			}
+		}
+	}
+
+	### SMALL WARGOAL WITH CHECKMARK
+	### GORA UI+ — substitute the compact `zz_gora_small_goal_item` for
+	### vanilla `small_wargoal_item` wherever the with-checkmark variants
+	### are requested (defined in gui/gora_goal_item.gui).
+	type small_wargoal_item_with_checkmark = container {
+		zz_gora_small_goal_item = {}
+		wargoal_checkmark = {}
+	}
+
+	type small_wargoal_item_with_executed_checkmark = container {
+		zz_gora_small_goal_item = {}
+		wargoal_checkmark_always = {}
+	}
+	### /GORA UI+
+}

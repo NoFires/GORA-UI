@@ -1,0 +1,15 @@
+﻿trade_partners_chart_display = {
+	default = trade_partner_show_all
+
+	# Option 1: Show all markets (Default)
+	trade_partner_show_all = {
+	}
+
+	# Option 2: Show player markets only
+	trade_partner_players_only = {
+	}
+
+	# Option 3: Disable trade partners chart
+	trade_partner_disabled = {
+	}
+}

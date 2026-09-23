@@ -1,0 +1,58 @@
+﻿l_english:
+ # GORA UI+ — Advanced GDP Tracker: original strings
+ # Replace strings (RADICALS_TOOLTIP, GDP_TOOLTIP, etc.) live in
+ # `localization/english/replace/00_gora_agdp_overrides_l_english.yml`.
+
+ # ─── Game concept ───────────────────────────────────────────────────────
+ concept_gdp_growth_rate:0       "GDP Growth Rate"
+ concept_gdp_growth_rate_short:0 "GDP Growth"
+ concept_gdp_growth_rate_desc:0  "The annualized change in your [concept_country]'s [concept_gdp]. It reflects changes in total output produced by [Concept('concept_pop','$concept_pops$')] employed within all [Concept('concept_building','$concept_buildings$')], shaped by [concept_pop_growth], investment through [concept_construction], and advanced [Concept('concept_production_method','$concept_production_methods$')]. A steady [Concept('concept_gdp_growth_rate','$concept_gdp_growth_rate_short$')] can influence the number of [Concept('concept_loyalist','$concept_loyalists$')] and [Concept('concept_radical','$concept_radicals$')]."
+
+ # ─── Magic packaging key (used inside other tooltips) ───────────────────
+ GDPGR_CONCEPT_CALL:0 "[Concept('concept_gdp_growth_rate', '$concept_gdp_growth_rate_short$')]"
+
+ # ─── In-line growth-rate display & tooltips ─────────────────────────────
+ GDPGR_growth_text:0          "@money! Annual Avg. $GDPGR_tt_avg_growth_rate_abs$ ($GDPGR_tt_avg_growth_rate_per$) $GDPGR_CONCEPT_CALL$ $GDPGR_leaderboard_text$"
+
+ GDPGR_tt_avg_growth_rate_per:0 "#tooltippable;tooltip:[Country.GetTooltipTag],GDPGR_GDP_tooltip [Multiply_CFixedPoint('(CFixedPoint)12',Country.MakeScope.Var('GDPGR_past_year_avg_rate').GetValue)|1+=%]#!"
+ GDPGR_tt_avg_growth_rate_abs:0 "#tooltippable;tooltip:[Country.GetTooltipTag],GDPGR_GDP_tooltip [Multiply_CFixedPoint('(CFixedPoint)12',Country.MakeScope.Var('GDPGR_past_year_avg_diff').GetValue)|D+=]#!"
+
+ GDPGR_GDP_tooltip:0 "$GDPGR_GDP_tooltip_h$\n$TOOLTIP_DELIMITER$\n$GDPGR_GDP_tooltip_mp_h$\n#weak $GDPGR_GDP_tooltip_mp_d$#!\n$GDPGR_GDP_tooltip_mp_abs$ ($GDPGR_GDP_tooltip_mp_per$)\n\n$GDPGR_GDP_tooltip_mr_h$\n#weak $GDPGR_GDP_tooltip_mr_d$#!\n$GDPGR_GDP_tooltip_mr_abs$ ($GDPGR_GDP_tooltip_mr_per$)\n\n$GDPGR_GDP_tooltip_r_h$\n#weak $GDPGR_GDP_tooltip_r_d$#!\n$GDPGR_GDP_tooltip_r_abs$ ($GDPGR_GDP_tooltip_r_per$)\n\n$GDPGR_GDP_tooltip_y_h$\n#weak $GDPGR_GDP_tooltip_y_d$#!\n$GDPGR_GDP_tooltip_y_abs$ ($GDPGR_GDP_tooltip_y_per$)"
+
+ GDPGR_GDP_tooltip_h:0     "#header @money! $GDPGR_CONCEPT_CALL$ Trends#!"
+
+ GDPGR_GDP_tooltip_r_h:0   "#T Last 12 Months:#!"
+ GDPGR_GDP_tooltip_r_d:0   "Net GDP change across the latest 12 recorded monthly snapshots."
+ GDPGR_GDP_tooltip_r_per:0 "[Country.MakeScope.Var('GDPGR_rolling_gdp_growth_rate').GetValue|1+=%]"
+ GDPGR_GDP_tooltip_r_abs:0 "@money![Country.MakeScope.Var('GDPGR_rolling_difference').GetValue|D+=]"
+
+ GDPGR_GDP_tooltip_y_h:0   "#T Between Early [Subtract_CFixedPoint(GetGlobalVariable('GDPGR_year').GetValue,'(CFixedPoint)1')|0] and [GetGlobalVariable('GDPGR_year').GetValue|0]:#!"
+ GDPGR_GDP_tooltip_y_d:0   "Compares GDP at the start of the previous year with GDP at the start of the current year."
+ GDPGR_GDP_tooltip_y_per:0 "[Country.MakeScope.Var('gdp_growth_rate').GetValue|1+=%]"
+ GDPGR_GDP_tooltip_y_abs:0 "@money![Subtract_CFixedPoint(Country.MakeScope.Var('current_gdp').GetValue,Country.MakeScope.Var('before_gdp').GetValue)|D+=]"
+
+ GDPGR_GDP_tooltip_mr_h:0   "#T Past Year Monthly Average:#!"
+ GDPGR_GDP_tooltip_mr_d:0   "Average monthly GDP gain or loss over the last 12 months."
+ GDPGR_GDP_tooltip_mr_per:0 "[Country.MakeScope.Var('GDPGR_past_year_avg_rate').GetValue|1+=%]"
+ GDPGR_GDP_tooltip_mr_abs:0 "@money![Country.MakeScope.Var('GDPGR_past_year_avg_diff').GetValue|D+=]"
+
+ GDPGR_GDP_tooltip_mp_h:0   "#T Last Month:#!"
+ GDPGR_GDP_tooltip_mp_d:0   "Change between the two most recent monthly GDP records."
+ GDPGR_GDP_tooltip_mp_per:0 "[Country.MakeScope.Var('GDPGR_past_month_rate').GetValue|1+=%]"
+ GDPGR_GDP_tooltip_mp_abs:0 "@money![Country.MakeScope.Var('GDPGR_past_month_diff').GetValue|D+=]"
+
+ # ─── Leaderboard widget ─────────────────────────────────────────────────
+ GDPGR_leaderboard_text:0      "(#tooltippable;tooltip:[Country.GetTooltipTag],GDPGR_leaderboard_tooltip #v $GDPGR_leaderboard_pos$#!#!)"
+ GDPGR_leaderboard_norm:0      "##[Country.MakeScope.Var('GDPGR_annl_growth_leaderboard_pos').GetValue|0]"
+ GDPGR_leaderboard_excl:0      "N/A"
+ GDPGR_leaderboard_pos:0       "[SelectLocalization(GreaterThan_CFixedPoint(Country.MakeScope.Var('GDPGR_annl_growth_leaderboard_pos').GetValue,'(CFixedPoint)0'),'GDPGR_leaderboard_norm','GDPGR_leaderboard_excl')]"
+
+ GDPGR_leaderboard_tooltip:0   "$GDPGR_leaderboard_tooltip_h$\n[GetScriptedGui('GDPGR_sg_annl_growth_leaderboard').ExecuteTooltip(GuiScope.SetRoot(GetPlayer.MakeScope).End)]\n$TOOLTIP_DELIMITER$\n$GDPGR_leaderboard_tooltip_h2$\n[GetScriptedGui('GDPGR_sg_annl_growth_leaderboard_top_gdps').ExecuteTooltip(GuiScope.SetRoot(GetPlayer.MakeScope).End)][AddLocalizationIf(EqualTo_CFixedPoint(Country.MakeScope.Var('GDPGR_annl_growth_leaderboard_pos').GetValue,'(CFixedPoint)0'),'GDPGR_leaderboard_rev_warning')]"
+ GDPGR_leaderboard_rev_warning:0      "\n$TOOLTIP_DELIMITER$\n@warning! $GDPGR_leaderboard_rev_warning_text$"
+ GDPGR_leaderboard_rev_warning_text:0 "[Country.GetName] is currently in a civil war or is a newly formed country. Data is still stabilizing."
+
+ GDPGR_leaderboard_tooltip_h:0  "#header @prestige! Annual Average $GDPGR_CONCEPT_CALL$ Leaderboard#!"
+ GDPGR_leaderboard_tooltip_h2:0 "#header @gdp! $GDPGR_CONCEPT_CALL$ Among Top 10 Economies#!"
+
+ GDPGR_tt_leaderboard_line:0          "#v ##[THIS.Var('GDPGR_annl_growth_leaderboard_pos').GetValue]:#! #bold [THIS.GetCountry.GetName]#! - [Multiply_CFixedPoint('(CFixedPoint)12',THIS.Var('GDPGR_past_year_avg_rate').GetValue)|1+=%] (@money![Multiply_CFixedPoint('(CFixedPoint)12',THIS.Var('GDPGR_past_year_avg_diff').GetValue)|D+=])"
+ GDPGR_tt_leaderboard_line_top_gdps:0 "#bold [THIS.GetCountry.GetName]#! (@money![THIS.GetCountry.GetGDP|Dv]) - [Multiply_CFixedPoint('(CFixedPoint)12',THIS.Var('GDPGR_past_year_avg_rate').GetValue)|1+=%] (@money![Multiply_CFixedPoint('(CFixedPoint)12',THIS.Var('GDPGR_past_year_avg_diff').GetValue)|D+=])"

@@ -1,0 +1,12 @@
+﻿l_simp_chinese:
+ # GORA UI+ — companies filter labels.
+ # Used by the companies panel
+
+  charter_filter: "产业权"
+  GORA_COMPANIES_COMPACT_LIST: "紧凑列表"
+  GORA_COMPANIES_FULL_CARDS: "完整卡片"
+  GORA_COMPANIES_COMPACT_LIST_HINT: "紧凑列表：选择公司以查看实时详情"
+  GORA_COMPANIES_FULL_CARDS_HINT: "完整卡片：CPU 占用较高"
+  GORA_COMPANIES_CLOSE_DETAILS: "关闭详情"
+  GORA_COMPANIES_INDUSTRIES_LABEL: "产业："
+  GORA_COMPANIES_PRESTIGE_GOODS_LABEL: "威望商品："

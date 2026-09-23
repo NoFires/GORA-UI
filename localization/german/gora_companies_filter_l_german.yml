@@ -1,0 +1,12 @@
+﻿l_german:
+ # GORA UI+ — companies filter labels.
+ # Used by the companies panel
+
+  charter_filter: "Industry Rights"
+  GORA_COMPANIES_COMPACT_LIST: "Kompaktliste"
+  GORA_COMPANIES_FULL_CARDS: "Vollständige Karten"
+  GORA_COMPANIES_COMPACT_LIST_HINT: "Kompaktliste: Wählt ein Unternehmen für Live-Details aus"
+  GORA_COMPANIES_FULL_CARDS_HINT: "Vollständige Karten: höhere CPU-Auslastung"
+  GORA_COMPANIES_CLOSE_DETAILS: "Details schließen"
+  GORA_COMPANIES_INDUSTRIES_LABEL: "Branchen:"
+  GORA_COMPANIES_PRESTIGE_GOODS_LABEL: "Prestigewaren:"

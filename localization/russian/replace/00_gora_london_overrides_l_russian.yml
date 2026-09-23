@@ -1,0 +1,27 @@
+﻿l_russian:
+ # GORA UI+ — Conference of London journal-entry overhaul
+ # Adds GP flag icons + per-proposal vote breakdowns to the vanilla journal
+ # entry. Verified against vanilla 1.13.4 key `je_conference_of_london_reason`.
+
+ je_conference_of_london_reason: "Великие державы прислали своих представителей в Лондон, чтобы разрешить вопрос демаркации спорных границ между Нидерландами и Бельгией. \n\nВ конференции примут участие не менее #variable [GetGlobalVariable( 'je_conference_of_london_participants_var' ).GetValue]#! [Concept('concept_great_power', 'великих держав')].\nВ поддержку #bold #tooltippable #tooltip:favour_belgium_button_desc бельгийских требований#!#!#! в сумме отдано #variable [GetGlobalVariable( 'je_conference_of_london_proposal_1' ).GetValue]#! ед [Concept('concept_prestige', 'престижа')]\nВ поддержку #bold #tooltippable #tooltip:favour_netherlands_button_desc нидерландских требований#!#!#! в сумме отдано #variable [GetGlobalVariable( 'je_conference_of_london_proposal_2' ).GetValue]#! ед [Concept('concept_prestige', 'престижа')]\nВ поддержку варианта #bold #tooltippable #tooltip:partition_compromise_button_desc «Двадцать четыре статьи»#!#!#! в сумме отдано #variable [GetGlobalVariable( 'je_conference_of_london_proposal_3' ).GetValue]#! ед [Concept('concept_prestige', 'престижа')]\nЗа #bold #tooltippable #tooltip:luxembourg_compromise_button_desc иной вариант раздела#!#!#! в сумме отдано #variable [GetGlobalVariable( 'je_conference_of_london_proposal_4' ).GetValue]#! ед [Concept('concept_prestige', 'престижа')]\n\nДо завершения конференции остаётся #variable [GetGlobalVariable('je_conference_of_london_timer').GetValue]#! мес. По итогам будет выбрано предложение, получившее #tooltippable #tooltip:london_treaty_voting_rules больше всего престижа#!#!.\n\n#Bold Итог#!\nУчастники конференции [ROOT.GetCountry.GetCustom('treaty_of_london_coutcome')][ROOT.GetCountry.GetCustom('treaty_of_london_acceptance_timer')]"
+
+ # Per-power flag-icon line fragments referenced by the customizable_localization
+ # `tlcm_*_favours_*` entries (defined in customizable_localization/tlcm_custom_loc.txt).
+ # Each line resolves both the flag icon AND the display name dynamically
+ # from the saved global ref. Using GetNameNoFormatting (vs. the static
+ # `$TAG$` locale key) means formed countries (DEU after unification, ITA
+ # after Sardinia formation) show their current name correctly, and no
+ # missing-locale-key warnings ever fire.
+ tlcm_gbr_favour_loc: "\n  [GetGlobalVariable('tlcm_ref_gbr').GetCountry.GetFlagTextIcon] #bold [GetGlobalVariable('tlcm_ref_gbr').GetCountry.GetNameNoFormatting]#!"
+ tlcm_fra_favour_loc: "\n  [GetGlobalVariable('tlcm_ref_fra').GetCountry.GetFlagTextIcon] #bold [GetGlobalVariable('tlcm_ref_fra').GetCountry.GetNameNoFormatting]#!"
+ tlcm_rus_favour_loc: "\n  [GetGlobalVariable('tlcm_ref_rus').GetCountry.GetFlagTextIcon] #bold [GetGlobalVariable('tlcm_ref_rus').GetCountry.GetNameNoFormatting]#!"
+ tlcm_aus_favour_loc: "\n  [GetGlobalVariable('tlcm_ref_aus').GetCountry.GetFlagTextIcon] #bold [GetGlobalVariable('tlcm_ref_aus').GetCountry.GetNameNoFormatting]#!"
+ tlcm_pru_favour_loc: "\n  [GetGlobalVariable('tlcm_ref_pru').GetCountry.GetFlagTextIcon] #bold [GetGlobalVariable('tlcm_ref_pru').GetCountry.GetNameNoFormatting]#!"
+ tlcm_spa_favour_loc: "\n  [GetGlobalVariable('tlcm_ref_spa').GetCountry.GetFlagTextIcon] #bold [GetGlobalVariable('tlcm_ref_spa').GetCountry.GetNameNoFormatting]#!"
+ tlcm_usa_favour_loc: "\n  [GetGlobalVariable('tlcm_ref_usa').GetCountry.GetFlagTextIcon] #bold [GetGlobalVariable('tlcm_ref_usa').GetCountry.GetNameNoFormatting]#!"
+ tlcm_tur_favour_loc: "\n  [GetGlobalVariable('tlcm_ref_tur').GetCountry.GetFlagTextIcon] #bold [GetGlobalVariable('tlcm_ref_tur').GetCountry.GetNameNoFormatting]#!"
+ tlcm_jap_favour_loc: "\n  [GetGlobalVariable('tlcm_ref_jap').GetCountry.GetFlagTextIcon] #bold [GetGlobalVariable('tlcm_ref_jap').GetCountry.GetNameNoFormatting]#!"
+ tlcm_ita_favour_loc: "\n  [GetGlobalVariable('tlcm_ref_ita').GetCountry.GetFlagTextIcon] #bold [GetGlobalVariable('tlcm_ref_ita').GetCountry.GetNameNoFormatting]#!"
+ # DEU (Germany) intentionally omitted — see common/scripted_effects/gora_london_effects.txt comment.
+ tlcm_other_favour_loc: "\n  Другие державы"
+ tlcm_no_loc: ""

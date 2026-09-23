@@ -1,0 +1,6 @@
+﻿l_spanish:
+ GDP_CHART_TITLE: "Composición del PIB"
+ GDP_CHART_SUBTITLE: "El tamaño de la figura representa la contribución estimada de cada bien al PIB nacional (órdenes de venta × precio de mercado)"
+ GDP_CHART_PIETOOLTIP: "#header [Goods.GetName]#!\nValor anual: @money![Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice)|K]#!\nPorcentaje del PIB: [Divide_CFixedPoint(Multiply_CFixedPoint(Goods.GetMarketSellOrders, Goods.GetMarketPrice), Market.GetMarketGDPValue)|%0]\nPrecio de mercado: @money![Goods.GetMarketPrice|v1]#!\nÓrdenes de venta: [Goods.GetMarketSellOrders|v0]"
+ GDP_CHART_SHOW_MORE: "Mostrar más"
+ GDP_CHART_SHOW_LESS: "Mostrar menos"

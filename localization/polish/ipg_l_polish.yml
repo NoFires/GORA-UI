@@ -1,0 +1,28 @@
+﻿l_polish:
+
+  # ==== Panel chrome ====
+  ipg_panel_title:0 "Parlament"
+  ipg_expand:0 "Rozwiń"
+  ipg_collapse:0 "Zwiń"
+  ipg_view_power:0 "Struktura władzy"
+  ipg_view_alignment:0 "Orientacja polityczna"
+  ipg_view_electoral:0 "Struktura partyjna"
+  ipg_power_desc:0 "Siła polityczna wszystkich grup interesu."
+  ipg_alignment_desc:0 "Poparcie populacji według grup interesu."
+  ipg_electoral_desc:0 "Na podstawie wyników ostatnich wyborów."
+  ipg_other_aligned:0 "Inni zwolennicy"
+  ipg_unaligned:0 "Niezwiązani politycznie"
+  ipg_other_minor:0 "Inne partie/grupy"
+  ipg_independent:0 "Niezależni"
+  ipg_last_election:0 "Ostatnie wybory"
+  ipg_seats_unit:0 "Mandaty"
+
+  # ==== Power Structure tooltip (clout share) ====
+
+  # ==== Political Alignment tooltip (population share) ====
+  ipg_alignment_unaligned_desc:0 "$ipg_unaligned$: #variable [GetPlayer.MakeScope.Var('ipg_alignment_unaligned_share').GetValue|1]%#!"
+
+  # ==== Party Structure tooltip ====
+  ipg_power_list_item:0 "[InterestGroup.GetName]: #variable [InterestGroup.MakeScope.Var('power_seats').GetValue|v0]#! $ipg_seats_unit$ ([InterestGroup.MakeScope.Var('power_share').GetValue|1]%)"
+  ipg_alignment_list_item:0 "[InterestGroup.GetName]: #variable [InterestGroup.MakeScope.Var('alignment_share').GetValue|1]%#!"
+  ipg_electoral_list_item:0 "[Party.GetName]: #variable [Party.MakeScope.Var('electoral_seats').GetValue|v0]#! $ipg_seats_unit$ ($ipg_last_election$: [Party.MakeScope.Var('ipg_last_election_vote_share').GetValue|%1])"

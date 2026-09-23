@@ -1,0 +1,2 @@
+﻿# Global invisible widget used to bridge GUI-only election values into script.
+gui/ipg_election_capture.gui = ipg_election_capture

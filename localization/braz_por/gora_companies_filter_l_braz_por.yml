@@ -1,0 +1,12 @@
+﻿l_braz_por:
+ # GORA UI+ — companies filter labels.
+ # Used by the companies panel
+
+  charter_filter: "Industry Rights"
+  GORA_COMPANIES_COMPACT_LIST: "Lista compacta"
+  GORA_COMPANIES_FULL_CARDS: "Cartões completos"
+  GORA_COMPANIES_COMPACT_LIST_HINT: "Lista compacta: selecione uma companhia para ver detalhes em tempo real"
+  GORA_COMPANIES_FULL_CARDS_HINT: "Cartões completos: maior uso da CPU"
+  GORA_COMPANIES_CLOSE_DETAILS: "Fechar detalhes"
+  GORA_COMPANIES_INDUSTRIES_LABEL: "Indústrias:"
+  GORA_COMPANIES_PRESTIGE_GOODS_LABEL: "Bens de prestígio:"
