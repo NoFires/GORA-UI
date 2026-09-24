@@ -1,4 +1,5 @@
 ﻿l_simp_chinese:
+ DSI_TRAITS_HEADER_TOOLTIP:0 "#header 地区特征#!\n该地区的地理及经济特征（例如地形、资源矿藏）以及它们提供的加成。"
  DSI_GDP_HEADER_TOOLTIP:0 "#header 地区[concept_gdp]贡献#!\n该地区每年产出的[concept_gdp]及其在全国总产值中的占比。"
  DSI_POP_HEADER_TOOLTIP:0 "#header 地区$concept_population$#!\n该地区的总人口。"
  DSI_SOL_HEADER_TOOLTIP:0 "#header 平均[concept_sol]#!\n该地区所有人群的平均[concept_sol]。"
@@ -18,6 +19,7 @@
  DSI_FILTER_ENACTED_ON:0 "@green_checkmark! 已颁布法令"
  DSI_FILTER_ENACTED_TOOLTIP:0 "仅显示此法令已激活（或无法新颁布）的地区。"
  DSI_VAL_GDP_HI:0 "#P @money![State.GetGDPContribution|K]#!"
+ DSI_VAL_POP_MID:0 "#light_green [State.GetPopulationSize|K]#!"
  DSI_VAL_POP_HI:0 "#P [State.GetPopulationSize|K]#!"
  DSI_VAL_SOL_LOW:0 "#N [State.GetAverageStandardOfLivingAll|1]#!"
  DSI_VAL_PEASANTS_HI:0 "#yellow #bold [State.GetNumSubsistenceWorkingAdults|K]#!#!"

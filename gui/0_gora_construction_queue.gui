@@ -204,10 +204,6 @@ types gora_construction_queue {
 			### /GORA UI+
 		}
 
-		# Advisor: additive quick-construction strip; the five GORA+ header buttons
-		# above remain unchanged. This is the only construction_queue integration hook.
-		advisor_construction_quick_actions = {}
-
 		# GORA+: separate zero-level infrastructure group. Its own GUI type keeps
 		# Advisor compatibility deterministic; the type contains the requested divider.
 		gora_zero_level_infrastructure_actions = {}

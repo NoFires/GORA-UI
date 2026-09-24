@@ -15,8 +15,8 @@
 # see partial_type_override_pattern memory).
 #
 # Types redeclared by GORA (5 — all touched by GORA deltas, none touched by CMF):
-#   - build_building_map_list_panel     (4 line diff vs vanilla)
-#   - construction_interaction_item_condensed (99 line diff, unfenced layout/column tweaks)
+#   - build_building_map_list_panel     (GORA base/filter wiring + click multiplier)
+#   - construction_interaction_item_condensed (layout/column tweaks + click multiplier)
 #   - construction_headers_condensed     (42 line diff)
 #   - construction_headers_full          (2 line diff)
 #   - construction_filters               (155 line diff, the big one — state filter strip etc.)
@@ -40,6 +40,11 @@
 #       construction_interaction_item_condensed (datamodel iteration item).
 #   (4) Column width / padding tweaks throughout (120→100, 85→70, 105→95) and
 #       fontsize_min bumps — scattered across the 5 extracted types.
+#   (5) Build All plus compact-row click multiplier (1 / 5 / 10 / 100).
+#       Inline action buttons keep every row instantiated at every level. Build
+#       All supports 1 / 5 / 10; its 100 option is disabled because dispatching
+#       100 actions to every valid state in one frame can freeze/assert the game.
+#       CMF's full-row type remains untouched.
 #
 # KNOWN ISSUE (unconfirmed): switching between the status filter buttons may
 # leave the previous selection active. Stacked onclick properties are NOT the
@@ -149,18 +154,20 @@ types gora_map_list_panel {
 
 	type build_building_map_list_panel = gora_build_building_map_list_panel_base {
 		name = "build_building_map_list_panel"
-		datamodel_reuse_widgets = no
+		# Match the original Bulk Construction implementation: the panel and its
+		# hidden workers must survive each native build action. The visible option
+		# lists in gora_build_building_map_list_panel_base still opt out of reuse
+		# individually so the 1.14 location-filter refresh fix remains intact.
+		datamodel_reuse_widgets = yes
 
 		blockoverride "headers" {
 			direction = vertical
 
 			construction_filters = {}
 
-			### BULK BUILD -- start ##################################
-			# Build one, five, or ten levels in every currently valid location by
-			# triggering the game's own MapListOption.OnClick action. Keeping this
-			# inside GORA's build_building_map_list_panel avoids a duplicate global
-			# type definition and preserves the custom base and filter-aware rows.
+			### BULK BUILD + CLICK MULTIPLIER -- start ################
+			# The selected level controls both Build All and the compact row's
+			# native + button. The full row keeps its vanilla level controller.
 			flowcontainer = {
 				direction = vertical
 				parentanchor = hcenter
@@ -186,7 +193,7 @@ types gora_map_list_panel {
 						onclick = "[GetVariableSystem.Set('bc_levels', '1')]"
 
 						icon = {
-							visible = "[Not(Or(GetVariableSystem.HasValue('bc_levels', '5'), GetVariableSystem.HasValue('bc_levels', '10')))]"
+							visible = "[Not(Or(GetVariableSystem.HasValue('bc_levels', '5'), Or(GetVariableSystem.HasValue('bc_levels', '10'), GetVariableSystem.HasValue('bc_levels', '100'))))]"
 							using = highlighted_square_selection
 						}
 					}
@@ -212,105 +219,130 @@ types gora_map_list_panel {
 							using = highlighted_square_selection
 						}
 					}
+
+					button = {
+						size = { 52 28 }
+						using = default_button
+						text = "BC_LEVELS_100"
+						onclick = "[GetVariableSystem.Set('bc_levels', '100')]"
+
+						icon = {
+							visible = "[GetVariableSystem.HasValue('bc_levels', '100')]"
+							using = highlighted_square_selection
+						}
+					}
 				}
 
 				button = {
-					visible = "[Not(Or(GetVariableSystem.HasValue('bc_levels', '5'), GetVariableSystem.HasValue('bc_levels', '10')))]"
+					visible = "[Not(Or(GetVariableSystem.HasValue('bc_levels', '5'), Or(GetVariableSystem.HasValue('bc_levels', '10'), GetVariableSystem.HasValue('bc_levels', '100'))))]"
 					size = { 500 30 }
 					using = default_button
 					text = "BC_BUILD_BUTTON_1"
 					tooltip = "BC_BUILD_TOOLTIP_1"
-					onclick = "[PdxGuiTriggerAllAnimations('bc_build_1')]"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_bulk_build_1')]"
 				}
+
 				button = {
 					visible = "[GetVariableSystem.HasValue('bc_levels', '5')]"
 					size = { 500 30 }
 					using = default_button
 					text = "BC_BUILD_BUTTON_5"
 					tooltip = "BC_BUILD_TOOLTIP_5"
-					onclick = "[PdxGuiTriggerAllAnimations('bc_build_1')]"
-					onclick = "[PdxGuiTriggerAllAnimations('bc_build_2')]"
-					onclick = "[PdxGuiTriggerAllAnimations('bc_build_3')]"
-					onclick = "[PdxGuiTriggerAllAnimations('bc_build_4')]"
-					onclick = "[PdxGuiTriggerAllAnimations('bc_build_5')]"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_bulk_build_1')]"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_bulk_build_2')]"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_bulk_build_3')]"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_bulk_build_4')]"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_bulk_build_5')]"
 				}
+
 				button = {
 					visible = "[GetVariableSystem.HasValue('bc_levels', '10')]"
 					size = { 500 30 }
 					using = default_button
 					text = "BC_BUILD_BUTTON_10"
 					tooltip = "BC_BUILD_TOOLTIP_10"
-					onclick = "[PdxGuiTriggerAllAnimations('bc_build_1')]"
-					onclick = "[PdxGuiTriggerAllAnimations('bc_build_2')]"
-					onclick = "[PdxGuiTriggerAllAnimations('bc_build_3')]"
-					onclick = "[PdxGuiTriggerAllAnimations('bc_build_4')]"
-					onclick = "[PdxGuiTriggerAllAnimations('bc_build_5')]"
-					onclick = "[PdxGuiTriggerAllAnimations('bc_build_6')]"
-					onclick = "[PdxGuiTriggerAllAnimations('bc_build_7')]"
-					onclick = "[PdxGuiTriggerAllAnimations('bc_build_8')]"
-					onclick = "[PdxGuiTriggerAllAnimations('bc_build_9')]"
-					onclick = "[PdxGuiTriggerAllAnimations('bc_build_10')]"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_bulk_build_1')]"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_bulk_build_2')]"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_bulk_build_3')]"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_bulk_build_4')]"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_bulk_build_5')]"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_bulk_build_6')]"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_bulk_build_7')]"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_bulk_build_8')]"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_bulk_build_9')]"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_bulk_build_10')]"
+				}
+
+				button = {
+					visible = "[GetVariableSystem.HasValue('bc_levels', '100')]"
+					size = { 500 30 }
+					using = default_button
+					text = "BC_BUILD_BUTTON_100"
+					tooltip = "BC_BUILD_TOOLTIP_100"
+					enabled = no
 				}
 			}
 
-			# One hidden worker per valid map-list option. The states remain idle
-			# until one of the buttons above triggers the matching animation name.
+			# One worker per valid location. Each state performs exactly one native
+			# action; the 5/10 buttons trigger multiple states, matching the proven
+			# original implementation. Build All at 100 is intentionally disabled.
 			widget = {
 				size = { 1 1 }
 
 				flowcontainer = {
 					direction = vertical
 					datamodel = "[MapListPanel.AccessValidOptions]"
+					datamodel_reuse_widgets = yes
 
 					item = {
 						widget = {
 							size = { 1 1 }
 
 							state = {
-								name = bc_build_1
+								name = bc_bulk_build_1
 								on_start = "[MapListOption.OnClick]"
 							}
 							state = {
-								name = bc_build_2
+								name = bc_bulk_build_2
 								on_start = "[MapListOption.OnClick]"
 							}
 							state = {
-								name = bc_build_3
+								name = bc_bulk_build_3
 								on_start = "[MapListOption.OnClick]"
 							}
 							state = {
-								name = bc_build_4
+								name = bc_bulk_build_4
 								on_start = "[MapListOption.OnClick]"
 							}
 							state = {
-								name = bc_build_5
+								name = bc_bulk_build_5
 								on_start = "[MapListOption.OnClick]"
 							}
 							state = {
-								name = bc_build_6
+								name = bc_bulk_build_6
 								on_start = "[MapListOption.OnClick]"
 							}
 							state = {
-								name = bc_build_7
+								name = bc_bulk_build_7
 								on_start = "[MapListOption.OnClick]"
 							}
 							state = {
-								name = bc_build_8
+								name = bc_bulk_build_8
 								on_start = "[MapListOption.OnClick]"
 							}
 							state = {
-								name = bc_build_9
+								name = bc_bulk_build_9
 								on_start = "[MapListOption.OnClick]"
 							}
 							state = {
-								name = bc_build_10
+								name = bc_bulk_build_10
 								on_start = "[MapListOption.OnClick]"
 							}
 						}
 					}
 				}
 			}
-			### BULK BUILD -- end ####################################
+			### BULK BUILD + CLICK MULTIPLIER -- end ##################
 
 			construction_headers_condensed = {
 				visible = "[Not(GetVariableSystem.Exists('construction_list_toggle_full_or_condensed'))]"
@@ -344,6 +376,12 @@ types gora_map_list_panel {
 	type construction_interaction_item_condensed = map_list_panel_item_interaction {
 		# this is very expensive for big countries like China
 		max_update_rate = 32
+
+		# Replace the inherited action button with multiplier-specific buttons
+		# inside the values block. The row itself is never filtered by bc_levels.
+		blockoverride "interaction_button_visibility" {
+			visible = no
+		}
 
 		blockoverride "name_button_visibility" {
 			visible = yes
@@ -444,7 +482,9 @@ types gora_map_list_panel {
 					visible = "[And(Building.IsActive, NotEqualTo_CFixedPoint(Building.GetEmploymentPercentage, '(CFixedPoint)1'))]"
 
 					default_progressbar_horizontal = {
-						tooltip = "TOOLTIP_BUILDING_EMPLOYMENT"
+						# Avoid the outdated 1.14 Chinese TOOLTIP_BUILDING_EMPLOYMENT
+						# localization, which still calls the removed GetAllFailedHiresDesc.
+						raw_tooltip = "[Building.GetNoOfEmployed|1*] / [Building.GetEmployeeCap|1*] ([Building.GetEmploymentPercentage|0%])"
 						size = { 40 2 } #58 2
 						parentanchor = bottom
 
@@ -626,6 +666,242 @@ types gora_map_list_panel {
 				parentanchor = vcenter
 				elide = right
 				visible = "[MapListOption.GetBuildingData.GetBuilding.GetBuildingType.GeneratesCombatUnits]"
+			}
+
+			button = {
+				visible = "[Not(Or(GetVariableSystem.HasValue('bc_levels', '5'), Or(GetVariableSystem.HasValue('bc_levels', '10'), GetVariableSystem.HasValue('bc_levels', '100'))))]"
+				size = { 55 40 }
+				using = default_button_action
+				using = tooltip_es
+				parentanchor = vcenter
+				tooltip = "[MapListOption.GetTooltip]"
+				enabled = "[MapListOption.CanClick]"
+				onclick = "[MapListOption.OnClick]"
+				onrightclick = "[MapListOption.OnRightClick]"
+				onmousehierarchyenter = "[MapListOption.OnMouseEnter]"
+				onmousehierarchyleave = "[MapListOption.OnMouseLeave]"
+
+				widget = {
+					parentanchor = center
+					size = { 35 35 }
+					visible = "[MapListOption.ShouldShowStatusIcon]"
+
+					icon = {
+						texture = "gfx/interface/map_list/map_list_status_icons.dds"
+						framesize = { 130 72 }
+						size = { 65 36 }
+						scale = 0.7
+						alpha = 0.8
+						parentanchor = center
+						frame = "[MapListOption.GetIconStatusFrame]"
+						alwaystransparent = yes
+					}
+				}
+			}
+
+			button = {
+				visible = "[GetVariableSystem.HasValue('bc_levels', '5')]"
+				size = { 55 40 }
+				using = default_button_action
+				using = tooltip_es
+				parentanchor = vcenter
+				tooltip = "[MapListOption.GetTooltip]"
+				enabled = "[MapListOption.CanClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onrightclick = "[MapListOption.OnRightClick]"
+				onmousehierarchyenter = "[MapListOption.OnMouseEnter]"
+				onmousehierarchyleave = "[MapListOption.OnMouseLeave]"
+
+				widget = {
+					parentanchor = center
+					size = { 35 35 }
+					visible = "[MapListOption.ShouldShowStatusIcon]"
+
+					icon = {
+						texture = "gfx/interface/map_list/map_list_status_icons.dds"
+						framesize = { 130 72 }
+						size = { 65 36 }
+						scale = 0.7
+						alpha = 0.8
+						parentanchor = center
+						frame = "[MapListOption.GetIconStatusFrame]"
+						alwaystransparent = yes
+					}
+				}
+			}
+
+			button = {
+				visible = "[GetVariableSystem.HasValue('bc_levels', '10')]"
+				size = { 55 40 }
+				using = default_button_action
+				using = tooltip_es
+				parentanchor = vcenter
+				tooltip = "[MapListOption.GetTooltip]"
+				enabled = "[MapListOption.CanClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onrightclick = "[MapListOption.OnRightClick]"
+				onmousehierarchyenter = "[MapListOption.OnMouseEnter]"
+				onmousehierarchyleave = "[MapListOption.OnMouseLeave]"
+
+				widget = {
+					parentanchor = center
+					size = { 35 35 }
+					visible = "[MapListOption.ShouldShowStatusIcon]"
+
+					icon = {
+						texture = "gfx/interface/map_list/map_list_status_icons.dds"
+						framesize = { 130 72 }
+						size = { 65 36 }
+						scale = 0.7
+						alpha = 0.8
+						parentanchor = center
+						frame = "[MapListOption.GetIconStatusFrame]"
+						alwaystransparent = yes
+					}
+				}
+			}
+
+			button = {
+				visible = "[GetVariableSystem.HasValue('bc_levels', '100')]"
+				size = { 55 40 }
+				using = default_button_action
+				using = tooltip_es
+				parentanchor = vcenter
+				tooltip = "[MapListOption.GetTooltip]"
+				enabled = "[MapListOption.CanClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onclick = "[MapListOption.OnClick]"
+				onrightclick = "[MapListOption.OnRightClick]"
+				onmousehierarchyenter = "[MapListOption.OnMouseEnter]"
+				onmousehierarchyleave = "[MapListOption.OnMouseLeave]"
+
+				widget = {
+					parentanchor = center
+					size = { 35 35 }
+					visible = "[MapListOption.ShouldShowStatusIcon]"
+
+					icon = {
+						texture = "gfx/interface/map_list/map_list_status_icons.dds"
+						framesize = { 130 72 }
+						size = { 65 36 }
+						scale = 0.7
+						alpha = 0.8
+						parentanchor = center
+						frame = "[MapListOption.GetIconStatusFrame]"
+						alwaystransparent = yes
+					}
+				}
 			}
 		}
 	}
