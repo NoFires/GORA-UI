@@ -1,0 +1,11 @@
+﻿l_spanish:
+ BC_LEVELS_LABEL:0 "(Build All) Niveles:"
+ BC_LEVELS_1:0 "1"
+ BC_LEVELS_5:0 "5"
+ BC_LEVELS_10:0 "10"
+ BC_BUILD_BUTTON_1:0 "(Build All) Añadir 1 nivel en hasta [GetDataModelSize(MapListPanel.AccessValidOptions)] estados"
+ BC_BUILD_BUTTON_5:0 "(Build All) Añadir 5 niveles en hasta [GetDataModelSize(MapListPanel.AccessValidOptions)] estados"
+ BC_BUILD_BUTTON_10:0 "(Build All) Añadir 10 niveles en hasta [GetDataModelSize(MapListPanel.AccessValidOptions)] estados"
+ BC_BUILD_TOOLTIP_1:0 "Añade 1 nivel de este edificio a la cola de construcción en todos los estados listados abajo.\n\nLos estados en los que el juego no te deja construir se omiten, así que puede que se añadan menos de [GetDataModelSize(MapListPanel.AccessValidOptions)]."
+ BC_BUILD_TOOLTIP_5:0 "Añade 5 niveles de este edificio a la cola de construcción en todos los estados listados abajo.\n\nLos estados en los que el juego no te deja construir se omiten, así que puede que se añadan menos de [GetDataModelSize(MapListPanel.AccessValidOptions)]."
+ BC_BUILD_TOOLTIP_10:0 "Añade 10 niveles de este edificio a la cola de construcción en todos los estados listados abajo.\n\nLos estados en los que el juego no te deja construir se omiten, así que puede que se añadan menos de [GetDataModelSize(MapListPanel.AccessValidOptions)]."

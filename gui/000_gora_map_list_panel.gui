@@ -155,6 +155,163 @@ types gora_map_list_panel {
 			direction = vertical
 
 			construction_filters = {}
+
+			### BULK BUILD -- start ##################################
+			# Build one, five, or ten levels in every currently valid location by
+			# triggering the game's own MapListOption.OnClick action. Keeping this
+			# inside GORA's build_building_map_list_panel avoids a duplicate global
+			# type definition and preserves the custom base and filter-aware rows.
+			flowcontainer = {
+				direction = vertical
+				parentanchor = hcenter
+				margin = { 10 4 }
+				spacing = 4
+
+				flowcontainer = {
+					direction = horizontal
+					parentanchor = hcenter
+					spacing = 6
+
+					textbox = {
+						autoresize = yes
+						align = nobaseline
+						parentanchor = vcenter
+						text = "BC_LEVELS_LABEL"
+					}
+
+					button = {
+						size = { 52 28 }
+						using = default_button
+						text = "BC_LEVELS_1"
+						onclick = "[GetVariableSystem.Set('bc_levels', '1')]"
+
+						icon = {
+							visible = "[Not(Or(GetVariableSystem.HasValue('bc_levels', '5'), GetVariableSystem.HasValue('bc_levels', '10')))]"
+							using = highlighted_square_selection
+						}
+					}
+					button = {
+						size = { 52 28 }
+						using = default_button
+						text = "BC_LEVELS_5"
+						onclick = "[GetVariableSystem.Set('bc_levels', '5')]"
+
+						icon = {
+							visible = "[GetVariableSystem.HasValue('bc_levels', '5')]"
+							using = highlighted_square_selection
+						}
+					}
+					button = {
+						size = { 52 28 }
+						using = default_button
+						text = "BC_LEVELS_10"
+						onclick = "[GetVariableSystem.Set('bc_levels', '10')]"
+
+						icon = {
+							visible = "[GetVariableSystem.HasValue('bc_levels', '10')]"
+							using = highlighted_square_selection
+						}
+					}
+				}
+
+				button = {
+					visible = "[Not(Or(GetVariableSystem.HasValue('bc_levels', '5'), GetVariableSystem.HasValue('bc_levels', '10')))]"
+					size = { 500 30 }
+					using = default_button
+					text = "BC_BUILD_BUTTON_1"
+					tooltip = "BC_BUILD_TOOLTIP_1"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_build_1')]"
+				}
+				button = {
+					visible = "[GetVariableSystem.HasValue('bc_levels', '5')]"
+					size = { 500 30 }
+					using = default_button
+					text = "BC_BUILD_BUTTON_5"
+					tooltip = "BC_BUILD_TOOLTIP_5"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_build_1')]"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_build_2')]"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_build_3')]"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_build_4')]"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_build_5')]"
+				}
+				button = {
+					visible = "[GetVariableSystem.HasValue('bc_levels', '10')]"
+					size = { 500 30 }
+					using = default_button
+					text = "BC_BUILD_BUTTON_10"
+					tooltip = "BC_BUILD_TOOLTIP_10"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_build_1')]"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_build_2')]"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_build_3')]"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_build_4')]"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_build_5')]"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_build_6')]"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_build_7')]"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_build_8')]"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_build_9')]"
+					onclick = "[PdxGuiTriggerAllAnimations('bc_build_10')]"
+				}
+			}
+
+			# One hidden worker per valid map-list option. The states remain idle
+			# until one of the buttons above triggers the matching animation name.
+			widget = {
+				size = { 1 1 }
+
+				flowcontainer = {
+					direction = vertical
+					datamodel = "[MapListPanel.AccessValidOptions]"
+
+					item = {
+						widget = {
+							size = { 1 1 }
+
+							state = {
+								name = bc_build_1
+								on_start = "[MapListOption.OnClick]"
+							}
+							state = {
+								name = bc_build_2
+								on_start = "[MapListOption.OnClick]"
+							}
+							state = {
+								name = bc_build_3
+								on_start = "[MapListOption.OnClick]"
+							}
+							state = {
+								name = bc_build_4
+								on_start = "[MapListOption.OnClick]"
+							}
+							state = {
+								name = bc_build_5
+								on_start = "[MapListOption.OnClick]"
+							}
+							state = {
+								name = bc_build_6
+								on_start = "[MapListOption.OnClick]"
+							}
+							state = {
+								name = bc_build_7
+								on_start = "[MapListOption.OnClick]"
+							}
+							state = {
+								name = bc_build_8
+								on_start = "[MapListOption.OnClick]"
+							}
+							state = {
+								name = bc_build_9
+								on_start = "[MapListOption.OnClick]"
+							}
+							state = {
+								name = bc_build_10
+								on_start = "[MapListOption.OnClick]"
+							}
+						}
+					}
+				}
+			}
+			### BULK BUILD -- end ####################################
+
 			construction_headers_condensed = {
 				visible = "[Not(GetVariableSystem.Exists('construction_list_toggle_full_or_condensed'))]"
 			}

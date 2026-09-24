@@ -1,0 +1,11 @@
+﻿l_braz_por:
+ BC_LEVELS_LABEL:0 "(Build All) Níveis:"
+ BC_LEVELS_1:0 "1"
+ BC_LEVELS_5:0 "5"
+ BC_LEVELS_10:0 "10"
+ BC_BUILD_BUTTON_1:0 "(Build All) Enfileirar 1 nível em até [GetDataModelSize(MapListPanel.AccessValidOptions)] estados"
+ BC_BUILD_BUTTON_5:0 "(Build All) Enfileirar 5 níveis em até [GetDataModelSize(MapListPanel.AccessValidOptions)] estados"
+ BC_BUILD_BUTTON_10:0 "(Build All) Enfileirar 10 níveis em até [GetDataModelSize(MapListPanel.AccessValidOptions)] estados"
+ BC_BUILD_TOOLTIP_1:0 "Adiciona 1 nível deste edifício à fila de obras em todos os estados listados abaixo.\n\nEstados nos quais o jogo não permite construir são ignorados, portanto menos de [GetDataModelSize(MapListPanel.AccessValidOptions)] podem ser enfileirados."
+ BC_BUILD_TOOLTIP_5:0 "Adiciona 5 níveis deste edifício à fila de obras em todos os estados listados abaixo.\n\nEstados nos quais o jogo não permite construir são ignorados, portanto menos de [GetDataModelSize(MapListPanel.AccessValidOptions)] podem ser enfileirados."
+ BC_BUILD_TOOLTIP_10:0 "Adiciona 10 níveis deste edifício à fila de obras em todos os estados listados abaixo.\n\nEstados nos quais o jogo não permite construir são ignorados, portanto menos de [GetDataModelSize(MapListPanel.AccessValidOptions)] podem ser enfileirados."

@@ -1,0 +1,11 @@
+﻿l_turkish:
+ BC_LEVELS_LABEL:0 "(Build All) Seviye:"
+ BC_LEVELS_1:0 "1"
+ BC_LEVELS_5:0 "5"
+ BC_LEVELS_10:0 "10"
+ BC_BUILD_BUTTON_1:0 "(Build All) En fazla [GetDataModelSize(MapListPanel.AccessValidOptions)] vilayete 1 seviye ekle"
+ BC_BUILD_BUTTON_5:0 "(Build All) En fazla [GetDataModelSize(MapListPanel.AccessValidOptions)] vilayete 5 seviye ekle"
+ BC_BUILD_BUTTON_10:0 "(Build All) En fazla [GetDataModelSize(MapListPanel.AccessValidOptions)] vilayete 10 seviye ekle"
+ BC_BUILD_TOOLTIP_1:0 "Aşağıda listelenen her vilayette bu binanın 1 seviyesini inşa sırasına ekler.\n\nOyunun inşaata izin vermediği vilayetler atlanır; bu yüzden [GetDataModelSize(MapListPanel.AccessValidOptions)] sayısından daha azı sıraya girebilir."
+ BC_BUILD_TOOLTIP_5:0 "Aşağıda listelenen her vilayette bu binanın 5 seviyesini inşa sırasına ekler.\n\nOyunun inşaata izin vermediği vilayetler atlanır; bu yüzden [GetDataModelSize(MapListPanel.AccessValidOptions)] sayısından daha azı sıraya girebilir."
+ BC_BUILD_TOOLTIP_10:0 "Aşağıda listelenen her vilayette bu binanın 10 seviyesini inşa sırasına ekler.\n\nOyunun inşaata izin vermediği vilayetler atlanır; bu yüzden [GetDataModelSize(MapListPanel.AccessValidOptions)] sayısından daha azı sıraya girebilir."

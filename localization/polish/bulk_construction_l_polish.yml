@@ -1,0 +1,11 @@
+﻿l_polish:
+ BC_LEVELS_LABEL:0 "(Build All) Poziomy:"
+ BC_LEVELS_1:0 "1"
+ BC_LEVELS_5:0 "5"
+ BC_LEVELS_10:0 "10"
+ BC_BUILD_BUTTON_1:0 "(Build All) Dodaj 1 poziom w maks. [GetDataModelSize(MapListPanel.AccessValidOptions)] obszarach"
+ BC_BUILD_BUTTON_5:0 "(Build All) Dodaj 5 poziomów w maks. [GetDataModelSize(MapListPanel.AccessValidOptions)] obszarach"
+ BC_BUILD_BUTTON_10:0 "(Build All) Dodaj 10 poziomów w maks. [GetDataModelSize(MapListPanel.AccessValidOptions)] obszarach"
+ BC_BUILD_TOOLTIP_1:0 "Dodaje 1 poziom tego budynku do kolejki budowy w każdym obszarze administracyjnym wymienionym poniżej.\n\nObszary, w których gra nie pozwala budować, są pomijane – może więc zostać dodanych mniej niż [GetDataModelSize(MapListPanel.AccessValidOptions)]."
+ BC_BUILD_TOOLTIP_5:0 "Dodaje 5 poziomów tego budynku do kolejki budowy w każdym obszarze administracyjnym wymienionym poniżej.\n\nObszary, w których gra nie pozwala budować, są pomijane – może więc zostać dodanych mniej niż [GetDataModelSize(MapListPanel.AccessValidOptions)]."
+ BC_BUILD_TOOLTIP_10:0 "Dodaje 10 poziomów tego budynku do kolejki budowy w każdym obszarze administracyjnym wymienionym poniżej.\n\nObszary, w których gra nie pozwala budować, są pomijane – może więc zostać dodanych mniej niż [GetDataModelSize(MapListPanel.AccessValidOptions)]."

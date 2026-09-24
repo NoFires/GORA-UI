@@ -1,0 +1,11 @@
+﻿l_korean:
+ BC_LEVELS_LABEL:0 "(Build All) 단계:"
+ BC_LEVELS_1:0 "1"
+ BC_LEVELS_5:0 "5"
+ BC_LEVELS_10:0 "10"
+ BC_BUILD_BUTTON_1:0 "(Build All) 최대 [GetDataModelSize(MapListPanel.AccessValidOptions)]개 주에 각 1단계 예약"
+ BC_BUILD_BUTTON_5:0 "(Build All) 최대 [GetDataModelSize(MapListPanel.AccessValidOptions)]개 주에 각 5단계 예약"
+ BC_BUILD_BUTTON_10:0 "(Build All) 최대 [GetDataModelSize(MapListPanel.AccessValidOptions)]개 주에 각 10단계 예약"
+ BC_BUILD_TOOLTIP_1:0 "아래 표시된 모든 주에 이 건물을 1단계씩 건설 대기열에 추가합니다.\n\n게임이 건설을 허용하지 않는 주는 건너뛰므로, 실제로 추가되는 수는 [GetDataModelSize(MapListPanel.AccessValidOptions)]개보다 적을 수 있습니다."
+ BC_BUILD_TOOLTIP_5:0 "아래 표시된 모든 주에 이 건물을 5단계씩 건설 대기열에 추가합니다.\n\n게임이 건설을 허용하지 않는 주는 건너뛰므로, 실제로 추가되는 수는 [GetDataModelSize(MapListPanel.AccessValidOptions)]개보다 적을 수 있습니다."
+ BC_BUILD_TOOLTIP_10:0 "아래 표시된 모든 주에 이 건물을 10단계씩 건설 대기열에 추가합니다.\n\n게임이 건설을 허용하지 않는 주는 건너뛰므로, 실제로 추가되는 수는 [GetDataModelSize(MapListPanel.AccessValidOptions)]개보다 적을 수 있습니다."

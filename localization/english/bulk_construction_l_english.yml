@@ -1,0 +1,11 @@
+﻿l_english:
+ BC_LEVELS_LABEL:0 "(Build All) Levels:"
+ BC_LEVELS_1:0 "1"
+ BC_LEVELS_5:0 "5"
+ BC_LEVELS_10:0 "10"
+ BC_BUILD_BUTTON_1:0 "(Build All) Queue 1 level in up to [GetDataModelSize(MapListPanel.AccessValidOptions)] states"
+ BC_BUILD_BUTTON_5:0 "(Build All) Queue 5 levels in up to [GetDataModelSize(MapListPanel.AccessValidOptions)] states"
+ BC_BUILD_BUTTON_10:0 "(Build All) Queue 10 levels in up to [GetDataModelSize(MapListPanel.AccessValidOptions)] states"
+ BC_BUILD_TOOLTIP_1:0 "Queue 1 level of this building in every state listed below.\n\nStates the game will not let you build in are skipped, so fewer than [GetDataModelSize(MapListPanel.AccessValidOptions)] may be queued."
+ BC_BUILD_TOOLTIP_5:0 "Queue 5 levels of this building in every state listed below.\n\nStates the game will not let you build in are skipped, so fewer than [GetDataModelSize(MapListPanel.AccessValidOptions)] may be queued."
+ BC_BUILD_TOOLTIP_10:0 "Queue 10 levels of this building in every state listed below.\n\nStates the game will not let you build in are skipped, so fewer than [GetDataModelSize(MapListPanel.AccessValidOptions)] may be queued."

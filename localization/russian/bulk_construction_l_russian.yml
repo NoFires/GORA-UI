@@ -1,0 +1,11 @@
+﻿l_russian:
+ BC_LEVELS_LABEL:0 "(Build All) Уровни:"
+ BC_LEVELS_1:0 "1"
+ BC_LEVELS_5:0 "5"
+ BC_LEVELS_10:0 "10"
+ BC_BUILD_BUTTON_1:0 "(Build All) Добавить 1 уровень макс. в [GetDataModelSize(MapListPanel.AccessValidOptions)] областях"
+ BC_BUILD_BUTTON_5:0 "(Build All) Добавить 5 уровней макс. в [GetDataModelSize(MapListPanel.AccessValidOptions)] областях"
+ BC_BUILD_BUTTON_10:0 "(Build All) Добавить 10 уровней макс. в [GetDataModelSize(MapListPanel.AccessValidOptions)] областях"
+ BC_BUILD_TOOLTIP_1:0 "Добавляет 1 уровень этого сооружения в очередь строительства в каждой перечисленной ниже области.\n\nОбласти, в которых игра не позволяет строить, пропускаются — поэтому добавлено может быть меньше [GetDataModelSize(MapListPanel.AccessValidOptions)]."
+ BC_BUILD_TOOLTIP_5:0 "Добавляет 5 уровней этого сооружения в очередь строительства в каждой перечисленной ниже области.\n\nОбласти, в которых игра не позволяет строить, пропускаются — поэтому добавлено может быть меньше [GetDataModelSize(MapListPanel.AccessValidOptions)]."
+ BC_BUILD_TOOLTIP_10:0 "Добавляет 10 уровней этого сооружения в очередь строительства в каждой перечисленной ниже области.\n\nОбласти, в которых игра не позволяет строить, пропускаются — поэтому добавлено может быть меньше [GetDataModelSize(MapListPanel.AccessValidOptions)]."

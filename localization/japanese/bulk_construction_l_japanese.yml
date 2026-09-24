@@ -1,0 +1,11 @@
+﻿l_japanese:
+ BC_LEVELS_LABEL:0 "(Build All) レベル："
+ BC_LEVELS_1:0 "1"
+ BC_LEVELS_5:0 "5"
+ BC_LEVELS_10:0 "10"
+ BC_BUILD_BUTTON_1:0 "(Build All) 最大 [GetDataModelSize(MapListPanel.AccessValidOptions)] 州にそれぞれ 1 レベル を予約"
+ BC_BUILD_BUTTON_5:0 "(Build All) 最大 [GetDataModelSize(MapListPanel.AccessValidOptions)] 州にそれぞれ 5 レベル を予約"
+ BC_BUILD_BUTTON_10:0 "(Build All) 最大 [GetDataModelSize(MapListPanel.AccessValidOptions)] 州にそれぞれ 10 レベル を予約"
+ BC_BUILD_TOOLTIP_1:0 "下に表示されているすべての州で、この施設を 1 レベル ずつ建設キューに追加します。\n\nゲームが建設を許可しない州はスキップされるため、実際に予約される数は [GetDataModelSize(MapListPanel.AccessValidOptions)] より少なくなることがあります。"
+ BC_BUILD_TOOLTIP_5:0 "下に表示されているすべての州で、この施設を 5 レベル ずつ建設キューに追加します。\n\nゲームが建設を許可しない州はスキップされるため、実際に予約される数は [GetDataModelSize(MapListPanel.AccessValidOptions)] より少なくなることがあります。"
+ BC_BUILD_TOOLTIP_10:0 "下に表示されているすべての州で、この施設を 10 レベル ずつ建設キューに追加します。\n\nゲームが建設を許可しない州はスキップされるため、実際に予約される数は [GetDataModelSize(MapListPanel.AccessValidOptions)] より少なくなることがあります。"
