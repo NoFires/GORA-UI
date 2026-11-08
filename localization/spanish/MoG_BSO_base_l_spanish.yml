@@ -1,0 +1,19 @@
+﻿l_spanish:
+ # Base Panel Localisations
+ concept_market_access_price_impact: "Impacto del acceso al mercado en los precios"
+ concept_market_access_price_impact_desc: "$state_market_access_price_impact_desc$"
+ concept_market_access_price_impact_short: "IAM"
+ GOODS_MARKET_ACCESS_PRICE_IMPACT_BSO: "[concept_state] [Concept('concept_market_access_price_impact','$concept_market_access_price_impact_short|q$')]\n[State.GetModifier.GetValueFor('state_market_access_price_impact')|v0%]"
+ BSO_MAPI_TOOLTIP_REPLACEMENT: "[State.GetModifier.GetTooltipFor('state_market_access_price_impact')]"
+ BSO_STRATEGIC_REGION_SHORT: "[Concept('concept_strategic_region', '$concept_strategic_region_short|q$')]"
+ STATE_REGION_STATE_STATUS: "[concept_state_region]\n[State.GetStateRegion.GetName]"
+ # Choice features: Game Rules & Decisions etc.
+ rule_mog_bso_structured_state_overview: "BSO: vista estructurada del estado"
+ setting_bso_structured_state_overview_enabled: "Activada"
+ setting_bso_structured_state_overview_enabled_desc: "El panel del estado usará el formato estructurado y habrá una decisión para cambiar de diseño."
+ setting_bso_structured_state_overview_disabled: "Desactivada"
+ setting_bso_structured_state_overview_disabled_desc: "El panel del estado usará el formato clásico con elementos informativos mejorados."
+ mog_bso_set_structured_panel_decision: "BSO: usar el panel estructurado"
+ mog_bso_set_structured_panel_decision_desc: "Usa un panel estructurado más compacto que agrupa por tipo los elementos informativos mejorados."
+ mog_bso_set_classic_panel_decision: "BSO: usar el panel clásico"
+ mog_bso_set_classic_panel_decision_desc: "Integra los elementos informativos mejorados en el diseño clásico del panel del estado."
