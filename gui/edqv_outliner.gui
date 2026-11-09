@@ -1,0 +1,90 @@
+# Native consumption-dependence results; no economy simulation changes.
+types edqv_outliner_types {
+	type edqv_outliner_section = flowcontainer {
+		# Resolve the current market owner for subjects and independent members.
+		# Hide self-owned markets and zero consumption dependence.
+		visible = "[And(Not(GetScriptedGui('edqv_outliner_is_disabled').IsShown(GuiScope.SetRoot(GetPlayer.MakeScope).End)), And(GetPlayer.GetCapital.GetMarket.GetOwner.IsValid, And(Not(ObjectsEqual(GetPlayer.GetCapital.GetMarket.GetOwner, GetPlayer.Self)), GreaterThan_CFixedPoint(GetPlayer.GetPopConsumptionDependenceOnRaw(GetPlayer.GetCapital.GetMarket.GetOwner), '(CFixedPoint)0'))))]"
+		datacontext = "[GetPlayer]"
+		direction = vertical
+		parentanchor = right
+		margin_top = 3
+		margin_bottom = 5
+		maximumsize = { 350 -1 }
+
+		button = {
+			size = { 350 30 }
+			using = expand_button_bg_left_fade
+			onclick = "[GetVariableSystem.Toggle('edqv_outliner_collapsed')]"
+			tooltip = "EDQV_HELP"
+
+			button = {
+				using = expand_arrow
+				onclick = "[GetVariableSystem.Toggle('edqv_outliner_collapsed')]"
+				visible = "[Not(GetVariableSystem.Exists('edqv_outliner_collapsed'))]"
+				position = { 7 0 }
+				parentanchor = vcenter
+				size = { 18 18 }
+			}
+			button = {
+				using = expand_arrow_expanded
+				onclick = "[GetVariableSystem.Toggle('edqv_outliner_collapsed')]"
+				visible = "[GetVariableSystem.Exists('edqv_outliner_collapsed')]"
+				position = { 7 0 }
+				parentanchor = vcenter
+				size = { 18 18 }
+			}
+			textbox = {
+				position = { 30 0 }
+				parentanchor = vcenter
+				autoresize = yes
+				align = nobaseline
+				elide = right
+				maximumsize = { 310 -1 }
+				text = "EDQV_HEADER"
+			}
+		}
+
+		container = {
+			visible = "[GetVariableSystem.Exists('edqv_outliner_collapsed')]"
+			minimumsize = { 350 -1 }
+			maximumsize = { 350 -1 }
+
+			# Use the complete button widget used by outliner_entry. Its native
+			# shader handles sprite-sheet frames, the bevel and UI skin textures.
+			button = {
+				using = clean_button
+				size = { 100% 100% }
+				alwaystransparent = yes
+				blockoverride "bevel_margin" {
+					margin = { 1 1 }
+				}
+			}
+
+			flowcontainer = {
+				direction = vertical
+				spacing = 4
+				margin = { 10 5 }
+				maximumsize = { 330 -1 }
+
+				textbox = {
+					autoresize = yes
+					multiline = yes
+					align = left|nobaseline
+					minimumsize = { 330 -1 }
+					maximumsize = { 330 -1 }
+					text = "[GetPlayer.GetPopConsumptionDependenceOnDesc(GetPlayer.GetCapital.GetMarket.GetOwner)]"
+				}
+
+				textbox = {
+					autoresize = yes
+					multiline = yes
+					align = left|nobaseline
+					minimumsize = { 330 -1 }
+					maximumsize = { 330 -1 }
+					text = "EDQV_TOTAL"
+					tooltip = "[GetPlayer.GetEconomicDependenceOnDesc(GetPlayer.GetCapital.GetMarket.GetOwner)]"
+				}
+			}
+		}
+	}
+}

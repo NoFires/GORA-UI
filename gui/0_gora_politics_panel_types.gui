@@ -37,6 +37,32 @@ types information_panels_types
 		}
 		blockoverride "multiitem" {}
 
+		blockoverride "underlay_plotlines" {
+			v3_plotline_current_value_marker = {
+				blockoverride "marker_values" {
+					min = "[GetMinPadded(Country.GetGDPTrend)]"
+					max = "[GetMaxPadded(Country.GetGDPTrend)]"
+					value = "[GetTrendValue(Country.GetGDPTrend)]"
+				}
+			}
+		}
+
+		blockoverride "extra_plotlines" {
+			v3_plotline_current_value_readout = {
+				blockoverride "marker_values" {
+					min = "[GetMinPadded(Country.GetGDPTrend)]"
+					max = "[GetMaxPadded(Country.GetGDPTrend)]"
+					value = "[GetTrendValue(Country.GetGDPTrend)]"
+				}
+				blockoverride "marker_peak_visibility" {
+					visible = "[GreaterThan_CFixedPoint(Subtract_CFixedPoint(GetMax(Country.GetGDPTrend), GetTrendValue(Country.GetGDPTrend)), Multiply_CFixedPoint(GetMax(Country.GetGDPTrend), '(CFixedPoint)0.001'))]"
+				}
+				blockoverride "marker_peak_text" {
+					raw_text = "-[Subtract_CFixedPoint(GetMax(Country.GetGDPTrend), GetTrendValue(Country.GetGDPTrend))|K]"
+				}
+			}
+		}
+
 		blockoverride "empty_state_visibility" {
 			visible = "[EqualTo_string(GetOldestDate(Country.GetGDPTrend), GetLatestDate(Country.GetGDPTrend))]"
 		}

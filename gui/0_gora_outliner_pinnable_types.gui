@@ -47,6 +47,14 @@ types gora_pinnable_outliner_items {
 	type market_item = pinnable_outliner_entry {
 		datacontext = "[OutlinerEntry.AccessScope.AccessMarket]"
 
+		state = {
+			name = gora_refresh_pinned_prices
+			trigger_on_create = yes
+			duration = 5
+			on_start = "[GetScriptedGui('gora_refresh_pinned_market_prices').Execute(GuiScope.SetRoot(Market.MakeScope).End)]"
+			on_finish = "[PdxGuiWidget.TriggerAnimation('gora_refresh_pinned_prices')]"
+		}
+
 		tooltipwidget = {
 			FancyTooltip_Market = {}
 		}
@@ -102,15 +110,16 @@ types gora_pinnable_outliner_items {
 					flowcontainer = {
 
 						# ─────────────────────────────────────────────────────────────────
-						# 需求最高 / 价格最高区 (Lowest Balance)
+						# 溢价最高区（按相对基础价格的涨幅降序）
 						# ─────────────────────────────────────────────────────────────────
 						flowcontainer = {
 							spacing = 11
 							maximumsize = { @entry_width -1 }
-							datamodel = "[Market.GetTopGoodsByLowestBalance('(int32)4')]"
+							datamodel = "[Market.GetOwner.MakeScope.GetList('gora_pinned_expensive_goods')]"
 
 							item = {
 								button = {
+									datacontext = "[Scope.GetMarketGoods.GetGoods]"
 									size = { 70 23 }
 									visible = "[Not(Goods.IsLocal)]"
 
@@ -163,14 +172,15 @@ types gora_pinnable_outliner_items {
 						
 					flowcontainer = {
 						# ─────────────────────────────────────────────────────────────────
-						# 供给最高 / 价格最低区 (Highest Balance)
+						# 折价最高区（按相对基础价格的跌幅降序）
 						# ─────────────────────────────────────────────────────────────────
 						spacing = 11
 						maximumsize = { @entry_width -1 }
-						datamodel = "[Market.GetTopGoodsByHighestBalance('(int32)4')]"
+						datamodel = "[Market.GetOwner.MakeScope.GetList('gora_pinned_cheap_goods')]"
 
 						item = {
 							button = {
+								datacontext = "[Scope.GetMarketGoods.GetGoods]"
 								visible = "[Not(Goods.IsLocal)]"
 								size = { 70 23 }
 

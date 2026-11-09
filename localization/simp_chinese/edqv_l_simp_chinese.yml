@@ -1,0 +1,9 @@
+﻿l_simp_chinese:
+ EDQV_HEADER: "对市场主导国的商品依赖"
+ EDQV_HELP: "#header 对市场主导国的商品依赖#!\n显示本国生产无法满足、由同一市场的主导国供应的商品。\n本国主导市场或消费依赖为零时隐藏。\n\n每行显示：供应价值 £（数量）商品\n消费依赖以供应价值与本国每周 GDP 比较；经济依赖总额还包括所有权和贸易等因素。\n\n使用游戏原有明细，通常显示前十种商品，其余合并显示。点击标题展开或折叠。"
+ EDQV_TOTAL: "经济依赖：[GetPlayer.GetEconomicDependenceOn(GetPlayer.GetCapital.GetMarket.GetOwner)]"
+ EDQV_JOURNAL_TITLE: "对市场主导国的商品依赖"
+ EDQV_JOURNAL_DESC: "开启或关闭大纲中的依赖商品列表。仅在其他国家主导本国市场且消费依赖大于零时显示此设置。"
+ EDQV_JOURNAL_TURN_OFF: "关闭大纲显示（当前开启）"
+ EDQV_JOURNAL_TURN_ON: "开启大纲显示（当前关闭）"
+ EDQV_JOURNAL_TOGGLE_HELP: "默认开启。设置按国家保存在存档中；关闭列表后仍可在此重新开启。"

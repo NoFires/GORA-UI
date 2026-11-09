@@ -6,10 +6,10 @@
  # ─── Game concept ───────────────────────────────────────────────────────
  concept_gdp_growth_rate:0 "国内生产总值增长率"
  concept_gdp_growth_rate_short:0 "GDP增长"
- concept_gdp_growth_rate_desc:0 "你的[concept_country]的[concept_gdp]的年化变化。它反映了在所有[Concept('concept_building','$concept_buildings$')]中就业的[Concept('concept_pop','$concept_pops$')]所产出的总产出的变化，这些变化受到[concept_pop_growth]、通过[concept_construction]进行的投资，以及先进的[Concept('concept_production_method','$concept_production_methods$')]的影响。稳定的[Concept('concept_gdp_growth_rate','$concept_gdp_growth_rate_short$')]会影响[Concept('concept_loyalist','$concept_loyalists$')]和[Concept('concept_radical','$concept_radicals$')]的人数。"
+ concept_gdp_growth_rate_desc:0 "你的[concept_country]的[concept_gdp]的年化变化。它反映了在所有[Concept('concept_building','$concept_buildings|q$')]中就业的[Concept('concept_pop','$concept_pops|q$')]所产出的总产出的变化，这些变化受到[concept_pop_growth]、通过[concept_construction]进行的投资，以及先进的[Concept('concept_production_method','$concept_production_methods|q$')]的影响。稳定的[Concept('concept_gdp_growth_rate','$concept_gdp_growth_rate_short|q$')]会影响[Concept('concept_loyalist','$concept_loyalists|q$')]和[Concept('concept_radical','$concept_radicals|q$')]的人数。"
 
  # ─── Magic packaging key (used inside other tooltips) ───────────────────
- GDPGR_CONCEPT_CALL:0 "[Concept('concept_gdp_growth_rate', '$concept_gdp_growth_rate_short$')]"
+ GDPGR_CONCEPT_CALL:0 "[Concept('concept_gdp_growth_rate', '$concept_gdp_growth_rate_short|q$')]"
 
  # ─── In-line growth-rate display & tooltips ─────────────────────────────
  GDPGR_growth_text:0 "@money!年均 $GDPGR_tt_avg_growth_rate_abs$（$GDPGR_tt_avg_growth_rate_per$）$GDPGR_CONCEPT_CALL$$GDPGR_leaderboard_text$"

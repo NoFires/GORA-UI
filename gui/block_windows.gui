@@ -86,6 +86,8 @@ types vfx_types {
 
 			block "camera_fov_y_degrees" {}
 			block "camera_position" {}		
+			block "camera_look_at" {}
+			block "camera_near_far" {}
 			block "entity_instance" {}
 			block "alpha" {}
 			block "visible" {}
@@ -138,13 +140,15 @@ types windows {
 			widget = {
 				size = { 100% 82 }
 
+				block "behind_header" {}
+
 				popup_top_header = {}
 
 				textbox = {
 					block "first_line_position" {
 						position = { 0 24 }
 					}
-					size = { 75% 40 }
+					size = { 70% 40 }
 					block "window_header_name" {
 						text = ""
 					}
@@ -177,6 +181,23 @@ types windows {
 			}
 			back_button_large = {
 				block "header_back_button" {}
+				parentanchor = center
+			}
+		}
+
+		### RANDOMIZE
+		container = {
+			position = { 3 10 }
+			block "header_reset_button_visibility" {
+				visible = no
+			}
+
+			icon = {
+				size = { 53 53 }
+				texture = "gfx/interface/backgrounds/round_button_bg.dds"
+			}
+			button_icon_random = {
+				block "header_reset_button" {}
 				parentanchor = center
 			}
 		}
@@ -1060,15 +1081,42 @@ template = map_modes_button_position {
 
 ### If the widget should NOT be visible in fullscreens, not taking the Treaty Draft panel into account.
 template fullscreen_hide {
-	visible = "[Not(Or(Or(Or(Or(InformationPanelBar.IsPanelOpen('politics'), InformationPanelBar.IsPanelOpen('politics_panel_change_law')), InformationPanelBar.IsPanelOpen('tech_tree')), InformationPanelBar.IsPanelOpen('pop_browser')), InformationPanelBar.IsPanelOpen('building_browser')))]"
+    visible = "[Not(
+        Or6(
+            InformationPanelBar.IsPanelOpen('politics'),
+            InformationPanelBar.IsPanelOpen('politics_panel_change_law'),
+            InformationPanelBar.IsPanelOpen('tech_tree'),
+            InformationPanelBar.IsPanelOpen('pop_browser'),
+            InformationPanelBar.IsPanelOpen('building_browser'),
+            GetVariableSystem.Exists('com_fullscreen')
+        )
+    )]"
 }
 
 ### If the widget should be visible when ANY fullscreen is open, including the Treaty Draft panel.
 template half_and_fullscreen_show {
-	visible = "[Or(Or(Or(Or(Or(InformationPanelBar.IsPanelOpen('politics'), InformationPanelBar.IsPanelOpen('politics_panel_change_law')), InformationPanelBar.IsPanelOpen('tech_tree')), InformationPanelBar.IsPanelOpen('pop_browser')), InformationPanelBar.IsPanelOpen('building_browser')), InformationPanelBar.IsPanelOpen('treaty_draft_panel'))]"
+	visible = "[Or7(
+	    InformationPanelBar.IsPanelOpen('politics'),
+	    InformationPanelBar.IsPanelOpen('politics_panel_change_law'),
+	    InformationPanelBar.IsPanelOpen('tech_tree'),
+	    InformationPanelBar.IsPanelOpen('pop_browser'),
+	    InformationPanelBar.IsPanelOpen('building_browser'),
+	    InformationPanelBar.IsPanelOpen('treaty_draft_panel'),
+	    GetVariableSystem.Exists('com_fullscreen')
+	)]"
 }
 
 ### If the widget should NOT be visible when ANY fullscreen is open, including the Treaty Draft panel.
 template half_and_fullscreen_hide {
-	visible = "[Not(Or(Or(Or(Or(Or(InformationPanelBar.IsPanelOpen('politics'), InformationPanelBar.IsPanelOpen('politics_panel_change_law')), InformationPanelBar.IsPanelOpen('tech_tree')), InformationPanelBar.IsPanelOpen('pop_browser')), InformationPanelBar.IsPanelOpen('building_browser')), InformationPanelBar.IsPanelOpen('treaty_draft_panel')))]"
+	visible = "[Not(
+	    Or7(
+	        InformationPanelBar.IsPanelOpen('politics'),
+	        InformationPanelBar.IsPanelOpen('politics_panel_change_law'),
+	        InformationPanelBar.IsPanelOpen('tech_tree'),
+	        InformationPanelBar.IsPanelOpen('pop_browser'),
+	        InformationPanelBar.IsPanelOpen('building_browser'),
+	        InformationPanelBar.IsPanelOpen('treaty_draft_panel'),
+	        GetVariableSystem.Exists('com_fullscreen')
+	    )
+	 )]"
 }

@@ -141,3 +141,11 @@ com_topbar_element_trade_capacity = {
 		always = yes
 	}
 }
+
+com_topbar_element_sailors = {
+	scope = country
+
+	is_shown = {
+		always = yes
+	}
+}

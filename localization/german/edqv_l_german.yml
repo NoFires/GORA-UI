@@ -1,0 +1,9 @@
+﻿l_german:
+ EDQV_HEADER: "Goods dependence on market leader"
+ EDQV_HELP: "#header Goods dependence on market leader#!\nGoods your market leader supplies for demand that your domestic production cannot fulfill, within the same market.\nHidden when you lead your own market or consumption dependence is zero.\n\nRows: supplied value £ (quantity) goods\nConsumption dependence compares this value to your weekly GDP. Total economic dependence also includes ownership and trade factors.\n\nUses the native game breakdown, normally the top 10 goods with remaining entries summarized.\nClick the title to collapse or expand."
+ EDQV_TOTAL: "Economic dependence: [GetPlayer.GetEconomicDependenceOn(GetPlayer.GetCapital.GetMarket.GetOwner)]"
+ EDQV_JOURNAL_TITLE: "Goods dependence on market leader"
+ EDQV_JOURNAL_DESC: "Turn the goods dependence outliner on or off. This entry appears only when another country leads your market and you have positive goods dependence."
+ EDQV_JOURNAL_TURN_OFF: "Turn outliner off (currently on)"
+ EDQV_JOURNAL_TURN_ON: "Turn outliner on (currently off)"
+ EDQV_JOURNAL_TOGGLE_HELP: "Enabled by default. Your choice is saved per country and restored when you load the save. This journal control remains available while the outliner is off."

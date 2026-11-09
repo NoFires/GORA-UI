@@ -229,6 +229,7 @@ types gora_military_formation_change_name
 				parentanchor = vcenter
 				tooltip = "MILITARY_FORMATION_TRANSFER_UNIT_TOOLTIP"
 				using = tooltip_ne
+				enabled = "[Not(MilitaryFormation.IsDefeated)]"
 				onclick = "[PopupManager.ShowTransferFormation( MilitaryFormation.AccessSelf )]"
 				
 				blockoverride "icon_size" {

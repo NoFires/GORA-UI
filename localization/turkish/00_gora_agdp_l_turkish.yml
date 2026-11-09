@@ -3,9 +3,9 @@
 
  concept_gdp_growth_rate:0       "GSYİH Büyüme Oranı"
  concept_gdp_growth_rate_short:0 "GSYİH Büyümesi"
- concept_gdp_growth_rate_desc:0  "[concept_country] [concept_gdp] değerindeki yıllıklandırılmış değişim. Tüm [Concept('concept_building','$concept_buildings$')] bünyesinde istihdam edilen [Concept('concept_pop','$concept_pops$')] tarafından üretilen toplam çıktıdaki değişimleri yansıtır; [concept_pop_growth], [concept_construction] yoluyla yapılan yatırımlar ve gelişmiş [Concept('concept_production_method','$concept_production_methods$')] tarafından şekillendirilir. İstikrarlı bir [Concept('concept_gdp_growth_rate','$concept_gdp_growth_rate_short$')], [Concept('concept_loyalist','$concept_loyalists$')] ve [Concept('concept_radical','$concept_radicals$')] sayısını etkileyebilir."
+ concept_gdp_growth_rate_desc:0  "[concept_country] [concept_gdp] değerindeki yıllıklandırılmış değişim. Tüm [Concept('concept_building','$concept_buildings|q$')] bünyesinde istihdam edilen [Concept('concept_pop','$concept_pops|q$')] tarafından üretilen toplam çıktıdaki değişimleri yansıtır; [concept_pop_growth], [concept_construction] yoluyla yapılan yatırımlar ve gelişmiş [Concept('concept_production_method','$concept_production_methods|q$')] tarafından şekillendirilir. İstikrarlı bir [Concept('concept_gdp_growth_rate','$concept_gdp_growth_rate_short|q$')], [Concept('concept_loyalist','$concept_loyalists|q$')] ve [Concept('concept_radical','$concept_radicals|q$')] sayısını etkileyebilir."
 
- GDPGR_CONCEPT_CALL:0 "[Concept('concept_gdp_growth_rate', '$concept_gdp_growth_rate_short$')]"
+ GDPGR_CONCEPT_CALL:0 "[Concept('concept_gdp_growth_rate', '$concept_gdp_growth_rate_short|q$')]"
 
  GDPGR_growth_text:0          "@money! Yıllık Ort. $GDPGR_tt_avg_growth_rate_abs$ ($GDPGR_tt_avg_growth_rate_per$) $GDPGR_CONCEPT_CALL$ $GDPGR_leaderboard_text$"
 
