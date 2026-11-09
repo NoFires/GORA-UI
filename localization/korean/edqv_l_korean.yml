@@ -1,0 +1,9 @@
+﻿l_korean:
+ EDQV_HEADER: "시장 주도국 의존 상품"
+ EDQV_HELP: "#header 시장 주도국 의존 상품#!\n우리나라가 자체 생산으로 충족하지 못한 수요 중 같은 시장의 시장 주도국이 공급한 상품입니다.\n우리나라가 시장 주도국이거나 상품 의존도가 0이면 항목을 숨깁니다.\n\n행 표시: 공급 가치 £ (수량) 상품\n소비 의존도: 공급 가치를 우리나라의 주간 GDP와 비교한 수치\n전체 경제의존도에는 해외 소유권과 무역 등의 요인도 포함됩니다.\n\n기본 게임의 상품별 내역을 그대로 사용합니다. 기본 표시 한도는 상위 10개이며, 나머지는 '몇 개 아이템'으로 표시될 수 있습니다.\n제목을 누르면 목록을 접거나 펼칩니다."
+ EDQV_TOTAL: "경제의존도: [GetPlayer.GetEconomicDependenceOn(GetPlayer.GetCapital.GetMarket.GetOwner)]"
+ EDQV_JOURNAL_TITLE: "시장 주도국 의존 상품"
+ EDQV_JOURNAL_DESC: "의존 상품 목록의 아웃라이너 표시를 켜거나 끕니다. 이 항목은 다른 국가가 주도하는 시장에 속하고 상품 의존도가 있을 때만 나타납니다."
+ EDQV_JOURNAL_TURN_OFF: "아웃라이너 끄기 (현재 켜짐)"
+ EDQV_JOURNAL_TURN_ON: "아웃라이너 켜기 (현재 꺼짐)"
+ EDQV_JOURNAL_TOGGLE_HELP: "기본값은 켜짐입니다. 선택한 상태는 국가별로 세이브에 저장되며, 불러온 뒤에도 유지됩니다. 목록을 꺼도 이 일지에서 다시 켤 수 있습니다."

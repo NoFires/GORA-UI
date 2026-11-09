@@ -74,7 +74,7 @@ types gora_goods_panel_types
 					tooltip = "[concept_world_market]"
 				} 
 				blockoverride "first_button_click" {
-					onclick = "[InformationPanelBar.OpenGoodsWorldMarketPanel( GoodsPanel.GetGoods.Self )]"
+					onclick = "[InformationPanelBar.SwitchToGoodsWorldMarketPanel( GoodsPanel.GetGoods.Self )]"
 				}
 				blockoverride "first_button_visibility_checked" {
 					visible = "[Not(GoodsPanel.GetGoods.IsLocal)]"
@@ -99,7 +99,7 @@ types gora_goods_panel_types
 					visible = "[GoodsPanel.GetGoods.HasStateContext]"
 				}
 				blockoverride "third_button_click" {
-					onclick = "[InformationPanelBar.OpenGoodsStatePanel(GoodsPanel.GetGoods.GetState, GoodsPanel.GetGoods.Self)]"
+					onclick = "[InformationPanelBar.SwitchToGoodsStatePanel(GoodsPanel.GetGoods.GetState, GoodsPanel.GetGoods.Self)]"
 				}
 
 				# states in market
@@ -113,7 +113,7 @@ types gora_goods_panel_types
 					visible = "[GoodsPanel.GetGoods.HasMarketContext]"
 				}			
 				blockoverride "fourth_button_click" {
-					onclick = "[InformationPanelBar.OpenGoodsLocalPricesPanel(GoodsPanel.GetGoods.Self)]"
+					onclick = "[InformationPanelBar.SwitchToGoodsLocalPricesPanel(GoodsPanel.GetGoods.Self)]"
 				}	
 				
 				# usage / application
@@ -121,7 +121,7 @@ types gora_goods_panel_types
 					text = USAGE
 				}
 				blockoverride "fifth_button_click" {
-					onclick = "[InformationPanelBar.OpenGoodsUsagePanel(GoodsPanel.GetGoods.Self)]"
+					onclick = "[InformationPanelBar.SwitchToGoodsUsagePanel(GoodsPanel.GetGoods.Self)]"
 				}
 				blockoverride "fifth_button_visibility_checked" {
 					visible = yes
@@ -181,6 +181,7 @@ types gora_goods_panel_types
 					widget = {
 						size = { @panel_width 110 }
 						parentanchor = hcenter
+						datacontext = "[GoodsPanel.GetGoods.GetBaseGoods]"
 						#visible = no
 
 						hbox = {
@@ -444,57 +445,21 @@ types gora_goods_panel_types
 						}
 					}
 
-					flowcontainer = {
-						visible = "[Not(IsDataModelEmpty(Goods.GetMarketPrestigeGoods))]"
-						parentanchor = hcenter
-						direction = vertical
-						margin_bottom = 5
-						margin_top = 5
-
-						default_header = {
-							parentanchor = hcenter
-
-							blockoverride "text"
-							{
-								text = "GOODS_AND_PRESTIGE_GOODS_DISTRIBUTION_HEADER"
+					goods_prestige_goods_distribution = {
+						blockoverride "prestige_goods_distribution_datacontext" {
+							datacontext = "[GoodsPanel.GetGoods.GetBaseGoods]"
 							}
 
-							blockoverride "text_max_width" {
-								max_width = 530
-							}
+						blockoverride "prestige_goods_not_selected_visibility" {
+							visible = "[Not(Goods.IsSameGoodsAs(GoodsPanel.GetGoods.Self))]"
 						}
 
-						goods_prestige_goods_breakdown_list_item = {						
-							parentanchor = hcenter
-
-							blockoverride "prestige_goods_item_name_size" {
-								minimumsize = { 300 -1 }
-								maximumsize = { 300 -1 }
+						blockoverride "prestige_goods_selected_visibility" {
+							visible = "[Goods.IsSameGoodsAs(GoodsPanel.GetGoods.Self)]"
 							}
 
-							blockoverride "prestige_goods_item_text_1" {
-								raw_text = "BASE_GOODS_MARKET_SELL_ORDERS"
-							}
-
-							blockoverride "prestige_goods_item_text_2" {
-								raw_text = "BASE_GOODS_MARKET_BUY_ORDERS"
-							}
-						}
-
-						flowcontainer = {
-							direction = vertical
-							parentanchor = hcenter
-							datamodel = "[Goods.GetMarketPrestigeGoods]"
-
-							item = {
-								goods_prestige_goods_breakdown_list_item = {
-
-									blockoverride "prestige_goods_item_name_size" {
-										minimumsize = { 260 -1 }
-										maximumsize = { 260 -1 }
-									}
-								}
-							}
+						blockoverride "prestige_goods_onclick" {
+							onclick = "[InformationPanelBar.SwitchToGoodsPanel(Goods.GetMarket, Goods.Self)]"
 						}
 					}
 

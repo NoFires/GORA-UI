@@ -1,0 +1,50 @@
+﻿gora_refresh_pinned_market_prices = {
+	scope = market
+
+	effect = {
+		# Cache on the market owner for one game day; no global market scan.
+		if = {
+			limit = { owner = { NOT = { has_variable = gora_pinned_prices_current } } }
+			owner = {
+				clear_variable_list = gora_pinned_expensive_goods
+				clear_variable_list = gora_pinned_cheap_goods
+			}
+
+			ordered_market_goods = {
+				limit = {
+					is_tradeable = yes
+					market_goods_pricier >= 0.01
+				}
+				order_by = market_goods_pricier
+				max = 4
+				check_range_bounds = no
+				save_temporary_scope_as = gora_pinned_good
+				root.owner = {
+					add_to_variable_list = {
+						name = gora_pinned_expensive_goods
+						target = scope:gora_pinned_good
+					}
+				}
+			}
+
+			ordered_market_goods = {
+				limit = {
+					is_tradeable = yes
+					market_goods_cheaper >= 0.01
+				}
+				order_by = market_goods_cheaper
+				max = 4
+				check_range_bounds = no
+				save_temporary_scope_as = gora_pinned_good
+				root.owner = {
+					add_to_variable_list = {
+						name = gora_pinned_cheap_goods
+						target = scope:gora_pinned_good
+					}
+				}
+			}
+
+			owner = { set_variable = { name = gora_pinned_prices_current value = 1 days = 1 } }
+		}
+	}
+}

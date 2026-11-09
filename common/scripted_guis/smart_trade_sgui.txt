@@ -1,0 +1,19 @@
+﻿# Smart Trade scripted GUIs. Read-only bridges from GUI to script triggers;
+# none has an effect, so nothing here can change game state.
+
+# Do the two countries' MARKETS border each other? Then a goods transfer goes
+# overland: no shipping lane, no shipping cost. This is the same test vanilla's
+# goods_transfer article uses (common/treaty_articles/13_goods_transfer.txt),
+# and the GUI has no equivalent function.
+# GUI: GetScriptedGui('st_markets_adjacent_sgui').IsValid(GuiScope.SetRoot(<country>.MakeScope).AddScope('st_other', <country>.MakeScope).End)
+st_markets_adjacent_sgui = {
+	scope = country
+	saved_scopes = { st_other }
+
+	is_valid = {
+		market = { is_adjacent_to_market = scope:st_other.market }
+	}
+
+	ai_is_valid = { always = no }
+	ai_chance = { base = 0 }
+}

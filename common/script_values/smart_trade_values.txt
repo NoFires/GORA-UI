@@ -1,0 +1,126 @@
+﻿# Smart Trade script values. Read-only: they compute, nothing here changes
+# game state. Called from the GUI as <Object>.MakeScope.ScriptValue('name'),
+# because GUI expressions cannot sum over a list (see
+# docs/smart-trade-investigation.md, "Constraints found while designing").
+#
+# How a goods transfer is booked (confirmed in game 2026-10-03): the SENDING
+# treasury buys the goods in its own market at that market's price and sells
+# them in the partner's market at the partner's price. Shipping (merchant
+# marine) is read from the lane in the GUI, because script cannot see lanes.
+
+# --- Market price, root: market_goods ------------------------------------
+# Script has no absolute price, only "% pricier / cheaper than base price".
+# Correct whether the two values are signed or floored at zero (run 3 showed
+# this matches the market's own price).
+st_price = {
+	value = goods.base_price
+	multiply = {
+		value = 1
+		add = { value = market_goods_pricier min = 0 }
+		subtract = { value = market_goods_cheaper min = 0 }
+	}
+}
+
+# --- Per article, root: treaty_article -------------------------------------
+# Merchant marine this good needs at distance x1.00 (vanilla: 1 per
+# traded_quantity units). st_article_traded_quantity is generated.
+st_article_lane_units = {
+	value = input_quantity
+	divide = st_article_traded_quantity
+}
+
+# Home and partner market price of this article's good.
+st_article_home_price = {
+	value = 0
+	if = {
+		limit = { source_country = { save_temporary_scope_as = st_src } }
+		add = { "input_market_goods(scope:st_src)" ?= { add = st_price } }
+	}
+}
+st_article_partner_price = {
+	value = 0
+	if = {
+		limit = { target_country = { save_temporary_scope_as = st_tgt } }
+		add = { "input_market_goods(scope:st_tgt)" ?= { add = st_price } }
+	}
+}
+
+# Sale minus purchase, before shipping.
+st_article_margin = {
+	value = st_article_partner_price
+	subtract = st_article_home_price
+	multiply = input_quantity
+}
+
+st_article_has_lane = {
+	value = 0
+	if = { limit = { exists = shipping_lane } value = 1 }
+}
+
+# --- Per treaty, current scope: treaty --------------------------------------
+# Only goods the PLAYER sends touch the player's treasury.
+st_treaty_margin = {
+	value = 0
+	every_scope_article = {
+		limit = { has_type = goods_transfer source_country = { is_player = yes } }
+		add = st_article_margin
+	}
+}
+# Only goods that actually travel by lane: an overland transfer (markets that
+# border each other) has no lane and costs nothing to ship. Counting those
+# made run 3's treasury estimate charge Germany's overland tools as if
+# shipped by sea.
+st_treaty_lane_units = {
+	value = 0
+	every_scope_article = {
+		limit = {
+			has_type = goods_transfer
+			source_country = { is_player = yes }
+			exists = shipping_lane
+		}
+		add = st_article_lane_units
+	}
+}
+st_treaty_has_lane = {
+	value = 0
+	if = {
+		limit = {
+			any_scope_article = {
+				has_type = goods_transfer
+				source_country = { is_player = yes }
+				exists = shipping_lane
+			}
+		}
+		value = 1
+	}
+}
+# Money transfers: + received, - paid.
+st_treaty_money = {
+	value = 0
+	every_scope_article = {
+		limit = { has_type = money_transfer target_country = { is_player = yes } }
+		add = input_quantity
+	}
+	every_scope_article = {
+		limit = { has_type = money_transfer source_country = { is_player = yes } }
+		subtract = input_quantity
+	}
+}
+
+# --- Player totals, root: the player country --------------------------------
+st_player_treaty_margin = {
+	value = 0
+	every_scope_treaty = { add = st_treaty_margin }
+}
+st_player_treaty_money = {
+	value = 0
+	every_scope_treaty = { add = st_treaty_money }
+}
+st_player_lane_units = {
+	value = 0
+	every_scope_treaty = { add = st_treaty_lane_units }
+}
+st_player_mm_price = {
+	value = 0
+	market ?= { mg:merchant_marine ?= { add = st_price } }
+}

@@ -9,7 +9,7 @@
  #   interfaces_l_english.yml:10514           — notification_new_ruler_desc
  # File lives in localization/english/replace/ so it overrides the vanilla string.
 
- notification_exile_notification_desc: "[SCOPE.sCharacter('exile_scope').GetFullName] a été envoyé[SCOPE.sCharacter('exile_scope').GetCustom('FR_E')] [Concept('concept_exile', '$concept_in_exile$')|l] par [SCOPE.sCountry('exiling_country_scope').GetAltNameNoFormatting('Le')][SCOPE.sCountry('exiling_country_scope').GetName].\n$gora_dan_agitator_interest_group$\n$gora_dan_agitator_ideology$\n$gora_dan_agitator_traits$"
+ notification_exile_notification_desc: "[SCOPE.sCharacter('exile_scope').GetFullName] a été envoyé[SCOPE.sCharacter('exile_scope').GetCustom('FR_E')] [Concept('concept_exile', '$concept_in_exile|q$')|l] par [SCOPE.sCountry('exiling_country_scope').GetAltNameNoFormatting('Le')][SCOPE.sCountry('exiling_country_scope').GetName].\n$gora_dan_agitator_interest_group$\n$gora_dan_agitator_ideology$\n$gora_dan_agitator_traits$"
 
  notification_new_ruler_desc: "Le règne de [SCOPE.sCharacter( 'previous' ).GetFullName] en tant que [concept_ruler|l] est révolu. [SCOPE.GetRootScope.GetCharacter.GetFullName] est désormais le [Concept('concept_ruler', SCOPE.GetRootScope.GetCharacter.GetPrimaryRoleTitle)|l] du [SCOPE.GetRootScope.GetCharacter.GetCountry.GetName]\n$gora_dan_ruler_interest_group$\n$gora_dan_ruler_ideology$\n$gora_dan_ruler_traits$"
 

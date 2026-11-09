@@ -1840,7 +1840,7 @@ types company_panel_types
 		}
 
 		### PROFIT TREND
-		v3_plotline_company_profit = {
+		v3_plotline = {
 			margin_top = 0
 
 			blockoverride "size" {
@@ -1891,6 +1891,16 @@ types company_panel_types
 
 			blockoverride "enddate" {
 				text = "[GetLatestDate(Company.GetProfitTrend)]"
+			}
+
+			blockoverride "underlay_plotlines" {
+				v3_plotline_current_value_marker = {
+					blockoverride "marker_values" {
+						min = "[Min_CFixedPoint('(CFixedPoint)0', GetMinPadded(Company.GetProfitTrend))]"
+						max = "[GetMaxPadded(Company.GetProfitTrend)]"
+						value = "[GetTrendValue(Company.GetProfitTrend)]"
+					}
+				}
 			}
 
 			blockoverride "empty_state_visibility" {

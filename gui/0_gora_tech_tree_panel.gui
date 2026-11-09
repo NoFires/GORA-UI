@@ -704,18 +704,21 @@ types gora_tech_tree_panel {
 					position = { -10 10 }
 					button_icon_reset = {
 						visible = "[InformationPanel.IsTabSelected('production')]"
+						using = tooltip_se
 						tooltip = "TOOLTIP_RESET"
 						onclick = "[TechTreePanel.ResetProductionView]"
 						size = { 42 42 }
 					}
 					button_icon_reset = {
 						visible = "[InformationPanel.IsTabSelected('military')]"
+						using = tooltip_se
 						tooltip = "TOOLTIP_RESET"
 						onclick = "[TechTreePanel.ResetMilitaryView]"
 						size = { 42 42 }
 					}
 					button_icon_reset = {
 						visible = "[InformationPanel.IsTabSelected('society')]"
+						using = tooltip_se
 						tooltip = "TOOLTIP_RESET"
 						onclick = "[TechTreePanel.ResetSocietyView]"
 						size = { 42 42 }

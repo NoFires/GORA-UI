@@ -1,0 +1,19 @@
+﻿l_simp_chinese:
+ # Base Panel Localisations
+ concept_market_access_price_impact: "市场准入价格影响"
+ concept_market_access_price_impact_desc: "$state_market_access_price_impact_desc$"
+ concept_market_access_price_impact_short: "价差"
+ GOODS_MARKET_ACCESS_PRICE_IMPACT_BSO: "[concept_state] [Concept('concept_market_access_price_impact','$concept_market_access_price_impact_short|q$')]\n[State.GetModifier.GetValueFor('state_market_access_price_impact')|v0%]"
+ BSO_MAPI_TOOLTIP_REPLACEMENT: "[State.GetModifier.GetTooltipFor('state_market_access_price_impact')]"
+ BSO_STRATEGIC_REGION_SHORT: "[Concept('concept_strategic_region', '$concept_strategic_region_short|q$')]"
+ STATE_REGION_STATE_STATUS: "[concept_state_region]\n[State.GetStateRegion.GetName]"
+ # Choice features: Game Rules & Decisions etc.
+ rule_mog_bso_structured_state_overview: "BSO：结构化州概览"
+ setting_bso_structured_state_overview_enabled: "启用"
+ setting_bso_structured_state_overview_enabled_desc: "州概览面板将使用结构化布局，并可通过决议切换布局。"
+ setting_bso_structured_state_overview_disabled: "禁用"
+ setting_bso_structured_state_overview_disabled_desc: "州概览面板将使用包含改进信息元素的经典布局。"
+ mog_bso_set_structured_panel_decision: "BSO：使用结构化州面板"
+ mog_bso_set_structured_panel_decision_desc: "将州概览面板设为结构化布局，紧凑地按类型分组显示改进的信息元素。"
+ mog_bso_set_classic_panel_decision: "BSO：使用经典州面板"
+ mog_bso_set_classic_panel_decision_desc: "将州概览面板设为经典布局，并整合改进的信息元素。"

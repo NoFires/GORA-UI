@@ -317,6 +317,20 @@ com_topbar_setup = {
 					element_name = com_topbar_element_trade_capacity
 				}
 			}
+			#= Sailors
+			if = {
+				limit = {
+					NOT = {
+						any_in_global_list = {
+							variable = com_topbar_items
+							this = flag:com_topbar_element_sailors
+						}
+					}
+				}
+				add_com_topbar_element = {
+					element_name = com_topbar_element_sailors
+				}
+			}
 		}
 	}
 }

@@ -1,0 +1,49 @@
+# Journal settings use the same native eligibility as the outliner.
+# Keep the control available while disabled so the player can turn it back on.
+# Absence of the saved country preference means enabled, including older saves.
+types edqv_journal_types {
+	type edqv_journal_entry = flowcontainer {
+		name = "edqv_journal_settings"
+		visible = "[And(GetPlayer.GetCapital.GetMarket.GetOwner.IsValid, And(Not(ObjectsEqual(GetPlayer.GetCapital.GetMarket.GetOwner, GetPlayer.Self)), GreaterThan_CFixedPoint(GetPlayer.GetPopConsumptionDependenceOnRaw(GetPlayer.GetCapital.GetMarket.GetOwner), '(CFixedPoint)0')))]"
+		direction = vertical
+		parentanchor = hcenter
+		spacing = 6
+		margin_bottom = 14
+		maximumsize = { 510 -1 }
+
+		default_header = {
+			blockoverride "size" { size = { 510 44 } }
+			blockoverride "text" { text = "EDQV_JOURNAL_TITLE" }
+		}
+		textbox = {
+			text = "EDQV_JOURNAL_DESC"
+			autoresize = yes
+			multiline = yes
+			align = left|nobaseline
+			minimumsize = { 490 -1 }
+			maximumsize = { 490 -1 }
+			margin = { 10 0 }
+		}
+		button = {
+			name = "edqv_journal_toggle"
+			using = default_button
+			size = { 510 38 }
+			onclick = "[GetScriptedGui('edqv_toggle_outliner').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+			tooltip = "EDQV_JOURNAL_TOGGLE_HELP"
+			textbox = {
+				visible = "[Not(GetScriptedGui('edqv_outliner_is_disabled').IsShown(GuiScope.SetRoot(GetPlayer.MakeScope).End))]"
+				text = "EDQV_JOURNAL_TURN_OFF"
+				parentanchor = center
+				size = { 490 30 }
+				align = hcenter|nobaseline
+			}
+			textbox = {
+				visible = "[GetScriptedGui('edqv_outliner_is_disabled').IsShown(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+				text = "EDQV_JOURNAL_TURN_ON"
+				parentanchor = center
+				size = { 490 30 }
+				align = hcenter|nobaseline
+			}
+		}
+	}
+}
