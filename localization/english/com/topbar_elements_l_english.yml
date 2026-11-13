@@ -176,8 +176,8 @@
  # Trade Capacity
  com_topbar_element_trade_capacity: "com_topbar_element_trade_capacity"
  com_topbar_element_trade_capacity_icon: "@com_trade_capacity!"
- com_topbar_element_trade_capacity_value: "[GetPlayer.GetMarket.GetCountryTradeCapacity(GetPlayer.Self)|*v2]"
- com_topbar_element_trade_capacity_tooltip: "[GetPlayer.GetMarket.GetCountryTradeCapacityDesc(GetPlayer.Self)]."
+ com_topbar_element_trade_capacity_value: "[GetPlayer.GetMarket.GetTradeCapacity|v0]"
+ com_topbar_element_trade_capacity_tooltip: "[GetPlayer.GetMarket.GetTradeCapacityDesc]."
  com_topbar_element_trade_capacity_source: "$com_topbar_base_game_source$"
  com_topbar_element_trade_capacity_source_tooltip: "$com_topbar_base_game_source_tooltip$"
  com_topbar_element_trade_capacity_map_mode: "mm_market_areas"
