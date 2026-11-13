@@ -3,8 +3,9 @@
 # Vanilla 1.13.9 baseline: gui/market_panel.gui
 # Base type is the vanilla default_block_window (no custom window theme). The
 # 0_gora_ filename keeps the vanilla file loaded; these types win first-load-wins.
-# Restored vanilla element: the MARKET_COUNTRY_TRADE_CAPACITY readout on the
-# trade tab (keep it when re-syncing).
+# Restored vanilla element: the 1.15 MARKET_TRADE_CAPACITY readout on the
+# trade tab (keep when re-syncing; old Market.GetCountryTradeCapacity* API
+# was removed in 1.15).
 #
 # GORA features carried by this file:
 #   (1) Export/import charts with quantity and monetary value in scrollable rows
@@ -309,9 +310,8 @@ types market_panel
 
 					widget = {
 						size = { 56 24 }
-						datacontext = "[GetMetaPlayer.GetPlayedOrObservedCountry]"
-						visible = "[GreaterThan_int32(Market.GetCountryTradeCapacity(Country.Self), '(int32)0')]"
-						tooltip = "[Market.GetCountryTradeCapacityDesc(Country.Self)]"
+						visible = "[GreaterThan_int32(MarketPanel.GetMarket.GetTradeCapacity, '(int32)0')]"
+						tooltip = "[MarketPanel.GetMarket.GetTradeCapacityDesc]"
 
 						icon = {
 							size = { 16 16 }
@@ -321,7 +321,7 @@ types market_panel
 						}
 
 						textbox = {
-							raw_text = "[Market.GetCountryTradeCapacityBalance(Country.Self)|+=]"
+							raw_text = "[MarketPanel.GetMarket.GetTradeCapacityBalance|+=]"
 							position = { 20 0 }
 							parentanchor = vcenter
 							align = left|vcenter
@@ -460,21 +460,37 @@ types market_panel
 					parentanchor = hcenter
 					visible = "[InformationPanel.IsTabSelected('world_market_trade')]"
 
-					### Vanilla trade-capacity readout (keep when re-syncing). The fixed-height
+					### Vanilla 1.15 trade-capacity readout (keep when re-syncing). The fixed-height
 					### wrapper reserves real space in the flow so the collapsible section
 					### header below cannot overlap it.
 					widget = {
 						size = { @panel_width 30 }
+						visible = "[Not(MarketPanel.HasSelectedWorldMarketHub)]"
+						tooltip = "[MarketPanel.GetMarket.GetTradeCapacityDesc]"
 
-						textbox = {
+						flowcontainer = {
 							parentanchor = left|vcenter
 							margin_left = 12
-							datacontext = "[GetMetaPlayer.GetPlayedOrObservedCountry]"
-							visible = "[GreaterThan_int32(Market.GetCountryTradeCapacity(Country.Self), '(int32)0')]"
-							text = "MARKET_COUNTRY_TRADE_CAPACITY"
-							tooltip = "[Market.GetCountryTradeCapacityDesc(Country.Self)]"
-							autoresize = yes
-							align = nobaseline
+							spacing = 7
+
+							textbox = {
+								parentanchor = vcenter
+								max_width = 250
+								autoresize = yes
+								align = nobaseline
+								using = elide_fontsize_min
+								text = "MARKET_PANEL_TRADE_CAPACITY"
+							}
+
+							textbox = {
+								parentanchor = vcenter
+								max_width = 250
+								autoresize = yes
+								align = nobaseline
+								using = elide_fontsize_min
+								using = fontsize_large
+								text = "MARKET_TRADE_CAPACITY"
+							}
 						}
 					}
 
