@@ -47,27 +47,19 @@ class SteamParamStringArray_t(Structure):
 
 
 def latest_changelog(path: Path, version: str) -> str:
-    """Top '## [x]' section as Steam BBCode; refuses to publish a note for another version."""
+    """Top '## [x]' section as plain text; refuses to publish a note for another version.
+
+    Plain text on purpose: BBCode ([b], [list]) renders each part in a different style on
+    the Workshop change notes page.
+    """
     text = path.read_text(encoding="utf-8")
     m = re.search(r"^## \[(.+?)\][^\n]*\n(.*?)(?=^## \[|\Z)", text, flags=re.M | re.S)
     if not m:
         raise SystemExit(f"No '## [version]' section in {path.name}")
     if m.group(1) != version:
         raise SystemExit(f"{path.name} top section is {m.group(1)}, metadata version is {version}")
-    items, out = False, [f"[b]v{version}[/b]"]
-    for line in m.group(2).strip().splitlines():
-        line = re.sub(r"\*\*([^*]+)\*\*", r"[b]\1[/b]", line.rstrip())
-        line = re.sub(r"`([^`]+)`", r"\1", line)
-        is_item = line.lstrip().startswith("- ")
-        if is_item and not items:
-            out.append("[list]")
-        if not is_item and items:
-            out.append("[/list]")
-        items = is_item
-        out.append(f"[*]{line.lstrip()[2:]}" if is_item else line)
-    if items:
-        out.append("[/list]")
-    return "\n".join(out)
+    body = re.sub(r"\*\*([^*]+)\*\*|`([^`]+)`", lambda x: x.group(1) or x.group(2), m.group(2).strip())
+    return f"v{version}\n{body}"
 
 
 def stage(dst: Path) -> tuple[int, int]:
