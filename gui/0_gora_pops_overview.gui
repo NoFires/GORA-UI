@@ -42,10 +42,12 @@ types pops_overview
 		using = entry_bg_fancy
 
 		# portrait and summary
-		# height covers portrait area (ends at y=200) plus SOL row below it
+		# height covers portrait area (ends at y=200) plus SOL row below it.
+		# Must equal vanilla 1.15 @portrait_box_height (276): pops_overview_panel draws
+		# the top illustration at that height behind these cards.
 		widget = {
 			parentanchor = hcenter
-			size = { 180 235 }
+			size = { 180 276 }
 
 			widget = {
 				size = { 170 190 }

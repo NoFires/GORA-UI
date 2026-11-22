@@ -1,7 +1,7 @@
 {
 	"name" : "GORA UI+",
 	"id" : "3724865565",
-	"version" : "1.1.0",
+	"version" : "1.1.1",
 	"supported_game_version" : "1.15.*",
 	"short_description" : "Polished UI overhaul for Victoria 3 - a curated bundle of QoL features, built to coexist cleanly with Community Mod Framework and other UI mods.",
 	"tags" : [
