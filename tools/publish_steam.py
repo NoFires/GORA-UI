@@ -95,6 +95,7 @@ def load_steam_api():
         "SteamAPI_ISteamUtils_GetAPICallResult": ([c_void_p, c_uint64, c_void_p, c_int32, c_int32, POINTER(c_bool)], c_bool),
         "SteamAPI_ISteamUGC_StartItemUpdate": ([c_void_p, c_uint32, c_uint64], c_uint64),
         "SteamAPI_ISteamUGC_SetItemUpdateLanguage": ([c_void_p, c_uint64, c_char_p], c_bool),
+        "SteamAPI_ISteamUGC_SetItemTitle": ([c_void_p, c_uint64, c_char_p], c_bool),
         "SteamAPI_ISteamUGC_SetItemDescription": ([c_void_p, c_uint64, c_char_p], c_bool),
         "SteamAPI_ISteamUGC_SetItemContent": ([c_void_p, c_uint64, c_char_p], c_bool),
         "SteamAPI_ISteamUGC_SetItemTags": ([c_void_p, c_uint64, POINTER(SteamParamStringArray_t)], c_bool),
@@ -114,13 +115,16 @@ def load_steam_api():
     return dll, ugc, utils
 
 
-def submit(dll, ugc, utils, file_id: int, lang: str, note: str, description: str | None = None,
-           content: Path | None = None, tags: list[str] = ()) -> None:
+def submit(dll, ugc, utils, file_id: int, lang: str, note: str | None, title: str | None = None,
+           description: str | None = None, content: Path | None = None, tags: list[str] = ()) -> None:
     h = dll.SteamAPI_ISteamUGC_StartItemUpdate(ugc, APP_ID, file_id)
     if not h:
         raise RuntimeError("StartItemUpdate returned an invalid handle")
     if not dll.SteamAPI_ISteamUGC_SetItemUpdateLanguage(ugc, h, lang.encode()):
         raise RuntimeError(f"SetItemUpdateLanguage({lang}) failed")
+    if title is not None:
+        if not dll.SteamAPI_ISteamUGC_SetItemTitle(ugc, h, title.encode("utf-8")):
+            raise RuntimeError(f"SetItemTitle({lang}) failed")
     if description is not None:
         desc_bytes = description.encode("utf-8")
         if len(desc_bytes) >= 8000:
@@ -133,7 +137,7 @@ def submit(dll, ugc, utils, file_id: int, lang: str, note: str, description: str
         arr = (c_char_p * len(tags))(*[t.encode() for t in tags])
         if not dll.SteamAPI_ISteamUGC_SetItemTags(ugc, h, byref(SteamParamStringArray_t(arr, len(tags)))):
             raise RuntimeError("SetItemTags failed")
-    call = dll.SteamAPI_ISteamUGC_SubmitItemUpdate(ugc, h, note.encode("utf-8"))
+    call = dll.SteamAPI_ISteamUGC_SubmitItemUpdate(ugc, h, note.encode("utf-8") if note is not None else None)
     if not call:
         raise RuntimeError("SubmitItemUpdate returned 0")
 
@@ -165,10 +169,11 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="Stage and publish GORA UI+ to Steam Workshop.")
     ap.add_argument("--publish", action="store_true", help="Upload (omit for dry run)")
     ap.add_argument("--no-description", action="store_true", help="Skip updating Workshop descriptions")
+    ap.add_argument("--metadata-only", action="store_true", help="Update title/description only (no content or change notes)")
     args = ap.parse_args()
 
     meta = json.loads((MOD_DIR / ".metadata" / "metadata.json").read_text(encoding="utf-8-sig"))
-    file_id, version, tags = int(meta["id"]), meta["version"], meta.get("tags", [])
+    file_id, title, version, tags = int(meta["id"]), meta["name"], meta["version"], meta.get("tags", [])
     notes = {"english": latest_changelog(MOD_DIR / "CHANGELOG.md", version),
              "schinese": latest_changelog(MOD_DIR / "CHANGELOG_CN.md", version)}
     desc_paths = {"english": MOD_DIR / "tools" / "steam_description.bbcode",
@@ -201,10 +206,16 @@ def main() -> int:
 
         dll, ugc, utils = load_steam_api()
         try:
-            submit(dll, ugc, utils, file_id, "english", notes["english"],
-                   description=descs["english"], content=stage_dir, tags=tags)
-            submit(dll, ugc, utils, file_id, "schinese", notes["schinese"],
-                   description=descs["schinese"])
+            if args.metadata_only:
+                for lang in ("english", "schinese"):
+                    submit(dll, ugc, utils, file_id, lang, None, title=title, description=descs[lang])
+            else:
+                submit(dll, ugc, utils, file_id, "english", notes["english"],
+                       title=title if descs["english"] is not None else None,
+                       description=descs["english"], content=stage_dir, tags=tags)
+                submit(dll, ugc, utils, file_id, "schinese", notes["schinese"],
+                       title=title if descs["schinese"] is not None else None,
+                       description=descs["schinese"])
         finally:
             dll.SteamAPI_Shutdown()
     return 0
