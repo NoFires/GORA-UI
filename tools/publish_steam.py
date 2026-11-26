@@ -32,7 +32,7 @@ MOD_DIR = Path(__file__).resolve().parent.parent
 # The game's steam_api64.dll is a wrapper; the _o copy is the real Steamworks DLL.
 STEAM_DLL = Path(r"C:\Program Files (x86)\Steam\steamapps\common\Victoria 3\binaries\steam_api64_o.dll")
 INCLUDE = [".metadata", "common", "data_binding", "events", "gfx", "gui", "input_profile",
-           "localization", "README.md", "reference.md", "thumbnail.png"]
+           "localization", "tools", "README.md", "reference.md", "thumbnail.png"]
 
 STATUS = {0: "Invalid", 1: "PreparingConfig", 2: "PreparingContent", 3: "UploadingContent",
           4: "UploadingPreviewFile", 5: "CommittingChanges"}
@@ -71,7 +71,7 @@ def stage(dst: Path) -> tuple[int, int]:
         if not src.exists():
             continue
         if src.is_dir():
-            shutil.copytree(src, dst / entry, ignore=shutil.ignore_patterns(".omc", "__pycache__"))
+            shutil.copytree(src, dst / entry, ignore=shutil.ignore_patterns(".omc", "__pycache__", "*.pyc"))
         else:
             shutil.copy2(src, dst / entry)
     for p in dst.rglob("*"):
