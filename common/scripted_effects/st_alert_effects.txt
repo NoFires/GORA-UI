@@ -1,0 +1,143 @@
+﻿# Smart Treaties: "a goods transfer is losing money" alert (Damien, 2026-11-13).
+# Written once by a one-off script; edit by hand.
+#
+# Per goods transfer article the player sends: a toast when its estimated
+# weekly net (st_tna_article_net) has been below -100 for 6 monthly checks
+# in a row. Then quiet until the article has been at or above -100 for 6
+# monthly checks in a row (one warning per losing streak), or until the
+# treaty is renegotiated (st_tna_on_treaty_in_force forgets its articles).
+# Chosen on Damien's 1836-1851 data: once per treaty would have warned about
+# the Great Qing deal in 1837 and stayed silent through its 1842-1851 loss; a
+# 0 bar would have warned about silk losing 13 a week. The 100 bar is
+# Damien's (2026-11-13; 50 at first): on that data it warns for Qing hardwood
+# in Nov 1837 and Feb 1843 and France hardwood in Mar 1848.
+#
+# State lives on the player in variable lists of article scopes (a treaty
+# cannot hold variables): st_tna_n1..n6 = months losing in a row,
+# st_tna_p1..p6 = months not losing in a row, st_tna_fired = warned this
+# streak. Bookkeeping only: nothing here changes the game (check_no_cheat_verbs).
+
+# Root and this: the player country (st_alert_on_actions.txt, monthly).
+st_tna_monthly = {
+	# A list that was never created errors when queried (Smart Notifications,
+	# 2026-09-09): create each one, empty, before any check.
+	add_to_variable_list = { name = st_tna_n1 target = this }
+	remove_list_variable = { name = st_tna_n1 target = this }
+	add_to_variable_list = { name = st_tna_n2 target = this }
+	remove_list_variable = { name = st_tna_n2 target = this }
+	add_to_variable_list = { name = st_tna_n3 target = this }
+	remove_list_variable = { name = st_tna_n3 target = this }
+	add_to_variable_list = { name = st_tna_n4 target = this }
+	remove_list_variable = { name = st_tna_n4 target = this }
+	add_to_variable_list = { name = st_tna_n5 target = this }
+	remove_list_variable = { name = st_tna_n5 target = this }
+	add_to_variable_list = { name = st_tna_n6 target = this }
+	remove_list_variable = { name = st_tna_n6 target = this }
+	add_to_variable_list = { name = st_tna_p1 target = this }
+	remove_list_variable = { name = st_tna_p1 target = this }
+	add_to_variable_list = { name = st_tna_p2 target = this }
+	remove_list_variable = { name = st_tna_p2 target = this }
+	add_to_variable_list = { name = st_tna_p3 target = this }
+	remove_list_variable = { name = st_tna_p3 target = this }
+	add_to_variable_list = { name = st_tna_p4 target = this }
+	remove_list_variable = { name = st_tna_p4 target = this }
+	add_to_variable_list = { name = st_tna_p5 target = this }
+	remove_list_variable = { name = st_tna_p5 target = this }
+	add_to_variable_list = { name = st_tna_p6 target = this }
+	remove_list_variable = { name = st_tna_p6 target = this }
+	add_to_variable_list = { name = st_tna_fired target = this }
+	remove_list_variable = { name = st_tna_fired target = this }
+	every_scope_treaty = {
+		# the notification is posted from the treaty, so it opens it
+		save_scope_as = st_tna_treaty
+		every_scope_article = {
+			limit = {
+				has_type = goods_transfer
+				source_country = { is_player = yes }
+			}
+			save_scope_as = st_tna_a
+			input_goods = { save_scope_as = st_tna_goods }
+			target_country = { save_scope_as = st_tna_partner }
+			save_scope_value_as = { name = st_tna_loss value = st_tna_article_loss }
+			if = {
+				limit = { st_tna_article_net < -100 }
+				root = { st_tna_losing = yes }
+			}
+			else = {
+				root = { st_tna_not_losing = yes }
+			}
+		}
+	}
+}
+
+# Root: the player; scope:st_tna_a = an article losing more than 100 a week.
+st_tna_losing = {
+	remove_list_variable = { name = st_tna_p1 target = scope:st_tna_a }
+	remove_list_variable = { name = st_tna_p2 target = scope:st_tna_a }
+	remove_list_variable = { name = st_tna_p3 target = scope:st_tna_a }
+	remove_list_variable = { name = st_tna_p4 target = scope:st_tna_a }
+	remove_list_variable = { name = st_tna_p5 target = scope:st_tna_a }
+	remove_list_variable = { name = st_tna_p6 target = scope:st_tna_a }
+	if = { limit = { is_target_in_variable_list = { name = st_tna_n6 target = scope:st_tna_a } } }
+	else_if = { limit = { is_target_in_variable_list = { name = st_tna_n5 target = scope:st_tna_a } } remove_list_variable = { name = st_tna_n5 target = scope:st_tna_a } add_to_variable_list = { name = st_tna_n6 target = scope:st_tna_a } }
+	else_if = { limit = { is_target_in_variable_list = { name = st_tna_n4 target = scope:st_tna_a } } remove_list_variable = { name = st_tna_n4 target = scope:st_tna_a } add_to_variable_list = { name = st_tna_n5 target = scope:st_tna_a } }
+	else_if = { limit = { is_target_in_variable_list = { name = st_tna_n3 target = scope:st_tna_a } } remove_list_variable = { name = st_tna_n3 target = scope:st_tna_a } add_to_variable_list = { name = st_tna_n4 target = scope:st_tna_a } }
+	else_if = { limit = { is_target_in_variable_list = { name = st_tna_n2 target = scope:st_tna_a } } remove_list_variable = { name = st_tna_n2 target = scope:st_tna_a } add_to_variable_list = { name = st_tna_n3 target = scope:st_tna_a } }
+	else_if = { limit = { is_target_in_variable_list = { name = st_tna_n1 target = scope:st_tna_a } } remove_list_variable = { name = st_tna_n1 target = scope:st_tna_a } add_to_variable_list = { name = st_tna_n2 target = scope:st_tna_a } }
+	else = { add_to_variable_list = { name = st_tna_n1 target = scope:st_tna_a } }
+	if = {
+		limit = {
+			is_target_in_variable_list = { name = st_tna_n6 target = scope:st_tna_a }
+			NOT = { is_target_in_variable_list = { name = st_tna_fired target = scope:st_tna_a } }
+		}
+		add_to_variable_list = { name = st_tna_fired target = scope:st_tna_a }
+		# type = treaty: posted from the treaty, as vanilla posts
+		# treaty_entered_into_force, so clicking it opens the treaty
+		scope:st_tna_treaty = { post_notification = st_treaty_article_losing }
+	}
+}
+
+# Root: the player; scope:st_tna_a = an article not losing more than 100 a week.
+st_tna_not_losing = {
+	remove_list_variable = { name = st_tna_n1 target = scope:st_tna_a }
+	remove_list_variable = { name = st_tna_n2 target = scope:st_tna_a }
+	remove_list_variable = { name = st_tna_n3 target = scope:st_tna_a }
+	remove_list_variable = { name = st_tna_n4 target = scope:st_tna_a }
+	remove_list_variable = { name = st_tna_n5 target = scope:st_tna_a }
+	remove_list_variable = { name = st_tna_n6 target = scope:st_tna_a }
+	if = { limit = { is_target_in_variable_list = { name = st_tna_p6 target = scope:st_tna_a } } }
+	else_if = { limit = { is_target_in_variable_list = { name = st_tna_p5 target = scope:st_tna_a } } remove_list_variable = { name = st_tna_p5 target = scope:st_tna_a } add_to_variable_list = { name = st_tna_p6 target = scope:st_tna_a } }
+	else_if = { limit = { is_target_in_variable_list = { name = st_tna_p4 target = scope:st_tna_a } } remove_list_variable = { name = st_tna_p4 target = scope:st_tna_a } add_to_variable_list = { name = st_tna_p5 target = scope:st_tna_a } }
+	else_if = { limit = { is_target_in_variable_list = { name = st_tna_p3 target = scope:st_tna_a } } remove_list_variable = { name = st_tna_p3 target = scope:st_tna_a } add_to_variable_list = { name = st_tna_p4 target = scope:st_tna_a } }
+	else_if = { limit = { is_target_in_variable_list = { name = st_tna_p2 target = scope:st_tna_a } } remove_list_variable = { name = st_tna_p2 target = scope:st_tna_a } add_to_variable_list = { name = st_tna_p3 target = scope:st_tna_a } }
+	else_if = { limit = { is_target_in_variable_list = { name = st_tna_p1 target = scope:st_tna_a } } remove_list_variable = { name = st_tna_p1 target = scope:st_tna_a } add_to_variable_list = { name = st_tna_p2 target = scope:st_tna_a } }
+	else = { add_to_variable_list = { name = st_tna_p1 target = scope:st_tna_a } }
+	if = {
+		limit = {
+			is_target_in_variable_list = { name = st_tna_p6 target = scope:st_tna_a }
+			is_target_in_variable_list = { name = st_tna_fired target = scope:st_tna_a }
+		}
+		remove_list_variable = { name = st_tna_fired target = scope:st_tna_a }
+	}
+}
+
+# Root: anything; scope:st_tna_a = an article to forget (removed, dissolved,
+# or its treaty renegotiated), on the player.
+st_tna_forget = {
+	every_country = {
+		limit = { is_player = yes }
+		if = { limit = { has_variable_list = st_tna_n1 } remove_list_variable = { name = st_tna_n1 target = scope:st_tna_a } }
+		if = { limit = { has_variable_list = st_tna_n2 } remove_list_variable = { name = st_tna_n2 target = scope:st_tna_a } }
+		if = { limit = { has_variable_list = st_tna_n3 } remove_list_variable = { name = st_tna_n3 target = scope:st_tna_a } }
+		if = { limit = { has_variable_list = st_tna_n4 } remove_list_variable = { name = st_tna_n4 target = scope:st_tna_a } }
+		if = { limit = { has_variable_list = st_tna_n5 } remove_list_variable = { name = st_tna_n5 target = scope:st_tna_a } }
+		if = { limit = { has_variable_list = st_tna_n6 } remove_list_variable = { name = st_tna_n6 target = scope:st_tna_a } }
+		if = { limit = { has_variable_list = st_tna_p1 } remove_list_variable = { name = st_tna_p1 target = scope:st_tna_a } }
+		if = { limit = { has_variable_list = st_tna_p2 } remove_list_variable = { name = st_tna_p2 target = scope:st_tna_a } }
+		if = { limit = { has_variable_list = st_tna_p3 } remove_list_variable = { name = st_tna_p3 target = scope:st_tna_a } }
+		if = { limit = { has_variable_list = st_tna_p4 } remove_list_variable = { name = st_tna_p4 target = scope:st_tna_a } }
+		if = { limit = { has_variable_list = st_tna_p5 } remove_list_variable = { name = st_tna_p5 target = scope:st_tna_a } }
+		if = { limit = { has_variable_list = st_tna_p6 } remove_list_variable = { name = st_tna_p6 target = scope:st_tna_a } }
+		if = { limit = { has_variable_list = st_tna_fired } remove_list_variable = { name = st_tna_fired target = scope:st_tna_a } }
+	}
+}

@@ -23,4 +23,6 @@ Mods bundled into GORA UI+ and their versions. TBD = version not yet verified.
 | Improved ParliamentGraph | TBD |
 | Less Clicks Bulk Construction | TBD |
 | Adjusted GDP / AGDP | TBD |
-| Smart Treaties | 0.12 |
+| Smart Treaties | 0.14 |
+| Reorder Research Queue: drag & drop techs | 0.10 |
+| Improved Ship Icons (ship silhouette sprites only) | TBD |

@@ -1,0 +1,3 @@
+﻿l_german:
+ RQ_MOVE_TO_ROW_TOOLTIP:0 "(Reorder) „[Technology.GetName]“ an den Anfang der Forschungsreihe verschieben, zusammen mit den dafür benötigten Techniken in der Reihe."
+ RQ_PREREQUISITES_FIRST:0 "(Reorder) Techniken bleiben in der Reihe immer hinter den Techniken, die sie benötigen."

@@ -1,0 +1,18 @@
+﻿# Smart Treaties: "a goods transfer is losing money" alert (st_alert_effects.txt).
+# Its own group, so a player can mute or demote it in Message Settings. The
+# text reads scope:st_tna_goods, st_tna_partner and the value st_tna_loss,
+# saved just before.
+#
+# type = treaty, posted from the treaty (Damien, 2026-11-19: open the treaty
+# from the notification). Vanilla's own treaty_entered_into_force does the
+# same (type = treaty, posted with root = the treaty, 00_code_on_actions.txt),
+# and its toast opens that treaty. Was type = country, posted from the player.
+st_treaty_article_losing = {
+	type = treaty
+	group = "st_treaty_article_losing_group"
+
+	texture = "gfx/interface/icons/notification_icons/trade_route.dds"
+
+	notification_type = toast
+	color = bad
+}

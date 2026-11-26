@@ -1,0 +1,3 @@
+﻿l_polish:
+ RQ_MOVE_TO_ROW_TOOLTIP:0 "(Reorder) [Technology.GetName] – przenieś na początek kolejki badań, razem z wymaganymi technologiami, które są już w kolejce."
+ RQ_PREREQUISITES_FIRST:0 "(Reorder) Technologie zawsze pozostają w kolejce za technologiami, których wymagają."

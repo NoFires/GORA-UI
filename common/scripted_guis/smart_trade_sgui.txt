@@ -17,3 +17,20 @@ st_markets_adjacent_sgui = {
 	ai_is_valid = { always = no }
 	ai_chance = { base = 0 }
 }
+
+# The two countries' capitals are on different continents (vanilla's five
+# geographic regions): the draft's ROUTE_FAR shipping estimate
+# (tools/gen_smart_trade_gui.py, D_FAR). The trigger is generated into
+# st_rec_triggers.txt.
+# GUI: GetScriptedGui('st_far_route_sgui').IsValid(GuiScope.SetRoot(<country>.MakeScope).AddScope('st_other', <country>.MakeScope).End)
+st_far_route_sgui = {
+	scope = country
+	saved_scopes = { st_other }
+
+	is_valid = {
+		NOT = { st_same_continent_as_other = yes }
+	}
+
+	ai_is_valid = { always = no }
+	ai_chance = { base = 0 }
+}

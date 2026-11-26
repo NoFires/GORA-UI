@@ -1,0 +1,53 @@
+﻿# Smart Treaties: "a goods transfer is losing money" alert (Damien, 2026-11-13).
+# Read-only values; the monthly check is in scripted_effects/st_alert_effects.txt.
+#
+# Root: a treaty article (goods_transfer) the PLAYER sends. Its weekly net,
+# estimated the way the draft does: (partner price - home price) x quantity,
+# minus shipping when there is a lane. Script cannot read a lane's real
+# merchant marine demand (only the GUI can, which is what the outliner uses),
+# so shipping is estimated: quantity / traded quantity x a route factor by
+# continent (st_tna_route), priced in the player's market. Off by the lane's
+# real length either way.
+
+# Merchant marine price in the sender's market.
+st_tna_mm_price = {
+	value = 0
+	source_country = {
+		market = {
+			mg:merchant_marine ?= { add = st_price }
+		}
+	}
+}
+
+st_tna_article_net = {
+	value = st_article_margin
+	if = {
+		limit = { exists = shipping_lane }
+		subtract = {
+			value = st_article_lane_units
+			multiply = st_tna_route
+			multiply = st_tna_mm_price
+		}
+	}
+}
+
+# Route factor by continent, the same as the suggestions' (ROUTE_NEAR and
+# ROUTE_FAR in tools/gen_st_recommender.py; st_article_same_continent is in
+# st_rec_triggers.txt). Measured 2026-11-13 on Spain's lanes, real demand per
+# estimated unit: 1.00 within Europe, 1.52 to 1.62 to Asia, constant over
+# time. The first version used 1.25 everywhere: it missed Japan small arms
+# losing 166 to 260 a week (estimate: -55 to +34) and warned about
+# Sardinia-Piedmont tobacco losing 77 to 97 (estimate: about -127).
+st_tna_route = {
+	value = 1.6
+	if = {
+		limit = { st_article_same_continent = yes }
+		value = 1
+	}
+}
+
+# The weekly loss as a positive number, for the toast's text.
+st_tna_article_loss = {
+	value = st_tna_article_net
+	multiply = -1
+}

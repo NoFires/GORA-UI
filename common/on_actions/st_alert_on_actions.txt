@@ -1,0 +1,62 @@
+﻿# Smart Treaties: "a goods transfer is losing money" alert (st_alert_effects.txt).
+# Append-only, like every on_action hook in this repo.
+
+# Monthly, for the player only (on_monthly_pulse_country is rooted on a
+# country; every hook in the published mods checks is_player first).
+on_monthly_pulse_country = {
+	on_actions = { st_tna_monthly_check }
+}
+st_tna_monthly_check = {
+	trigger = { is_player = yes }
+	effect = { st_tna_monthly = yes }
+}
+
+# A treaty coming into force, renegotiated ones included: its articles start
+# afresh (Damien: a renegotiation resets the warning). Root is the treaty, as
+# the observer's hook on the same on_action relies on (ST_OBS|SIGN). Whether
+# the engine fires this for an amended treaty, or makes new articles, is not
+# confirmed: either way the articles start afresh. ST_TNA|RESET says which.
+on_treaty_entered_into_force = {
+	on_actions = { st_tna_on_treaty_in_force }
+}
+st_tna_on_treaty_in_force = {
+	effect = {
+		every_scope_article = {
+			limit = {
+				has_type = goods_transfer
+				source_country = { is_player = yes }
+			}
+			save_scope_as = st_tna_a
+			st_tna_forget = yes
+		}
+	}
+}
+
+# An article removed or its treaty dissolved: drop it from the lists, so they
+# hold no dead articles.
+on_treaty_article_removed = {
+	on_actions = { st_tna_on_article_removed }
+}
+st_tna_on_article_removed = {
+	effect = {
+		scope:article = {
+			if = {
+				limit = { has_type = goods_transfer }
+				save_scope_as = st_tna_a
+				st_tna_forget = yes
+			}
+		}
+	}
+}
+on_treaty_dissolved = {
+	on_actions = { st_tna_on_treaty_dissolved }
+}
+st_tna_on_treaty_dissolved = {
+	effect = {
+		every_scope_article = {
+			limit = { has_type = goods_transfer }
+			save_scope_as = st_tna_a
+			st_tna_forget = yes
+		}
+	}
+}

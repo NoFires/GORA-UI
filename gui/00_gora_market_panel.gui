@@ -2,7 +2,9 @@
 # ─────────────────────────────────────────────────────────────────────────────
 # Vanilla 1.13.9 baseline: gui/market_panel.gui
 # Base type is the vanilla default_block_window (no custom window theme). The
-# 0_gora_ filename keeps the vanilla file loaded; these types win first-load-wins.
+# 00_gora_ filename keeps the vanilla file loaded, wins first-load-wins against
+# vanilla and 00_market_*/00_smart_trade_*/00_trade_partners_* mods, and still
+# yields to 000_ compat patches (e.g. 000_gora_ef_market_panel.gui).
 # Restored vanilla element: the 1.15 MARKET_TRADE_CAPACITY readout on the
 # trade tab (keep when re-syncing; old Market.GetCountryTradeCapacity* API
 # was removed in 1.15).
@@ -19,12 +21,15 @@
 #   (6) 2x2 extra goods filters (goods_filters) with matching visibility
 #       predicates wired into goods_entry_button.
 #   (7) Compact goods rows with a leaderboard rank label.
+#   (8) Smart Treaties v0.14 suggested goods transfers collapsible section on
+#       the Trade tab + scan hooks on tab click/_show.
 #
 # Re-sync recipe: diff the redeclared types against vanilla and merge vanilla
 # changes around the sections listed above.
 # ─────────────────────────────────────────────────────────────────────────────
 
 # Reference GORA+ content widths; keep goods headers and rows aligned.
+@panel_width_minus_10 = 590
 @panel_width = 600
 @panel_width_plus_14 = 624
 # Match the working World Market outer width so the 624 px content fits.
@@ -404,6 +409,8 @@ types market_panel
 				}
 				blockoverride "second_button_click" {
 					onclick = "[InformationPanel.SelectTab('world_market_trade')]"
+					### Smart Treaties: scan on opening the tab
+					onclick = "[GetScriptedGui('st_rec_open_tab_sgui').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
 				}
 				blockoverride "second_button_visibility" {
 					visible = "[InformationPanel.IsTabSelected('world_market_trade')]"
@@ -460,6 +467,12 @@ types market_panel
 					parentanchor = hcenter
 					visible = "[InformationPanel.IsTabSelected('world_market_trade')]"
 
+					### Smart Treaties: scan when the Trade tab is shown
+					state = {
+						name = _show
+						on_start = "[GetScriptedGui('st_rec_open_show_sgui').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+					}
+
 					### Vanilla 1.15 trade-capacity readout (keep when re-syncing). The fixed-height
 					### wrapper reserves real space in the flow so the collapsible section
 					### header below cannot overlap it.
@@ -493,6 +506,218 @@ types market_panel
 							}
 						}
 					}
+
+					### Smart Treaties: suggested goods transfers (v0.14)
+					flowcontainer = {
+						direction = vertical
+						parentanchor = hcenter
+						visible = "[Market.GetOwner.IsLocalPlayer]"
+						spacing = 2
+
+						container = {
+							parentanchor = hcenter
+							section_header_button = {
+								blockoverride "layout" {
+									parentanchor = hcenter
+									size = { @panel_width 38 }
+								}
+								blockoverride "left_text" {
+									text = "ST_REC_HEADER"
+									fontsize_min = 12
+									elide = right
+								}
+								tooltip = "ST_REC_HEADER_TT"
+								blockoverride "onclick" {
+									onclick = "[GetVariableSystem.Toggle('st_rec_closed')]"
+								}
+								blockoverride "onclick_showmore" {
+									visible = "[GetVariableSystem.Exists('st_rec_closed')]"
+								}
+								blockoverride "onclick_showless" {
+									visible = "[Not(GetVariableSystem.Exists('st_rec_closed'))]"
+								}
+							}
+							button_icon_reset = {
+								size = { 26 26 }
+								parentanchor = right|vcenter
+								position = { -10 0 }
+								onclick = "[GetScriptedGui('st_rec_refresh_sgui').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+								tooltip = "ST_REC_REFRESH_TT"
+							}
+						}
+
+						flowcontainer = {
+							visible = "[Not(GetVariableSystem.Exists('st_rec_closed'))]"
+							direction = vertical
+							parentanchor = hcenter
+							margin = { 10 4 }
+							spacing = 2
+
+							flowcontainer = {
+								visible = "[GetPlayer.MakeScope.Var('st_rec_c1').IsSet]"
+								datacontext = "[GetPlayer.MakeScope.Var('st_rec_c1').GetCountry]"
+								direction = horizontal
+								spacing = 5
+								button_icon_round = {
+									size = { 26 26 }
+									parentanchor = vcenter
+									blockoverride "icon" {
+										texture = "gfx/interface/icons/generic_icons/diplomatic_treaties.dds"
+									}
+									blockoverride "icon_size" {
+										size = { 75% 75% }
+									}
+									tooltip = "ST_REC_TREATY_TT"
+									enabled = "[GetPlayer.CanSignTreatyWith(Country.Self)]"
+									onclick = "[GetVariableSystem.Set('st_rec_good', GetPlayer.MakeScope.Var('st_rec_k1').GetGoods.GetKey)]"
+									onclick = "[InformationPanelBar.OpenTreatyDraftPanelForNewDraft(GetPlayer.Self, Country.Self)]"
+								}
+								textbox = {
+									parentanchor = vcenter
+									text = "ST_REC_ROW_1"
+									autoresize = yes
+									multiline = yes
+									maximumsize = { 559 -1 }
+									align = nobaseline
+								}
+							}
+
+							flowcontainer = {
+								visible = "[GetPlayer.MakeScope.Var('st_rec_c2').IsSet]"
+								datacontext = "[GetPlayer.MakeScope.Var('st_rec_c2').GetCountry]"
+								direction = horizontal
+								spacing = 5
+								button_icon_round = {
+									size = { 26 26 }
+									parentanchor = vcenter
+									blockoverride "icon" {
+										texture = "gfx/interface/icons/generic_icons/diplomatic_treaties.dds"
+									}
+									blockoverride "icon_size" {
+										size = { 75% 75% }
+									}
+									tooltip = "ST_REC_TREATY_TT"
+									enabled = "[GetPlayer.CanSignTreatyWith(Country.Self)]"
+									onclick = "[GetVariableSystem.Set('st_rec_good', GetPlayer.MakeScope.Var('st_rec_k2').GetGoods.GetKey)]"
+									onclick = "[InformationPanelBar.OpenTreatyDraftPanelForNewDraft(GetPlayer.Self, Country.Self)]"
+								}
+								textbox = {
+									parentanchor = vcenter
+									text = "ST_REC_ROW_2"
+									autoresize = yes
+									multiline = yes
+									maximumsize = { 559 -1 }
+									align = nobaseline
+								}
+							}
+
+							flowcontainer = {
+								visible = "[GetPlayer.MakeScope.Var('st_rec_c3').IsSet]"
+								datacontext = "[GetPlayer.MakeScope.Var('st_rec_c3').GetCountry]"
+								direction = horizontal
+								spacing = 5
+								button_icon_round = {
+									size = { 26 26 }
+									parentanchor = vcenter
+									blockoverride "icon" {
+										texture = "gfx/interface/icons/generic_icons/diplomatic_treaties.dds"
+									}
+									blockoverride "icon_size" {
+										size = { 75% 75% }
+									}
+									tooltip = "ST_REC_TREATY_TT"
+									enabled = "[GetPlayer.CanSignTreatyWith(Country.Self)]"
+									onclick = "[GetVariableSystem.Set('st_rec_good', GetPlayer.MakeScope.Var('st_rec_k3').GetGoods.GetKey)]"
+									onclick = "[InformationPanelBar.OpenTreatyDraftPanelForNewDraft(GetPlayer.Self, Country.Self)]"
+								}
+								textbox = {
+									parentanchor = vcenter
+									text = "ST_REC_ROW_3"
+									autoresize = yes
+									multiline = yes
+									maximumsize = { 559 -1 }
+									align = nobaseline
+								}
+							}
+
+							flowcontainer = {
+								visible = "[GetPlayer.MakeScope.Var('st_rec_c4').IsSet]"
+								datacontext = "[GetPlayer.MakeScope.Var('st_rec_c4').GetCountry]"
+								direction = horizontal
+								spacing = 5
+								button_icon_round = {
+									size = { 26 26 }
+									parentanchor = vcenter
+									blockoverride "icon" {
+										texture = "gfx/interface/icons/generic_icons/diplomatic_treaties.dds"
+									}
+									blockoverride "icon_size" {
+										size = { 75% 75% }
+									}
+									tooltip = "ST_REC_TREATY_TT"
+									enabled = "[GetPlayer.CanSignTreatyWith(Country.Self)]"
+									onclick = "[GetVariableSystem.Set('st_rec_good', GetPlayer.MakeScope.Var('st_rec_k4').GetGoods.GetKey)]"
+									onclick = "[InformationPanelBar.OpenTreatyDraftPanelForNewDraft(GetPlayer.Self, Country.Self)]"
+								}
+								textbox = {
+									parentanchor = vcenter
+									text = "ST_REC_ROW_4"
+									autoresize = yes
+									multiline = yes
+									maximumsize = { 559 -1 }
+									align = nobaseline
+								}
+							}
+
+							flowcontainer = {
+								visible = "[GetPlayer.MakeScope.Var('st_rec_c5').IsSet]"
+								datacontext = "[GetPlayer.MakeScope.Var('st_rec_c5').GetCountry]"
+								direction = horizontal
+								spacing = 5
+								button_icon_round = {
+									size = { 26 26 }
+									parentanchor = vcenter
+									blockoverride "icon" {
+										texture = "gfx/interface/icons/generic_icons/diplomatic_treaties.dds"
+									}
+									blockoverride "icon_size" {
+										size = { 75% 75% }
+									}
+									tooltip = "ST_REC_TREATY_TT"
+									enabled = "[GetPlayer.CanSignTreatyWith(Country.Self)]"
+									onclick = "[GetVariableSystem.Set('st_rec_good', GetPlayer.MakeScope.Var('st_rec_k5').GetGoods.GetKey)]"
+									onclick = "[InformationPanelBar.OpenTreatyDraftPanelForNewDraft(GetPlayer.Self, Country.Self)]"
+								}
+								textbox = {
+									parentanchor = vcenter
+									text = "ST_REC_ROW_5"
+									autoresize = yes
+									multiline = yes
+									maximumsize = { 559 -1 }
+									align = nobaseline
+								}
+							}
+
+							textbox = {
+								visible = "[Not(GetPlayer.MakeScope.Var('st_rec_g1').IsSet)]"
+								text = "ST_REC_PENDING"
+								autoresize = yes
+								multiline = yes
+								maximumsize = { @panel_width_minus_10 -1 }
+								align = nobaseline
+							}
+
+							textbox = {
+								visible = "[And(GetPlayer.MakeScope.Var('st_rec_g1').IsSet, Not(GetPlayer.MakeScope.Var('st_rec_c1').IsSet))]"
+								text = "ST_REC_NONE"
+								autoresize = yes
+								multiline = yes
+								maximumsize = { @panel_width_minus_10 -1 }
+								align = nobaseline
+							}
+						}
+					}
+					### Smart Treaties — end suggested goods transfers
 
 					section_header_button = {
 						blockoverride "left_text" {

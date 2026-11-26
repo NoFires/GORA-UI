@@ -3,9 +3,11 @@
 Talks to the running Steam client through the Steamworks C-API shipped with Victoria 3.
 Default is a dry run (stage + preview). Pass --publish to upload.
 
-Change notes are per language: the content upload carries the English note
+Change notes and descriptions are per language: the content upload carries the
+English description (tools/steam_description.bbcode) and change note
 (CHANGELOG.md), then a content-less update tagged schinese carries the Chinese
-note (CHANGELOG_CN.md). Each file's top "## [x.y.z]" section is used.
+description (tools/steam_description_cn.bbcode) and change note
+(CHANGELOG_CN.md). Each changelog's top "## [x.y.z]" section is used.
 """
 
 from __future__ import annotations
@@ -93,6 +95,7 @@ def load_steam_api():
         "SteamAPI_ISteamUtils_GetAPICallResult": ([c_void_p, c_uint64, c_void_p, c_int32, c_int32, POINTER(c_bool)], c_bool),
         "SteamAPI_ISteamUGC_StartItemUpdate": ([c_void_p, c_uint32, c_uint64], c_uint64),
         "SteamAPI_ISteamUGC_SetItemUpdateLanguage": ([c_void_p, c_uint64, c_char_p], c_bool),
+        "SteamAPI_ISteamUGC_SetItemDescription": ([c_void_p, c_uint64, c_char_p], c_bool),
         "SteamAPI_ISteamUGC_SetItemContent": ([c_void_p, c_uint64, c_char_p], c_bool),
         "SteamAPI_ISteamUGC_SetItemTags": ([c_void_p, c_uint64, POINTER(SteamParamStringArray_t)], c_bool),
         "SteamAPI_ISteamUGC_SubmitItemUpdate": ([c_void_p, c_uint64, c_char_p], c_uint64),
@@ -111,12 +114,19 @@ def load_steam_api():
     return dll, ugc, utils
 
 
-def submit(dll, ugc, utils, file_id: int, lang: str, note: str, content: Path | None = None, tags: list[str] = ()) -> None:
+def submit(dll, ugc, utils, file_id: int, lang: str, note: str, description: str | None = None,
+           content: Path | None = None, tags: list[str] = ()) -> None:
     h = dll.SteamAPI_ISteamUGC_StartItemUpdate(ugc, APP_ID, file_id)
     if not h:
         raise RuntimeError("StartItemUpdate returned an invalid handle")
     if not dll.SteamAPI_ISteamUGC_SetItemUpdateLanguage(ugc, h, lang.encode()):
         raise RuntimeError(f"SetItemUpdateLanguage({lang}) failed")
+    if description is not None:
+        desc_bytes = description.encode("utf-8")
+        if len(desc_bytes) >= 8000:
+            raise ValueError(f"[{lang}] description is {len(desc_bytes)} bytes (Steam limit is 8000)")
+        if not dll.SteamAPI_ISteamUGC_SetItemDescription(ugc, h, desc_bytes):
+            raise RuntimeError(f"SetItemDescription({lang}) failed")
     if content and not dll.SteamAPI_ISteamUGC_SetItemContent(ugc, h, str(content).encode()):
         raise RuntimeError(f"SetItemContent({content}) failed")
     if tags:
@@ -154,12 +164,25 @@ def submit(dll, ugc, utils, file_id: int, lang: str, note: str, content: Path | 
 def main() -> int:
     ap = argparse.ArgumentParser(description="Stage and publish GORA UI+ to Steam Workshop.")
     ap.add_argument("--publish", action="store_true", help="Upload (omit for dry run)")
+    ap.add_argument("--no-description", action="store_true", help="Skip updating Workshop descriptions")
     args = ap.parse_args()
 
     meta = json.loads((MOD_DIR / ".metadata" / "metadata.json").read_text(encoding="utf-8-sig"))
     file_id, version, tags = int(meta["id"]), meta["version"], meta.get("tags", [])
     notes = {"english": latest_changelog(MOD_DIR / "CHANGELOG.md", version),
              "schinese": latest_changelog(MOD_DIR / "CHANGELOG_CN.md", version)}
+    desc_paths = {"english": MOD_DIR / "tools" / "steam_description.bbcode",
+                  "schinese": MOD_DIR / "tools" / "steam_description_cn.bbcode"}
+    descs: dict[str, str | None] = {}
+    for lang, p in desc_paths.items():
+        if args.no_description or not p.exists():
+            descs[lang] = None
+        else:
+            txt = p.read_text(encoding="utf-8").strip()
+            b = len(txt.encode("utf-8"))
+            if b >= 8000:
+                raise SystemExit(f"{p.name} is {b} UTF-8 bytes (Steam limit is 8000)")
+            descs[lang] = txt
 
     with tempfile.TemporaryDirectory(prefix="gora_stage_") as tmp:
         stage_dir = Path(tmp) / "GORA UI+"
@@ -167,6 +190,9 @@ def main() -> int:
         files, size = stage(stage_dir)
         print(f"Workshop ID={file_id} | v{version} | tags={tags}")
         print(f"Staged {files} files, {size / 1024:.1f} KB")
+        for lang, desc in descs.items():
+            if desc is not None:
+                print(f"Description [{lang}]: {len(desc)} chars, {len(desc.encode('utf-8'))}/8000 UTF-8 bytes")
         for lang, note in notes.items():
             print(f"--- change note [{lang}] ---\n{note}\n")
         if not args.publish:
@@ -175,8 +201,10 @@ def main() -> int:
 
         dll, ugc, utils = load_steam_api()
         try:
-            submit(dll, ugc, utils, file_id, "english", notes["english"], content=stage_dir, tags=tags)
-            submit(dll, ugc, utils, file_id, "schinese", notes["schinese"])
+            submit(dll, ugc, utils, file_id, "english", notes["english"],
+                   description=descs["english"], content=stage_dir, tags=tags)
+            submit(dll, ugc, utils, file_id, "schinese", notes["schinese"],
+                   description=descs["schinese"])
         finally:
             dll.SteamAPI_Shutdown()
     return 0

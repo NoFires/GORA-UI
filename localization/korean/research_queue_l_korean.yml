@@ -1,0 +1,3 @@
+﻿l_korean:
+ RQ_MOVE_TO_ROW_TOOLTIP:0 "(Reorder) [Technology.GetName]을(를) 연구 대기열의 맨 앞으로 이동합니다. 대기열에 있는 필요한 기술도 함께 이동합니다."
+ RQ_PREREQUISITES_FIRST:0 "(Reorder) 대기열에서 기술은 항상 필요한 기술 뒤에 위치합니다."
