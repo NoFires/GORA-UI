@@ -641,10 +641,11 @@ types pops_overview
 								}
 
 								### right side
-								flowcontainer = {								
+								flowcontainer = {
 									position = { 105 0 }
 									parentanchor = vcenter
 									direction = vertical
+									spacing = 4
 
 									# buttons
 									flowcontainer = {
@@ -773,9 +774,9 @@ types pops_overview
 										}
 									}
 
-									# bottom half information
+									# bottom half information (tall enough for SoL line + 64px vpn_good_tile row)
 									widget = {
-										size = { 430 55 }
+										size = { 430 96 }
 										flowcontainer = {
 											parentanchor = vcenter
 											spacing = 5
@@ -871,14 +872,15 @@ types pops_overview
 												using = pop_sol_tooltip_with_graph
 												autoresize = yes
 												align = nobaseline
-												margin_right = 2
+												margin_right = 4
 												parentanchor = right
 											}
 
 											flowcontainer = {
 												datamodel = "[Pop.GetTopGoodsConsumption]"
 												parentanchor = right
-												tooltip = "[Pop.GetAdditionalSOLFactorsDesc]" 
+												tooltip = "[Pop.GetAdditionalSOLFactorsDesc]"
+												spacing = 2
 
 												item = {
 													vpn_good_tile = {}

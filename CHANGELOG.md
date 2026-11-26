@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.2.2] - 2026-11-26
+
+- Fixed the Standard of Living label overlapping the workplace building button on expanded rows of the Population list (`gui/0_gora_pops_overview.gui`) by resizing the bottom info container to fit the 64px goods-consumption tiles alongside the SoL header, and added spacing between tiles.
+
 ## [1.2.1] - 2026-11-26
 
 - Added clickable descending/ascending column sorting (Population, GDP, Standard of Living, Peasants) with sort-direction arrows to the Domestic Lens Decree state list; per-country scripted sorting is multiplayer-safe and preserves all existing filters and actions.
