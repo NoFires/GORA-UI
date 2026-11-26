@@ -31,8 +31,8 @@ UTILS_INTERFACE_VERSION = b"SteamUtils009"
 MOD_DIR = Path(__file__).resolve().parent.parent
 # The game's steam_api64.dll is a wrapper; the _o copy is the real Steamworks DLL.
 STEAM_DLL = Path(r"C:\Program Files (x86)\Steam\steamapps\common\Victoria 3\binaries\steam_api64_o.dll")
-INCLUDE = [".metadata", "common", "data_binding", "events", "gfx", "gui", "input_profile",
-           "localization", "tools", "README.md", "reference.md", "thumbnail.png"]
+ALLOWED_DOT_ENTRIES = {".metadata"}
+EXCLUDE_NAMES = {"__pycache__", "build"}
 
 STATUS = {0: "Invalid", 1: "PreparingConfig", 2: "PreparingContent", 3: "UploadingContent",
           4: "UploadingPreviewFile", 5: "CommittingChanges"}
@@ -64,16 +64,20 @@ def latest_changelog(path: Path, version: str) -> str:
     return f"v{version}\n{body}"
 
 
+def _ignore_entries(src_dir: str, names: list[str]) -> set[str]:
+    is_root = Path(src_dir).resolve() == MOD_DIR.resolve()
+    ignored: set[str] = set()
+    for name in names:
+        if name.startswith(".") and not (is_root and name in ALLOWED_DOT_ENTRIES):
+            ignored.add(name)
+        elif name in EXCLUDE_NAMES or name.endswith(".pyc"):
+            ignored.add(name)
+    return ignored
+
+
 def stage(dst: Path) -> tuple[int, int]:
+    shutil.copytree(MOD_DIR, dst, ignore=_ignore_entries, dirs_exist_ok=True)
     files = size = 0
-    for entry in INCLUDE:
-        src = MOD_DIR / entry
-        if not src.exists():
-            continue
-        if src.is_dir():
-            shutil.copytree(src, dst / entry, ignore=shutil.ignore_patterns(".omc", "__pycache__", "*.pyc"))
-        else:
-            shutil.copy2(src, dst / entry)
     for p in dst.rglob("*"):
         if p.is_file():
             files += 1
