@@ -2436,6 +2436,14 @@ types state_panel_types
 				}
 			}
 		}																# BSO: STRUCTURED VIEW ENDS HERE
+
+		### GORA UI+ Soft Compat: Economic and Financial Mod (E&F)
+		# Real type lives in E&F (`00_ef_deported_gui_1.gui`); empty fallback
+		# in `gui/z_gora_compat_placeholders.gui` hides cleanly without E&F.
+		state_panel_currency_panel_content = {
+			using = default_fade_in_out
+		}
+		### /GORA UI+ Soft Compat
 	}
 
 	type state_panel_status_item_extra_small = container {	# BSO: new TYPE - split text for fancy tooltips

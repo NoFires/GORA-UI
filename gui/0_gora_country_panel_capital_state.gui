@@ -610,6 +610,14 @@ types gora_capital_state_indicator {
 					blockoverride "stats_rank" {}
 				}
 
+				### GORA UI+ Soft Compat: Economic and Financial Mod (E&F)
+				# Real type lives in E&F (`00_ef_deported_gui_1.gui`); empty fallback
+				# in `gui/z_gora_compat_placeholders.gui` hides cleanly without E&F.
+				country_panel_currency_panel_content = {
+					using = default_fade_in_out
+				}
+				### /GORA UI+ Soft Compat
+
 				##POPULATION
 				country_stats_entry = {
 					onmousehierarchyenter = "[SetTempMapModeByKey('mm_population')]"

@@ -1,0 +1,136 @@
+# GORA UI+ — Decree State Insights custom column sorting scripted GUI
+# Per-country state variable list (no global variables; multiplayer-safe).
+# Sort direction state is kept client-side in GetVariableSystem ('dsi_sort_mode').
+# scope:mode codes:
+#   1 = Population DESC, 2 = Population ASC
+#   3 = GDP DESC,        4 = GDP ASC
+#   5 = SoL DESC,        6 = SoL ASC
+#   7 = Peasants DESC,   8 = Peasants ASC
+
+gora_dsi_sort_states = {
+	scope = country
+	saved_scopes = { mode }
+	effect = {
+		clear_variable_list = gora_dsi_sorted_states
+		if = {
+			limit = { scope:mode = 1 }
+			ordered_scope_state = {
+				order_by = state_population
+				min = 0
+				max = 1000
+				check_range_bounds = no
+				root = {
+					add_to_variable_list = {
+						name = gora_dsi_sorted_states
+						target = prev
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = { scope:mode = 2 }
+			ordered_scope_state = {
+				order_by = gora_dsi_pop_asc
+				min = 0
+				max = 1000
+				check_range_bounds = no
+				root = {
+					add_to_variable_list = {
+						name = gora_dsi_sorted_states
+						target = prev
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = { scope:mode = 3 }
+			ordered_scope_state = {
+				order_by = gdp
+				min = 0
+				max = 1000
+				check_range_bounds = no
+				root = {
+					add_to_variable_list = {
+						name = gora_dsi_sorted_states
+						target = prev
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = { scope:mode = 4 }
+			ordered_scope_state = {
+				order_by = gora_dsi_gdp_asc
+				min = 0
+				max = 1000
+				check_range_bounds = no
+				root = {
+					add_to_variable_list = {
+						name = gora_dsi_sorted_states
+						target = prev
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = { scope:mode = 5 }
+			ordered_scope_state = {
+				order_by = average_sol
+				min = 0
+				max = 1000
+				check_range_bounds = no
+				root = {
+					add_to_variable_list = {
+						name = gora_dsi_sorted_states
+						target = prev
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = { scope:mode = 6 }
+			ordered_scope_state = {
+				order_by = gora_dsi_sol_asc
+				min = 0
+				max = 1000
+				check_range_bounds = no
+				root = {
+					add_to_variable_list = {
+						name = gora_dsi_sorted_states
+						target = prev
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = { scope:mode = 7 }
+			ordered_scope_state = {
+				order_by = gora_dsi_peasants
+				min = 0
+				max = 1000
+				check_range_bounds = no
+				root = {
+					add_to_variable_list = {
+						name = gora_dsi_sorted_states
+						target = prev
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = { scope:mode = 8 }
+			ordered_scope_state = {
+				order_by = gora_dsi_peasants_asc
+				min = 0
+				max = 1000
+				check_range_bounds = no
+				root = {
+					add_to_variable_list = {
+						name = gora_dsi_sorted_states
+						target = prev
+					}
+				}
+			}
+		}
+	}
+}

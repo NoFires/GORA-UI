@@ -1,0 +1,30 @@
+# GORA UI+ — Built-in Soft Compatibility Placeholders
+# ------------------------------------------------------------------------------
+# Why the `z_` filename prefix:
+#   Victoria 3's Jomini GUI type registry is first-load-wins alphabetically by
+#   filename across all active mods. Because `z_` sorts last:
+#     - When a supported overhaul IS enabled, its real type definition loads
+#       first and renders natively inside GORA UI+'s panels (no compatch needed).
+#     - When the overhaul is NOT enabled, these empty `visible = no` fallback
+#       types load instead so the engine logs zero unknown-type errors and
+#       allocates zero visual space.
+#
+# To add a new soft-compatible overhaul hook:
+#   1. Place the overhaul's custom widget invocation inside the relevant GORA
+#      panel under a `### GORA UI+ Soft Compat: <Mod Name>` comment.
+#   2. Add a matching empty `visible = no` placeholder type below.
+#   3. Run `python tools/compatch.py audit` to verify brace balance & zero errors.
+# ------------------------------------------------------------------------------
+
+types gora_compat_placeholders {
+
+	### Economic and Financial Mod (E&F) — Steam Workshop 3143591632
+	# Real definitions live in E&F's `gui/00_ef_deported_gui_1.gui`.
+	type country_panel_currency_panel_content = flowcontainer {
+		visible = no
+	}
+
+	type state_panel_currency_panel_content = flowcontainer {
+		visible = no
+	}
+}

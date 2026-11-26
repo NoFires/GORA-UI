@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.1] - 2026-11-26
+
+- Added clickable descending/ascending column sorting (Population, GDP, Standard of Living, Peasants) with sort-direction arrows to the Domestic Lens Decree state list; per-country scripted sorting is multiplayer-safe and preserves all existing filters and actions.
+- Added built-in soft compatibility placeholders (`gui/z_gora_compat_placeholders.gui`) with native Economic and Financial Mod (E&F) currency panel hooks on the Country and State Overview panels (zero errors when E&F is disabled).
+- Added the overhaul compatibility toolkit (`tools/compatch.py`, `tools/compatch_recipes.json`) and comprehensive `README.md` documentation for GUI override priorities, soft-compatibility hooks, and automated compatch building/auditing.
+
 ## [1.2.0] - 2026-11-26
 
 - Integrated Reorder Research Queue: drag & drop techs (v0.10) into the tech tree panel alongside the Latest Research indicator, with drag-and-drop queue reordering, expandable overflow row, and 11-language localization.

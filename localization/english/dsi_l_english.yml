@@ -1,8 +1,8 @@
 ﻿l_english:
- DSI_GDP_HEADER_TOOLTIP:0 "#header State [concept_gdp] contribution#!\nAnnual [concept_gdp] generated in this state and its share of the national total."
- DSI_POP_HEADER_TOOLTIP:0 "#header State $concept_population$#!\nTotal population of this state."
- DSI_SOL_HEADER_TOOLTIP:0 "#header Average [concept_sol]#!\nAverage [concept_sol] of all pops in this state."
- DSI_PEASANTS_HEADER_TOOLTIP:0 "#header $peasants_no_icon$#!\nNumber of peasants working in subsistence buildings in this state."
+ DSI_GDP_HEADER_TOOLTIP:0 "#header State [concept_gdp] contribution#!\nAnnual [concept_gdp] generated in this state and its share of the national total.\n#I Click to sort#!"
+ DSI_POP_HEADER_TOOLTIP:0 "#header State $concept_population$#!\nTotal population of this state.\n#I Click to sort#!"
+ DSI_SOL_HEADER_TOOLTIP:0 "#header Average [concept_sol]#!\nAverage [concept_sol] of all pops in this state.\n#I Click to sort#!"
+ DSI_PEASANTS_HEADER_TOOLTIP:0 "#header $peasants_no_icon$#!\nNumber of peasants working in subsistence buildings in this state.\n#I Click to sort#!"
  DSI_TRAITS_HEADER_TOOLTIP:0 "#header State Traits#!\nGeographic and economic traits of this state (e.g. terrain, resource deposits) and their bonuses."
  DSI_FILTER_ALL:0 "All"
  DSI_FILTER_ALL_TOOLTIP:0 "Reset all filters and show every state."

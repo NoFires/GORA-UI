@@ -1,0 +1,33 @@
+# GORA UI+ — Decree State Insights state-sorting script values
+# Root scope: state. Consumed by ordered_scope_state in
+# common/scripted_guis/gora_dsi_sort_sgui.txt.
+
+gora_dsi_pop_asc = {
+	value = 0
+	subtract = state_population
+}
+
+gora_dsi_gdp_asc = {
+	value = 0
+	subtract = gdp
+}
+
+gora_dsi_sol_asc = {
+	value = 0
+	subtract = average_sol
+}
+
+gora_dsi_peasants = {
+	value = 0
+	every_scope_pop = {
+		limit = {
+			is_pop_type = peasants
+		}
+		add = total_size
+	}
+}
+
+gora_dsi_peasants_asc = {
+	value = 0
+	subtract = gora_dsi_peasants
+}

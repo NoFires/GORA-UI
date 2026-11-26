@@ -1,0 +1,188 @@
+{
+  "_comment": "Declarative compatibility recipes for tools/compatch.py. Supports multiple workshop_ids (primary active fork first, legacy IDs as fallback) so adopting/re-uploading an overhaul never breaks the recipe.",
+  "recipes": {
+    "bpm": {
+      "display_name": "Better Politics Mod",
+      "workshop_ids": ["2932134122"],
+      "compatch_workshop_id": "3726578545",
+      "compatch_name": "GORA UI+ × Better Politics Mod Compat",
+      "types": {
+        "politics_panel_government_details": {
+          "strategy": "splice",
+          "ops": [
+            {
+              "action": "insert_after",
+              "anchor": "in_opposition_icon.dds",
+              "after_block_end": true,
+              "enclosing_levels": 3,
+              "gora_file": "0_gora_politics_panel_government_details.gui",
+              "fence": "IPG hemicycle",
+              "idempotent_marker": "parliament_item = {}"
+            }
+          ]
+        },
+        "country_panel_information_content": {
+          "strategy": "splice",
+          "ops": [
+            {
+              "action": "insert_after",
+              "anchor": "COUNTRY_ALL_OWNERSHIP",
+              "after_block_end": true,
+              "enclosing_levels": 2,
+              "inline": [
+                "### GORA UI+ Soft Compat: Economic and Financial Mod (E&F)",
+                "country_panel_currency_panel_content = {",
+                "\tusing = default_fade_in_out",
+                "}",
+                "### /GORA UI+ Soft Compat"
+              ],
+              "idempotent_marker": "country_panel_currency_panel_content"
+            },
+            {
+              "action": "insert_after",
+              "anchor": "COUNTRY_CULTURES_ONE_LINE",
+              "after_block_end": true,
+              "enclosing_levels": 2,
+              "gora_file": "0_gora_country_panel_capital_state.gui",
+              "fence": "Capital State indicator",
+              "idempotent_marker": "concept_capital_state"
+            }
+          ]
+        }
+      }
+    },
+    "tgr": {
+      "display_name": "The Great Revision",
+      "workshop_ids": ["3215078236"],
+      "compatch_workshop_id": "3725288683",
+      "legacy_compatch_ids": ["3764673932"],
+      "compatch_name": "GORA UI+ × The Great Revision Compat",
+      "types": {
+        "budget_panel": {
+          "strategy": "splice",
+          "ops": [
+            {
+              "action": "insert_after",
+              "anchor": "tutorial_highlight_assets",
+              "after_block_end": true,
+              "enclosing_levels": 1,
+              "gora_file": "0_gora_budget_panel.gui",
+              "fence": "Capital tab button",
+              "idempotent_marker": "BUDGET_TAB_CAPITAL"
+            },
+            {
+              "action": "insert_after",
+              "anchor": "STATE_EXPLAINER",
+              "after_block_end": true,
+              "enclosing_levels": 1,
+              "gora_file": "0_gora_budget_panel.gui",
+              "fence": "Labor column",
+              "idempotent_marker": "STATS_BUDGET_LABOR"
+            },
+            {
+              "action": "insert_after",
+              "anchor": "FancyTooltip_State = {}",
+              "after_block_end": true,
+              "enclosing_levels": 2,
+              "gora_file": "0_gora_budget_panel.gui",
+              "fence": "Labor cell",
+              "idempotent_marker": "STATS_BUDGET_LABOR_ROW_TOOLTIP"
+            },
+            {
+              "action": "insert_after",
+              "anchor": "REMAINING_CREDIT",
+              "after_block_end": true,
+              "enclosing_levels": 3,
+              "gora_file": "0_gora_budget_panel.gui",
+              "fence": "Capital tab content",
+              "idempotent_marker": "InformationPanel.IsTabSelected('capital')"
+            }
+          ]
+        }
+      }
+    },
+    "psc": {
+      "display_name": "Private Sector Construction Continued",
+      "workshop_ids": ["3843134572", "3420714166"],
+      "compatch_workshop_id": "3732705410",
+      "compatch_name": "GORA UI+ x Private Sector Construction Compatch",
+      "types": {
+        "construction_panel": {
+          "strategy": "auto"
+        },
+        "state_panel_buildings_fixed_bottom": {
+          "strategy": "soft_compat",
+          "reason": "GORA UI+'s 000_gora_states_panel_buildings.gui already wraps >3 local goods into a 3-column dynamicgridbox and loads before PSC_states_panel_buildings.gui"
+        }
+      }
+    },
+    "ef": {
+      "display_name": "Economic and Financial Mod (E&F) - V4",
+      "workshop_ids": ["3143591632"],
+      "compatch_workshop_id": "3728688560",
+      "compatch_name": "GORA UI+ × Economic and Financial Mod Compat",
+      "types": {
+        "country_panel_information_content": {
+          "strategy": "soft_compat",
+          "reason": "Built into GORA UI+ via gui/z_gora_compat_placeholders.gui"
+        },
+        "state_panel_overview_content": {
+          "strategy": "soft_compat",
+          "reason": "Built into GORA UI+ via gui/z_gora_compat_placeholders.gui"
+        },
+        "budget_panel": {
+          "strategy": "splice",
+          "ops": [
+            {
+              "action": "insert_after",
+              "anchor": "STATE_EXPLAINER",
+              "after_block_end": true,
+              "enclosing_levels": 1,
+              "gora_file": "0_gora_budget_panel.gui",
+              "fence": "Labor column",
+              "idempotent_marker": "STATS_BUDGET_LABOR"
+            },
+            {
+              "action": "insert_after",
+              "anchor": "FancyTooltip_State = {}",
+              "after_block_end": true,
+              "enclosing_levels": 2,
+              "gora_file": "0_gora_budget_panel.gui",
+              "fence": "Labor cell",
+              "idempotent_marker": "STATS_BUDGET_LABOR_ROW_TOOLTIP"
+            }
+          ]
+        },
+        "construction_panel": {
+          "strategy": "auto"
+        }
+      }
+    },
+    "utopia": {
+      "display_name": "Project Utopia - Extended Timeline",
+      "workshop_ids": ["3535929411"],
+      "compatch_workshop_id": "3764673932",
+      "legacy_compatch_ids": ["3726554346"],
+      "compatch_name": "GORA UI+ × Project Utopia Compat",
+      "types": {
+        "tech_tree_panel": {
+          "strategy": "auto"
+        }
+      }
+    },
+    "vfm": {
+      "display_name": "Victorian Flavor Mod",
+      "workshop_ids": ["2880089689"],
+      "compatch_workshop_id": "3726652461",
+      "compatch_name": "GORA UI+ × Victorian Flavor Mod Compat",
+      "types": {}
+    },
+    "banking": {
+      "display_name": "Banking and Currency",
+      "workshop_ids": ["3737520195"],
+      "compatch_workshop_id": "3761478832",
+      "compatch_name": "GORA UI+ × Banking and Currency Compat",
+      "types": {}
+    }
+  }
+}

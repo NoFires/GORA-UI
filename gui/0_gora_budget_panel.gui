@@ -188,6 +188,7 @@ types gora_budget_panel {
 				blockoverride "fourth_button_name" {
 					name = "tutorial_highlight_capital"
 				}
+				### /GORA UI+
 			}
 
 			widget = { size = { 1 10 }}
@@ -1250,6 +1251,7 @@ types gora_budget_panel {
 
 								tooltip = STATS_BUDGET_LABOR_TOOLTIP
 							}
+							### /GORA UI+
 
 							sort_button = {
 								layoutstretchfactor_horizontal = 1
@@ -1352,6 +1354,7 @@ types gora_budget_panel {
 											elide = right
 										}
 									}
+									### /GORA UI+
 
 									textbox = {
 										layoutstretchfactor_horizontal = 1

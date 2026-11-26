@@ -643,6 +643,7 @@ types gora_politics_panel_government_details {
 
 			### GORA UI+ — IPG hemicycle (parliament_item type lives in gui/gora_ipg_parliament_panel.gui)
 			parliament_item = {}
+			### /GORA UI+
 
 			textbox = {
 				layoutpolicy_horizontal = preferred

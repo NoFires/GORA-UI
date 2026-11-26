@@ -1,25 +1,521 @@
 ﻿# GORA UI - Decree State Insights (partial type override)
 # ------------------------------------------------------------------------------
 # Vanilla 1.13.9 baseline: gui/map_list_panel.gui, type decree_map_list_panel.
-# This file redeclares ONLY decree_map_list_panel. All sibling types in the
-# vanilla file (map_list_panel, map_list_panel_item_interaction, the other
-# *_map_list_panel variants) are intentionally left untouched and load from
-# whichever file wins their registration.
+# This file redeclares ONLY decree_map_list_panel (plus helper row types). All
+# sibling types in the vanilla file (map_list_panel, map_list_panel_item_interaction,
+# the other *_map_list_panel variants) are intentionally left untouched and load
+# from whichever file wins their registration.
 #
 # The 0_ filename prefix sorts before map_list_panel.gui so this declaration
 # wins the first-load-wins type registry against vanilla and full-file mods.
 #
-# Feature: adds state traits, GDP, population, standard-of-living and peasants columns to the
-# decree state-selection list, with color thresholds for strong/weak states and
-# a filter strip (All / Incorporated / Peasants). Filter state is stored in
-# GetVariableSystem toggles, gated per row with short-circuiting Not(HasValue)
-# chains; the selection persists while the game session runs.
+# Feature:
+#   - Adds state traits, population, GDP, standard-of-living and peasants columns
+#     to the decree state-selection list with color thresholds and filter strip
+#     (All / Incorporated / Peasants / Without decree / With decree).
+#   - Clickable DESC/ASC sorting on Population, GDP, SoL, and Peasants headers
+#     backed by per-country ordered_scope_state scripted GUI
+#     (common/scripted_guis/gora_dsi_sort_sgui.txt & gora_dsi_sort_values.txt).
+#     Clicking vanilla State / Cost / Status headers returns cleanly to vanilla
+#     MapListPanel.Sort(...).
 #
 # Maintenance: on a vanilla patch, diff the vanilla decree_map_list_panel body
-# against this type and re-apply the marked column/filter additions.
+# against this type and re-apply the marked column/filter/sort additions.
 # Credit: integrated from "Decree State Insights" (Steam Workshop 3760606574).
 
+@panel_width = 540
+
 types dsi_map_list_panel_types {
+
+	### Shared state-columns row used by the custom-sorted view (datacontext = State)
+	type gora_dsi_sorted_state_row = container {
+		datacontext = "[Scope.GetState]"
+
+		### DSI row gate: same 4 filters as vanilla-sorted rows
+		visible = "[And( Or( Not(GetVariableSystem.Exists('dsi_only_incorporated')), State.IsIncorporated ), And( Or( Not(GetVariableSystem.Exists('dsi_only_peasants')), GreaterThan_int64(State.GetNumSubsistenceWorkingAdults, '(int64)0') ), And( Or( Not(GetVariableSystem.Exists('dsi_hide_enacted')), IsValid(MapListDecreePanel.GetDecreeType.GetSetCommand(State.Self)) ), Or( Not(GetVariableSystem.Exists('dsi_only_enacted')), Not(IsValid(MapListDecreePanel.GetDecreeType.GetSetCommand(State.Self))) ) ) ) )]"
+
+		widget = {
+			size = { @panel_width 40 }
+
+			background = {
+				using = entry_bg_simple
+			}
+
+			flowcontainer = {
+				### State name button
+				button = {
+					size = { 94 40 }
+					using = default_button
+					parentanchor = vcenter
+
+					onmousehierarchyenter = "[AccessHighlightManager.HighlightState(State.Self)]"
+					onmousehierarchyleave = "[AccessHighlightManager.RemoveHighlight]"
+
+					onclick = "[InformationPanelBar.OpenStatePanel(State.AccessSelf)]"
+					onrightclick = "[RightClickMenuManager.ShowForState(State.AccessSelf)]"
+
+					tooltipwidget = {
+						FancyTooltip_State = {}
+					}
+
+					textbox = {
+						visible = "[Not(And(State.IsUnincorporated, Not(State.IsIncorporating)))]"
+						margin = { 6 0 }
+						size = { 88 25 }
+						align = nobaseline
+						text = "[State.GetNameNoFormatting]"
+						parentanchor = vcenter
+						elide = right
+						fontsize_min = 10
+					}
+
+					textbox = {
+						visible = "[And(State.IsUnincorporated, Not(State.IsIncorporating))]"
+						margin = { 6 0 }
+						size = { 63 25 }
+						align = nobaseline
+						text = "[State.GetNameNoFormatting]"
+						parentanchor = vcenter
+						elide = right
+						fontsize_min = 10
+					}
+
+					icon = {
+						visible = "[And(State.IsUnincorporated, Not(State.IsIncorporating))]"
+						parentanchor = right|vcenter
+						position = { -5 0 }
+						size = { 25 25 }
+						texture = "gfx/interface/icons/state_status_icons/unincorporated_state.dds"
+					}
+				}
+
+				### State traits
+				widget = {
+					size = { 88 40 }
+					parentanchor = vcenter
+
+					flowcontainer = {
+						datamodel = "[State.AccessStateRegion.AccessTraits]"
+						parentanchor = center
+						spacing = 2
+
+						item = {
+							icon = {
+								size = { 26 26 }
+								tooltip = TOOLTIP_STATE_TRAIT
+								onmousehierarchyenter = "[AccessHighlightManager.HighlightStateTrait(StateTrait.Self)]"
+								onmousehierarchyleave = "[AccessHighlightManager.RemoveHighlight]"
+								alwaystransparent = no
+								texture = "[StateTrait.GetTexture]"
+							}
+						}
+					}
+				}
+
+				### Population: light green from 1M to 2M, strong green above 2M
+				textbox = {
+					margin = { 5 0 }
+					size = { 61 30 }
+					align = right|nobaseline
+					parentanchor = vcenter
+					elide = right
+					fontsize_min = 12
+					visible = "[Not(GreaterThan_int64(State.GetPopulationSize, '(int64)999999'))]"
+					text = "[State.GetPopulationSize|Kv]"
+					tooltip = "TOOLTIP_STATE_POPULATION"
+				}
+				textbox = {
+					margin = { 5 0 }
+					size = { 61 30 }
+					align = right|nobaseline
+					parentanchor = vcenter
+					elide = right
+					fontsize_min = 12
+					visible = "[And(GreaterThan_int64(State.GetPopulationSize, '(int64)999999'), Not(GreaterThan_int64(State.GetPopulationSize, '(int64)1999999')))]"
+					text = "DSI_VAL_POP_MID"
+					tooltip = "TOOLTIP_STATE_POPULATION"
+				}
+				textbox = {
+					margin = { 5 0 }
+					size = { 61 30 }
+					align = right|nobaseline
+					parentanchor = vcenter
+					elide = right
+					fontsize_min = 12
+					visible = "[GreaterThan_int64(State.GetPopulationSize, '(int64)1999999')]"
+					text = "DSI_VAL_POP_HI"
+					tooltip = "TOOLTIP_STATE_POPULATION"
+				}
+
+				### GDP: green from 1M pounds (DSI threshold)
+				textbox = {
+					margin = { 5 0 }
+					size = { 74 30 }
+					align = right|nobaseline
+					parentanchor = vcenter
+					elide = right
+					fontsize_min = 12
+					visible = "[Not(GreaterThanOrEqualTo_CFixedPoint(State.GetGDPContribution, '(CFixedPoint)1000000'))]"
+					raw_text = "@money![State.GetGDPContribution|Kv]"
+					tooltip = "CURRENT_GDP_STATE"
+				}
+				textbox = {
+					margin = { 5 0 }
+					size = { 74 30 }
+					align = right|nobaseline
+					parentanchor = vcenter
+					elide = right
+					fontsize_min = 12
+					visible = "[GreaterThanOrEqualTo_CFixedPoint(State.GetGDPContribution, '(CFixedPoint)1000000')]"
+					text = "DSI_VAL_GDP_HI"
+					tooltip = "CURRENT_GDP_STATE"
+				}
+
+				### SoL: red below 10 (vanilla SOL_STRUGGLING_THRESHOLD)
+				textbox = {
+					margin = { 5 0 }
+					size = { 42 30 }
+					align = right|nobaseline
+					parentanchor = vcenter
+					elide = right
+					fontsize_min = 12
+					visible = "[GreaterThanOrEqualTo_CFixedPoint(State.GetAverageStandardOfLivingAll, '(CFixedPoint)10')]"
+					text = "[State.GetAverageStandardOfLivingAll|v1]"
+					tooltip = "NUM_SOL"
+				}
+				textbox = {
+					margin = { 5 0 }
+					size = { 42 30 }
+					align = right|nobaseline
+					parentanchor = vcenter
+					elide = right
+					fontsize_min = 12
+					visible = "[Not(GreaterThanOrEqualTo_CFixedPoint(State.GetAverageStandardOfLivingAll, '(CFixedPoint)10'))]"
+					text = "DSI_VAL_SOL_LOW"
+					tooltip = "NUM_SOL"
+				}
+
+				### Peasants: yellow from 100K
+				textbox = {
+					margin = { 5 0 }
+					size = { 61 30 }
+					align = right|nobaseline
+					parentanchor = vcenter
+					elide = right
+					fontsize_min = 12
+					visible = "[Not(GreaterThan_int64(State.GetNumSubsistenceWorkingAdults, '(int64)99999'))]"
+					text = "[State.GetNumSubsistenceWorkingAdults|Kv]"
+					tooltip = "STATE_AVAILABLE_LABOR_TOOLTIP"
+				}
+				textbox = {
+					margin = { 5 0 }
+					size = { 61 30 }
+					align = right|nobaseline
+					parentanchor = vcenter
+					elide = right
+					fontsize_min = 12
+					visible = "[GreaterThan_int64(State.GetNumSubsistenceWorkingAdults, '(int64)99999')]"
+					text = "DSI_VAL_PEASANTS_HI"
+					tooltip = "STATE_AVAILABLE_LABOR_TOOLTIP"
+				}
+
+				### Authority cost
+				widget = {
+					size = { 60 40 }
+					parentanchor = vcenter
+
+					textbox = {
+						parentanchor = right|vcenter
+						text = "[MapListDecreePanel.GetDecreeType.GetCostFormatted(GetPlayer.Self)]"
+						tooltip = "[MapListDecreePanel.GetDecreeType.GetTooltipForState(State.Self)]"
+						size = { 58 34 }
+						align = right|nobaseline
+						margin_right = 4
+						multiline = yes
+						elide = right
+						fontsize_min = 9
+					}
+				}
+
+				### Enact / Remove decree action button
+				widget = {
+					size = { 55 40 }
+					parentanchor = vcenter
+
+					# Base layer: enact decree (or disabled with vanilla reason tooltip)
+					button = {
+						size = { 55 40 }
+						using = default_button_action
+						using = tooltip_es
+						enabled = "[IsValid(MapListDecreePanel.GetDecreeType.GetSetCommand(State.Self))]"
+						onclick = "[Execute(MapListDecreePanel.GetDecreeType.GetSetCommand(State.Self))]"
+						tooltip = "[MapListDecreePanel.GetDecreeType.GetTooltipForState(State.Self)]"
+						onmousehierarchyenter = "[AccessHighlightManager.HighlightState(State.Self)]"
+						onmousehierarchyleave = "[AccessHighlightManager.RemoveHighlight]"
+
+						icon = {
+							texture = "[MapListDecreePanel.GetDecreeType.GetTexture]"
+							size = { 30 30 }
+							parentanchor = center
+							alpha = "[Select_float(IsValid(MapListDecreePanel.GetDecreeType.GetSetCommand(State.Self)), '(float)1.0', '(float)0.35')]"
+							alwaystransparent = yes
+						}
+					}
+
+					# Overlay layer: shown only when this decree is already active in this state; clicking removes it
+					flowcontainer = {
+						datamodel = "[State.AccessDecrees]"
+
+						item = {
+							button = {
+								visible = "[And(ObjectsEqual(Decree.GetType, MapListDecreePanel.GetDecreeType), ObjectsEqual(Decree.GetCountry.Self, GetPlayer.Self))]"
+								size = { 55 40 }
+								using = default_button_action
+								using = tooltip_es
+								enabled = "[IsValid(Decree.GetRemoveCommand)]"
+								onclick = "[Execute(Decree.GetRemoveCommand)]"
+								tooltip = "[Decree.GetTooltip]"
+								onmousehierarchyenter = "[AccessHighlightManager.HighlightState(State.Self)]"
+								onmousehierarchyleave = "[AccessHighlightManager.RemoveHighlight]"
+
+								icon = {
+									using = highlighted_square_selection
+									alwaystransparent = yes
+								}
+
+								icon = {
+									texture = "[Decree.GetTexture]"
+									size = { 30 30 }
+									parentanchor = center
+									alwaystransparent = yes
+								}
+
+								textbox = {
+									raw_text = "@green_checkmark!"
+									autoresize = yes
+									parentanchor = top|right
+									position = { -3 2 }
+									alwaystransparent = yes
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	### Vanilla MapListOption row (shared by default valid_options_list & FailedOptions)
+	type gora_dsi_vanilla_option_row = container {
+		### DSI row gate: AND chain of the filters, each short-circuited via Not(HasValue)
+		visible = "[And( Or( Not(GetVariableSystem.Exists('dsi_only_incorporated')), MapListOption.GetDecreeData.GetState.IsIncorporated ), And( Or( Not(GetVariableSystem.Exists('dsi_only_peasants')), GreaterThan_int64(MapListOption.GetDecreeData.GetState.GetNumSubsistenceWorkingAdults, '(int64)0') ), And( Or( Not(GetVariableSystem.Exists('dsi_hide_enacted')), IsValid(MapListDecreePanel.GetDecreeType.GetSetCommand(MapListOption.GetDecreeData.GetState.Self)) ), Or( Not(GetVariableSystem.Exists('dsi_only_enacted')), Not(IsValid(MapListDecreePanel.GetDecreeType.GetSetCommand(MapListOption.GetDecreeData.GetState.Self))) ) ) ) )]"
+
+		map_list_panel_item_interaction = {
+			blockoverride "name_button_visibility" {
+				visible = yes
+			}
+
+			blockoverride "name_button_size" {
+				size = { 94 40 }
+			}
+
+			blockoverride "name_button_properties" {
+				datacontext = "[MapListOption.GetDecreeData.GetState]"
+
+				onmousehierarchyenter = "[AccessHighlightManager.HighlightState(State.Self)]"
+				onmousehierarchyleave = "[AccessHighlightManager.RemoveHighlight]"
+
+				onclick = "[InformationPanelBar.OpenStatePanel(State.AccessSelf)]"
+				onrightclick = "[RightClickMenuManager.ShowForState(State.AccessSelf)]"
+
+				tooltipwidget = {
+					FancyTooltip_State = {}
+				}
+
+				textbox = {
+					visible = "[Not(And(State.IsUnincorporated, Not(State.IsIncorporating)))]"
+					margin = { 6 0 }
+					size = { 88 25 }
+					align = nobaseline
+					text = "[State.GetNameNoFormatting]"
+					parentanchor = vcenter
+					elide = right
+					fontsize_min = 10
+				}
+
+				textbox = {
+					visible = "[And(State.IsUnincorporated, Not(State.IsIncorporating))]"
+					margin = { 6 0 }
+					size = { 63 25 }
+					align = nobaseline
+					text = "[State.GetNameNoFormatting]"
+					parentanchor = vcenter
+					elide = right
+					fontsize_min = 10
+				}
+
+				icon = {
+					visible = "[And(State.IsUnincorporated, Not(State.IsIncorporating))]"
+					parentanchor = right|vcenter
+					position = { -5 0 }
+					size = { 25 25 }
+					texture = "gfx/interface/icons/state_status_icons/unincorporated_state.dds"
+				}
+			}
+
+			blockoverride "values" {
+				### State traits: centered inside a fixed-width slot to keep one or two icons aligned.
+				widget = {
+					size = { 88 40 }
+					parentanchor = vcenter
+
+					flowcontainer = {
+						datacontext = "[MapListOption.GetDecreeData.GetState]"
+						datamodel = "[State.AccessStateRegion.AccessTraits]"
+						parentanchor = center
+						spacing = 2
+
+						item = {
+							icon = {
+								size = { 26 26 }
+								tooltip = TOOLTIP_STATE_TRAIT
+								onmousehierarchyenter = "[AccessHighlightManager.HighlightStateTrait(StateTrait.Self)]"
+								onmousehierarchyleave = "[AccessHighlightManager.RemoveHighlight]"
+								alwaystransparent = no
+								texture = "[StateTrait.GetTexture]"
+							}
+						}
+					}
+				}
+
+				### Population: light green from 1M to 2M, strong green above 2M
+				textbox = {
+					datacontext = "[MapListOption.GetDecreeData.GetState]"
+					margin = { 5 0 }
+					size = { 61 30 }
+					align = right|nobaseline
+					parentanchor = vcenter
+					elide = right
+					fontsize_min = 12
+					visible = "[Not(GreaterThan_int64(State.GetPopulationSize, '(int64)999999'))]"
+					text = "[State.GetPopulationSize|Kv]"
+					tooltip = "TOOLTIP_STATE_POPULATION"
+				}
+				textbox = {
+					datacontext = "[MapListOption.GetDecreeData.GetState]"
+					margin = { 5 0 }
+					size = { 61 30 }
+					align = right|nobaseline
+					parentanchor = vcenter
+					elide = right
+					fontsize_min = 12
+					visible = "[And(GreaterThan_int64(State.GetPopulationSize, '(int64)999999'), Not(GreaterThan_int64(State.GetPopulationSize, '(int64)1999999')))]"
+					text = "DSI_VAL_POP_MID"
+					tooltip = "TOOLTIP_STATE_POPULATION"
+				}
+				textbox = {
+					datacontext = "[MapListOption.GetDecreeData.GetState]"
+					margin = { 5 0 }
+					size = { 61 30 }
+					align = right|nobaseline
+					parentanchor = vcenter
+					elide = right
+					fontsize_min = 12
+					visible = "[GreaterThan_int64(State.GetPopulationSize, '(int64)1999999')]"
+					text = "DSI_VAL_POP_HI"
+					tooltip = "TOOLTIP_STATE_POPULATION"
+				}
+
+				### GDP: green from 1M pounds (DSI threshold)
+				textbox = {
+					datacontext = "[MapListOption.GetDecreeData.GetState]"
+					margin = { 5 0 }
+					size = { 74 30 }
+					align = right|nobaseline
+					parentanchor = vcenter
+					elide = right
+					fontsize_min = 12
+					visible = "[Not(GreaterThanOrEqualTo_CFixedPoint(State.GetGDPContribution, '(CFixedPoint)1000000'))]"
+					raw_text = "@money![State.GetGDPContribution|Kv]"
+					tooltip = "CURRENT_GDP_STATE"
+				}
+				textbox = {
+					datacontext = "[MapListOption.GetDecreeData.GetState]"
+					margin = { 5 0 }
+					size = { 74 30 }
+					align = right|nobaseline
+					parentanchor = vcenter
+					elide = right
+					fontsize_min = 12
+					visible = "[GreaterThanOrEqualTo_CFixedPoint(State.GetGDPContribution, '(CFixedPoint)1000000')]"
+					text = "DSI_VAL_GDP_HI"
+					tooltip = "CURRENT_GDP_STATE"
+				}
+
+				### SoL: red below 10 (vanilla SOL_STRUGGLING_THRESHOLD, 00_defines.txt)
+				textbox = {
+					datacontext = "[MapListOption.GetDecreeData.GetState]"
+					margin = { 5 0 }
+					size = { 42 30 }
+					align = right|nobaseline
+					parentanchor = vcenter
+					elide = right
+					fontsize_min = 12
+					visible = "[GreaterThanOrEqualTo_CFixedPoint(State.GetAverageStandardOfLivingAll, '(CFixedPoint)10')]"
+					text = "[State.GetAverageStandardOfLivingAll|v1]"
+					tooltip = "NUM_SOL"
+				}
+				textbox = {
+					datacontext = "[MapListOption.GetDecreeData.GetState]"
+					margin = { 5 0 }
+					size = { 42 30 }
+					align = right|nobaseline
+					parentanchor = vcenter
+					elide = right
+					fontsize_min = 12
+					visible = "[Not(GreaterThanOrEqualTo_CFixedPoint(State.GetAverageStandardOfLivingAll, '(CFixedPoint)10'))]"
+					text = "DSI_VAL_SOL_LOW"
+					tooltip = "NUM_SOL"
+				}
+
+				### Peasants: yellow from 100K
+				textbox = {
+					datacontext = "[MapListOption.GetDecreeData.GetState]"
+					margin = { 5 0 }
+					size = { 61 30 }
+					align = right|nobaseline
+					parentanchor = vcenter
+					elide = right
+					fontsize_min = 12
+					visible = "[Not(GreaterThan_int64(State.GetNumSubsistenceWorkingAdults, '(int64)99999'))]"
+					text = "[State.GetNumSubsistenceWorkingAdults|Kv]"
+					tooltip = "STATE_AVAILABLE_LABOR_TOOLTIP"
+				}
+				textbox = {
+					datacontext = "[MapListOption.GetDecreeData.GetState]"
+					margin = { 5 0 }
+					size = { 61 30 }
+					align = right|nobaseline
+					parentanchor = vcenter
+					elide = right
+					fontsize_min = 12
+					visible = "[GreaterThan_int64(State.GetNumSubsistenceWorkingAdults, '(int64)99999')]"
+					text = "DSI_VAL_PEASANTS_HI"
+					tooltip = "STATE_AVAILABLE_LABOR_TOOLTIP"
+				}
+
+				textbox = {
+					parentanchor = right|vcenter
+					text = "MAP_LIST_DECREE_COST"
+					size = { 60 30 }
+					align = right|nobaseline
+					margin_right = 10
+					elide = right
+					fontsize_min = 12
+				}
+			}
+		}
+	}
 
 	### DECREES
 	type decree_map_list_panel = map_list_panel {
@@ -27,6 +523,12 @@ types dsi_map_list_panel_types {
 
 		blockoverride "headers" {
 			direction = vertical
+
+			# Always open cleanly in vanilla view without overriding map_list_panel's root _show sound
+			state = {
+				name = _show
+				on_start = "[GetVariableSystem.Clear('dsi_sort_mode')]"
+			}
 
 			### DSI filter strip
 			flowcontainer = {
@@ -86,6 +588,7 @@ types dsi_map_list_panel_types {
 					align = hcenter|nobaseline
 					text = "DECREE_LIST_PANEL_STATE_HEADER"
 					tooltip = "DECREE_LIST_PANEL_STATE_HEADER_TOOLTIP"
+					onclick = "[GetVariableSystem.Clear('dsi_sort_mode')]"
 					onclick = "[MapListPanel.Sort('state')]"
 				}
 
@@ -105,10 +608,30 @@ types dsi_map_list_panel_types {
 					size = { 61 30 }
 					align = hcenter|nobaseline
 					tooltip = "DSI_POP_HEADER_TOOLTIP"
+					onclick = "[GetScriptedGui('gora_dsi_sort_states').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('mode', MakeScopeValue(IntToFixedPoint(Select_int32(GetVariableSystem.HasValue('dsi_sort_mode', 'pop_desc'), '(int32)2', '(int32)1')))).End)]"
+					onclick = "[GetVariableSystem.Set('dsi_sort_mode', Select_CString(GetVariableSystem.HasValue('dsi_sort_mode', 'pop_desc'), 'pop_asc', 'pop_desc'))]"
+
 					icon = {
 						texture = "gfx/interface/icons/generic_icons/population.dds"
-						size = { 25 25 }
+						size = { 24 24 }
 						parentanchor = center
+						alwaystransparent = yes
+					}
+					button = {
+						visible = "[GetVariableSystem.HasValue('dsi_sort_mode', 'pop_desc')]"
+						size = { 12 12 }
+						parentanchor = right|vcenter
+						position = { -2 0 }
+						using = expand_arrow_expanded
+						alwaystransparent = yes
+					}
+					button = {
+						visible = "[GetVariableSystem.HasValue('dsi_sort_mode', 'pop_asc')]"
+						size = { 12 12 }
+						parentanchor = right|vcenter
+						position = { -2 0 }
+						using = expand_arrow_expanded
+						mirror = vertical
 						alwaystransparent = yes
 					}
 				}
@@ -117,10 +640,30 @@ types dsi_map_list_panel_types {
 					size = { 74 30 }
 					align = hcenter|nobaseline
 					tooltip = "DSI_GDP_HEADER_TOOLTIP"
+					onclick = "[GetScriptedGui('gora_dsi_sort_states').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('mode', MakeScopeValue(IntToFixedPoint(Select_int32(GetVariableSystem.HasValue('dsi_sort_mode', 'gdp_desc'), '(int32)4', '(int32)3')))).End)]"
+					onclick = "[GetVariableSystem.Set('dsi_sort_mode', Select_CString(GetVariableSystem.HasValue('dsi_sort_mode', 'gdp_desc'), 'gdp_asc', 'gdp_desc'))]"
+
 					icon = {
 						texture = "gfx/interface/icons/generic_icons/gdp.dds"
-						size = { 25 25 }
+						size = { 24 24 }
 						parentanchor = center
+						alwaystransparent = yes
+					}
+					button = {
+						visible = "[GetVariableSystem.HasValue('dsi_sort_mode', 'gdp_desc')]"
+						size = { 12 12 }
+						parentanchor = right|vcenter
+						position = { -2 0 }
+						using = expand_arrow_expanded
+						alwaystransparent = yes
+					}
+					button = {
+						visible = "[GetVariableSystem.HasValue('dsi_sort_mode', 'gdp_asc')]"
+						size = { 12 12 }
+						parentanchor = right|vcenter
+						position = { -2 0 }
+						using = expand_arrow_expanded
+						mirror = vertical
 						alwaystransparent = yes
 					}
 				}
@@ -129,10 +672,30 @@ types dsi_map_list_panel_types {
 					size = { 42 30 }
 					align = hcenter|nobaseline
 					tooltip = "DSI_SOL_HEADER_TOOLTIP"
+					onclick = "[GetScriptedGui('gora_dsi_sort_states').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('mode', MakeScopeValue(IntToFixedPoint(Select_int32(GetVariableSystem.HasValue('dsi_sort_mode', 'sol_desc'), '(int32)6', '(int32)5')))).End)]"
+					onclick = "[GetVariableSystem.Set('dsi_sort_mode', Select_CString(GetVariableSystem.HasValue('dsi_sort_mode', 'sol_desc'), 'sol_asc', 'sol_desc'))]"
+
 					icon = {
 						texture = "gfx/interface/icons/generic_icons/sol_icon.dds"
-						size = { 25 25 }
+						size = { 22 22 }
 						parentanchor = center
+						alwaystransparent = yes
+					}
+					button = {
+						visible = "[GetVariableSystem.HasValue('dsi_sort_mode', 'sol_desc')]"
+						size = { 10 10 }
+						parentanchor = right|vcenter
+						position = { -1 0 }
+						using = expand_arrow_expanded
+						alwaystransparent = yes
+					}
+					button = {
+						visible = "[GetVariableSystem.HasValue('dsi_sort_mode', 'sol_asc')]"
+						size = { 10 10 }
+						parentanchor = right|vcenter
+						position = { -1 0 }
+						using = expand_arrow_expanded
+						mirror = vertical
 						alwaystransparent = yes
 					}
 				}
@@ -141,10 +704,30 @@ types dsi_map_list_panel_types {
 					size = { 61 30 }
 					align = hcenter|nobaseline
 					tooltip = "DSI_PEASANTS_HEADER_TOOLTIP"
+					onclick = "[GetScriptedGui('gora_dsi_sort_states').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('mode', MakeScopeValue(IntToFixedPoint(Select_int32(GetVariableSystem.HasValue('dsi_sort_mode', 'peasants_desc'), '(int32)8', '(int32)7')))).End)]"
+					onclick = "[GetVariableSystem.Set('dsi_sort_mode', Select_CString(GetVariableSystem.HasValue('dsi_sort_mode', 'peasants_desc'), 'peasants_asc', 'peasants_desc'))]"
+
 					icon = {
 						texture = "gfx/interface/icons/pops_icons/peasants.dds"
-						size = { 25 25 }
+						size = { 24 24 }
 						parentanchor = center
+						alwaystransparent = yes
+					}
+					button = {
+						visible = "[GetVariableSystem.HasValue('dsi_sort_mode', 'peasants_desc')]"
+						size = { 12 12 }
+						parentanchor = right|vcenter
+						position = { -2 0 }
+						using = expand_arrow_expanded
+						alwaystransparent = yes
+					}
+					button = {
+						visible = "[GetVariableSystem.HasValue('dsi_sort_mode', 'peasants_asc')]"
+						size = { 12 12 }
+						parentanchor = right|vcenter
+						position = { -2 0 }
+						using = expand_arrow_expanded
+						mirror = vertical
 						alwaystransparent = yes
 					}
 				}
@@ -155,12 +738,14 @@ types dsi_map_list_panel_types {
 					align = hcenter|nobaseline
 					text = "DECREE_LIST_PANEL_COST_HEADER"
 					tooltip = "DECREE_LIST_PANEL_COST_HEADER_TOOLTIP"
+					onclick = "[GetVariableSystem.Clear('dsi_sort_mode')]"
 					onclick = "[MapListPanel.Sort('cost')]"
 				}
 
 				sort_button = {
 					size = { 55 20 }
 					tooltip = "DECREE_MAP_LIST_PANEL_STATUS_HEADER_TOOLTIP"
+					onclick = "[GetVariableSystem.Clear('dsi_sort_mode')]"
 					onclick = "[MapListPanel.Sort('status')]"
 					icon = {
 						texture = "gfx/interface/buttons/sort_button_icons/sort_icon_status.dds"
@@ -172,219 +757,37 @@ types dsi_map_list_panel_types {
 			}
 		}
 
+		blockoverride "valid_options_list" {
+			# Vanilla-sorted list (default; active for State / Cost / Status headers)
+			flowcontainer = {
+				visible = "[Not(GetVariableSystem.Exists('dsi_sort_mode'))]"
+				direction = vertical
+				parentanchor = hcenter
+				datamodel_reuse_widgets = yes
+				datamodel = "[MapListPanel.AccessValidOptions]"
+
+				item = {
+					gora_dsi_vanilla_option_row = {}
+				}
+			}
+
+			# Custom-sorted list (Population / GDP / SoL / Peasants DESC/ASC)
+			flowcontainer = {
+				visible = "[GetVariableSystem.Exists('dsi_sort_mode')]"
+				direction = vertical
+				parentanchor = hcenter
+				datamodel = "[GetPlayer.MakeScope.GetList('gora_dsi_sorted_states')]"
+
+				item = {
+					gora_dsi_sorted_state_row = {}
+				}
+			}
+		}
+
+		# Used by map_list_panel's AccessFailedOptions section
 		blockoverride "item" {
 			item = {
-				container = {
-					### DSI row gate: AND chain of the filters, each short-circuited via Not(HasValue)
-					visible = "[And( Or( Not(GetVariableSystem.Exists('dsi_only_incorporated')), MapListOption.GetDecreeData.GetState.IsIncorporated ), And( Or( Not(GetVariableSystem.Exists('dsi_only_peasants')), GreaterThan_int64(MapListOption.GetDecreeData.GetState.GetNumSubsistenceWorkingAdults, '(int64)0') ), And( Or( Not(GetVariableSystem.Exists('dsi_hide_enacted')), IsValid(MapListDecreePanel.GetDecreeType.GetSetCommand(MapListOption.GetDecreeData.GetState.Self)) ), Or( Not(GetVariableSystem.Exists('dsi_only_enacted')), Not(IsValid(MapListDecreePanel.GetDecreeType.GetSetCommand(MapListOption.GetDecreeData.GetState.Self))) ) ) ) )]"
-
-					map_list_panel_item_interaction = {
-						blockoverride "name_button_visibility" {
-							visible = yes
-						}
-
-						blockoverride "name_button_size" {
-							size = { 94 40 }
-						}
-
-						blockoverride "name_button_properties" {
-
-							datacontext = "[MapListOption.GetDecreeData.GetState]"
-
-							onmousehierarchyenter = "[AccessHighlightManager.HighlightState(State.Self)]"
-							onmousehierarchyleave = "[AccessHighlightManager.RemoveHighlight]"
-
-							onclick = "[InformationPanelBar.OpenStatePanel(State.AccessSelf)]"
-							onrightclick = "[RightClickMenuManager.ShowForState(State.AccessSelf)]"
-
-							tooltipwidget = {
-								FancyTooltip_State = {}
-							}
-
-							textbox = {
-								visible = "[Not(And(State.IsUnincorporated, Not(State.IsIncorporating)))]"
-								margin = { 6 0 }
-								size = { 88 25 }
-								align = nobaseline
-								text = "[State.GetNameNoFormatting]"
-								parentanchor = vcenter
-								elide = right
-								fontsize_min = 10
-							}
-
-							textbox = {
-								visible = "[And(State.IsUnincorporated, Not(State.IsIncorporating))]"
-								margin = { 6 0 }
-								size = { 63 25 }
-								align = nobaseline
-								text = "[State.GetNameNoFormatting]"
-								parentanchor = vcenter
-								elide = right
-								fontsize_min = 10
-							}
-
-							icon = {
-								visible = "[And(State.IsUnincorporated, Not(State.IsIncorporating))]"
-								parentanchor = right|vcenter
-								position = { -5 0 }
-								size = { 25 25 }
-								texture = "gfx/interface/icons/state_status_icons/unincorporated_state.dds"
-							}
-						}
-
-						blockoverride "values" {
-							### State traits: centered inside a fixed-width slot to keep one or two icons aligned.
-							widget = {
-								size = { 88 40 }
-								parentanchor = vcenter
-
-								flowcontainer = {
-									datacontext = "[MapListOption.GetDecreeData.GetState]"
-									datamodel = "[State.AccessStateRegion.AccessTraits]"
-									parentanchor = center
-									spacing = 2
-
-									item = {
-										icon = {
-											size = { 26 26 }
-											tooltip = TOOLTIP_STATE_TRAIT
-											onmousehierarchyenter = "[AccessHighlightManager.HighlightStateTrait(StateTrait.Self)]"
-											onmousehierarchyleave = "[AccessHighlightManager.RemoveHighlight]"
-											alwaystransparent = no
-											texture = "[StateTrait.GetTexture]"
-										}
-									}
-								}
-							}
-
-							### Population: light green from 1M to 2M, strong green above 2M
-							textbox = {
-								datacontext = "[MapListOption.GetDecreeData.GetState]"
-								margin = { 5 0 }
-								size = { 61 30 }
-								align = right|nobaseline
-								parentanchor = vcenter
-								elide = right
-								fontsize_min = 12
-								visible = "[Not(GreaterThan_int64(State.GetPopulationSize, '(int64)999999'))]"
-								text = "[State.GetPopulationSize|Kv]"
-								tooltip = "TOOLTIP_STATE_POPULATION"
-							}
-							textbox = {
-								datacontext = "[MapListOption.GetDecreeData.GetState]"
-								margin = { 5 0 }
-								size = { 61 30 }
-								align = right|nobaseline
-								parentanchor = vcenter
-								elide = right
-								fontsize_min = 12
-								visible = "[And(GreaterThan_int64(State.GetPopulationSize, '(int64)999999'), Not(GreaterThan_int64(State.GetPopulationSize, '(int64)1999999')))]"
-								text = "DSI_VAL_POP_MID"
-								tooltip = "TOOLTIP_STATE_POPULATION"
-							}
-							textbox = {
-								datacontext = "[MapListOption.GetDecreeData.GetState]"
-								margin = { 5 0 }
-								size = { 61 30 }
-								align = right|nobaseline
-								parentanchor = vcenter
-								elide = right
-								fontsize_min = 12
-								visible = "[GreaterThan_int64(State.GetPopulationSize, '(int64)1999999')]"
-								text = "DSI_VAL_POP_HI"
-								tooltip = "TOOLTIP_STATE_POPULATION"
-							}
-
-							### GDP: green from 1M pounds (DSI threshold)
-							textbox = {
-								datacontext = "[MapListOption.GetDecreeData.GetState]"
-								margin = { 5 0 }
-								size = { 74 30 }
-								align = right|nobaseline
-								parentanchor = vcenter
-								elide = right
-								fontsize_min = 12
-								visible = "[Not(GreaterThanOrEqualTo_CFixedPoint(State.GetGDPContribution, '(CFixedPoint)1000000'))]"
-								raw_text = "@money![State.GetGDPContribution|Kv]"
-								tooltip = "CURRENT_GDP_STATE"
-							}
-							textbox = {
-								datacontext = "[MapListOption.GetDecreeData.GetState]"
-								margin = { 5 0 }
-								size = { 74 30 }
-								align = right|nobaseline
-								parentanchor = vcenter
-								elide = right
-								fontsize_min = 12
-								visible = "[GreaterThanOrEqualTo_CFixedPoint(State.GetGDPContribution, '(CFixedPoint)1000000')]"
-								text = "DSI_VAL_GDP_HI"
-								tooltip = "CURRENT_GDP_STATE"
-							}
-
-							### SoL: red below 10 (vanilla SOL_STRUGGLING_THRESHOLD, 00_defines.txt)
-							textbox = {
-								datacontext = "[MapListOption.GetDecreeData.GetState]"
-								margin = { 5 0 }
-								size = { 42 30 }
-								align = right|nobaseline
-								parentanchor = vcenter
-								elide = right
-								fontsize_min = 12
-								visible = "[GreaterThanOrEqualTo_CFixedPoint(State.GetAverageStandardOfLivingAll, '(CFixedPoint)10')]"
-								text = "[State.GetAverageStandardOfLivingAll|v1]"
-								tooltip = "NUM_SOL"
-							}
-							textbox = {
-								datacontext = "[MapListOption.GetDecreeData.GetState]"
-								margin = { 5 0 }
-								size = { 42 30 }
-								align = right|nobaseline
-								parentanchor = vcenter
-								elide = right
-								fontsize_min = 12
-								visible = "[Not(GreaterThanOrEqualTo_CFixedPoint(State.GetAverageStandardOfLivingAll, '(CFixedPoint)10'))]"
-								text = "DSI_VAL_SOL_LOW"
-								tooltip = "NUM_SOL"
-							}
-
-							### Bauern: gelb ab 100K (DSI-Schwelle, eigene Wahl, kein Vanilla-Vorbild)
-							textbox = {
-								datacontext = "[MapListOption.GetDecreeData.GetState]"
-								margin = { 5 0 }
-								size = { 61 30 }
-								align = right|nobaseline
-								parentanchor = vcenter
-								elide = right
-								fontsize_min = 12
-								visible = "[Not(GreaterThan_int64(State.GetNumSubsistenceWorkingAdults, '(int64)99999'))]"
-								text = "[State.GetNumSubsistenceWorkingAdults|Kv]"
-								tooltip = "STATE_AVAILABLE_LABOR_TOOLTIP"
-							}
-							textbox = {
-								datacontext = "[MapListOption.GetDecreeData.GetState]"
-								margin = { 5 0 }
-								size = { 61 30 }
-								align = right|nobaseline
-								parentanchor = vcenter
-								elide = right
-								fontsize_min = 12
-								visible = "[GreaterThan_int64(State.GetNumSubsistenceWorkingAdults, '(int64)99999')]"
-								text = "DSI_VAL_PEASANTS_HI"
-								tooltip = "STATE_AVAILABLE_LABOR_TOOLTIP"
-							}
-
-							textbox = {
-								parentanchor = right|vcenter
-								text = "MAP_LIST_DECREE_COST"
-								size = { 60 30 }
-								align = right|nobaseline
-								margin_right = 10
-								elide = right
-								fontsize_min = 12
-							}
-						}
-					}
-				}
+				gora_dsi_vanilla_option_row = {}
 			}
 		}
 	}
