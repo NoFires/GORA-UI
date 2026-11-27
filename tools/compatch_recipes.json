@@ -48,6 +48,23 @@
               "idempotent_marker": "concept_capital_state"
             }
           ]
+        },
+        "country_panel_politics_content": {
+          "strategy": "splice",
+          "ops": [
+            {
+              "action": "insert_before",
+              "anchor": "### MOVEMENTS",
+              "inline": [
+                "### GORA UI+ — IPG Foreign Parliament Viewer (ipg_foreign_parliament_section lives in gui/ipg_parliament_panel.gui)",
+                "ipg_foreign_parliament_section = {}",
+                "",
+                "widget = { size = { 10 10 } }",
+                "### /GORA UI+"
+              ],
+              "idempotent_marker": "ipg_foreign_parliament_section"
+            }
+          ]
         }
       }
     },

@@ -1,60 +1,57 @@
-[h1]🏛️ Improved ParliamentGraph [1.15] — Version 3.0 Major Overhaul![/h1]
+[h1]🏛️ Improved ParliamentGraph 3.1 — Proportional Formulas, Historical Chambers & Foreign Parliaments![/h1]
 
-[b]Version 3.0[/b] is a complete ground-up overhaul of [b]Improved ParliamentGraph[/b], transforming the classic parliament hemicycle into a dynamic, culturally authentic multi-chamber visualization suite designed to look and feel like an official Victoria 3 expansion feature.
+[b]Version 3.1[/b] expands the 3.0 overhaul with live in-game seat apportionment formulas (linked to both seat distribution and historical chamber size), 20+ country-specific historical Upper & Lower chamber names, 5-election rolling seat trends, 3D enameled seat dots, and an on-demand 3-view Foreign AI Parliament Viewer.
 
 [list]
 [*]Supported Game Version: [b]1.15.*[/b]
-[*]Ironman / Achievement / Multiplayer compatible (zero global variables, player-gated calculations)
+[*]Ironman / Achievement / Multiplayer compatible (zero global variables, zero gameplay alteration, zero background AI ticks)
 [*]Mid-save safe — works immediately on existing saves with automatic election data capture
-[*]Full native support for [b]all 11 official languages[/b]
+[*]Full native support for [b]all 11 official languages[/b], aligned directly with official Victoria 3 law & concept localization keys
 [/list]
 
-[h2]🔥 What's New in 3.0[/h2]
+[h2]🔥 What's New in 3.1[/h2]
 
-[h3]1. Five Authentic Chamber Architectures + Smart Auto-Matching[/h3]
-Your parliament chamber now adapts to your country's laws and parliamentary tradition automatically — or switch freely anytime from the sleek bottom-right layout selector popup:
+[h3]1. Live In-Game Seat Apportionment Formulas (5 Methods + Smart Auto-Match)[/h3]
+Click the new bottom-left [b]Seat Apportionment[/b] dropdown anytime to switch between 5 mathematically exact electoral formulas — or leave it on [b]Auto PR[/b] to adapt automatically to your Distribution of Power law & heritage:
 [list]
-[*][b]Westminster (Opposing Benches)[/b]: Iconic face-to-face government & opposition benches inspired by the Palace of Westminster — auto-matched for [b]British & Anglo-Canadian heritage[/b] countries (non-autocratic) and [b]Parliamentary Republics[/b].
-[*][b]Bicameral Split (Dual Chamber)[/b]: Side-by-side Upper House (Power Structure) and Lower House (Electoral Parties / Political Alignment) — auto-matched for [b]Presidential Republics[/b] with voting laws.
-[*][b]Commonwealth Horseshoe[/b]: Curved U-shaped chamber — auto-matched for [b]Australian heritage[/b] and non-British [b]Constitutional Monarchies[/b].
-[*][b]Terraced Assembly Hall[/b]: Ranked rectilinear congress hall facing the central presidium — auto-matched for [b]Council Republics[/b] and [b]Single-Party States[/b].
-[*][b]Classic Hemicycle[/b]: Continental fan-shaped amphitheater — default fallback for Autocracy, Oligarchy, Technocracy, and all other regimes.
-[*]Every option in the bottom-right popup includes rich native tooltips explaining its historical flavor, auto-match condition, and why your country currently uses its active chamber.
+[*][b]Plurality (FPTP)[/b]: Single-member constituency winner's bonus (auto-matched for British / Anglophone heritage with voting laws). Chamber size: [b]+25%[/b] (local constituency MPs).
+[*][b]Sainte-Laguë / Webster[/b]: Odd-divisor highest-average PR (1, 3, 5, 7…) unbiased toward smaller parties (auto-matched for Universal Suffrage under Parliamentary / Council Republics). Chamber size: [b]+10%[/b] (leveling seats).
+[*][b]Hare / Hamilton[/b]: Classic largest-remainder quota PR (auto-matched when no voting law is enacted). Chamber size: [b]baseline (100%)[/b].
+[*][b]D'Hondt[/b]: Highest-average continental list PR (1, 2, 3, 4…) mildly favoring larger parties and stable coalitions (auto-matched for non-Anglophone Landed / Wealth / Census voting). Chamber size: [b]-5%[/b].
+[*][b]5% Threshold PR[/b]: Eliminates splinter factions below 5% (auto-matched for Universal Suffrage under Presidential Republics & Constitutional Monarchies). Chamber size: [b]-15%[/b].
+[*]Switching formulas live recalculates real seats, post-formula share percentages, visual dot tiers (100/200/300), and canvas dots across [b]all three views[/b] (Party Structure, Power Structure, and Political Alignment).
 [/list]
 
-[h3]2. Dynamic Seat Counts (50–650 Seats) & Hamilton Apportionment[/h3]
+[h3]2. 20+ Country-Specific Historical Upper & Lower Chamber Names[/h3]
 [list]
-[*]Total parliamentary seats scale dynamically from [b]50 to 650[/b] based on your [b]Distribution of Power[/b] law, number of [b]incorporated states[/b] (constituencies), and [b]politically active population[/b].
-[*]Backed by 3 automatic visual dot tiers (100 / 200 / 300) and mathematically exact [b]Hamilton (largest-remainder) apportionment[/b] so seat counts stay strictly proportional.
+[*]Power Structure displays the authentic [b]Upper House / Council[/b] with a custom badge, Party Structure displays the elected [b]Lower House[/b], and Political Alignment displays the [b]Whole Legislature[/b] (matching Bicameral Split 1:1):
+[*]Great Britain: [b]House of Lords / House of Commons / Parliament[/b] • USA: [b]Senate / House of Representatives / Congress[/b] • France: [b]Chamber of Peers / Chamber of Deputies[/b] (or [b]Senate / National Assembly[/b]) • Germany: [b]Bundesrat / Reichstag[/b] • Prussia & Austria: [b]House of Lords / House of Deputies[/b] • Russia: [b]State Council / State Duma[/b] (or [b]Soviet of Nationalities / Soviet of the Union[/b]) • Qing China: [b]Grand Council / Advisory Council[/b] • Japan: [b]House of Peers / House of Representatives[/b] • Ottoman, Poland (Sejm), Netherlands, Sweden (Riksdag), Norway (Storting), Spain, Italy, Canada, Australia, and Latin America.
 [/list]
 
-[h3]3. Paradox-Native Fancy Tooltips & Per-Seat Hover[/h3]
+[h3]3. On-Demand Foreign AI Parliament Viewer, 5-Election Trends & 3D Dots[/h3]
 [list]
-[*]Completely redesigned summary tooltips with ornate header emblems, [b]multi-color proportional stacked parliament bars[/b] (with a 50% majority line for Electoral view), and grouped [b]In Government / In Opposition[/b] zebra-striped tables using native icons, seat color dots, approval ratings, population counts, and party member IG icon strips.
-[*][b]Per-seat interactive hover[/b]: hover over any individual seat dot to inspect that Interest Group or Party's exact seat share, government status, clout/approval, population, or last-election vote share.
-[*]Smart view-aware readouts: [b]Majority / Minority[/b] badges apply strictly to elected parliamentary seats, while Power Structure shows coalition balance and Political Alignment displays Government / Politically Unaligned / Opposition shares.
+[*][b]Foreign Country Parliament Viewer[/b]: Open any foreign nation's Diplomacy → Politics tab and click [b]Inspect Parliament[/b] to view its [b]Party Structure[/b], [b]Power Structure[/b], and [b]Political Alignment[/b] in its own culturally matched chamber layout (non-party nations seamlessly fall back to Power Structure; zero background AI overhead).
+[*][b]5-Election Rolling Seat History[/b]: Hover any Party or Interest Group seat dot to see its recent seat trend across up to 5 elections (e.g. `42 → 51 → 64`).
+[*][b]3D Enameled Dot Sheen[/b]: Procedural specular highlight + bevel overlay on every seat dot for sharper visual depth.
 [/list]
 
-[h3]4. Coalition Seating, Halos, Ruler Seat & Instant Refresh[/h3]
+[h2]🏛️ Core 3.0 Features Included[/h2]
 [list]
-[*]Seats are ordered contiguously ([b]In Government[/b] descending → [b]In Opposition[/b] descending) with crisp [b]gold coalition halos[/b] highlighting governing benches and a dedicated [b]Head of State[/b] focal seat.
-[*]Refreshes [b]instantly[/b] upon government reform (`on_government_reformed`) and panel open — zero monthly wait.
-[*]Smart default tab automatically falls back to Power Structure when no election has occurred yet, and corner overlays (seat totals & election dates) can be toggled with one click.
+[*][b]5 Authentic Chamber Architectures + Smart Auto-Matching[/b]: Westminster, Bicameral Split, Commonwealth Horseshoe, Terraced Assembly Hall, and Classic Hemicycle, switchable anytime from the bottom-right popup with rich native tooltips.
+[*][b]Dynamic Seat Counts (50–650 Seats)[/b] across 100/200/300 visual tiers, [b]Paradox-Native FancyTooltips[/b] with multi-color stacked parliament bars & 50% electoral majority needle, per-seat hover tooltips, gold coalition halos, Ruler focal seat, and instant updates on government reform.
 [/list]
 
 [h2]🔧 Compatibility[/h2]
 [list]
-[*]Uses a lightweight partial GUI override (`0_ipg_politics_panel_government_details.gui`) — high compatibility with most UI and flavor mods.
-[*]⚠️ [b]Already built into [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3724865565]GORA UI+[/url][/b] — if you use GORA UI+, you do [b]not[/b] need to enable this standalone mod separately.
-[*]Not compatible with other mods that replace the same `politics_panel_government_details` parliament widget without a compatch.
+[*]Uses lightweight partial GUI overrides (`0_ipg_politics_panel_government_details.gui` & `0_ipg_country_politics_panel.gui`) — high compatibility with UI and flavor mods.
+[*]⚠️ [b]Already built into [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3724865565]GORA UI+[/url][/b] — do [b]not[/b] enable this standalone mod alongside GORA UI+.
+[*]Playing with [b]Better Politics Mod (BPM 2.5 / 1.15)[/b]? Use [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3697574736]BPM2.5-ParliamentGraph(1.15)[/url] (or [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3726578545]GORA UI+ × BPM Compat[/url] if using GORA UI+).
 [/list]
-
-[h2]🌐 Languages[/h2]
-Full localization included for all 11 official languages: English, Simplified Chinese, Brazilian Portuguese, French, German, Japanese, Korean, Polish, Russian, Spanish, and Turkish.
 
 [h2]🙏 Credits[/h2]
 [list]
 [*]Original mod: [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3687767007]Vanilla ParliamentGraph[/url]
-[*]BPM2.5 version: [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3697574736]BPM2.5-ParliamentGraph[/url]
+[*]BPM2.5 version: [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3697574736]BPM2.5-ParliamentGraph(1.15)[/url]
+[*]Inspiration & ideas: [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3842935371]Vote! Submod for BPM[/url]
 [*]Flagship UI pack: [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3724865565]GORA UI+[/url]
 [/list]

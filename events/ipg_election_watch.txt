@@ -15,6 +15,7 @@ ipg_election_watch.1 = {
 				trigger_event = { id = ipg_election_watch.1 days = 30 }
 			}
 			else = {
+				ipg_shift_election_history = yes
 				ipg_request_election_capture = yes
 			}
 		}

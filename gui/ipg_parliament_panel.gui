@@ -41,9 +41,15 @@ types politics_panel_types
 			parentanchor = center
 
 			icon = {
+				texture = "gfx/interface/icons/ipg_dot_overlay.dds"
+				size = { 100% 100% }
+				alwaystransparent = yes
+			}
+			icon = {
 				texture = "gfx/interface/icons/ipg_gov_halo.dds"
 				size = { 22 22 }
 				parentanchor = center
+				alwaystransparent = yes
 			}
 		}
 	}
@@ -679,6 +685,7 @@ types politics_panel_types
 						visible = "[Not(Or(GetVariableSystem.HasValue('ipg_parl_view', 'electoral'), And(Not(GetVariableSystem.Exists('ipg_parl_view')), Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties'))))))]"
 						onclick = "[GetVariableSystem.Set('ipg_parl_view', 'electoral')]"
 						onclick = "[GetVariableSystem.Clear('ipg_layout_menu_open')]"
+						onclick = "[GetVariableSystem.Clear('ipg_formula_menu_open')]"
 						text = "ipg_view_electoral"
 						using = fontsize_medium
 					}
@@ -702,6 +709,7 @@ types politics_panel_types
 						visible = "[Not(Or(GetVariableSystem.HasValue('ipg_parl_view', 'power'), And(Not(GetVariableSystem.Exists('ipg_parl_view')), IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties')))))]"
 						onclick = "[GetVariableSystem.Set('ipg_parl_view', 'power')]"
 						onclick = "[GetVariableSystem.Clear('ipg_layout_menu_open')]"
+						onclick = "[GetVariableSystem.Clear('ipg_formula_menu_open')]"
 						text = "ipg_view_power"
 						using = fontsize_medium
 					}
@@ -725,6 +733,7 @@ types politics_panel_types
 						visible = "[Not(GetVariableSystem.HasValue('ipg_parl_view', 'alignment'))]"
 						onclick = "[GetVariableSystem.Set('ipg_parl_view', 'alignment')]"
 						onclick = "[GetVariableSystem.Clear('ipg_layout_menu_open')]"
+						onclick = "[GetVariableSystem.Clear('ipg_formula_menu_open')]"
 						text = "ipg_view_alignment"
 						using = fontsize_medium
 					}
@@ -746,6 +755,7 @@ types politics_panel_types
 					using = default_button
 					onclick = "[GetVariableSystem.Toggle('ipg_parl_collapsed')]"
 					onclick = "[GetVariableSystem.Clear('ipg_layout_menu_open')]"
+					onclick = "[GetVariableSystem.Clear('ipg_formula_menu_open')]"
 					text = "ipg_collapse"
 					using = fontsize_medium
 				}
@@ -764,13 +774,415 @@ types politics_panel_types
 					visible = "[Or(GetVariableSystem.HasValue('ipg_layout_mode', 'bicameral'), And(Not(GetVariableSystem.Exists('ipg_layout_mode')), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)5')))]"
 				}
 				ipg_view_electoral = {
-					visible = "[And(Not(Or(GetVariableSystem.HasValue('ipg_layout_mode', 'bicameral'), And(Not(GetVariableSystem.Exists('ipg_layout_mode')), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)5')))), Or(GetVariableSystem.HasValue('ipg_parl_view', 'electoral'), And(Not(GetVariableSystem.Exists('ipg_parl_view')), Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties'))))))]"
+					visible = "[And(Not(Or(GetVariableSystem.HasValue('ipg_layout_mode', 'bicameral'), And(Not(GetVariableSystem.Exists('ipg_layout_mode')), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)5')))), And(Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties'))), Or(GetVariableSystem.HasValue('ipg_parl_view', 'electoral'), Not(GetVariableSystem.Exists('ipg_parl_view')))))]"
 				}
 				ipg_view_power = {
-					visible = "[And(Not(Or(GetVariableSystem.HasValue('ipg_layout_mode', 'bicameral'), And(Not(GetVariableSystem.Exists('ipg_layout_mode')), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)5')))), Or(GetVariableSystem.HasValue('ipg_parl_view', 'power'), And(Not(GetVariableSystem.Exists('ipg_parl_view')), IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties')))))]"
+					visible = "[And(Not(Or(GetVariableSystem.HasValue('ipg_layout_mode', 'bicameral'), And(Not(GetVariableSystem.Exists('ipg_layout_mode')), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)5')))), Or(GetVariableSystem.HasValue('ipg_parl_view', 'power'), And(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties')), Not(GetVariableSystem.HasValue('ipg_parl_view', 'alignment')))))]"
 				}
 				ipg_view_alignment = {
 					visible = "[And(Not(Or(GetVariableSystem.HasValue('ipg_layout_mode', 'bicameral'), And(Not(GetVariableSystem.Exists('ipg_layout_mode')), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)5')))), GetVariableSystem.HasValue('ipg_parl_view', 'alignment'))]"
+				}
+
+				# --- Bottom-left compact Seat Formula selector button (default: Auto PR) ---
+				widget = {
+					parentanchor = bottom|left
+					position = { 12 -10 }
+					size = { 134 26 }
+					alwaystransparent = no
+					using = tooltip_above
+					tooltipwidget = { ipg_tooltip_formula_status = {} }
+
+					button = {
+						size = { 134 26 }
+						visible = "[Not(GetVariableSystem.Exists('ipg_formula_menu_open'))]"
+						using = default_button
+						onclick = "[GetVariableSystem.Toggle('ipg_formula_menu_open')]"
+						onclick = "[GetVariableSystem.Clear('ipg_layout_menu_open')]"
+					}
+					button = {
+						size = { 134 26 }
+						visible = "[GetVariableSystem.Exists('ipg_formula_menu_open')]"
+						using = default_button_primary
+						onclick = "[GetVariableSystem.Toggle('ipg_formula_menu_open')]"
+						onclick = "[GetVariableSystem.Clear('ipg_layout_menu_open')]"
+					}
+
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+						margin = { 8 0 }
+						spacing = 4
+						alwaystransparent = yes
+
+						icon = {
+							size = { 16 16 }
+							texture = "gfx/interface/icons/law_icons/census_voting.dds"
+							alwaystransparent = yes
+						}
+
+						textbox = {
+							visible = "[Not(Country.MakeScope.Var('ipg_formula_override').IsSet)]"
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							text = "ipg_formula_auto"
+							align = center|nobaseline
+							elide = right
+							using = fontsize_small
+							alwaystransparent = yes
+						}
+						textbox = {
+							visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_formula_override').GetValue, '(CFixedPoint)1')]"
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							text = "ipg_formula_1"
+							align = center|nobaseline
+							elide = right
+							using = fontsize_small
+							alwaystransparent = yes
+						}
+						textbox = {
+							visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_formula_override').GetValue, '(CFixedPoint)2')]"
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							text = "ipg_formula_2"
+							align = center|nobaseline
+							elide = right
+							using = fontsize_small
+							alwaystransparent = yes
+						}
+						textbox = {
+							visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_formula_override').GetValue, '(CFixedPoint)3')]"
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							text = "ipg_formula_3"
+							align = center|nobaseline
+							elide = right
+							using = fontsize_small
+							alwaystransparent = yes
+						}
+						textbox = {
+							visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_formula_override').GetValue, '(CFixedPoint)4')]"
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							text = "ipg_formula_4"
+							align = center|nobaseline
+							elide = right
+							using = fontsize_small
+							alwaystransparent = yes
+						}
+						textbox = {
+							visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_formula_override').GetValue, '(CFixedPoint)5')]"
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							text = "ipg_formula_5"
+							align = center|nobaseline
+							elide = right
+							using = fontsize_small
+							alwaystransparent = yes
+						}
+
+						icon = {
+							size = { 12 12 }
+							texture = "gfx/interface/politics_view/summary_arrow_down.dds"
+							alpha = 0.85
+							alwaystransparent = yes
+						}
+					}
+				}
+
+				# --- Floating Seat Formula picker popup (anchored cleanly above bottom-left button) ---
+				widget = {
+					visible = "[GetVariableSystem.Exists('ipg_formula_menu_open')]"
+					parentanchor = bottom|left
+					position = { 12 -39 }
+					size = { 174 184 }
+					alwaystransparent = no
+
+					background = {
+						using = dropdown_background
+					}
+
+					flowcontainer = {
+						parentanchor = center
+						direction = vertical
+						spacing = 2
+
+						# Formula 0: Auto PR
+						widget = {
+							size = { 158 26 }
+							tooltip_type = widget
+							tooltip_parentanchor = vcenter|right
+							tooltip_widgetanchor = vcenter|left
+							tooltip_verticalbehavior = slide
+							tooltip_horizontalbehavior = mirror
+							tooltipwidget = { ipg_tooltip_formula_opt_auto = {} }
+
+							button = {
+								size = { 158 26 }
+								visible = "[Not(Country.MakeScope.Var('ipg_formula_override').IsSet)]"
+								using = default_button_primary
+								onclick = "[GetScriptedGui('ipg_set_formula_auto_sg').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+								onclick = "[GetVariableSystem.Clear('ipg_formula_menu_open')]"
+							}
+							button = {
+								size = { 158 26 }
+								visible = "[Country.MakeScope.Var('ipg_formula_override').IsSet]"
+								using = default_button
+								onclick = "[GetScriptedGui('ipg_set_formula_auto_sg').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+								onclick = "[GetVariableSystem.Clear('ipg_formula_menu_open')]"
+							}
+							hbox = {
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								margin = { 10 0 }
+								alwaystransparent = yes
+								textbox = {
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									text = "ipg_formula_auto"
+									align = left|nobaseline
+									using = fontsize_small
+									alwaystransparent = yes
+								}
+								icon = {
+									visible = "[Not(Country.MakeScope.Var('ipg_formula_override').IsSet)]"
+									size = { 14 14 }
+									texture = "gfx/interface/icons/generic_icons/checkmark.dds"
+									alwaystransparent = yes
+								}
+							}
+						}
+
+						# Formula 1: Hare / Hamilton
+						widget = {
+							size = { 158 26 }
+							tooltip_type = widget
+							tooltip_parentanchor = vcenter|right
+							tooltip_widgetanchor = vcenter|left
+							tooltip_verticalbehavior = slide
+							tooltip_horizontalbehavior = mirror
+							tooltipwidget = { ipg_tooltip_formula_opt_1 = {} }
+
+							button = {
+								size = { 158 26 }
+								visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_formula_override').GetValue, '(CFixedPoint)1')]"
+								using = default_button_primary
+								onclick = "[GetScriptedGui('ipg_set_formula_1_sg').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+								onclick = "[GetVariableSystem.Clear('ipg_formula_menu_open')]"
+							}
+							button = {
+								size = { 158 26 }
+								visible = "[Not(EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_formula_override').GetValue, '(CFixedPoint)1'))]"
+								using = default_button
+								onclick = "[GetScriptedGui('ipg_set_formula_1_sg').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+								onclick = "[GetVariableSystem.Clear('ipg_formula_menu_open')]"
+							}
+							hbox = {
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								margin = { 10 0 }
+								alwaystransparent = yes
+								textbox = {
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									text = "ipg_formula_1"
+									align = left|nobaseline
+									using = fontsize_small
+									alwaystransparent = yes
+								}
+								icon = {
+									visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_formula_override').GetValue, '(CFixedPoint)1')]"
+									size = { 14 14 }
+									texture = "gfx/interface/icons/generic_icons/checkmark.dds"
+									alwaystransparent = yes
+								}
+							}
+						}
+
+						# Formula 2: D'Hondt
+						widget = {
+							size = { 158 26 }
+							tooltip_type = widget
+							tooltip_parentanchor = vcenter|right
+							tooltip_widgetanchor = vcenter|left
+							tooltip_verticalbehavior = slide
+							tooltip_horizontalbehavior = mirror
+							tooltipwidget = { ipg_tooltip_formula_opt_2 = {} }
+
+							button = {
+								size = { 158 26 }
+								visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_formula_override').GetValue, '(CFixedPoint)2')]"
+								using = default_button_primary
+								onclick = "[GetScriptedGui('ipg_set_formula_2_sg').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+								onclick = "[GetVariableSystem.Clear('ipg_formula_menu_open')]"
+							}
+							button = {
+								size = { 158 26 }
+								visible = "[Not(EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_formula_override').GetValue, '(CFixedPoint)2'))]"
+								using = default_button
+								onclick = "[GetScriptedGui('ipg_set_formula_2_sg').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+								onclick = "[GetVariableSystem.Clear('ipg_formula_menu_open')]"
+							}
+							hbox = {
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								margin = { 10 0 }
+								alwaystransparent = yes
+								textbox = {
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									text = "ipg_formula_2"
+									align = left|nobaseline
+									using = fontsize_small
+									alwaystransparent = yes
+								}
+								icon = {
+									visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_formula_override').GetValue, '(CFixedPoint)2')]"
+									size = { 14 14 }
+									texture = "gfx/interface/icons/generic_icons/checkmark.dds"
+									alwaystransparent = yes
+								}
+							}
+						}
+
+						# Formula 3: Sainte-Lague
+						widget = {
+							size = { 158 26 }
+							tooltip_type = widget
+							tooltip_parentanchor = vcenter|right
+							tooltip_widgetanchor = vcenter|left
+							tooltip_verticalbehavior = slide
+							tooltip_horizontalbehavior = mirror
+							tooltipwidget = { ipg_tooltip_formula_opt_3 = {} }
+
+							button = {
+								size = { 158 26 }
+								visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_formula_override').GetValue, '(CFixedPoint)3')]"
+								using = default_button_primary
+								onclick = "[GetScriptedGui('ipg_set_formula_3_sg').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+								onclick = "[GetVariableSystem.Clear('ipg_formula_menu_open')]"
+							}
+							button = {
+								size = { 158 26 }
+								visible = "[Not(EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_formula_override').GetValue, '(CFixedPoint)3'))]"
+								using = default_button
+								onclick = "[GetScriptedGui('ipg_set_formula_3_sg').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+								onclick = "[GetVariableSystem.Clear('ipg_formula_menu_open')]"
+							}
+							hbox = {
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								margin = { 10 0 }
+								alwaystransparent = yes
+								textbox = {
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									text = "ipg_formula_3"
+									align = left|nobaseline
+									using = fontsize_small
+									alwaystransparent = yes
+								}
+								icon = {
+									visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_formula_override').GetValue, '(CFixedPoint)3')]"
+									size = { 14 14 }
+									texture = "gfx/interface/icons/generic_icons/checkmark.dds"
+									alwaystransparent = yes
+								}
+							}
+						}
+
+						# Formula 4: 5% Threshold PR
+						widget = {
+							size = { 158 26 }
+							tooltip_type = widget
+							tooltip_parentanchor = vcenter|right
+							tooltip_widgetanchor = vcenter|left
+							tooltip_verticalbehavior = slide
+							tooltip_horizontalbehavior = mirror
+							tooltipwidget = { ipg_tooltip_formula_opt_4 = {} }
+
+							button = {
+								size = { 158 26 }
+								visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_formula_override').GetValue, '(CFixedPoint)4')]"
+								using = default_button_primary
+								onclick = "[GetScriptedGui('ipg_set_formula_4_sg').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+								onclick = "[GetVariableSystem.Clear('ipg_formula_menu_open')]"
+							}
+							button = {
+								size = { 158 26 }
+								visible = "[Not(EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_formula_override').GetValue, '(CFixedPoint)4'))]"
+								using = default_button
+								onclick = "[GetScriptedGui('ipg_set_formula_4_sg').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+								onclick = "[GetVariableSystem.Clear('ipg_formula_menu_open')]"
+							}
+							hbox = {
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								margin = { 10 0 }
+								alwaystransparent = yes
+								textbox = {
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									text = "ipg_formula_4"
+									align = left|nobaseline
+									using = fontsize_small
+									alwaystransparent = yes
+								}
+								icon = {
+									visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_formula_override').GetValue, '(CFixedPoint)4')]"
+									size = { 14 14 }
+									texture = "gfx/interface/icons/generic_icons/checkmark.dds"
+									alwaystransparent = yes
+								}
+							}
+						}
+
+						# Formula 5: Mild Plurality (FPTP)
+						widget = {
+							size = { 158 26 }
+							tooltip_type = widget
+							tooltip_parentanchor = vcenter|right
+							tooltip_widgetanchor = vcenter|left
+							tooltip_verticalbehavior = slide
+							tooltip_horizontalbehavior = mirror
+							tooltipwidget = { ipg_tooltip_formula_opt_5 = {} }
+
+							button = {
+								size = { 158 26 }
+								visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_formula_override').GetValue, '(CFixedPoint)5')]"
+								using = default_button_primary
+								onclick = "[GetScriptedGui('ipg_set_formula_5_sg').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+								onclick = "[GetVariableSystem.Clear('ipg_formula_menu_open')]"
+							}
+							button = {
+								size = { 158 26 }
+								visible = "[Not(EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_formula_override').GetValue, '(CFixedPoint)5'))]"
+								using = default_button
+								onclick = "[GetScriptedGui('ipg_set_formula_5_sg').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+								onclick = "[GetVariableSystem.Clear('ipg_formula_menu_open')]"
+							}
+							hbox = {
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								margin = { 10 0 }
+								alwaystransparent = yes
+								textbox = {
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									text = "ipg_formula_5"
+									align = left|nobaseline
+									using = fontsize_small
+									alwaystransparent = yes
+								}
+								icon = {
+									visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_formula_override').GetValue, '(CFixedPoint)5')]"
+									size = { 14 14 }
+									texture = "gfx/interface/icons/generic_icons/checkmark.dds"
+									alwaystransparent = yes
+								}
+							}
+						}
+					}
 				}
 
 				# --- Bottom-right compact layout selector button (default: Auto) ---
@@ -787,12 +1199,14 @@ types politics_panel_types
 						visible = "[Not(GetVariableSystem.Exists('ipg_layout_menu_open'))]"
 						using = default_button
 						onclick = "[GetVariableSystem.Toggle('ipg_layout_menu_open')]"
+						onclick = "[GetVariableSystem.Clear('ipg_formula_menu_open')]"
 					}
 					button = {
 						size = { 126 26 }
 						visible = "[GetVariableSystem.Exists('ipg_layout_menu_open')]"
 						using = default_button_primary
 						onclick = "[GetVariableSystem.Toggle('ipg_layout_menu_open')]"
+						onclick = "[GetVariableSystem.Clear('ipg_formula_menu_open')]"
 					}
 
 					hbox = {
@@ -1197,7 +1611,7 @@ types politics_panel_types
 
 			textbox = {
 				autoresize = yes
-				text = "ipg_view_power"
+				text = "ipg_upper_chamber_title"
 				using = fontsize_medium
 				align = left|nobaseline
 			}
@@ -1280,7 +1694,7 @@ types politics_panel_types
 
 			textbox = {
 				autoresize = yes
-				text = "ipg_view_alignment"
+				text = "ipg_single_chamber_title"
 				using = fontsize_medium
 				align = left|nobaseline
 			}
@@ -1362,7 +1776,7 @@ types politics_panel_types
 
 			textbox = {
 				autoresize = yes
-				text = "ipg_view_electoral"
+				text = "ipg_lower_chamber_title"
 				using = fontsize_medium
 				align = left|nobaseline
 			}
@@ -1429,6 +1843,477 @@ types politics_panel_types
 			widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
 			ipg_canvas_electoral = {}
 			widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+		}
+	}
+
+
+	# -------------------------------------------------------------------------
+	# Foreign AI Country Compact Canvas (strictly follows target country's own auto layout)
+	# -------------------------------------------------------------------------
+	type ipg_foreign_canvas_power = widget {
+		size = { 600 230 }
+
+		# Hemicycle (auto=1, auto=5 fallback, or unset)
+		widget = {
+			size = { 600 230 }
+			visible = "[Or(Not(Country.MakeScope.Var('ipg_auto_layout').IsSet), Or(EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)1'), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)5')))]"
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)100')]"
+				datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+				item = { ipg_hemicycle_100_power = {} }
+			}
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)200')]"
+				datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+				item = { ipg_hemicycle_200_power = {} }
+			}
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[Or(Not(Country.MakeScope.Var('ipg_visual_seats_val').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)300'))]"
+				datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+				item = { ipg_hemicycle_300_power = {} }
+			}
+			ipg_ruler_seat = { position = { 288 190 } }
+		}
+
+		# Westminster (auto=2)
+		widget = {
+			size = { 600 230 }
+			visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)2')]"
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)100')]"
+				datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+				item = { ipg_westminster_100_power = {} }
+			}
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)200')]"
+				datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+				item = { ipg_westminster_200_power = {} }
+			}
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[Or(Not(Country.MakeScope.Var('ipg_visual_seats_val').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)300'))]"
+				datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+				item = { ipg_westminster_300_power = {} }
+			}
+			ipg_ruler_seat = { position = { 102 104 } }
+		}
+
+		# Horseshoe (auto=3)
+		widget = {
+			size = { 600 230 }
+			visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)3')]"
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)100')]"
+				datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+				item = { ipg_horseshoe_100_power = {} }
+			}
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)200')]"
+				datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+				item = { ipg_horseshoe_200_power = {} }
+			}
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[Or(Not(Country.MakeScope.Var('ipg_visual_seats_val').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)300'))]"
+				datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+				item = { ipg_horseshoe_300_power = {} }
+			}
+			ipg_ruler_seat = { position = { 288 20 } }
+		}
+
+		# Assembly Hall (auto=4)
+		widget = {
+			size = { 600 230 }
+			visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)4')]"
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)100')]"
+				datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+				item = { ipg_assembly_100_power = {} }
+			}
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)200')]"
+				datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+				item = { ipg_assembly_200_power = {} }
+			}
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[Or(Not(Country.MakeScope.Var('ipg_visual_seats_val').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)300'))]"
+				datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+				item = { ipg_assembly_300_power = {} }
+			}
+			ipg_ruler_seat = { position = { 288 18 } }
+		}
+	}
+
+	type ipg_foreign_canvas_alignment = widget {
+		size = { 600 230 }
+
+		# Hemicycle (auto=1, auto=5 fallback, or unset)
+		widget = {
+			size = { 600 230 }
+			visible = "[Or(Not(Country.MakeScope.Var('ipg_auto_layout').IsSet), Or(EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)1'), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)5')))]"
+			widget = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)100')]"
+				overlappingitembox = { size = { 600 230 } datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]" item = { ipg_hemicycle_100_alignment = {} } }
+				ipg_hemicycle_100_unaligned = {}
+			}
+			widget = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)200')]"
+				overlappingitembox = { size = { 600 230 } datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]" item = { ipg_hemicycle_200_alignment = {} } }
+				ipg_hemicycle_200_unaligned = {}
+			}
+			widget = {
+				size = { 600 230 }
+				visible = "[Or(Not(Country.MakeScope.Var('ipg_visual_seats_val').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)300'))]"
+				overlappingitembox = { size = { 600 230 } datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]" item = { ipg_hemicycle_300_alignment = {} } }
+				ipg_hemicycle_300_unaligned = {}
+			}
+			ipg_ruler_seat = { position = { 288 190 } }
+		}
+
+		# Westminster (auto=2)
+		widget = {
+			size = { 600 230 }
+			visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)2')]"
+			widget = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)100')]"
+				overlappingitembox = { size = { 600 230 } datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]" item = { ipg_westminster_100_alignment = {} } }
+				ipg_westminster_100_unaligned = {}
+			}
+			widget = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)200')]"
+				overlappingitembox = { size = { 600 230 } datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]" item = { ipg_westminster_200_alignment = {} } }
+				ipg_westminster_200_unaligned = {}
+			}
+			widget = {
+				size = { 600 230 }
+				visible = "[Or(Not(Country.MakeScope.Var('ipg_visual_seats_val').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)300'))]"
+				overlappingitembox = { size = { 600 230 } datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]" item = { ipg_westminster_300_alignment = {} } }
+				ipg_westminster_300_unaligned = {}
+			}
+			ipg_ruler_seat = { position = { 102 104 } }
+		}
+
+		# Horseshoe (auto=3)
+		widget = {
+			size = { 600 230 }
+			visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)3')]"
+			widget = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)100')]"
+				overlappingitembox = { size = { 600 230 } datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]" item = { ipg_horseshoe_100_alignment = {} } }
+				ipg_horseshoe_100_unaligned = {}
+			}
+			widget = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)200')]"
+				overlappingitembox = { size = { 600 230 } datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]" item = { ipg_horseshoe_200_alignment = {} } }
+				ipg_horseshoe_200_unaligned = {}
+			}
+			widget = {
+				size = { 600 230 }
+				visible = "[Or(Not(Country.MakeScope.Var('ipg_visual_seats_val').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)300'))]"
+				overlappingitembox = { size = { 600 230 } datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]" item = { ipg_horseshoe_300_alignment = {} } }
+				ipg_horseshoe_300_unaligned = {}
+			}
+			ipg_ruler_seat = { position = { 288 20 } }
+		}
+
+		# Assembly Hall (auto=4)
+		widget = {
+			size = { 600 230 }
+			visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)4')]"
+			widget = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)100')]"
+				overlappingitembox = { size = { 600 230 } datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]" item = { ipg_assembly_100_alignment = {} } }
+				ipg_assembly_100_unaligned = {}
+			}
+			widget = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)200')]"
+				overlappingitembox = { size = { 600 230 } datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]" item = { ipg_assembly_200_alignment = {} } }
+				ipg_assembly_200_unaligned = {}
+			}
+			widget = {
+				size = { 600 230 }
+				visible = "[Or(Not(Country.MakeScope.Var('ipg_visual_seats_val').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)300'))]"
+				overlappingitembox = { size = { 600 230 } datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]" item = { ipg_assembly_300_alignment = {} } }
+				ipg_assembly_300_unaligned = {}
+			}
+			ipg_ruler_seat = { position = { 288 18 } }
+		}
+	}
+
+	type ipg_foreign_canvas_electoral = widget {
+		size = { 600 230 }
+
+		textbox = {
+			visible = "[IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties'))]"
+			parentanchor = center
+			size = { 460 60 }
+			multiline = yes
+			align = center|nobaseline
+			text = "ipg_foreign_no_parties"
+			using = fontsize_medium
+			alpha = 0.75
+		}
+
+		# Hemicycle (auto=1, auto=5 fallback, or unset)
+		widget = {
+			size = { 600 230 }
+			visible = "[And(Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties'))), Or(Not(Country.MakeScope.Var('ipg_auto_layout').IsSet), Or(EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)1'), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)5'))))]"
+			overlappingitembox = { size = { 600 230 } visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)100')]" datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]" item = { ipg_hemicycle_100_electoral = {} } }
+			overlappingitembox = { size = { 600 230 } visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)200')]" datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]" item = { ipg_hemicycle_200_electoral = {} } }
+			overlappingitembox = { size = { 600 230 } visible = "[Or(Not(Country.MakeScope.Var('ipg_visual_seats_val').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)300'))]" datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]" item = { ipg_hemicycle_300_electoral = {} } }
+			ipg_ruler_seat = { position = { 288 190 } }
+		}
+
+		# Westminster (auto=2)
+		widget = {
+			size = { 600 230 }
+			visible = "[And(Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties'))), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)2'))]"
+			overlappingitembox = { size = { 600 230 } visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)100')]" datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]" item = { ipg_westminster_100_electoral = {} } }
+			overlappingitembox = { size = { 600 230 } visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)200')]" datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]" item = { ipg_westminster_200_electoral = {} } }
+			overlappingitembox = { size = { 600 230 } visible = "[Or(Not(Country.MakeScope.Var('ipg_visual_seats_val').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)300'))]" datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]" item = { ipg_westminster_300_electoral = {} } }
+			ipg_ruler_seat = { position = { 102 104 } }
+		}
+
+		# Horseshoe (auto=3)
+		widget = {
+			size = { 600 230 }
+			visible = "[And(Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties'))), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)3'))]"
+			overlappingitembox = { size = { 600 230 } visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)100')]" datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]" item = { ipg_horseshoe_100_electoral = {} } }
+			overlappingitembox = { size = { 600 230 } visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)200')]" datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]" item = { ipg_horseshoe_200_electoral = {} } }
+			overlappingitembox = { size = { 600 230 } visible = "[Or(Not(Country.MakeScope.Var('ipg_visual_seats_val').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)300'))]" datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]" item = { ipg_horseshoe_300_electoral = {} } }
+			ipg_ruler_seat = { position = { 288 20 } }
+		}
+
+		# Assembly Hall (auto=4)
+		widget = {
+			size = { 600 230 }
+			visible = "[And(Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties'))), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)4'))]"
+			overlappingitembox = { size = { 600 230 } visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)100')]" datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]" item = { ipg_assembly_100_electoral = {} } }
+			overlappingitembox = { size = { 600 230 } visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)200')]" datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]" item = { ipg_assembly_200_electoral = {} } }
+			overlappingitembox = { size = { 600 230 } visible = "[Or(Not(Country.MakeScope.Var('ipg_visual_seats_val').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)300'))]" datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]" item = { ipg_assembly_300_electoral = {} } }
+			ipg_ruler_seat = { position = { 288 18 } }
+		}
+	}
+
+	# On-demand foreign AI country parliament viewer (spliced into country_panel_politics_content)
+	type ipg_foreign_parliament_section = flowcontainer {
+		visible = "[Not(Country.IsLocalPlayer)]"
+		parentanchor = hcenter
+		direction = vertical
+		ignoreinvisible = yes
+		spacing = 6
+
+		# Before inspection: sleek zero-overhead trigger button
+		flowcontainer = {
+			visible = "[Not(Country.MakeScope.Var('ipg_real_total_seats_val').IsSet)]"
+			parentanchor = hcenter
+			direction = vertical
+			spacing = 6
+
+			default_header = {
+				parentanchor = hcenter
+				blockoverride "text" {
+					text = "ipg_single_chamber_title"
+				}
+			}
+
+			button = {
+				parentanchor = hcenter
+				size = { 260 34 }
+				using = default_button
+				text = "ipg_inspect_foreign_btn"
+				tooltip = "ipg_inspect_foreign_tt"
+				using = fontsize_medium
+				onclick = "[GetScriptedGui('ipg_inspect_foreign_sg').Execute(GuiScope.SetRoot(Country.MakeScope).End)]"
+			}
+		}
+
+		# After inspection: compact scaled parliament panel (540px)
+		flowcontainer = {
+			visible = "[Country.MakeScope.Var('ipg_real_total_seats_val').IsSet]"
+			parentanchor = hcenter
+			direction = vertical
+			ignoreinvisible = yes
+			spacing = 6
+
+			default_header = {
+				visible = "[And(Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties'))), Or(GetVariableSystem.HasValue('ipg_foreign_view', 'electoral'), Not(GetVariableSystem.Exists('ipg_foreign_view'))))]"
+				parentanchor = hcenter
+				blockoverride "text" {
+					text = "ipg_foreign_header_electoral"
+				}
+			}
+			default_header = {
+				visible = "[Or(GetVariableSystem.HasValue('ipg_foreign_view', 'power'), And(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties')), Not(GetVariableSystem.HasValue('ipg_foreign_view', 'alignment'))))]"
+				parentanchor = hcenter
+				blockoverride "text" {
+					text = "ipg_foreign_header_power"
+				}
+			}
+			default_header = {
+				visible = "[GetVariableSystem.HasValue('ipg_foreign_view', 'alignment')]"
+				parentanchor = hcenter
+				blockoverride "text" {
+					text = "ipg_foreign_header_alignment"
+				}
+			}
+
+			# Compact 3-tab strip + refresh button
+			widget = {
+				parentanchor = hcenter
+				size = { 540 28 }
+
+				hbox = {
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+					spacing = 5
+
+					widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+
+					# Party Structure tab
+					widget = {
+						size = { 140 26 }
+						button = {
+							size = { 140 26 }
+							using = default_button_primary
+							enabled = no
+							visible = "[Or(GetVariableSystem.HasValue('ipg_foreign_view', 'electoral'), And(Not(GetVariableSystem.Exists('ipg_foreign_view')), Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties')))))]"
+							text = "ipg_view_electoral"
+							using = fontsize_small
+						}
+						button = {
+							size = { 140 26 }
+							using = default_button
+							visible = "[Not(Or(GetVariableSystem.HasValue('ipg_foreign_view', 'electoral'), And(Not(GetVariableSystem.Exists('ipg_foreign_view')), Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties'))))))]"
+							onclick = "[GetVariableSystem.Set('ipg_foreign_view', 'electoral')]"
+							text = "ipg_view_electoral"
+							using = fontsize_small
+						}
+					}
+
+					# Power Structure tab
+					widget = {
+						size = { 140 26 }
+						button = {
+							size = { 140 26 }
+							using = default_button_primary
+							enabled = no
+							visible = "[Or(GetVariableSystem.HasValue('ipg_foreign_view', 'power'), And(Not(GetVariableSystem.Exists('ipg_foreign_view')), IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties'))))]"
+							text = "ipg_view_power"
+							using = fontsize_small
+						}
+						button = {
+							size = { 140 26 }
+							using = default_button
+							visible = "[Not(Or(GetVariableSystem.HasValue('ipg_foreign_view', 'power'), And(Not(GetVariableSystem.Exists('ipg_foreign_view')), IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties')))))]"
+							onclick = "[GetVariableSystem.Set('ipg_foreign_view', 'power')]"
+							text = "ipg_view_power"
+							using = fontsize_small
+						}
+					}
+
+					# Political Alignment tab
+					widget = {
+						size = { 140 26 }
+						button = {
+							size = { 140 26 }
+							using = default_button_primary
+							enabled = no
+							visible = "[GetVariableSystem.HasValue('ipg_foreign_view', 'alignment')]"
+							text = "ipg_view_alignment"
+							using = fontsize_small
+						}
+						button = {
+							size = { 140 26 }
+							using = default_button
+							visible = "[Not(GetVariableSystem.HasValue('ipg_foreign_view', 'alignment'))]"
+							onclick = "[GetVariableSystem.Set('ipg_foreign_view', 'alignment')]"
+							text = "ipg_view_alignment"
+							using = fontsize_small
+						}
+					}
+
+					button = {
+						size = { 74 26 }
+						using = default_button
+						text = "ipg_refresh_foreign_btn"
+						tooltip = "ipg_inspect_foreign_tt"
+						using = fontsize_small
+						onclick = "[GetScriptedGui('ipg_inspect_foreign_sg').Execute(GuiScope.SetRoot(Country.MakeScope).End)]"
+					}
+
+					widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+				}
+			}
+
+			# Party Structure scaled canvas card (falls back seamlessly to Power Structure when no active parties exist)
+			widget = {
+				visible = "[And(Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties'))), Or(GetVariableSystem.HasValue('ipg_foreign_view', 'electoral'), Not(GetVariableSystem.Exists('ipg_foreign_view'))))]"
+				parentanchor = hcenter
+				size = { 540 206 }
+				using = entry_bg_fancy
+				using = tooltip_below
+				tooltipwidget = { ipg_tooltip_electoral_dynamic = {} }
+
+				widget = {
+					parentanchor = center
+					size = { 600 230 }
+					scale = 0.86
+					ipg_foreign_canvas_electoral = {}
+				}
+			}
+
+			# Power Structure scaled canvas card (also serves as seamless fallback for non-party countries)
+			widget = {
+				visible = "[Or(GetVariableSystem.HasValue('ipg_foreign_view', 'power'), And(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties')), Not(GetVariableSystem.HasValue('ipg_foreign_view', 'alignment'))))]"
+				parentanchor = hcenter
+				size = { 540 206 }
+				using = entry_bg_fancy
+				using = tooltip_below
+				tooltipwidget = { ipg_tooltip_power_dynamic = {} }
+
+				widget = {
+					parentanchor = center
+					size = { 600 230 }
+					scale = 0.86
+					ipg_foreign_canvas_power = {}
+				}
+			}
+
+			# Political Alignment scaled canvas card
+			widget = {
+				visible = "[GetVariableSystem.HasValue('ipg_foreign_view', 'alignment')]"
+				parentanchor = hcenter
+				size = { 540 206 }
+				using = entry_bg_fancy
+				using = tooltip_below
+				tooltipwidget = { ipg_tooltip_alignment_dynamic = {} }
+
+				widget = {
+					parentanchor = center
+					size = { 600 230 }
+					scale = 0.86
+					ipg_foreign_canvas_alignment = {}
+				}
+			}
 		}
 	}
 }
@@ -1898,7 +2783,7 @@ types TooltipTypes
 			color = { 0.56 0.36 0.50 1 }
 		}
 		blockoverride "name" {
-			text = "ipg_view_power"
+			text = "ipg_tooltip_power_title"
 		}
 		blockoverride "type" {
 			text = "ipg_total_seats_header"
@@ -2036,6 +2921,69 @@ types TooltipTypes
 							texture_density = 2
 						}
 					}
+
+					# Active seat apportionment formula caption
+					widget = {
+						size = { 436 18 }
+						alpha = 0.78
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							margin = { 4 0 }
+							spacing = 6
+
+							textbox = {
+								autoresize = yes
+								text = "ipg_formula_current_label"
+								default_format = "#title"
+								align = left|nobaseline
+								using = fontsize_small
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+							widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+							textbox = {
+								visible = "[Or(Not(Country.MakeScope.Var('ipg_active_formula').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_active_formula').GetValue, '(CFixedPoint)1'))]"
+								autoresize = yes
+								text = "ipg_formula_1"
+								align = right|nobaseline
+								using = fontsize_small
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+							textbox = {
+								visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_active_formula').GetValue, '(CFixedPoint)2')]"
+								autoresize = yes
+								text = "ipg_formula_2"
+								align = right|nobaseline
+								using = fontsize_small
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+							textbox = {
+								visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_active_formula').GetValue, '(CFixedPoint)3')]"
+								autoresize = yes
+								text = "ipg_formula_3"
+								align = right|nobaseline
+								using = fontsize_small
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+							textbox = {
+								visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_active_formula').GetValue, '(CFixedPoint)4')]"
+								autoresize = yes
+								text = "ipg_formula_4"
+								align = right|nobaseline
+								using = fontsize_small
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+							textbox = {
+								visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_active_formula').GetValue, '(CFixedPoint)5')]"
+								autoresize = yes
+								text = "ipg_formula_5"
+								align = right|nobaseline
+								using = fontsize_small
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+						}
+					}
 				}
 
 				# Grouped table
@@ -2164,7 +3112,7 @@ types TooltipTypes
 			color = { 0.32 0.48 0.58 1 }
 		}
 		blockoverride "name" {
-			text = "ipg_view_alignment"
+			text = "ipg_tooltip_alignment_title"
 		}
 		blockoverride "type" {
 			text = "ipg_total_seats_header"
@@ -2336,6 +3284,69 @@ types TooltipTypes
 							spriteType = Corneredstretched
 							spriteborder = { 6 6 }
 							texture_density = 2
+						}
+					}
+
+					# Active seat apportionment formula caption
+					widget = {
+						size = { 436 18 }
+						alpha = 0.78
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							margin = { 4 0 }
+							spacing = 6
+
+							textbox = {
+								autoresize = yes
+								text = "ipg_formula_current_label"
+								default_format = "#title"
+								align = left|nobaseline
+								using = fontsize_small
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+							widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+							textbox = {
+								visible = "[Or(Not(Country.MakeScope.Var('ipg_active_formula').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_active_formula').GetValue, '(CFixedPoint)1'))]"
+								autoresize = yes
+								text = "ipg_formula_1"
+								align = right|nobaseline
+								using = fontsize_small
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+							textbox = {
+								visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_active_formula').GetValue, '(CFixedPoint)2')]"
+								autoresize = yes
+								text = "ipg_formula_2"
+								align = right|nobaseline
+								using = fontsize_small
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+							textbox = {
+								visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_active_formula').GetValue, '(CFixedPoint)3')]"
+								autoresize = yes
+								text = "ipg_formula_3"
+								align = right|nobaseline
+								using = fontsize_small
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+							textbox = {
+								visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_active_formula').GetValue, '(CFixedPoint)4')]"
+								autoresize = yes
+								text = "ipg_formula_4"
+								align = right|nobaseline
+								using = fontsize_small
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+							textbox = {
+								visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_active_formula').GetValue, '(CFixedPoint)5')]"
+								autoresize = yes
+								text = "ipg_formula_5"
+								align = right|nobaseline
+								using = fontsize_small
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
 						}
 					}
 				}
@@ -2544,7 +3555,7 @@ types TooltipTypes
 			color = { 0.58 0.42 0.30 1 }
 		}
 		blockoverride "name" {
-			text = "ipg_view_electoral"
+			text = "ipg_tooltip_electoral_title"
 		}
 		blockoverride "type" {
 			text = "ipg_total_seats_header"
@@ -2711,6 +3722,69 @@ types TooltipTypes
 								size = { 2 18 }
 								texture = "gfx/interface/tooltip/stacked_barchart_small_item.dds"
 								color = { 0.98 0.94 0.82 0.95 }
+							}
+						}
+
+						# Active seat apportionment formula caption
+						widget = {
+							size = { 436 18 }
+							alpha = 0.78
+
+							hbox = {
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								margin = { 4 0 }
+								spacing = 6
+
+								textbox = {
+									autoresize = yes
+									text = "ipg_formula_current_label"
+									default_format = "#title"
+									align = left|nobaseline
+									using = fontsize_small
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+								widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+								textbox = {
+									visible = "[Or(Not(Country.MakeScope.Var('ipg_active_formula').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_active_formula').GetValue, '(CFixedPoint)1'))]"
+									autoresize = yes
+									text = "ipg_formula_1"
+									align = right|nobaseline
+									using = fontsize_small
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+								textbox = {
+									visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_active_formula').GetValue, '(CFixedPoint)2')]"
+									autoresize = yes
+									text = "ipg_formula_2"
+									align = right|nobaseline
+									using = fontsize_small
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+								textbox = {
+									visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_active_formula').GetValue, '(CFixedPoint)3')]"
+									autoresize = yes
+									text = "ipg_formula_3"
+									align = right|nobaseline
+									using = fontsize_small
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+								textbox = {
+									visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_active_formula').GetValue, '(CFixedPoint)4')]"
+									autoresize = yes
+									text = "ipg_formula_4"
+									align = right|nobaseline
+									using = fontsize_small
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+								textbox = {
+									visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_active_formula').GetValue, '(CFixedPoint)5')]"
+									autoresize = yes
+									text = "ipg_formula_5"
+									align = right|nobaseline
+									using = fontsize_small
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
 							}
 						}
 					}
@@ -3473,5 +4547,256 @@ types TooltipTypes
 		blockoverride "type" { text = "ipg_layout_opt_badge_dual" }
 		blockoverride "opt_desc" { text = "ipg_layout_bicameral_desc" }
 		blockoverride "opt_cond" { text = "ipg_layout_bicameral_cond" }
+	}
+
+	# =========================================================================
+	# 7. Bottom-Left Seat Formula Status Tooltip + 6 Formula Option Tooltips
+	# =========================================================================
+	type ipg_tooltip_formula_status = FancyTooltipWidgetType {
+		blockoverride "icon_texture" {
+			texture = "gfx/interface/icons/law_icons/census_voting.dds"
+		}
+		blockoverride "icon_size" {
+			size = { 44 44 }
+		}
+		blockoverride "color" {
+			color = { 0.36 0.48 0.54 1 }
+		}
+		blockoverride "name" {
+			text = "ipg_formula_menu_title"
+		}
+		blockoverride "type" {
+			text = "[SelectLocalization(Country.MakeScope.Var('ipg_formula_override').IsSet, 'ipg_mode_manual_badge', 'ipg_mode_auto_badge')]"
+		}
+		blockoverride "text" {
+			visible = no
+		}
+		blockoverride "tooltip_content_after" {
+			flowcontainer = {
+				direction = vertical
+				spacing = 8
+
+				# Active formula banner
+				widget = {
+					size = { 392 30 }
+
+					background = {
+						using = dark_area
+						alpha = 0.55
+					}
+
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+						margin = { 10 0 }
+						spacing = 8
+
+						textbox = {
+							autoresize = yes
+							text = "ipg_formula_current_label"
+							default_format = "#title"
+							align = left|nobaseline
+							using = fontsize_small
+							fonttintcolor = "[TooltipInfo.GetTintColor]"
+						}
+
+						widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+
+						textbox = {
+							visible = "[Or(Not(Country.MakeScope.Var('ipg_active_formula').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_active_formula').GetValue, '(CFixedPoint)1'))]"
+							autoresize = yes
+							text = "ipg_formula_1"
+							default_format = "#v"
+							align = right|nobaseline
+							fonttintcolor = "[TooltipInfo.GetTintColor]"
+						}
+						textbox = {
+							visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_active_formula').GetValue, '(CFixedPoint)2')]"
+							autoresize = yes
+							text = "ipg_formula_2"
+							default_format = "#v"
+							align = right|nobaseline
+							fonttintcolor = "[TooltipInfo.GetTintColor]"
+						}
+						textbox = {
+							visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_active_formula').GetValue, '(CFixedPoint)3')]"
+							autoresize = yes
+							text = "ipg_formula_3"
+							default_format = "#v"
+							align = right|nobaseline
+							fonttintcolor = "[TooltipInfo.GetTintColor]"
+						}
+						textbox = {
+							visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_active_formula').GetValue, '(CFixedPoint)4')]"
+							autoresize = yes
+							text = "ipg_formula_4"
+							default_format = "#v"
+							align = right|nobaseline
+							fonttintcolor = "[TooltipInfo.GetTintColor]"
+						}
+						textbox = {
+							visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_active_formula').GetValue, '(CFixedPoint)5')]"
+							autoresize = yes
+							text = "ipg_formula_5"
+							default_format = "#v"
+							align = right|nobaseline
+							fonttintcolor = "[TooltipInfo.GetTintColor]"
+						}
+					}
+				}
+
+				# Match reason card
+				flowcontainer = {
+					direction = vertical
+					spacing = 4
+					margin = { 10 8 }
+
+					background = {
+						using = dark_area
+						alpha = 0.35
+					}
+
+					textbox = {
+						max_width = 372
+						min_width = 372
+						autoresize = yes
+						text = "ipg_formula_reason_label"
+						default_format = "#title"
+						align = left|nobaseline
+						using = fontsize_small
+						fonttintcolor = "[TooltipInfo.GetTintColor]"
+					}
+
+					divider_clean = {
+						size = { 372 2 }
+					}
+
+					textbox = {
+						visible = "[Country.MakeScope.Var('ipg_formula_override').IsSet]"
+						max_width = 372
+						min_width = 372
+						autoresize = yes
+						multiline = yes
+						text = "ipg_formula_reason_manual"
+						align = left|nobaseline
+						fonttintcolor = "[TooltipInfo.GetTintColor]"
+					}
+					textbox = {
+						visible = "[And(Not(Country.MakeScope.Var('ipg_formula_override').IsSet), Or(Not(Country.MakeScope.Var('ipg_auto_formula_reason').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_formula_reason').GetValue, '(CFixedPoint)1')))]"
+						max_width = 372
+						min_width = 372
+						autoresize = yes
+						multiline = yes
+						text = "ipg_formula_reason_1"
+						align = left|nobaseline
+						fonttintcolor = "[TooltipInfo.GetTintColor]"
+					}
+					textbox = {
+						visible = "[And(Not(Country.MakeScope.Var('ipg_formula_override').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_formula_reason').GetValue, '(CFixedPoint)2'))]"
+						max_width = 372
+						min_width = 372
+						autoresize = yes
+						multiline = yes
+						text = "ipg_formula_reason_2"
+						align = left|nobaseline
+						fonttintcolor = "[TooltipInfo.GetTintColor]"
+					}
+					textbox = {
+						visible = "[And(Not(Country.MakeScope.Var('ipg_formula_override').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_formula_reason').GetValue, '(CFixedPoint)3'))]"
+						max_width = 372
+						min_width = 372
+						autoresize = yes
+						multiline = yes
+						text = "ipg_formula_reason_3"
+						align = left|nobaseline
+						fonttintcolor = "[TooltipInfo.GetTintColor]"
+					}
+					textbox = {
+						visible = "[And(Not(Country.MakeScope.Var('ipg_formula_override').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_formula_reason').GetValue, '(CFixedPoint)4'))]"
+						max_width = 372
+						min_width = 372
+						autoresize = yes
+						multiline = yes
+						text = "ipg_formula_reason_4"
+						align = left|nobaseline
+						fonttintcolor = "[TooltipInfo.GetTintColor]"
+					}
+					textbox = {
+						visible = "[And(Not(Country.MakeScope.Var('ipg_formula_override').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_formula_reason').GetValue, '(CFixedPoint)5'))]"
+						max_width = 372
+						min_width = 372
+						autoresize = yes
+						multiline = yes
+						text = "ipg_formula_reason_5"
+						align = left|nobaseline
+						fonttintcolor = "[TooltipInfo.GetTintColor]"
+					}
+				}
+
+				textbox = {
+					max_width = 392
+					autoresize = yes
+					text = "ipg_formula_click_hint"
+					align = left|nobaseline
+					using = fontsize_small
+					alpha = 0.85
+					fonttintcolor = "[TooltipInfo.GetTintColor]"
+				}
+			}
+		}
+	}
+
+	type ipg_tooltip_formula_opt_auto = ipg_tooltip_layout_option_base {
+		blockoverride "icon_texture" { texture = "gfx/interface/icons/law_icons/census_voting.dds" }
+		blockoverride "color" { color = { 0.36 0.54 0.44 1 } }
+		blockoverride "name" { text = "ipg_formula_auto" }
+		blockoverride "type" { text = "ipg_layout_opt_badge_auto" }
+		blockoverride "opt_desc" { text = "ipg_formula_auto_desc" }
+		blockoverride "opt_cond" { text = "ipg_formula_auto_cond" }
+	}
+
+	type ipg_tooltip_formula_opt_1 = ipg_tooltip_layout_option_base {
+		blockoverride "icon_texture" { texture = "gfx/interface/icons/law_icons/parliamentary_republic.dds" }
+		blockoverride "color" { color = { 0.36 0.48 0.58 1 } }
+		blockoverride "name" { text = "ipg_formula_1" }
+		blockoverride "type" { text = "ipg_formula_opt_badge_pr" }
+		blockoverride "opt_desc" { text = "ipg_formula_1_desc" }
+		blockoverride "opt_cond" { text = "ipg_formula_1_cond" }
+	}
+
+	type ipg_tooltip_formula_opt_2 = ipg_tooltip_layout_option_base {
+		blockoverride "icon_texture" { texture = "gfx/interface/icons/law_icons/wealth_voting.dds" }
+		blockoverride "color" { color = { 0.52 0.44 0.32 1 } }
+		blockoverride "name" { text = "ipg_formula_2" }
+		blockoverride "type" { text = "ipg_formula_opt_badge_pr" }
+		blockoverride "opt_desc" { text = "ipg_formula_2_desc" }
+		blockoverride "opt_cond" { text = "ipg_formula_2_cond" }
+	}
+
+	type ipg_tooltip_formula_opt_3 = ipg_tooltip_layout_option_base {
+		blockoverride "icon_texture" { texture = "gfx/interface/icons/law_icons/census_voting.dds" }
+		blockoverride "color" { color = { 0.34 0.52 0.48 1 } }
+		blockoverride "name" { text = "ipg_formula_3" }
+		blockoverride "type" { text = "ipg_formula_opt_badge_pr" }
+		blockoverride "opt_desc" { text = "ipg_formula_3_desc" }
+		blockoverride "opt_cond" { text = "ipg_formula_3_cond" }
+	}
+
+	type ipg_tooltip_formula_opt_4 = ipg_tooltip_layout_option_base {
+		blockoverride "icon_texture" { texture = "gfx/interface/icons/event_icons/event_election.dds" }
+		blockoverride "color" { color = { 0.54 0.38 0.48 1 } }
+		blockoverride "name" { text = "ipg_formula_4" }
+		blockoverride "type" { text = "ipg_formula_opt_badge_pr" }
+		blockoverride "opt_desc" { text = "ipg_formula_4_desc" }
+		blockoverride "opt_cond" { text = "ipg_formula_4_cond" }
+	}
+
+	type ipg_tooltip_formula_opt_5 = ipg_tooltip_layout_option_base {
+		blockoverride "icon_texture" { texture = "gfx/interface/icons/law_icons/landed_voting.dds" }
+		blockoverride "color" { color = { 0.58 0.38 0.30 1 } }
+		blockoverride "name" { text = "ipg_formula_5" }
+		blockoverride "type" { text = "ipg_formula_opt_badge_maj" }
+		blockoverride "opt_desc" { text = "ipg_formula_5_desc" }
+		blockoverride "opt_cond" { text = "ipg_formula_5_cond" }
 	}
 }

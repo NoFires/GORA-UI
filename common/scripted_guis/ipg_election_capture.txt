@@ -1,11 +1,15 @@
 ﻿# =============================================================================
-# Improved ParliamentGraph - Scripted GUIs
+# Improved ParliamentGraph - Scripted GUIs (v3.1)
 # -----------------------------------------------------------------------------
 # 1. `ipg_capture_election_vote_share_sg`: Party -> Country bridge used by
 #    `gui/ipg_election_capture.gui` to persist GUI-only election vote shares.
 # 2. `ipg_open_refresh_sg`: Country-scoped on-demand refresh invoked when
 #    `parliament_item` opens/expands; refreshes dynamic seats + auto layout and
 #    triggers a one-shot election capture on mid-save loads if needed.
+# 3. `ipg_set_formula_*_sg`: In-game live apportionment formula switches
+#    (Auto / Hare / D'Hondt / Sainte-Lague / 5% Threshold / Mild FPTP).
+# 4. `ipg_inspect_foreign_sg`: On-demand Power + Alignment calculation for any
+#    foreign AI country viewed on the diplomatic Country Politics panel.
 # =============================================================================
 
 ipg_capture_election_vote_share_sg = {
@@ -38,5 +42,60 @@ ipg_open_refresh_sg = {
 			}
 			ipg_request_election_capture = yes
 		}
+	}
+}
+
+ipg_set_formula_auto_sg = {
+	scope = country
+	effect = {
+		remove_variable = ipg_formula_override
+		ipg_recalculate_dynamic_structures = yes
+	}
+}
+
+ipg_set_formula_1_sg = {
+	scope = country
+	effect = {
+		set_variable = { name = ipg_formula_override value = 1 }
+		ipg_recalculate_dynamic_structures = yes
+	}
+}
+
+ipg_set_formula_2_sg = {
+	scope = country
+	effect = {
+		set_variable = { name = ipg_formula_override value = 2 }
+		ipg_recalculate_dynamic_structures = yes
+	}
+}
+
+ipg_set_formula_3_sg = {
+	scope = country
+	effect = {
+		set_variable = { name = ipg_formula_override value = 3 }
+		ipg_recalculate_dynamic_structures = yes
+	}
+}
+
+ipg_set_formula_4_sg = {
+	scope = country
+	effect = {
+		set_variable = { name = ipg_formula_override value = 4 }
+		ipg_recalculate_dynamic_structures = yes
+	}
+}
+
+ipg_set_formula_5_sg = {
+	scope = country
+	effect = {
+		set_variable = { name = ipg_formula_override value = 5 }
+		ipg_recalculate_dynamic_structures = yes
+	}
+}
+
+ipg_inspect_foreign_sg = {
+	scope = country
+	effect = {
+		ipg_inspect_foreign_country = yes
 	}
 }

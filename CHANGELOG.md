@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0] - 2026-11-28
+
+- Upgraded bundled Improved ParliamentGraph to v3.1: added an interactive bottom-left Seat Apportionment selector with 5 live formulas (Hare / Hamilton, D'Hondt, Sainte-Laguë, 5% Threshold PR, and Mild Plurality / FPTP) plus Smart Auto-Matching driven by Distribution of Power laws and cultural heritage.
+- Linked active apportionment formulas to both real-time seat distribution across all 3 views (Party Structure, Power Structure, Political Alignment, including post-formula seat share percentages) and historically authentic chamber sizes (Plurality +25%, Sainte-Laguë +10%, Hare baseline, D'Hondt -5%, 5% Threshold -15%).
+- Added 20+ country-specific historical chamber names with full Upper House / Lower House / Whole Parliament alignment across all views and tooltips (e.g., Great Britain House of Lords / House of Commons / Parliament, USA Senate / House of Representatives / Congress, Qing Grand Council / Advisory Council, Tsarist State Council / State Duma, German Bundesrat / Reichstag).
+- Added on-demand Foreign AI Parliament Viewer on other countries' Diplomacy -> Politics tab (Party Structure, Power Structure, and Political Alignment with zero background AI overhead), 5-election rolling seat history on hover tooltips, 3D enameled dot sheen, custom Upper/Lower chamber badges, and full official vanilla terminology alignment.
+
 ## [1.3.0] - 2026-11-28
 
 - Upgraded bundled Improved ParliamentGraph to v3.0: added 5 authentic chamber architectures (Westminster Opposing Benches, Bicameral Dual-Chamber Split, Commonwealth Horseshoe, Terraced Assembly Hall, and Classic Hemicycle) with automatic culture & law matching (British/Anglo-Canadian heritage -> Westminster, Presidential Republic -> Bicameral, Council/Single-Party -> Assembly Hall, Australian & Constitutional Monarchy -> Horseshoe) plus a sleek bottom-right dropdown selector with native explanation tooltips.

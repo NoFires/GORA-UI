@@ -111,13 +111,54 @@ ipg_participation_factor = {
 	add = ipg_total_aligned_population_share
 }
 
+# Historical chamber-size multiplier driven by the active apportionment formula:
+#   5 = Plurality (FPTP) single-member constituencies:  +25% (large local-MP chamber)
+#   3 = Sainte-Lague leveling / overhang seats:        +10% (balanced expanded chamber)
+#   1 = Hare / Hamilton quota baseline:                 0%  (baseline)
+#   2 = D'Hondt continental list PR:                    -5% (moderately compact)
+#   4 = 5% Threshold consolidated parliament:          -15% (streamlined chamber)
+ipg_formula_seat_multiplier = {
+	if = {
+		limit = {
+			has_variable = ipg_active_formula
+			var:ipg_active_formula = 5
+		}
+		value = 1.25
+	}
+	else_if = {
+		limit = {
+			has_variable = ipg_active_formula
+			var:ipg_active_formula = 3
+		}
+		value = 1.10
+	}
+	else_if = {
+		limit = {
+			has_variable = ipg_active_formula
+			var:ipg_active_formula = 2
+		}
+		value = 0.95
+	}
+	else_if = {
+		limit = {
+			has_variable = ipg_active_formula
+			var:ipg_active_formula = 4
+		}
+		value = 0.85
+	}
+	else = {
+		value = 1.0
+	}
+}
+
 # Continuous real parliamentary seat count (50 .. 650).
-# Driven by law franchise + incorporated states (constituencies) + active pops.
+# Driven by law franchise + incorporated states + active pops + active formula.
 ipg_real_total_seats = {
 	value = num_incorporated_states
 	multiply = ipg_law_state_seat_weight
 	add = ipg_law_base_seats
 	multiply = ipg_participation_factor
+	multiply = ipg_formula_seat_multiplier
 	floor = yes
 	min = 50
 	max = 650
@@ -180,5 +221,40 @@ ipg_total_captured_vote_share = {
 			var:ipg_last_election_vote_share > 0
 		}
 		add = ipg_party_captured_vote_share
+	}
+}
+
+# D'Hondt highest-average quotient: raw_share / (seats + 1).
+# Evaluated on IG or Party scope during formula apportionment.
+ipg_dhondt_quotient = {
+	value = 0
+	if = {
+		limit = { has_variable = ipg_tmp_raw_share }
+		add = var:ipg_tmp_raw_share
+		divide = {
+			value = 1
+			if = {
+				limit = { has_variable = ipg_tmp_seats }
+				add = var:ipg_tmp_seats
+			}
+		}
+	}
+}
+
+# Sainte-Lague / Webster highest-average quotient: raw_share / (2 * seats + 1).
+# Evaluated on IG or Party scope during formula apportionment.
+ipg_sainte_lague_quotient = {
+	value = 0
+	if = {
+		limit = { has_variable = ipg_tmp_raw_share }
+		add = var:ipg_tmp_raw_share
+		divide = {
+			value = 1
+			if = {
+				limit = { has_variable = ipg_tmp_seats }
+				add = var:ipg_tmp_seats
+				add = var:ipg_tmp_seats
+			}
+		}
 	}
 }

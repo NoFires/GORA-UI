@@ -1,0 +1,386 @@
+﻿# =============================================================================
+# Improved ParliamentGraph - Country-Specific Historical Chamber Names (v3.1)
+# -----------------------------------------------------------------------------
+# Pure customizable localization (zero gameplay alteration, safe in overhauls
+# via `c:TAG ?= this`). Provides three distinct, semantically consistent layers:
+#   - ipg_upper_house_name     (Power Structure / Upper House / Council / Peers)
+#   - ipg_lower_house_name     (Party Structure / Electoral Lower House)
+#   - ipg_single_chamber_name  (Whole Legislature / Political Alignment view)
+# =============================================================================
+
+ipg_single_chamber_name = {
+	type = country
+	random_valid = no
+
+	text = {
+		trigger = {
+			has_law_or_variant = law_type:law_council_republic
+			c:RUS ?= this
+		}
+		localization_key = ipg_ch_supreme_soviet
+	}
+	text = {
+		trigger = { has_law_or_variant = law_type:law_council_republic }
+		localization_key = ipg_ch_peoples_congress
+	}
+	text = {
+		trigger = {
+			c:GBR ?= this
+			has_law_or_variant = law_type:law_monarchy
+		}
+		localization_key = ipg_ch_gbr_single
+	}
+	text = {
+		trigger = { c:GBR ?= this }
+		localization_key = ipg_panel_title
+	}
+	text = {
+		trigger = { c:USA ?= this }
+		localization_key = ipg_ch_usa_single
+	}
+	text = {
+		trigger = {
+			c:FRA ?= this
+			has_law_or_variant = law_type:law_monarchy
+		}
+		localization_key = ipg_ch_fra_monarchy_single
+	}
+	text = {
+		trigger = { c:FRA ?= this }
+		localization_key = ipg_ch_fra_assembly
+	}
+	text = {
+		trigger = { OR = { c:GER ?= this c:NGF ?= this } }
+		localization_key = ipg_ch_ger_single
+	}
+	text = {
+		trigger = { c:PRU ?= this }
+		localization_key = ipg_ch_pru_single
+	}
+	text = {
+		trigger = {
+			c:AUS ?= this
+			has_law_or_variant = law_type:law_monarchy
+		}
+		localization_key = ipg_ch_aus_monarchy_single
+	}
+	text = {
+		trigger = { c:AUS ?= this }
+		localization_key = ipg_ch_aus_rep_lower
+	}
+	text = {
+		trigger = {
+			c:RUS ?= this
+			has_law_or_variant = law_type:law_monarchy
+		}
+		localization_key = ipg_ch_rus_single
+	}
+	text = {
+		trigger = { c:RUS ?= this }
+		localization_key = ipg_ch_fra_assembly
+	}
+	text = {
+		trigger = {
+			c:JAP ?= this
+			has_law_or_variant = law_type:law_monarchy
+		}
+		localization_key = ipg_ch_jap_single
+	}
+	text = {
+		trigger = { c:JAP ?= this }
+		localization_key = ipg_ch_jap_rep_single
+	}
+	text = {
+		trigger = {
+			c:CHI ?= this
+			has_law_or_variant = law_type:law_monarchy
+		}
+		localization_key = ipg_ch_chi_monarchy_single
+	}
+	text = {
+		trigger = { c:CHI ?= this }
+		localization_key = ipg_ch_usa_single
+	}
+	text = {
+		trigger = {
+			c:TUR ?= this
+			has_law_or_variant = law_type:law_monarchy
+		}
+		localization_key = ipg_ch_tur_monarchy_single
+	}
+	text = {
+		trigger = { c:TUR ?= this }
+		localization_key = ipg_ch_tur_rep_single
+	}
+	text = {
+		trigger = { OR = { c:POL ?= this c:PLC ?= this } }
+		localization_key = ipg_ch_fra_assembly
+	}
+	text = {
+		trigger = { c:SPA ?= this }
+		localization_key = ipg_ch_spa_single
+	}
+	text = {
+		trigger = { OR = { c:BRZ ?= this c:MEX ?= this c:CHL ?= this c:ARG ?= this } }
+		localization_key = ipg_ch_latam_single
+	}
+	text = {
+		trigger = { c:NET ?= this }
+		localization_key = ipg_ch_net_single
+	}
+	text = {
+		trigger = { c:SWE ?= this }
+		localization_key = ipg_ch_swe_single
+	}
+	text = {
+		trigger = { c:NOR ?= this }
+		localization_key = ipg_ch_nor_single
+	}
+	text = {
+		trigger = { always = yes }
+		localization_key = ipg_panel_title
+	}
+}
+
+ipg_lower_house_name = {
+	type = country
+	random_valid = no
+
+	text = {
+		trigger = {
+			has_law_or_variant = law_type:law_council_republic
+			c:RUS ?= this
+		}
+		localization_key = ipg_ch_soviet_lower
+	}
+	text = {
+		trigger = { has_law_or_variant = law_type:law_council_republic }
+		localization_key = ipg_ch_peoples_congress
+	}
+	text = {
+		trigger = { c:USA ?= this }
+		localization_key = ipg_ch_usa_lower
+	}
+	text = {
+		trigger = { OR = { c:GBR ?= this c:CAN ?= this } }
+		localization_key = ipg_ch_gbr_lower
+	}
+	text = {
+		trigger = { c:AST ?= this }
+		localization_key = ipg_ch_usa_lower
+	}
+	text = {
+		trigger = {
+			c:FRA ?= this
+			has_law_or_variant = law_type:law_monarchy
+		}
+		localization_key = ipg_ch_fra_monarchy_lower
+	}
+	text = {
+		trigger = { c:FRA ?= this }
+		localization_key = ipg_ch_fra_assembly
+	}
+	text = {
+		trigger = { OR = { c:GER ?= this c:NGF ?= this } }
+		localization_key = ipg_ch_ger_lower
+	}
+	text = {
+		trigger = { c:PRU ?= this }
+		localization_key = ipg_ch_pru_lower
+	}
+	text = {
+		trigger = {
+			c:AUS ?= this
+			has_law_or_variant = law_type:law_monarchy
+		}
+		localization_key = ipg_ch_pru_lower
+	}
+	text = {
+		trigger = { c:AUS ?= this }
+		localization_key = ipg_ch_aus_rep_lower
+	}
+	text = {
+		trigger = { c:RUS ?= this }
+		localization_key = ipg_ch_rus_lower
+	}
+	text = {
+		trigger = { c:JAP ?= this }
+		localization_key = ipg_ch_jap_lower
+	}
+	text = {
+		trigger = {
+			c:CHI ?= this
+			has_law_or_variant = law_type:law_monarchy
+		}
+		localization_key = ipg_ch_chi_monarchy_lower
+	}
+	text = {
+		trigger = { c:CHI ?= this }
+		localization_key = ipg_ch_usa_lower
+	}
+	text = {
+		trigger = {
+			c:TUR ?= this
+			has_law_or_variant = law_type:law_monarchy
+		}
+		localization_key = ipg_ch_tur_lower
+	}
+	text = {
+		trigger = { c:TUR ?= this }
+		localization_key = ipg_ch_tur_rep_single
+	}
+	text = {
+		trigger = { OR = { c:POL ?= this c:PLC ?= this } }
+		localization_key = ipg_ch_pol_lower
+	}
+	text = {
+		trigger = { c:SPA ?= this }
+		localization_key = ipg_ch_spa_lower
+	}
+	text = {
+		trigger = { OR = { c:ITA ?= this c:SAR ?= this c:SIC ?= this c:BRZ ?= this c:MEX ?= this c:CHL ?= this c:ARG ?= this } }
+		localization_key = ipg_ch_ita_lower
+	}
+	text = {
+		trigger = { c:BEL ?= this }
+		localization_key = ipg_ch_bel_lower
+	}
+	text = {
+		trigger = { OR = { c:NET ?= this c:SWE ?= this } }
+		localization_key = ipg_ch_net_lower
+	}
+	text = {
+		trigger = { c:NOR ?= this }
+		localization_key = ipg_ch_nor_lower
+	}
+	text = {
+		trigger = { always = yes }
+		localization_key = ipg_ch_default_lower
+	}
+}
+
+ipg_upper_house_name = {
+	type = country
+	random_valid = no
+
+	text = {
+		trigger = {
+			has_law_or_variant = law_type:law_council_republic
+			c:RUS ?= this
+		}
+		localization_key = ipg_ch_soviet_upper
+	}
+	text = {
+		trigger = { has_law_or_variant = law_type:law_council_republic }
+		localization_key = ipg_ch_council_upper
+	}
+	text = {
+		trigger = { c:USA ?= this }
+		localization_key = ipg_ch_senate
+	}
+	text = {
+		trigger = {
+			c:GBR ?= this
+			has_law_or_variant = law_type:law_monarchy
+		}
+		localization_key = ipg_ch_gbr_upper
+	}
+	text = {
+		trigger = { c:GBR ?= this }
+		localization_key = ipg_ch_senate
+	}
+	text = {
+		trigger = {
+			c:FRA ?= this
+			has_law_or_variant = law_type:law_monarchy
+		}
+		localization_key = ipg_ch_fra_monarchy_upper
+	}
+	text = {
+		trigger = { c:FRA ?= this }
+		localization_key = ipg_ch_senate
+	}
+	text = {
+		trigger = { OR = { c:GER ?= this c:NGF ?= this } }
+		localization_key = ipg_ch_ger_upper
+	}
+	text = {
+		trigger = { c:PRU ?= this }
+		localization_key = ipg_ch_pru_upper
+	}
+	text = {
+		trigger = {
+			c:AUS ?= this
+			has_law_or_variant = law_type:law_monarchy
+		}
+		localization_key = ipg_ch_pru_upper
+	}
+	text = {
+		trigger = { c:AUS ?= this }
+		localization_key = ipg_ch_aus_rep_upper
+	}
+	text = {
+		trigger = {
+			c:RUS ?= this
+			has_law_or_variant = law_type:law_monarchy
+		}
+		localization_key = ipg_ch_rus_upper
+	}
+	text = {
+		trigger = { c:RUS ?= this }
+		localization_key = ipg_ch_senate
+	}
+	text = {
+		trigger = {
+			c:JAP ?= this
+			has_law_or_variant = law_type:law_monarchy
+		}
+		localization_key = ipg_ch_jap_upper
+	}
+	text = {
+		trigger = { c:JAP ?= this }
+		localization_key = ipg_ch_senate
+	}
+	text = {
+		trigger = {
+			c:CHI ?= this
+			has_law_or_variant = law_type:law_monarchy
+		}
+		localization_key = ipg_ch_chi_monarchy_upper
+	}
+	text = {
+		trigger = { c:CHI ?= this }
+		localization_key = ipg_ch_senate
+	}
+	text = {
+		trigger = {
+			c:TUR ?= this
+			has_law_or_variant = law_type:law_monarchy
+		}
+		localization_key = ipg_ch_tur_upper
+	}
+	text = {
+		trigger = { c:TUR ?= this }
+		localization_key = ipg_ch_senate
+	}
+	text = {
+		trigger = { OR = { c:POL ?= this c:PLC ?= this c:SPA ?= this c:ITA ?= this c:SAR ?= this c:SIC ?= this c:BRZ ?= this c:MEX ?= this c:CHL ?= this c:ARG ?= this c:BEL ?= this c:CAN ?= this c:AST ?= this } }
+		localization_key = ipg_ch_senate
+	}
+	text = {
+		trigger = { OR = { c:NET ?= this c:SWE ?= this } }
+		localization_key = ipg_ch_net_upper
+	}
+	text = {
+		trigger = { c:NOR ?= this }
+		localization_key = ipg_ch_nor_upper
+	}
+	text = {
+		trigger = { has_law_or_variant = law_type:law_monarchy }
+		localization_key = ipg_ch_default_monarchy_upper
+	}
+	text = {
+		trigger = { always = yes }
+		localization_key = ipg_ch_default_upper
+	}
+}
