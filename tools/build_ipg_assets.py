@@ -821,6 +821,12 @@ LOC_BASE: dict[str, dict[str, str]] = {
         "ipg_inspect_foreign_tt": "Survey this country's current parliamentary composition across Party Structure, Power Structure, and Political Alignment.",
         "ipg_refresh_foreign_btn": "Refresh",
         "ipg_foreign_no_parties": "This country currently has no active political parties.",
+        "ipg_tab_electoral_tt": "#title $ipg_view_electoral$#!\nDisplays lower-house seats apportioned from the last $concept_election$'s $concept_votes$ under the active apportionment method.\n#weak Displays Power Structure before an election is held.#!",
+        "ipg_tab_foreign_electoral_tt": "#title $ipg_view_electoral$#!\nDisplays this country's lower-house seats across active $concept_party$ coalitions weighted by member $concept_clout$.\n#weak Displays Power Structure when no active parties exist.#!",
+        "ipg_tab_power_tt": "#title $ipg_view_power$#!\nDisplays upper-house seats apportioned by each $concept_interest_group$'s $concept_clout$ under the active apportionment method.",
+        "ipg_tab_alignment_tt": "#title $ipg_view_alignment$#!\nDisplays legislative seats apportioned by $concept_population$ support across each $concept_interest_group$, alongside $concept_politically_unaligned$ seats.",
+        "ipg_collapse_tt": "Collapse the parliament chamber.",
+        "ipg_expand_tt": "Expand the parliament chamber.",
     },
     "simp_chinese": {
         "ipg_panel_title": "议会",
@@ -981,6 +987,12 @@ LOC_BASE: dict[str, dict[str, str]] = {
         "ipg_inspect_foreign_tt": "调阅该国当前的议会席位分布，包括政党结构、权力结构与政治倾向。",
         "ipg_refresh_foreign_btn": "刷新",
         "ipg_foreign_no_parties": "该国当前尚无活跃$concept_party$。",
+        "ipg_tab_electoral_tt": "#title $ipg_view_electoral$#!\n按上届$concept_election$真实$concept_votes$与现行议席分配制度展示下院席位分布。\n#weak 尚未举行大选时自动按权力结构展示。#!",
+        "ipg_tab_foreign_electoral_tt": "#title $ipg_view_electoral$#!\n按该国活跃$concept_party$成员的$concept_clout$占比展示下院席位分布。\n#weak 尚无活跃$concept_party$时自动按权力结构展示。#!",
+        "ipg_tab_power_tt": "#title $ipg_view_power$#!\n按各$concept_interest_group$的$concept_clout$与现行议席分配制度展示上院席位分布。",
+        "ipg_tab_alignment_tt": "#title $ipg_view_alignment$#!\n按全境$concept_population$对各$concept_interest_group$的支持比例分配席位，并保留$concept_politically_unaligned$席位。",
+        "ipg_collapse_tt": "折叠议会席位图。",
+        "ipg_expand_tt": "展开议会席位图。",
     },
 }
 

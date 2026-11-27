@@ -641,6 +641,7 @@ types politics_panel_types
 				using = default_button
 				onclick = "[GetVariableSystem.Toggle('ipg_parl_collapsed')]"
 				text = "ipg_expand"
+				tooltip = "ipg_expand_tt"
 				using = fontsize_medium
 			}
 		}
@@ -677,6 +678,8 @@ types politics_panel_types
 						enabled = no
 						visible = "[Or(GetVariableSystem.HasValue('ipg_parl_view', 'electoral'), And(Not(GetVariableSystem.Exists('ipg_parl_view')), Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties')))))]"
 						text = "ipg_view_electoral"
+						using = tooltip_below
+						tooltip = "ipg_tab_electoral_tt"
 						using = fontsize_medium
 					}
 					button = {
@@ -687,6 +690,8 @@ types politics_panel_types
 						onclick = "[GetVariableSystem.Clear('ipg_layout_menu_open')]"
 						onclick = "[GetVariableSystem.Clear('ipg_formula_menu_open')]"
 						text = "ipg_view_electoral"
+						using = tooltip_below
+						tooltip = "ipg_tab_electoral_tt"
 						using = fontsize_medium
 					}
 				}
@@ -701,6 +706,8 @@ types politics_panel_types
 						enabled = no
 						visible = "[Or(GetVariableSystem.HasValue('ipg_parl_view', 'power'), And(Not(GetVariableSystem.Exists('ipg_parl_view')), IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties'))))]"
 						text = "ipg_view_power"
+						using = tooltip_below
+						tooltip = "ipg_tab_power_tt"
 						using = fontsize_medium
 					}
 					button = {
@@ -711,6 +718,8 @@ types politics_panel_types
 						onclick = "[GetVariableSystem.Clear('ipg_layout_menu_open')]"
 						onclick = "[GetVariableSystem.Clear('ipg_formula_menu_open')]"
 						text = "ipg_view_power"
+						using = tooltip_below
+						tooltip = "ipg_tab_power_tt"
 						using = fontsize_medium
 					}
 				}
@@ -725,6 +734,8 @@ types politics_panel_types
 						enabled = no
 						visible = "[GetVariableSystem.HasValue('ipg_parl_view', 'alignment')]"
 						text = "ipg_view_alignment"
+						using = tooltip_below
+						tooltip = "ipg_tab_alignment_tt"
 						using = fontsize_medium
 					}
 					button = {
@@ -735,6 +746,8 @@ types politics_panel_types
 						onclick = "[GetVariableSystem.Clear('ipg_layout_menu_open')]"
 						onclick = "[GetVariableSystem.Clear('ipg_formula_menu_open')]"
 						text = "ipg_view_alignment"
+						using = tooltip_below
+						tooltip = "ipg_tab_alignment_tt"
 						using = fontsize_medium
 					}
 				}
@@ -745,6 +758,7 @@ types politics_panel_types
 					using = default_button
 					onclick = "[GetVariableSystem.Toggle('ipg_hide_info')]"
 					text = "ipg_toggle_info_btn"
+					using = tooltip_below
 					tooltip = "ipg_toggle_info_tt"
 					using = fontsize_small
 				}
@@ -757,6 +771,8 @@ types politics_panel_types
 					onclick = "[GetVariableSystem.Clear('ipg_layout_menu_open')]"
 					onclick = "[GetVariableSystem.Clear('ipg_formula_menu_open')]"
 					text = "ipg_collapse"
+					using = tooltip_below
+					tooltip = "ipg_collapse_tt"
 					using = fontsize_medium
 				}
 
@@ -2197,6 +2213,8 @@ types politics_panel_types
 							enabled = no
 							visible = "[Or(GetVariableSystem.HasValue('ipg_foreign_view', 'electoral'), And(Not(GetVariableSystem.Exists('ipg_foreign_view')), Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties')))))]"
 							text = "ipg_view_electoral"
+							using = tooltip_below
+							tooltip = "ipg_tab_foreign_electoral_tt"
 							using = fontsize_small
 						}
 						button = {
@@ -2205,6 +2223,8 @@ types politics_panel_types
 							visible = "[Not(Or(GetVariableSystem.HasValue('ipg_foreign_view', 'electoral'), And(Not(GetVariableSystem.Exists('ipg_foreign_view')), Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties'))))))]"
 							onclick = "[GetVariableSystem.Set('ipg_foreign_view', 'electoral')]"
 							text = "ipg_view_electoral"
+							using = tooltip_below
+							tooltip = "ipg_tab_foreign_electoral_tt"
 							using = fontsize_small
 						}
 					}
@@ -2218,6 +2238,8 @@ types politics_panel_types
 							enabled = no
 							visible = "[Or(GetVariableSystem.HasValue('ipg_foreign_view', 'power'), And(Not(GetVariableSystem.Exists('ipg_foreign_view')), IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties'))))]"
 							text = "ipg_view_power"
+							using = tooltip_below
+							tooltip = "ipg_tab_power_tt"
 							using = fontsize_small
 						}
 						button = {
@@ -2226,6 +2248,8 @@ types politics_panel_types
 							visible = "[Not(Or(GetVariableSystem.HasValue('ipg_foreign_view', 'power'), And(Not(GetVariableSystem.Exists('ipg_foreign_view')), IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties')))))]"
 							onclick = "[GetVariableSystem.Set('ipg_foreign_view', 'power')]"
 							text = "ipg_view_power"
+							using = tooltip_below
+							tooltip = "ipg_tab_power_tt"
 							using = fontsize_small
 						}
 					}
@@ -2239,6 +2263,8 @@ types politics_panel_types
 							enabled = no
 							visible = "[GetVariableSystem.HasValue('ipg_foreign_view', 'alignment')]"
 							text = "ipg_view_alignment"
+							using = tooltip_below
+							tooltip = "ipg_tab_alignment_tt"
 							using = fontsize_small
 						}
 						button = {
@@ -2247,6 +2273,8 @@ types politics_panel_types
 							visible = "[Not(GetVariableSystem.HasValue('ipg_foreign_view', 'alignment'))]"
 							onclick = "[GetVariableSystem.Set('ipg_foreign_view', 'alignment')]"
 							text = "ipg_view_alignment"
+							using = tooltip_below
+							tooltip = "ipg_tab_alignment_tt"
 							using = fontsize_small
 						}
 					}

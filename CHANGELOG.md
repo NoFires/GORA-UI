@@ -6,6 +6,7 @@
 - Linked active apportionment formulas to both real-time seat distribution across all 3 views (Party Structure, Power Structure, Political Alignment, including post-formula seat share percentages) and historically authentic chamber sizes (Plurality +25%, Sainte-Laguë +10%, Hare baseline, D'Hondt -5%, 5% Threshold -15%).
 - Added 20+ country-specific historical chamber names with full Upper House / Lower House / Whole Parliament alignment across all views and tooltips (e.g., Great Britain House of Lords / House of Commons / Parliament, USA Senate / House of Representatives / Congress, Qing Grand Council / Advisory Council, Tsarist State Council / State Duma, German Bundesrat / Reichstag).
 - Added on-demand Foreign AI Parliament Viewer on other countries' Diplomacy -> Politics tab (Party Structure, Power Structure, and Political Alignment with zero background AI overhead), 5-election rolling seat history on hover tooltips, 3D enameled dot sheen, custom Upper/Lower chamber badges, and full official vanilla terminology alignment.
+- Added localized hover tooltips to all domestic and foreign parliament view tab buttons (Party Structure, Power Structure, Political Alignment) as well as Collapse/Expand controls across all 11 official languages.
 
 ## [1.3.0] - 2026-11-28
 
