@@ -1,26 +1,616 @@
 ﻿# =============================================================================
 # Improved ParliamentGraph - Parliament Panel Widget
 # -----------------------------------------------------------------------------
-# `parliament_item` is the single entry point used by the override of
-# politics_panel_government - drop it into the Opposition column and the
-# whole subsystem renders from country variables populated by
-# common/scripted_effects/ipg_seat_allocation.txt.
+# Single entry point: `parliament_item` (spliced into
+# `politics_panel_government_details`, preserving zero-friction BPM compat).
 #
-# Three sub-widgets back the three tabs; only the visible one renders.
-# State is held in two VariableSystem keys:
-#   ipg_parl_collapsed   (presence -> panel is collapsed to a header row)
-#   ipg_parl_view        (value: 'power' | 'alignment' | 'electoral')
+# Features:
+#   - 3 analytical views: Party Structure (Electoral), Power Structure,
+#     Political Alignment — with automatic fallback to Power Structure when no
+#     election snapshot exists yet (never opens to a blank box).
+#   - 5 chamber layouts: Auto (law-driven default) + Hemicycle, Westminster,
+#     Horseshoe, Assembly Hall, and Bicameral (Upper Power + Lower Election/Pop).
+#   - 3 physical dot tiers (100 / 200 / 300) automatically matched to the
+#     continuous real seat count (50..650).
+#   - Gold coalition halos on governing seats, Ruler focal seat, coalition seat
+#     counter with majority indicator, election dates, and on-demand _show refresh.
+#
+# Client-side VariableSystem keys:
+#   ipg_parl_collapsed  (presence -> collapsed header strip)
+#   ipg_parl_view       ('electoral' | 'power' | 'alignment')
+#   ipg_layout_mode     (unset = Auto | 'hemicycle' | 'westminster' | 'horseshoe' | 'assembly' | 'bicameral')
+#   ipg_hide_info       (presence -> hide corner seat/election overlays)
 # =============================================================================
 
 types politics_panel_types
 {
 	# -------------------------------------------------------------------------
-	# Top-level container: header + three tab buttons + currently-selected view
+	# Reusable Ruler / Head of State focal seat
+	# -------------------------------------------------------------------------
+	type ipg_ruler_seat = widget {
+		size = { 24 24 }
+		visible = "[Country.HasRuler]"
+		alwaystransparent = no
+		using = tooltip_below
+		tooltip = "ipg_ruler_tooltip"
+
+		icon = {
+			texture = "gfx/interface/icons/ipg_white_circle.dds"
+			tintcolor = "[Country.GetRuler.GetInterestGroup.GetColor]"
+			size = { 16 16 }
+			parentanchor = center
+
+			icon = {
+				texture = "gfx/interface/icons/ipg_gov_halo.dds"
+				size = { 22 22 }
+				parentanchor = center
+			}
+		}
+	}
+
+	# -------------------------------------------------------------------------
+	# Reusable 4-layout x 3-tier canvas renderers (only 1 layout x 1 tier visible)
+	# -------------------------------------------------------------------------
+	type ipg_canvas_power = widget {
+		size = { 600 230 }
+
+		# --- Hemicycle (layout 1 or default) ---
+		widget = {
+			size = { 600 230 }
+			visible = "[Or(GetVariableSystem.HasValue('ipg_layout_mode', 'hemicycle'), And(Not(GetVariableSystem.Exists('ipg_layout_mode')), Or(Not(Country.MakeScope.Var('ipg_auto_layout').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)1'))))]"
+
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)100')]"
+				datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+				item = { ipg_hemicycle_100_power = {} }
+			}
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)200')]"
+				datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+				item = { ipg_hemicycle_200_power = {} }
+			}
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[Or(Not(Country.MakeScope.Var('ipg_visual_seats_val').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)300'))]"
+				datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+				item = { ipg_hemicycle_300_power = {} }
+			}
+			ipg_ruler_seat = { position = { 288 190 } }
+		}
+
+		# --- Westminster (layout 2) ---
+		widget = {
+			size = { 600 230 }
+			visible = "[Or(GetVariableSystem.HasValue('ipg_layout_mode', 'westminster'), And(Not(GetVariableSystem.Exists('ipg_layout_mode')), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)2')))]"
+
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)100')]"
+				datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+				item = { ipg_westminster_100_power = {} }
+			}
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)200')]"
+				datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+				item = { ipg_westminster_200_power = {} }
+			}
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[Or(Not(Country.MakeScope.Var('ipg_visual_seats_val').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)300'))]"
+				datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+				item = { ipg_westminster_300_power = {} }
+			}
+			ipg_ruler_seat = { position = { 102 104 } }
+		}
+
+		# --- Horseshoe (layout 3) ---
+		widget = {
+			size = { 600 230 }
+			visible = "[Or(GetVariableSystem.HasValue('ipg_layout_mode', 'horseshoe'), And(Not(GetVariableSystem.Exists('ipg_layout_mode')), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)3')))]"
+
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)100')]"
+				datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+				item = { ipg_horseshoe_100_power = {} }
+			}
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)200')]"
+				datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+				item = { ipg_horseshoe_200_power = {} }
+			}
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[Or(Not(Country.MakeScope.Var('ipg_visual_seats_val').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)300'))]"
+				datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+				item = { ipg_horseshoe_300_power = {} }
+			}
+			ipg_ruler_seat = { position = { 288 20 } }
+		}
+
+		# --- Assembly Hall (layout 4) ---
+		widget = {
+			size = { 600 230 }
+			visible = "[Or(GetVariableSystem.HasValue('ipg_layout_mode', 'assembly'), And(Not(GetVariableSystem.Exists('ipg_layout_mode')), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)4')))]"
+
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)100')]"
+				datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+				item = { ipg_assembly_100_power = {} }
+			}
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)200')]"
+				datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+				item = { ipg_assembly_200_power = {} }
+			}
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[Or(Not(Country.MakeScope.Var('ipg_visual_seats_val').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)300'))]"
+				datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+				item = { ipg_assembly_300_power = {} }
+			}
+			ipg_ruler_seat = { position = { 288 18 } }
+		}
+	}
+
+	type ipg_canvas_alignment = widget {
+		size = { 600 230 }
+
+		# --- Hemicycle ---
+		widget = {
+			size = { 600 230 }
+			visible = "[Or(GetVariableSystem.HasValue('ipg_layout_mode', 'hemicycle'), And(Not(GetVariableSystem.Exists('ipg_layout_mode')), Or(Not(Country.MakeScope.Var('ipg_auto_layout').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)1'))))]"
+
+			widget = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)100')]"
+				overlappingitembox = {
+					size = { 600 230 }
+					datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]"
+					item = { ipg_hemicycle_100_alignment = {} }
+				}
+				ipg_hemicycle_100_unaligned = {}
+			}
+			widget = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)200')]"
+				overlappingitembox = {
+					size = { 600 230 }
+					datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]"
+					item = { ipg_hemicycle_200_alignment = {} }
+				}
+				ipg_hemicycle_200_unaligned = {}
+			}
+			widget = {
+				size = { 600 230 }
+				visible = "[Or(Not(Country.MakeScope.Var('ipg_visual_seats_val').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)300'))]"
+				overlappingitembox = {
+					size = { 600 230 }
+					datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]"
+					item = { ipg_hemicycle_300_alignment = {} }
+				}
+				ipg_hemicycle_300_unaligned = {}
+			}
+			ipg_ruler_seat = { position = { 288 190 } }
+		}
+
+		# --- Westminster ---
+		widget = {
+			size = { 600 230 }
+			visible = "[Or(GetVariableSystem.HasValue('ipg_layout_mode', 'westminster'), And(Not(GetVariableSystem.Exists('ipg_layout_mode')), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)2')))]"
+
+			widget = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)100')]"
+				overlappingitembox = {
+					size = { 600 230 }
+					datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]"
+					item = { ipg_westminster_100_alignment = {} }
+				}
+				ipg_westminster_100_unaligned = {}
+			}
+			widget = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)200')]"
+				overlappingitembox = {
+					size = { 600 230 }
+					datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]"
+					item = { ipg_westminster_200_alignment = {} }
+				}
+				ipg_westminster_200_unaligned = {}
+			}
+			widget = {
+				size = { 600 230 }
+				visible = "[Or(Not(Country.MakeScope.Var('ipg_visual_seats_val').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)300'))]"
+				overlappingitembox = {
+					size = { 600 230 }
+					datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]"
+					item = { ipg_westminster_300_alignment = {} }
+				}
+				ipg_westminster_300_unaligned = {}
+			}
+			ipg_ruler_seat = { position = { 102 104 } }
+		}
+
+		# --- Horseshoe ---
+		widget = {
+			size = { 600 230 }
+			visible = "[Or(GetVariableSystem.HasValue('ipg_layout_mode', 'horseshoe'), And(Not(GetVariableSystem.Exists('ipg_layout_mode')), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)3')))]"
+
+			widget = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)100')]"
+				overlappingitembox = {
+					size = { 600 230 }
+					datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]"
+					item = { ipg_horseshoe_100_alignment = {} }
+				}
+				ipg_horseshoe_100_unaligned = {}
+			}
+			widget = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)200')]"
+				overlappingitembox = {
+					size = { 600 230 }
+					datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]"
+					item = { ipg_horseshoe_200_alignment = {} }
+				}
+				ipg_horseshoe_200_unaligned = {}
+			}
+			widget = {
+				size = { 600 230 }
+				visible = "[Or(Not(Country.MakeScope.Var('ipg_visual_seats_val').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)300'))]"
+				overlappingitembox = {
+					size = { 600 230 }
+					datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]"
+					item = { ipg_horseshoe_300_alignment = {} }
+				}
+				ipg_horseshoe_300_unaligned = {}
+			}
+			ipg_ruler_seat = { position = { 288 20 } }
+		}
+
+		# --- Assembly Hall ---
+		widget = {
+			size = { 600 230 }
+			visible = "[Or(GetVariableSystem.HasValue('ipg_layout_mode', 'assembly'), And(Not(GetVariableSystem.Exists('ipg_layout_mode')), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)4')))]"
+
+			widget = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)100')]"
+				overlappingitembox = {
+					size = { 600 230 }
+					datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]"
+					item = { ipg_assembly_100_alignment = {} }
+				}
+				ipg_assembly_100_unaligned = {}
+			}
+			widget = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)200')]"
+				overlappingitembox = {
+					size = { 600 230 }
+					datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]"
+					item = { ipg_assembly_200_alignment = {} }
+				}
+				ipg_assembly_200_unaligned = {}
+			}
+			widget = {
+				size = { 600 230 }
+				visible = "[Or(Not(Country.MakeScope.Var('ipg_visual_seats_val').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)300'))]"
+				overlappingitembox = {
+					size = { 600 230 }
+					datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]"
+					item = { ipg_assembly_300_alignment = {} }
+				}
+				ipg_assembly_300_unaligned = {}
+			}
+			ipg_ruler_seat = { position = { 288 18 } }
+		}
+	}
+
+	type ipg_canvas_electoral = widget {
+		size = { 600 230 }
+
+		# Friendly empty-state message when no election has occurred yet
+		textbox = {
+			visible = "[IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties'))]"
+			parentanchor = center
+			size = { 460 60 }
+			multiline = yes
+			align = center|nobaseline
+			text = "ipg_no_election_yet"
+			using = fontsize_medium
+			alpha = 0.75
+		}
+
+		# --- Hemicycle ---
+		widget = {
+			size = { 600 230 }
+			visible = "[And(Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties'))), Or(GetVariableSystem.HasValue('ipg_layout_mode', 'hemicycle'), And(Not(GetVariableSystem.Exists('ipg_layout_mode')), Or(Not(Country.MakeScope.Var('ipg_auto_layout').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)1')))))]"
+
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)100')]"
+				datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]"
+				item = { ipg_hemicycle_100_electoral = {} }
+			}
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)200')]"
+				datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]"
+				item = { ipg_hemicycle_200_electoral = {} }
+			}
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[Or(Not(Country.MakeScope.Var('ipg_visual_seats_val').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)300'))]"
+				datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]"
+				item = { ipg_hemicycle_300_electoral = {} }
+			}
+			ipg_ruler_seat = { position = { 288 190 } }
+		}
+
+		# --- Westminster ---
+		widget = {
+			size = { 600 230 }
+			visible = "[And(Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties'))), Or(GetVariableSystem.HasValue('ipg_layout_mode', 'westminster'), And(Not(GetVariableSystem.Exists('ipg_layout_mode')), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)2'))))]"
+
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)100')]"
+				datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]"
+				item = { ipg_westminster_100_electoral = {} }
+			}
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)200')]"
+				datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]"
+				item = { ipg_westminster_200_electoral = {} }
+			}
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[Or(Not(Country.MakeScope.Var('ipg_visual_seats_val').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)300'))]"
+				datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]"
+				item = { ipg_westminster_300_electoral = {} }
+			}
+			ipg_ruler_seat = { position = { 102 104 } }
+		}
+
+		# --- Horseshoe ---
+		widget = {
+			size = { 600 230 }
+			visible = "[And(Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties'))), Or(GetVariableSystem.HasValue('ipg_layout_mode', 'horseshoe'), And(Not(GetVariableSystem.Exists('ipg_layout_mode')), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)3'))))]"
+
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)100')]"
+				datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]"
+				item = { ipg_horseshoe_100_electoral = {} }
+			}
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)200')]"
+				datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]"
+				item = { ipg_horseshoe_200_electoral = {} }
+			}
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[Or(Not(Country.MakeScope.Var('ipg_visual_seats_val').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)300'))]"
+				datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]"
+				item = { ipg_horseshoe_300_electoral = {} }
+			}
+			ipg_ruler_seat = { position = { 288 20 } }
+		}
+
+		# --- Assembly Hall ---
+		widget = {
+			size = { 600 230 }
+			visible = "[And(Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties'))), Or(GetVariableSystem.HasValue('ipg_layout_mode', 'assembly'), And(Not(GetVariableSystem.Exists('ipg_layout_mode')), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)4'))))]"
+
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)100')]"
+				datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]"
+				item = { ipg_assembly_100_electoral = {} }
+			}
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)200')]"
+				datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]"
+				item = { ipg_assembly_200_electoral = {} }
+			}
+			overlappingitembox = {
+				size = { 600 230 }
+				visible = "[Or(Not(Country.MakeScope.Var('ipg_visual_seats_val').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)300'))]"
+				datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]"
+				item = { ipg_assembly_300_electoral = {} }
+			}
+			ipg_ruler_seat = { position = { 288 18 } }
+		}
+	}
+
+	# -------------------------------------------------------------------------
+	# Bicameral Split View: Left Upper House (Power) + Right Lower House
+	# (Electoral when captured & not Alignment tab, else Political Alignment)
+	# -------------------------------------------------------------------------
+	type ipg_view_bicameral = widget {
+		size = { 100% 230 }
+		layoutpolicy_horizontal = expanding
+		layoutpolicy_vertical = preferred
+		using = tooltip_below
+		using = entry_bg_fancy
+		tooltipwidget = { ipg_tooltip_bicameral_dynamic = {} }
+
+		hbox = {
+			size = { 100% 230 }
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = preferred
+
+			widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+
+			widget = {
+				size = { 600 230 }
+
+				# Chamber titles
+				textbox = {
+					position = { 44 52 }
+					size = { 215 24 }
+					align = center|nobaseline
+					text = "ipg_bicameral_upper"
+					using = fontsize_medium
+				}
+				textbox = {
+					visible = "[And(Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties'))), Not(GetVariableSystem.HasValue('ipg_parl_view', 'alignment')))]"
+					position = { 326 30 }
+					size = { 236 24 }
+					align = center|nobaseline
+					text = "ipg_bicameral_lower_electoral"
+					using = fontsize_medium
+				}
+				textbox = {
+					visible = "[Or(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties')), GetVariableSystem.HasValue('ipg_parl_view', 'alignment'))]"
+					position = { 326 30 }
+					size = { 236 24 }
+					align = center|nobaseline
+					text = "ipg_bicameral_lower_alignment"
+					using = fontsize_medium
+				}
+
+				# Upper House (Power, mapped from tier 100 / 200 / 300)
+				overlappingitembox = {
+					size = { 600 230 }
+					visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)100')]"
+					datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+					item = { ipg_bicameral_upper_100_power = {} }
+				}
+				overlappingitembox = {
+					size = { 600 230 }
+					visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)200')]"
+					datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+					item = { ipg_bicameral_upper_200_power = {} }
+				}
+				overlappingitembox = {
+					size = { 600 230 }
+					visible = "[Or(Not(Country.MakeScope.Var('ipg_visual_seats_val').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)300'))]"
+					datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+					item = { ipg_bicameral_upper_300_power = {} }
+				}
+
+				# Lower House (Electoral when available & not Alignment tab)
+				widget = {
+					size = { 600 230 }
+					visible = "[And(Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties'))), Not(GetVariableSystem.HasValue('ipg_parl_view', 'alignment')))]"
+
+					overlappingitembox = {
+						size = { 600 230 }
+						visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)100')]"
+						datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]"
+						item = { ipg_bicameral_lower_100_electoral = {} }
+					}
+					overlappingitembox = {
+						size = { 600 230 }
+						visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)200')]"
+						datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]"
+						item = { ipg_bicameral_lower_200_electoral = {} }
+					}
+					overlappingitembox = {
+						size = { 600 230 }
+						visible = "[Or(Not(Country.MakeScope.Var('ipg_visual_seats_val').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)300'))]"
+						datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]"
+						item = { ipg_bicameral_lower_300_electoral = {} }
+					}
+				}
+
+				# Lower House (Political Alignment fallback / selected)
+				widget = {
+					size = { 600 230 }
+					visible = "[Or(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties')), GetVariableSystem.HasValue('ipg_parl_view', 'alignment'))]"
+
+					widget = {
+						size = { 600 230 }
+						visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)100')]"
+						overlappingitembox = {
+							size = { 600 230 }
+							datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]"
+							item = { ipg_bicameral_lower_100_alignment = {} }
+						}
+						ipg_bicameral_lower_100_unaligned = {}
+					}
+					widget = {
+						size = { 600 230 }
+						visible = "[EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)200')]"
+						overlappingitembox = {
+							size = { 600 230 }
+							datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]"
+							item = { ipg_bicameral_lower_200_alignment = {} }
+						}
+						ipg_bicameral_lower_200_unaligned = {}
+					}
+					widget = {
+						size = { 600 230 }
+						visible = "[Or(Not(Country.MakeScope.Var('ipg_visual_seats_val').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_visual_seats_val').GetValue, '(CFixedPoint)300'))]"
+						overlappingitembox = {
+							size = { 600 230 }
+							datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]"
+							item = { ipg_bicameral_lower_300_alignment = {} }
+						}
+						ipg_bicameral_lower_300_unaligned = {}
+					}
+				}
+
+				ipg_ruler_seat = { position = { 276 188 } }
+			}
+
+			widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+		}
+
+		# Compact top-left total & top-right election dates (toggleable)
+		flowcontainer = {
+			visible = "[Not(GetVariableSystem.Exists('ipg_hide_info'))]"
+			direction = vertical
+			position = { 14 8 }
+			spacing = 2
+
+			flowcontainer = {
+				spacing = 4
+				icon = {
+					size = { 16 16 }
+					parentanchor = vcenter
+					texture = "gfx/interface/icons/generic_icons/in_government_icon.dds"
+				}
+				textbox = {
+					autoresize = yes
+					parentanchor = vcenter
+					text = "ipg_power_coalition_badge"
+					using = fontsize_small
+					align = left|nobaseline
+				}
+			}
+			textbox = {
+				visible = "[AccessPlayer.HasElections]"
+				autoresize = yes
+				text = "ipg_election_dates_line"
+				using = fontsize_small
+				align = left|nobaseline
+				alpha = 0.85
+			}
+		}
+	}
+
+
+	# -------------------------------------------------------------------------
+	# Top-level container: header + 3 view tabs + canvas + layout switcher bar
 	# -------------------------------------------------------------------------
 	type parliament_item = vbox {
 		layoutpolicy_horizontal = expanding
 		layoutpolicy_vertical = preferred
-		spacing = 6
+		spacing = 5
 
 		# --- Collapsed state: a single bar with an "Expand" button ---
 		hbox = {
@@ -41,7 +631,7 @@ types politics_panel_types
 			}
 
 			button = {
-				size = { 110 28 }
+				size = { 100 28 }
 				using = default_button
 				onclick = "[GetVariableSystem.Toggle('ipg_parl_collapsed')]"
 				text = "ipg_expand"
@@ -49,48 +639,46 @@ types politics_panel_types
 			}
 		}
 
-		# --- Expanded state: tab strip + selected view ---
+		# --- Expanded state: tab strip + canvas with bottom-right layout selector ---
 		vbox = {
-			size = { 100% 270 }
+			size = { 100% 266 }
 			layoutpolicy_horizontal = expanding
 			layoutpolicy_vertical = preferred
-			spacing = 6
+			spacing = 4
 			visible = "[Not(GetVariableSystem.Exists('ipg_parl_collapsed'))]"
 
-			# --- Tab strip ---
+			# On-demand refresh whenever the panel becomes visible / expanded
+			state = {
+				name = _show
+				on_start = "[GetScriptedGui('ipg_open_refresh_sg').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+			}
+
+			# --- Top bar: 3 View tabs + Info toggle + Collapse ---
 			hbox = {
-				spacing = 8
+				spacing = 6
 				layoutpolicy_horizontal = expanding
 				layoutpolicy_vertical = preferred
 
-				widget = {
-					size = { 0 1 }
-					layoutpolicy_horizontal = expanding
-				}
+				widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
 
-				# Party Structure tab (default view).
-				# Always enabled - the chart is clout-based, not tied to
-				# actual elections, so franchise / party existence is not a
-				# meaningful gate.
+				# Party Structure (Electoral) tab
 				widget = {
-					size = { 200 30 }
+					size = { 168 30 }
 
-					# Active state: when the variable is unset (default), or
-					# when it is explicitly set to 'electoral'.
 					button = {
-						size = { 200 30 }
+						size = { 168 30 }
 						using = default_button_primary
 						enabled = no
-						visible = "[Or(Not(GetVariableSystem.Exists('ipg_parl_view')), GetVariableSystem.HasValue('ipg_parl_view', 'electoral'))]"
+						visible = "[Or(GetVariableSystem.HasValue('ipg_parl_view', 'electoral'), And(Not(GetVariableSystem.Exists('ipg_parl_view')), Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties')))))]"
 						text = "ipg_view_electoral"
 						using = fontsize_medium
 					}
-					# Inactive state (clickable): variable is set to something else.
 					button = {
-						size = { 200 30 }
+						size = { 168 30 }
 						using = default_button
-						visible = "[And(GetVariableSystem.Exists('ipg_parl_view'), Not(GetVariableSystem.HasValue('ipg_parl_view', 'electoral')))]"
+						visible = "[Not(Or(GetVariableSystem.HasValue('ipg_parl_view', 'electoral'), And(Not(GetVariableSystem.Exists('ipg_parl_view')), Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties'))))))]"
 						onclick = "[GetVariableSystem.Set('ipg_parl_view', 'electoral')]"
+						onclick = "[GetVariableSystem.Clear('ipg_layout_menu_open')]"
 						text = "ipg_view_electoral"
 						using = fontsize_medium
 					}
@@ -98,21 +686,22 @@ types politics_panel_types
 
 				# Power Structure tab
 				widget = {
-					size = { 200 30 }
+					size = { 168 30 }
 
 					button = {
-						size = { 200 30 }
+						size = { 168 30 }
 						using = default_button_primary
 						enabled = no
-						visible = "[GetVariableSystem.HasValue('ipg_parl_view', 'power')]"
+						visible = "[Or(GetVariableSystem.HasValue('ipg_parl_view', 'power'), And(Not(GetVariableSystem.Exists('ipg_parl_view')), IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties'))))]"
 						text = "ipg_view_power"
 						using = fontsize_medium
 					}
 					button = {
-						size = { 200 30 }
+						size = { 168 30 }
 						using = default_button
-						visible = "[Not(GetVariableSystem.HasValue('ipg_parl_view', 'power'))]"
+						visible = "[Not(Or(GetVariableSystem.HasValue('ipg_parl_view', 'power'), And(Not(GetVariableSystem.Exists('ipg_parl_view')), IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties')))))]"
 						onclick = "[GetVariableSystem.Set('ipg_parl_view', 'power')]"
+						onclick = "[GetVariableSystem.Clear('ipg_layout_menu_open')]"
 						text = "ipg_view_power"
 						using = fontsize_medium
 					}
@@ -120,10 +709,10 @@ types politics_panel_types
 
 				# Political Alignment tab
 				widget = {
-					size = { 200 30 }
+					size = { 168 30 }
 
 					button = {
-						size = { 200 30 }
+						size = { 168 30 }
 						using = default_button_primary
 						enabled = no
 						visible = "[GetVariableSystem.HasValue('ipg_parl_view', 'alignment')]"
@@ -131,40 +720,458 @@ types politics_panel_types
 						using = fontsize_medium
 					}
 					button = {
-						size = { 200 30 }
+						size = { 168 30 }
 						using = default_button
 						visible = "[Not(GetVariableSystem.HasValue('ipg_parl_view', 'alignment'))]"
 						onclick = "[GetVariableSystem.Set('ipg_parl_view', 'alignment')]"
+						onclick = "[GetVariableSystem.Clear('ipg_layout_menu_open')]"
 						text = "ipg_view_alignment"
 						using = fontsize_medium
 					}
 				}
 
-				# Collapse button on the right
+				# Toggle corner overlays (Info)
+				button = {
+					size = { 68 30 }
+					using = default_button
+					onclick = "[GetVariableSystem.Toggle('ipg_hide_info')]"
+					text = "ipg_toggle_info_btn"
+					tooltip = "ipg_toggle_info_tt"
+					using = fontsize_small
+				}
+
+				# Collapse button
+				button = {
+					size = { 82 30 }
+					using = default_button
+					onclick = "[GetVariableSystem.Toggle('ipg_parl_collapsed')]"
+					onclick = "[GetVariableSystem.Clear('ipg_layout_menu_open')]"
+					text = "ipg_collapse"
+					using = fontsize_medium
+				}
+
+				widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+			}
+
+			# --- Canvas stage + bottom-right layout selector trigger & popup ---
+			widget = {
+				size = { 100% 230 }
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = fixed
+
+				# Selected sub-view (single chamber OR Bicameral split, manual OR auto=5)
+				ipg_view_bicameral = {
+					visible = "[Or(GetVariableSystem.HasValue('ipg_layout_mode', 'bicameral'), And(Not(GetVariableSystem.Exists('ipg_layout_mode')), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)5')))]"
+				}
+				ipg_view_electoral = {
+					visible = "[And(Not(Or(GetVariableSystem.HasValue('ipg_layout_mode', 'bicameral'), And(Not(GetVariableSystem.Exists('ipg_layout_mode')), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)5')))), Or(GetVariableSystem.HasValue('ipg_parl_view', 'electoral'), And(Not(GetVariableSystem.Exists('ipg_parl_view')), Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties'))))))]"
+				}
+				ipg_view_power = {
+					visible = "[And(Not(Or(GetVariableSystem.HasValue('ipg_layout_mode', 'bicameral'), And(Not(GetVariableSystem.Exists('ipg_layout_mode')), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)5')))), Or(GetVariableSystem.HasValue('ipg_parl_view', 'power'), And(Not(GetVariableSystem.Exists('ipg_parl_view')), IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties')))))]"
+				}
+				ipg_view_alignment = {
+					visible = "[And(Not(Or(GetVariableSystem.HasValue('ipg_layout_mode', 'bicameral'), And(Not(GetVariableSystem.Exists('ipg_layout_mode')), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)5')))), GetVariableSystem.HasValue('ipg_parl_view', 'alignment'))]"
+				}
+
+				# --- Bottom-right compact layout selector button (default: Auto) ---
 				widget = {
-					size = { 110 30 }
+					parentanchor = bottom|right
+					position = { -12 -10 }
+					size = { 126 26 }
+					alwaystransparent = no
+					using = tooltip_above
+					tooltipwidget = { ipg_tooltip_layout_status = {} }
 
 					button = {
-						size = { 110 30 }
+						size = { 126 26 }
+						visible = "[Not(GetVariableSystem.Exists('ipg_layout_menu_open'))]"
 						using = default_button
-						onclick = "[GetVariableSystem.Toggle('ipg_parl_collapsed')]"
-						text = "ipg_collapse"
-						using = fontsize_medium
+						onclick = "[GetVariableSystem.Toggle('ipg_layout_menu_open')]"
+					}
+					button = {
+						size = { 126 26 }
+						visible = "[GetVariableSystem.Exists('ipg_layout_menu_open')]"
+						using = default_button_primary
+						onclick = "[GetVariableSystem.Toggle('ipg_layout_menu_open')]"
+					}
+
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+						margin = { 8 0 }
+						spacing = 4
+						alwaystransparent = yes
+
+						icon = {
+							size = { 16 16 }
+							texture = "gfx/interface/icons/law_icons/parliamentary_republic.dds"
+							alwaystransparent = yes
+						}
+
+						textbox = {
+							visible = "[Not(GetVariableSystem.Exists('ipg_layout_mode'))]"
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							text = "ipg_layout_auto"
+							align = center|nobaseline
+							elide = right
+							using = fontsize_small
+							alwaystransparent = yes
+						}
+						textbox = {
+							visible = "[GetVariableSystem.HasValue('ipg_layout_mode', 'hemicycle')]"
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							text = "ipg_layout_hemicycle"
+							align = center|nobaseline
+							elide = right
+							using = fontsize_small
+							alwaystransparent = yes
+						}
+						textbox = {
+							visible = "[GetVariableSystem.HasValue('ipg_layout_mode', 'westminster')]"
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							text = "ipg_layout_westminster"
+							align = center|nobaseline
+							elide = right
+							using = fontsize_small
+							alwaystransparent = yes
+						}
+						textbox = {
+							visible = "[GetVariableSystem.HasValue('ipg_layout_mode', 'horseshoe')]"
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							text = "ipg_layout_horseshoe"
+							align = center|nobaseline
+							elide = right
+							using = fontsize_small
+							alwaystransparent = yes
+						}
+						textbox = {
+							visible = "[GetVariableSystem.HasValue('ipg_layout_mode', 'assembly')]"
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							text = "ipg_layout_assembly"
+							align = center|nobaseline
+							elide = right
+							using = fontsize_small
+							alwaystransparent = yes
+						}
+						textbox = {
+							visible = "[GetVariableSystem.HasValue('ipg_layout_mode', 'bicameral')]"
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							text = "ipg_layout_bicameral"
+							align = center|nobaseline
+							elide = right
+							using = fontsize_small
+							alwaystransparent = yes
+						}
+
+						icon = {
+							size = { 12 12 }
+							texture = "gfx/interface/politics_view/summary_arrow_down.dds"
+							alpha = 0.85
+							alwaystransparent = yes
+						}
 					}
 				}
-			}
 
-			# --- Selected sub-view (only one visible at a time) ---
-			# Party Structure (electoral) is the default view: visible when
-			# the variable is unset OR explicitly 'electoral'.
-			ipg_view_electoral = {
-				visible = "[Or(Not(GetVariableSystem.Exists('ipg_parl_view')), GetVariableSystem.HasValue('ipg_parl_view', 'electoral'))]"
-			}
-			ipg_view_power = {
-				visible = "[GetVariableSystem.HasValue('ipg_parl_view', 'power')]"
-			}
-			ipg_view_alignment = {
-				visible = "[GetVariableSystem.HasValue('ipg_parl_view', 'alignment')]"
+				# --- Floating layout picker popup (anchored cleanly above bottom-right button) ---
+				widget = {
+					visible = "[GetVariableSystem.Exists('ipg_layout_menu_open')]"
+					parentanchor = bottom|right
+					position = { -12 -39 }
+					size = { 168 184 }
+					alwaystransparent = no
+
+					background = {
+						using = dropdown_background
+					}
+
+					flowcontainer = {
+						parentanchor = center
+						direction = vertical
+						spacing = 2
+
+						# Option 0: Auto
+						widget = {
+							size = { 152 26 }
+							tooltip_type = widget
+							tooltip_parentanchor = vcenter|left
+							tooltip_widgetanchor = vcenter|right
+							tooltip_verticalbehavior = slide
+							tooltip_horizontalbehavior = mirror
+							tooltipwidget = { ipg_tooltip_opt_auto = {} }
+
+							button = {
+								size = { 152 26 }
+								visible = "[Not(GetVariableSystem.Exists('ipg_layout_mode'))]"
+								using = default_button_primary
+								onclick = "[GetVariableSystem.Clear('ipg_layout_mode')]"
+								onclick = "[GetVariableSystem.Clear('ipg_layout_menu_open')]"
+							}
+							button = {
+								size = { 152 26 }
+								visible = "[GetVariableSystem.Exists('ipg_layout_mode')]"
+								using = default_button
+								onclick = "[GetVariableSystem.Clear('ipg_layout_mode')]"
+								onclick = "[GetVariableSystem.Clear('ipg_layout_menu_open')]"
+							}
+							hbox = {
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								margin = { 10 0 }
+								alwaystransparent = yes
+								textbox = {
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									text = "ipg_layout_auto"
+									align = left|nobaseline
+									using = fontsize_small
+									alwaystransparent = yes
+								}
+								icon = {
+									visible = "[Not(GetVariableSystem.Exists('ipg_layout_mode'))]"
+									size = { 14 14 }
+									texture = "gfx/interface/icons/generic_icons/checkmark.dds"
+									alwaystransparent = yes
+								}
+							}
+						}
+
+						# Option 1: Hemicycle
+						widget = {
+							size = { 152 26 }
+							tooltip_type = widget
+							tooltip_parentanchor = vcenter|left
+							tooltip_widgetanchor = vcenter|right
+							tooltip_verticalbehavior = slide
+							tooltip_horizontalbehavior = mirror
+							tooltipwidget = { ipg_tooltip_opt_hemicycle = {} }
+
+							button = {
+								size = { 152 26 }
+								visible = "[GetVariableSystem.HasValue('ipg_layout_mode', 'hemicycle')]"
+								using = default_button_primary
+								onclick = "[GetVariableSystem.Set('ipg_layout_mode', 'hemicycle')]"
+								onclick = "[GetVariableSystem.Clear('ipg_layout_menu_open')]"
+							}
+							button = {
+								size = { 152 26 }
+								visible = "[Not(GetVariableSystem.HasValue('ipg_layout_mode', 'hemicycle'))]"
+								using = default_button
+								onclick = "[GetVariableSystem.Set('ipg_layout_mode', 'hemicycle')]"
+								onclick = "[GetVariableSystem.Clear('ipg_layout_menu_open')]"
+							}
+							hbox = {
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								margin = { 10 0 }
+								alwaystransparent = yes
+								textbox = {
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									text = "ipg_layout_hemicycle"
+									align = left|nobaseline
+									using = fontsize_small
+									alwaystransparent = yes
+								}
+								icon = {
+									visible = "[GetVariableSystem.HasValue('ipg_layout_mode', 'hemicycle')]"
+									size = { 14 14 }
+									texture = "gfx/interface/icons/generic_icons/checkmark.dds"
+									alwaystransparent = yes
+								}
+							}
+						}
+
+						# Option 2: Westminster
+						widget = {
+							size = { 152 26 }
+							tooltip_type = widget
+							tooltip_parentanchor = vcenter|left
+							tooltip_widgetanchor = vcenter|right
+							tooltip_verticalbehavior = slide
+							tooltip_horizontalbehavior = mirror
+							tooltipwidget = { ipg_tooltip_opt_westminster = {} }
+
+							button = {
+								size = { 152 26 }
+								visible = "[GetVariableSystem.HasValue('ipg_layout_mode', 'westminster')]"
+								using = default_button_primary
+								onclick = "[GetVariableSystem.Set('ipg_layout_mode', 'westminster')]"
+								onclick = "[GetVariableSystem.Clear('ipg_layout_menu_open')]"
+							}
+							button = {
+								size = { 152 26 }
+								visible = "[Not(GetVariableSystem.HasValue('ipg_layout_mode', 'westminster'))]"
+								using = default_button
+								onclick = "[GetVariableSystem.Set('ipg_layout_mode', 'westminster')]"
+								onclick = "[GetVariableSystem.Clear('ipg_layout_menu_open')]"
+							}
+							hbox = {
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								margin = { 10 0 }
+								alwaystransparent = yes
+								textbox = {
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									text = "ipg_layout_westminster"
+									align = left|nobaseline
+									using = fontsize_small
+									alwaystransparent = yes
+								}
+								icon = {
+									visible = "[GetVariableSystem.HasValue('ipg_layout_mode', 'westminster')]"
+									size = { 14 14 }
+									texture = "gfx/interface/icons/generic_icons/checkmark.dds"
+									alwaystransparent = yes
+								}
+							}
+						}
+
+						# Option 3: Horseshoe
+						widget = {
+							size = { 152 26 }
+							tooltip_type = widget
+							tooltip_parentanchor = vcenter|left
+							tooltip_widgetanchor = vcenter|right
+							tooltip_verticalbehavior = slide
+							tooltip_horizontalbehavior = mirror
+							tooltipwidget = { ipg_tooltip_opt_horseshoe = {} }
+
+							button = {
+								size = { 152 26 }
+								visible = "[GetVariableSystem.HasValue('ipg_layout_mode', 'horseshoe')]"
+								using = default_button_primary
+								onclick = "[GetVariableSystem.Set('ipg_layout_mode', 'horseshoe')]"
+								onclick = "[GetVariableSystem.Clear('ipg_layout_menu_open')]"
+							}
+							button = {
+								size = { 152 26 }
+								visible = "[Not(GetVariableSystem.HasValue('ipg_layout_mode', 'horseshoe'))]"
+								using = default_button
+								onclick = "[GetVariableSystem.Set('ipg_layout_mode', 'horseshoe')]"
+								onclick = "[GetVariableSystem.Clear('ipg_layout_menu_open')]"
+							}
+							hbox = {
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								margin = { 10 0 }
+								alwaystransparent = yes
+								textbox = {
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									text = "ipg_layout_horseshoe"
+									align = left|nobaseline
+									using = fontsize_small
+									alwaystransparent = yes
+								}
+								icon = {
+									visible = "[GetVariableSystem.HasValue('ipg_layout_mode', 'horseshoe')]"
+									size = { 14 14 }
+									texture = "gfx/interface/icons/generic_icons/checkmark.dds"
+									alwaystransparent = yes
+								}
+							}
+						}
+
+						# Option 4: Assembly Hall
+						widget = {
+							size = { 152 26 }
+							tooltip_type = widget
+							tooltip_parentanchor = vcenter|left
+							tooltip_widgetanchor = vcenter|right
+							tooltip_verticalbehavior = slide
+							tooltip_horizontalbehavior = mirror
+							tooltipwidget = { ipg_tooltip_opt_assembly = {} }
+
+							button = {
+								size = { 152 26 }
+								visible = "[GetVariableSystem.HasValue('ipg_layout_mode', 'assembly')]"
+								using = default_button_primary
+								onclick = "[GetVariableSystem.Set('ipg_layout_mode', 'assembly')]"
+								onclick = "[GetVariableSystem.Clear('ipg_layout_menu_open')]"
+							}
+							button = {
+								size = { 152 26 }
+								visible = "[Not(GetVariableSystem.HasValue('ipg_layout_mode', 'assembly'))]"
+								using = default_button
+								onclick = "[GetVariableSystem.Set('ipg_layout_mode', 'assembly')]"
+								onclick = "[GetVariableSystem.Clear('ipg_layout_menu_open')]"
+							}
+							hbox = {
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								margin = { 10 0 }
+								alwaystransparent = yes
+								textbox = {
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									text = "ipg_layout_assembly"
+									align = left|nobaseline
+									using = fontsize_small
+									alwaystransparent = yes
+								}
+								icon = {
+									visible = "[GetVariableSystem.HasValue('ipg_layout_mode', 'assembly')]"
+									size = { 14 14 }
+									texture = "gfx/interface/icons/generic_icons/checkmark.dds"
+									alwaystransparent = yes
+								}
+							}
+						}
+
+						# Option 5: Bicameral
+						widget = {
+							size = { 152 26 }
+							tooltip_type = widget
+							tooltip_parentanchor = vcenter|left
+							tooltip_widgetanchor = vcenter|right
+							tooltip_verticalbehavior = slide
+							tooltip_horizontalbehavior = mirror
+							tooltipwidget = { ipg_tooltip_opt_bicameral = {} }
+
+							button = {
+								size = { 152 26 }
+								visible = "[GetVariableSystem.HasValue('ipg_layout_mode', 'bicameral')]"
+								using = default_button_primary
+								onclick = "[GetVariableSystem.Set('ipg_layout_mode', 'bicameral')]"
+								onclick = "[GetVariableSystem.Clear('ipg_layout_menu_open')]"
+							}
+							button = {
+								size = { 152 26 }
+								visible = "[Not(GetVariableSystem.HasValue('ipg_layout_mode', 'bicameral'))]"
+								using = default_button
+								onclick = "[GetVariableSystem.Set('ipg_layout_mode', 'bicameral')]"
+								onclick = "[GetVariableSystem.Clear('ipg_layout_menu_open')]"
+							}
+							hbox = {
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								margin = { 10 0 }
+								alwaystransparent = yes
+								textbox = {
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									text = "ipg_layout_bicameral"
+									align = left|nobaseline
+									using = fontsize_small
+									alwaystransparent = yes
+								}
+								icon = {
+									visible = "[GetVariableSystem.HasValue('ipg_layout_mode', 'bicameral')]"
+									size = { 14 14 }
+									texture = "gfx/interface/icons/generic_icons/checkmark.dds"
+									alwaystransparent = yes
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 	}
@@ -181,26 +1188,65 @@ types politics_panel_types
 		using = entry_bg_fancy
 		tooltipwidget = { ipg_tooltip_power_dynamic = {} }
 
-		textbox = {
-			autoresize = yes
-			text = "ipg_view_power"
-			using = fontsize_large
-			align = left|nobaseline
-			position = { 18 12 }
+		# Left corner title & subtitle (toggleable via Info button)
+		flowcontainer = {
+			visible = "[Not(GetVariableSystem.Exists('ipg_hide_info'))]"
+			direction = vertical
+			position = { 14 10 }
+			spacing = 2
+
+			textbox = {
+				autoresize = yes
+				text = "ipg_view_power"
+				using = fontsize_medium
+				align = left|nobaseline
+			}
+			textbox = {
+				size = { 165 44 }
+				multiline = yes
+				autoresize = no
+				text = "ipg_power_desc"
+				using = fontsize_small
+				align = left|nobaseline
+				alpha = 0.78
+			}
 		}
-		# Inline description with constrained width + multiline wrap. The
-		# hemicycle's left curve leaves ~180px of empty space at y=40..70,
-		# so 200x60 keeps the text safely outside the chart even when it
-		# wraps to two or three lines.
-		textbox = {
-			size = { 200 60 }
-			multiline = yes
-			autoresize = no
-			text = "ipg_power_desc"
-			using = fontsize_small
-			align = left|nobaseline
-			position = { 18 40 }
-			alpha = 0.8
+
+		# Right corner coalition readout + election dates (toggleable via Info button)
+		flowcontainer = {
+			visible = "[Not(GetVariableSystem.Exists('ipg_hide_info'))]"
+			parentanchor = top|right
+			position = { -14 10 }
+			direction = vertical
+			spacing = 2
+
+			flowcontainer = {
+				parentanchor = right
+				spacing = 5
+
+				icon = {
+					size = { 16 16 }
+					parentanchor = vcenter
+					texture = "gfx/interface/icons/generic_icons/in_government_icon.dds"
+				}
+				textbox = {
+					autoresize = yes
+					parentanchor = vcenter
+					text = "ipg_power_coalition_badge"
+					using = fontsize_small
+					align = right|nobaseline
+				}
+			}
+
+			textbox = {
+				visible = "[AccessPlayer.HasElections]"
+				parentanchor = right
+				autoresize = yes
+				text = "ipg_election_dates_line"
+				using = fontsize_small
+				align = right|nobaseline
+				alpha = 0.82
+			}
 		}
 
 		hbox = {
@@ -209,21 +1255,7 @@ types politics_panel_types
 			layoutpolicy_vertical = preferred
 
 			widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
-
-			widget = {
-				size = { 600 230 }
-
-				# The country list is already in descending clout order. Every item
-				# receives its InterestGroup datacontext and overlays the same chart.
-				overlappingitembox = {
-					size = { 600 230 }
-					datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
-					item = {
-						ipg_seats_ig_power = {}
-					}
-				}
-			}
-
+			ipg_canvas_power = {}
 			widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
 		}
 	}
@@ -240,23 +1272,63 @@ types politics_panel_types
 		using = entry_bg_fancy
 		tooltipwidget = { ipg_tooltip_alignment_dynamic = {} }
 
-		textbox = {
-			autoresize = yes
-			text = "ipg_view_alignment"
-			using = fontsize_large
-			align = left|nobaseline
-			position = { 18 12 }
+		flowcontainer = {
+			visible = "[Not(GetVariableSystem.Exists('ipg_hide_info'))]"
+			direction = vertical
+			position = { 14 10 }
+			spacing = 2
+
+			textbox = {
+				autoresize = yes
+				text = "ipg_view_alignment"
+				using = fontsize_medium
+				align = left|nobaseline
+			}
+			textbox = {
+				size = { 165 44 }
+				multiline = yes
+				autoresize = no
+				text = "ipg_alignment_desc"
+				using = fontsize_small
+				align = left|nobaseline
+				alpha = 0.78
+			}
 		}
-		# Inline description (see ipg_view_power for the geometry rationale).
-		textbox = {
-			size = { 200 60 }
-			multiline = yes
-			autoresize = no
-			text = "ipg_alignment_desc"
-			using = fontsize_small
-			align = left|nobaseline
-			position = { 18 40 }
-			alpha = 0.8
+
+		flowcontainer = {
+			visible = "[Not(GetVariableSystem.Exists('ipg_hide_info'))]"
+			parentanchor = top|right
+			position = { -14 10 }
+			direction = vertical
+			spacing = 2
+
+			flowcontainer = {
+				parentanchor = right
+				spacing = 5
+
+				icon = {
+					size = { 16 16 }
+					parentanchor = vcenter
+					texture = "gfx/interface/icons/generic_icons/in_government_icon.dds"
+				}
+				textbox = {
+					autoresize = yes
+					parentanchor = vcenter
+					text = "ipg_alignment_coalition_badge"
+					using = fontsize_small
+					align = right|nobaseline
+				}
+			}
+
+			textbox = {
+				visible = "[AccessPlayer.HasElections]"
+				parentanchor = right
+				autoresize = yes
+				text = "ipg_election_dates_line"
+				using = fontsize_small
+				align = right|nobaseline
+				alpha = 0.82
+			}
 		}
 
 		hbox = {
@@ -265,23 +1337,7 @@ types politics_panel_types
 			layoutpolicy_vertical = preferred
 
 			widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
-
-			widget = {
-				size = { 600 230 }
-
-				# Ordered population-share list built by ipg_calc_political_alignment.
-				overlappingitembox = {
-					size = { 600 230 }
-					datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]"
-					item = {
-						ipg_seats_ig_alignment = {}
-					}
-				}
-
-				# Country-scoped politically unaligned slot
-				ipg_seats_alignment_unaligned = {}
-			}
-
+			ipg_canvas_alignment = {}
 			widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
 		}
 	}
@@ -298,23 +1354,71 @@ types politics_panel_types
 		using = entry_bg_fancy
 		tooltipwidget = { ipg_tooltip_electoral_dynamic = {} }
 
-		textbox = {
-			autoresize = yes
-			text = "ipg_view_electoral"
-			using = fontsize_large
-			align = left|nobaseline
-			position = { 18 12 }
+		flowcontainer = {
+			visible = "[Not(GetVariableSystem.Exists('ipg_hide_info'))]"
+			direction = vertical
+			position = { 14 10 }
+			spacing = 2
+
+			textbox = {
+				autoresize = yes
+				text = "ipg_view_electoral"
+				using = fontsize_medium
+				align = left|nobaseline
+			}
+			textbox = {
+				size = { 165 44 }
+				multiline = yes
+				autoresize = no
+				text = "ipg_electoral_desc"
+				using = fontsize_small
+				align = left|nobaseline
+				alpha = 0.78
+			}
 		}
-		# Inline description (see ipg_view_power for the geometry rationale).
-		textbox = {
-			size = { 200 60 }
-			multiline = yes
-			autoresize = no
-			text = "ipg_electoral_desc"
-			using = fontsize_small
-			align = left|nobaseline
-			position = { 18 40 }
-			alpha = 0.8
+
+		flowcontainer = {
+			visible = "[Not(GetVariableSystem.Exists('ipg_hide_info'))]"
+			parentanchor = top|right
+			position = { -14 10 }
+			direction = vertical
+			spacing = 2
+
+			flowcontainer = {
+				visible = "[Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties')))]"
+				parentanchor = right
+				spacing = 5
+
+				icon = {
+					size = { 16 16 }
+					parentanchor = vcenter
+					texture = "gfx/interface/icons/generic_icons/in_government_icon.dds"
+				}
+				textbox = {
+					autoresize = yes
+					parentanchor = vcenter
+					text = "ipg_electoral_coalition_badge"
+					using = fontsize_small
+					align = right|nobaseline
+				}
+				textbox = {
+					autoresize = yes
+					parentanchor = vcenter
+					text = "[SelectLocalization(GreaterThanOrEqualTo_CFixedPoint(Country.MakeScope.Var('ipg_electoral_gov_seats').GetValue, Country.MakeScope.Var('ipg_majority_threshold').GetValue), 'ipg_majority_tag', 'ipg_minority_tag')]"
+					using = fontsize_small
+					align = right|nobaseline
+				}
+			}
+
+			textbox = {
+				visible = "[AccessPlayer.HasElections]"
+				parentanchor = right
+				autoresize = yes
+				text = "ipg_election_dates_line"
+				using = fontsize_small
+				align = right|nobaseline
+				alpha = 0.82
+			}
 		}
 
 		hbox = {
@@ -323,95 +1427,2051 @@ types politics_panel_types
 			layoutpolicy_vertical = preferred
 
 			widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
-
-			widget = {
-				size = { 600 230 }
-
-				# Ordered real-vote list built by ipg_calc_electoral_from_votes.
-				overlappingitembox = {
-					size = { 600 230 }
-					datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]"
-					item = {
-						ipg_seats_party_electoral = {}
-					}
-				}
-			}
-
+			ipg_canvas_electoral = {}
 			widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
 		}
 	}
 }
 
 
-# Dynamic tooltips consume the same unbounded variable lists as the chart.
-# This avoids a second rank/pointer representation and keeps every displayed
-# entity in the tooltip automatically.
+# -----------------------------------------------------------------------------
+# Native Victoria 3 Styled Dynamic Tooltips
+# -----------------------------------------------------------------------------
 types TooltipTypes
 {
+	# Reusable compact section banner: [Gov/Opp Icon] [Label] ...... [Seats]
+	type ipg_tooltip_group_header = widget {
+		size = { 436 24 }
+
+		background = {
+			using = dark_area
+			alpha = 0.28
+		}
+
+		hbox = {
+			margin = { 8 0 }
+			spacing = 6
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = expanding
+
+			icon = {
+				size = { 16 16 }
+				block "group_icon" {
+					texture = "gfx/interface/icons/generic_icons/in_government_icon.dds"
+				}
+			}
+
+			textbox = {
+				layoutpolicy_horizontal = expanding
+				autoresize = yes
+				align = left|nobaseline
+				using = fontsize_small
+				fonttintcolor = "[TooltipInfo.GetTintColor]"
+				block "group_label" {
+					text = "concept_in_government"
+					default_format = "#P"
+				}
+			}
+
+			textbox = {
+				autoresize = yes
+				align = right|nobaseline
+				using = fontsize_small
+				fonttintcolor = "[TooltipInfo.GetTintColor]"
+				block "group_total" {}
+			}
+		}
+	}
+
+	# Power Structure table row (436 x 26)
+	type ipg_tooltip_power_row = widget {
+		datacontext = "[Scope.GetInterestGroup]"
+		size = { 436 26 }
+
+		background = {
+			visible = "[IsOdd_int32(PdxGuiWidget.GetIndexInDataModel)]"
+			using = dark_area
+			alpha = 0.45
+		}
+
+		hbox = {
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = expanding
+			margin = { 8 0 }
+
+			# Col 1 (180): color dot + IG icon + name
+			widget = {
+				size = { 180 26 }
+				layoutpolicy_horizontal = fixed
+
+				hbox = {
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+					spacing = 5
+
+					icon = {
+						size = { 8 8 }
+						texture = "gfx/interface/icons/ipg_white_circle.dds"
+						tintcolor = "[InterestGroup.GetColor]"
+					}
+					icon = {
+						size = { 20 20 }
+						texture = "[InterestGroup.GetTexture]"
+					}
+					textbox = {
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+						text = "[InterestGroup.GetNameNoFormatting]"
+						align = left|nobaseline
+						elide = right
+						fontsize_min = 12
+						fonttintcolor = "[TooltipInfo.GetTintColor]"
+					}
+				}
+			}
+
+			# Col 2 (56): seats
+			textbox = {
+				size = { 56 26 }
+				layoutpolicy_horizontal = fixed
+				text = "ipg_power_seats_cell"
+				align = right|nobaseline
+				fonttintcolor = "[TooltipInfo.GetTintColor]"
+			}
+
+			# Col 3 (66): clout %
+			textbox = {
+				size = { 66 26 }
+				layoutpolicy_horizontal = fixed
+				text = "ipg_power_share_cell"
+				align = right|nobaseline
+				alpha = 0.85
+				fonttintcolor = "[TooltipInfo.GetTintColor]"
+			}
+
+			# Col 4 (118): approval
+			textbox = {
+				size = { 118 26 }
+				layoutpolicy_horizontal = fixed
+				text = "ipg_ig_approval_cell"
+				align = right|nobaseline
+				elide = right
+				fontsize_min = 12
+				fonttintcolor = "[TooltipInfo.GetTintColor]"
+			}
+		}
+	}
+
+	# Political Alignment table row (436 x 26)
+	type ipg_tooltip_alignment_row = widget {
+		datacontext = "[Scope.GetInterestGroup]"
+		size = { 436 26 }
+
+		background = {
+			visible = "[IsOdd_int32(PdxGuiWidget.GetIndexInDataModel)]"
+			using = dark_area
+			alpha = 0.45
+		}
+
+		hbox = {
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = expanding
+			margin = { 8 0 }
+
+			# Col 1 (190): color dot + IG icon + name
+			widget = {
+				size = { 190 26 }
+				layoutpolicy_horizontal = fixed
+
+				hbox = {
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+					spacing = 5
+
+					icon = {
+						size = { 8 8 }
+						texture = "gfx/interface/icons/ipg_white_circle.dds"
+						tintcolor = "[InterestGroup.GetColor]"
+					}
+					icon = {
+						size = { 20 20 }
+						texture = "[InterestGroup.GetTexture]"
+					}
+					textbox = {
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+						text = "[InterestGroup.GetNameNoFormatting]"
+						align = left|nobaseline
+						elide = right
+						fontsize_min = 12
+						fonttintcolor = "[TooltipInfo.GetTintColor]"
+					}
+				}
+			}
+
+			# Col 2 (60): seats
+			textbox = {
+				size = { 60 26 }
+				layoutpolicy_horizontal = fixed
+				text = "ipg_alignment_seats_cell"
+				align = right|nobaseline
+				fonttintcolor = "[TooltipInfo.GetTintColor]"
+			}
+
+			# Col 3 (70): alignment %
+			textbox = {
+				size = { 70 26 }
+				layoutpolicy_horizontal = fixed
+				text = "ipg_alignment_share_cell"
+				align = right|nobaseline
+				alpha = 0.85
+				fonttintcolor = "[TooltipInfo.GetTintColor]"
+			}
+
+			# Col 4 (100): population
+			textbox = {
+				size = { 100 26 }
+				layoutpolicy_horizontal = fixed
+				text = "ipg_ig_pop_cell"
+				align = right|nobaseline
+				alpha = 0.9
+				fonttintcolor = "[TooltipInfo.GetTintColor]"
+			}
+		}
+	}
+
+	# Electoral Party table row (436 x 26)
+	type ipg_tooltip_electoral_row = widget {
+		datacontext = "[Scope.GetParty]"
+		size = { 436 26 }
+
+		background = {
+			visible = "[IsOdd_int32(PdxGuiWidget.GetIndexInDataModel)]"
+			using = dark_area
+			alpha = 0.45
+		}
+
+		hbox = {
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = expanding
+			margin = { 8 0 }
+
+			# Col 1 (186): color dot + Party icon + name
+			widget = {
+				size = { 186 26 }
+				layoutpolicy_horizontal = fixed
+
+				hbox = {
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+					spacing = 5
+
+					icon = {
+						size = { 8 8 }
+						texture = "gfx/interface/icons/ipg_white_circle.dds"
+						tintcolor = "[Party.GetColor]"
+					}
+					icon = {
+						size = { 20 20 }
+						texture = "[Party.GetIcon]"
+					}
+					textbox = {
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+						text = "[Party.GetNameNoFormatting]"
+						align = left|nobaseline
+						elide = right
+						fontsize_min = 12
+						fonttintcolor = "[TooltipInfo.GetTintColor]"
+					}
+				}
+			}
+
+			# Col 2 (56): seats
+			textbox = {
+				size = { 56 26 }
+				layoutpolicy_horizontal = fixed
+				text = "ipg_electoral_seats_cell"
+				align = right|nobaseline
+				fonttintcolor = "[TooltipInfo.GetTintColor]"
+			}
+
+			# Col 3 (72): vote share %
+			textbox = {
+				size = { 72 26 }
+				layoutpolicy_horizontal = fixed
+				text = "ipg_electoral_vote_cell"
+				align = right|nobaseline
+				alpha = 0.85
+				fonttintcolor = "[TooltipInfo.GetTintColor]"
+			}
+
+			# Col 4 (106): member IG icon strip
+			widget = {
+				size = { 106 26 }
+				layoutpolicy_horizontal = fixed
+
+				overlappingitembox = {
+					datamodel = "[Party.GetMembers]"
+					size = { 102 20 }
+					spacing = 2
+					righttoleft = yes
+					parentanchor = right|vcenter
+
+					item = {
+						icon = {
+							size = { 20 20 }
+							parentanchor = vcenter
+							texture = "[InterestGroup.GetTexture]"
+						}
+					}
+				}
+			}
+		}
+	}
+
+	# Condensed Bicameral IG row (436 x 22)
+	type ipg_tooltip_bicameral_ig_row = widget {
+		datacontext = "[Scope.GetInterestGroup]"
+		size = { 436 22 }
+
+		background = {
+			visible = "[IsOdd_int32(PdxGuiWidget.GetIndexInDataModel)]"
+			using = dark_area
+			alpha = 0.45
+		}
+
+		hbox = {
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = expanding
+			margin = { 8 0 }
+
+			widget = {
+				size = { 268 22 }
+				layoutpolicy_horizontal = fixed
+
+				hbox = {
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+					spacing = 5
+
+					icon = {
+						size = { 14 14 }
+						visible = "[InterestGroup.IsInGovernment]"
+						texture = "gfx/interface/icons/generic_icons/in_government_icon.dds"
+					}
+					icon = {
+						size = { 14 14 }
+						visible = "[Not(InterestGroup.IsInGovernment)]"
+						texture = "gfx/interface/icons/generic_icons/in_opposition_icon.dds"
+					}
+					icon = {
+						size = { 8 8 }
+						texture = "gfx/interface/icons/ipg_white_circle.dds"
+						tintcolor = "[InterestGroup.GetColor]"
+					}
+					icon = {
+						size = { 18 18 }
+						texture = "[InterestGroup.GetTexture]"
+					}
+					textbox = {
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+						text = "[InterestGroup.GetNameNoFormatting]"
+						align = left|nobaseline
+						elide = right
+						using = fontsize_small
+						fonttintcolor = "[TooltipInfo.GetTintColor]"
+					}
+				}
+			}
+
+			textbox = {
+				size = { 72 22 }
+				layoutpolicy_horizontal = fixed
+				block "bi_seats_text" { text = "ipg_power_seats_cell" }
+				align = right|nobaseline
+				using = fontsize_small
+				fonttintcolor = "[TooltipInfo.GetTintColor]"
+			}
+
+			textbox = {
+				size = { 80 22 }
+				layoutpolicy_horizontal = fixed
+				block "bi_share_text" { text = "ipg_power_share_cell" }
+				align = right|nobaseline
+				using = fontsize_small
+				alpha = 0.85
+				fonttintcolor = "[TooltipInfo.GetTintColor]"
+			}
+		}
+	}
+
+	# Condensed Bicameral Party row (436 x 22)
+	type ipg_tooltip_bicameral_party_row = widget {
+		datacontext = "[Scope.GetParty]"
+		size = { 436 22 }
+
+		background = {
+			visible = "[IsOdd_int32(PdxGuiWidget.GetIndexInDataModel)]"
+			using = dark_area
+			alpha = 0.45
+		}
+
+		hbox = {
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = expanding
+			margin = { 8 0 }
+
+			widget = {
+				size = { 268 22 }
+				layoutpolicy_horizontal = fixed
+
+				hbox = {
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+					spacing = 5
+
+					icon = {
+						size = { 14 14 }
+						visible = "[Party.IsInGovernment]"
+						texture = "gfx/interface/icons/generic_icons/in_government_icon.dds"
+					}
+					icon = {
+						size = { 14 14 }
+						visible = "[Not(Party.IsInGovernment)]"
+						texture = "gfx/interface/icons/generic_icons/in_opposition_icon.dds"
+					}
+					icon = {
+						size = { 8 8 }
+						texture = "gfx/interface/icons/ipg_white_circle.dds"
+						tintcolor = "[Party.GetColor]"
+					}
+					icon = {
+						size = { 18 18 }
+						texture = "[Party.GetIcon]"
+					}
+					textbox = {
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+						text = "[Party.GetNameNoFormatting]"
+						align = left|nobaseline
+						elide = right
+						using = fontsize_small
+						fonttintcolor = "[TooltipInfo.GetTintColor]"
+					}
+				}
+			}
+
+			textbox = {
+				size = { 72 22 }
+				layoutpolicy_horizontal = fixed
+				text = "ipg_electoral_seats_cell"
+				align = right|nobaseline
+				using = fontsize_small
+				fonttintcolor = "[TooltipInfo.GetTintColor]"
+			}
+
+			textbox = {
+				size = { 80 22 }
+				layoutpolicy_horizontal = fixed
+				text = "ipg_electoral_vote_cell"
+				align = right|nobaseline
+				using = fontsize_small
+				alpha = 0.85
+				fonttintcolor = "[TooltipInfo.GetTintColor]"
+			}
+		}
+	}
+
+	# =========================================================================
+	# 1. Power Structure Tooltip
+	# =========================================================================
 	type ipg_tooltip_power_dynamic = FancyTooltipWidgetType {
-		blockoverride "whole_icon" {}
-		blockoverride "header_text_margin_left" { margin_left = 18 }
-		blockoverride "name" { text = "ipg_view_power" }
-		blockoverride "type" {}
-		blockoverride "text" {}
+		blockoverride "icon_texture" {
+			texture = "gfx/interface/main_hud/pol_btn.dds"
+		}
+		blockoverride "icon_size" {
+			size = { 42 42 }
+		}
+		blockoverride "color" {
+			color = { 0.56 0.36 0.50 1 }
+		}
+		blockoverride "name" {
+			text = "ipg_view_power"
+		}
+		blockoverride "type" {
+			text = "ipg_total_seats_header"
+		}
+		blockoverride "text" {
+			visible = no
+		}
 		blockoverride "tooltip_content_after" {
-			fixedgridbox = {
-				addcolumn = 500
-				addrow = 22
-				datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
-				item = {
-					custom_tooltip_textbox_fixed_width = {
-						datacontext = "[Scope.GetInterestGroup]"
-						text = "ipg_power_list_item"
+			flowcontainer = {
+				direction = vertical
+				spacing = 8
+
+				# Hero coalition KPI + proportional multi-color stacked bar
+				flowcontainer = {
+					direction = vertical
+					spacing = 5
+
+					widget = {
+						size = { 436 24 }
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							margin = { 2 0 }
+
+							flowcontainer = {
+								spacing = 5
+								icon = {
+									size = { 20 20 }
+									parentanchor = vcenter
+									texture = "gfx/interface/icons/generic_icons/in_government_icon.dds"
+								}
+								textbox = {
+									autoresize = yes
+									parentanchor = vcenter
+									text = "ipg_power_gov_kpi"
+									align = left|nobaseline
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+							}
+
+							widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+
+							flowcontainer = {
+								spacing = 5
+								textbox = {
+									autoresize = yes
+									parentanchor = vcenter
+									text = "ipg_power_opp_kpi"
+									align = right|nobaseline
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+								icon = {
+									size = { 20 20 }
+									parentanchor = vcenter
+									texture = "gfx/interface/icons/generic_icons/in_opposition_icon.dds"
+								}
+							}
+						}
+					}
+
+					# Multi-color parliament seat bar (vanilla v3_stacked_barchart layout)
+					widget = {
+						size = { 436 14 }
+
+						background = {
+							using = dark_area
+							alpha = 0.75
+						}
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							margin = { 2 2 }
+
+							# Governing coalition segments
+							hbox = {
+								visible = "[GreaterThan_CFixedPoint(Country.MakeScope.Var('ipg_power_gov_seats').GetValue, '(CFixedPoint)0')]"
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								layoutstretchfactor_horizontal = "[FixedPointToInt(Country.MakeScope.Var('ipg_power_gov_seats').GetValue)]"
+								datamodel = "[Country.MakeScope.GetList('ipg_power_gov_igs')]"
+
+								item = {
+									hbox = {
+										datacontext = "[Scope.GetInterestGroup]"
+										visible = "[GreaterThan_CFixedPoint(InterestGroup.MakeScope.Var('power_seats').GetValue, '(CFixedPoint)0')]"
+										layoutpolicy_horizontal = expanding
+										layoutpolicy_vertical = expanding
+										layoutstretchfactor_horizontal = "[FixedPointToInt(InterestGroup.MakeScope.Var('power_seats').GetValue)]"
+
+										background = {
+											texture = "gfx/interface/tooltip/stacked_barchart_small_item.dds"
+											color = "[InterestGroup.GetColor]"
+											spriteType = Corneredstretched
+											spriteborder = { 2 2 }
+										}
+									}
+								}
+							}
+
+							# Opposition segments
+							hbox = {
+								visible = "[GreaterThan_CFixedPoint(Country.MakeScope.Var('ipg_power_opp_seats').GetValue, '(CFixedPoint)0')]"
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								layoutstretchfactor_horizontal = "[FixedPointToInt(Country.MakeScope.Var('ipg_power_opp_seats').GetValue)]"
+								datamodel = "[Country.MakeScope.GetList('ipg_power_opp_igs')]"
+
+								item = {
+									hbox = {
+										datacontext = "[Scope.GetInterestGroup]"
+										visible = "[GreaterThan_CFixedPoint(InterestGroup.MakeScope.Var('power_seats').GetValue, '(CFixedPoint)0')]"
+										layoutpolicy_horizontal = expanding
+										layoutpolicy_vertical = expanding
+										layoutstretchfactor_horizontal = "[FixedPointToInt(InterestGroup.MakeScope.Var('power_seats').GetValue)]"
+
+										background = {
+											texture = "gfx/interface/tooltip/stacked_barchart_small_item.dds"
+											color = "[InterestGroup.GetColor]"
+											alpha = 0.72
+											spriteType = Corneredstretched
+											spriteborder = { 2 2 }
+										}
+									}
+								}
+							}
+						}
+
+						icon = {
+							size = { 100% 100% }
+							texture = "gfx/interface/progressbar/progressbar_frame.dds"
+							spriteType = Corneredstretched
+							spriteborder = { 6 6 }
+							texture_density = 2
+						}
+					}
+				}
+
+				# Grouped table
+				flowcontainer = {
+					direction = vertical
+					spacing = 2
+
+					# Column headers
+					widget = {
+						size = { 436 24 }
+
+						hbox = {
+							margin = { 8 0 }
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+
+							textbox = {
+								size = { 180 22 }
+								layoutpolicy_horizontal = fixed
+								text = "[concept_interest_group]"
+								align = left|nobaseline
+								using = fontsize_small
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+							textbox = {
+								size = { 56 22 }
+								layoutpolicy_horizontal = fixed
+								text = "ipg_seats_col"
+								default_format = "#title"
+								align = right|nobaseline
+								using = fontsize_small
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+							textbox = {
+								size = { 66 22 }
+								layoutpolicy_horizontal = fixed
+								text = "[concept_clout]"
+								align = right|nobaseline
+								using = fontsize_small
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+							textbox = {
+								size = { 118 22 }
+								layoutpolicy_horizontal = fixed
+								text = "[concept_approval]"
+								align = right|nobaseline
+								using = fontsize_small
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+						}
+
+						divider_clean = {
+							parentanchor = bottom|hcenter
+							size = { 436 2 }
+						}
+					}
+
+					# Government group
+					flowcontainer = {
+						visible = "[Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_power_gov_igs')))]"
+						direction = vertical
+						spacing = 0
+
+						ipg_tooltip_group_header = {
+							blockoverride "group_icon" {
+								texture = "gfx/interface/icons/generic_icons/in_government_icon.dds"
+							}
+							blockoverride "group_label" {
+								text = "concept_in_government"
+								default_format = "#P"
+							}
+							blockoverride "group_total" {
+								text = "ipg_power_gov_sub"
+							}
+						}
+
+						flowcontainer = {
+							direction = vertical
+							datamodel = "[Country.MakeScope.GetList('ipg_power_gov_igs')]"
+							item = { ipg_tooltip_power_row = {} }
+						}
+					}
+
+					# Opposition group
+					flowcontainer = {
+						visible = "[Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_power_opp_igs')))]"
+						direction = vertical
+						margin_top = 4
+						spacing = 0
+
+						ipg_tooltip_group_header = {
+							blockoverride "group_icon" {
+								texture = "gfx/interface/icons/generic_icons/in_opposition_icon.dds"
+							}
+							blockoverride "group_label" {
+								text = "concept_in_opposition"
+								default_format = "#N"
+							}
+							blockoverride "group_total" {
+								text = "ipg_power_opp_sub"
+							}
+						}
+
+						flowcontainer = {
+							direction = vertical
+							datamodel = "[Country.MakeScope.GetList('ipg_power_opp_igs')]"
+							item = { ipg_tooltip_power_row = {} }
+						}
 					}
 				}
 			}
 		}
 	}
 
+	# =========================================================================
+	# 2. Political Alignment Tooltip
+	# =========================================================================
 	type ipg_tooltip_alignment_dynamic = FancyTooltipWidgetType {
-		blockoverride "whole_icon" {}
-		blockoverride "header_text_margin_left" { margin_left = 18 }
-		blockoverride "name" { text = "ipg_view_alignment" }
-		blockoverride "type" {}
-		blockoverride "text" {}
+		blockoverride "icon_texture" {
+			texture = "gfx/interface/main_hud/pops_btn.dds"
+		}
+		blockoverride "icon_size" {
+			size = { 42 42 }
+		}
+		blockoverride "color" {
+			color = { 0.32 0.48 0.58 1 }
+		}
+		blockoverride "name" {
+			text = "ipg_view_alignment"
+		}
+		blockoverride "type" {
+			text = "ipg_total_seats_header"
+		}
+		blockoverride "text" {
+			visible = no
+		}
 		blockoverride "tooltip_content_after" {
-			fixedgridbox = {
-				addcolumn = 500
-				addrow = 22
-				datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]"
-				item = {
-					custom_tooltip_textbox_fixed_width = {
-						datacontext = "[Scope.GetInterestGroup]"
-						text = "ipg_alignment_list_item"
+			flowcontainer = {
+				direction = vertical
+				spacing = 8
+
+				# 3-way KPI: In Government | Politically Unaligned | In Opposition
+				flowcontainer = {
+					direction = vertical
+					spacing = 5
+
+					widget = {
+						size = { 436 24 }
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							margin = { 2 0 }
+
+							flowcontainer = {
+								spacing = 4
+								icon = {
+									size = { 18 18 }
+									parentanchor = vcenter
+									texture = "gfx/interface/icons/generic_icons/in_government_icon.dds"
+								}
+								textbox = {
+									autoresize = yes
+									parentanchor = vcenter
+									text = "ipg_alignment_gov_kpi"
+									align = left|nobaseline
+									using = fontsize_small
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+							}
+
+							widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+
+							flowcontainer = {
+								visible = "[GreaterThan_CFixedPoint(Country.MakeScope.Var('ipg_alignment_unaligned_seats').GetValue, '(CFixedPoint)0')]"
+								spacing = 4
+								alpha = 0.8
+								icon = {
+									size = { 18 18 }
+									parentanchor = vcenter
+									texture = "gfx/interface/icons/ig_icons/politically_unaligned.dds"
+								}
+								textbox = {
+									autoresize = yes
+									parentanchor = vcenter
+									text = "ipg_alignment_unaligned_kpi"
+									align = hcenter|nobaseline
+									using = fontsize_small
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+							}
+
+							widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+
+							flowcontainer = {
+								spacing = 4
+								textbox = {
+									autoresize = yes
+									parentanchor = vcenter
+									text = "ipg_alignment_opp_kpi"
+									align = right|nobaseline
+									using = fontsize_small
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+								icon = {
+									size = { 18 18 }
+									parentanchor = vcenter
+									texture = "gfx/interface/icons/generic_icons/in_opposition_icon.dds"
+								}
+							}
+						}
+					}
+
+					# Multi-color alignment bar (Gov | Opp | Unaligned grey)
+					widget = {
+						size = { 436 14 }
+
+						background = {
+							using = dark_area
+							alpha = 0.75
+						}
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							margin = { 2 2 }
+
+							hbox = {
+								visible = "[GreaterThan_CFixedPoint(Country.MakeScope.Var('ipg_alignment_gov_seats').GetValue, '(CFixedPoint)0')]"
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								layoutstretchfactor_horizontal = "[FixedPointToInt(Country.MakeScope.Var('ipg_alignment_gov_seats').GetValue)]"
+								datamodel = "[Country.MakeScope.GetList('ipg_alignment_gov_igs')]"
+
+								item = {
+									hbox = {
+										datacontext = "[Scope.GetInterestGroup]"
+										visible = "[GreaterThan_CFixedPoint(InterestGroup.MakeScope.Var('alignment_seats').GetValue, '(CFixedPoint)0')]"
+										layoutpolicy_horizontal = expanding
+										layoutpolicy_vertical = expanding
+										layoutstretchfactor_horizontal = "[FixedPointToInt(InterestGroup.MakeScope.Var('alignment_seats').GetValue)]"
+
+										background = {
+											texture = "gfx/interface/tooltip/stacked_barchart_small_item.dds"
+											color = "[InterestGroup.GetColor]"
+											spriteType = Corneredstretched
+											spriteborder = { 2 2 }
+										}
+									}
+								}
+							}
+
+							hbox = {
+								visible = "[GreaterThan_CFixedPoint(Country.MakeScope.Var('ipg_alignment_opp_seats').GetValue, '(CFixedPoint)0')]"
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								layoutstretchfactor_horizontal = "[FixedPointToInt(Country.MakeScope.Var('ipg_alignment_opp_seats').GetValue)]"
+								datamodel = "[Country.MakeScope.GetList('ipg_alignment_opp_igs')]"
+
+								item = {
+									hbox = {
+										datacontext = "[Scope.GetInterestGroup]"
+										visible = "[GreaterThan_CFixedPoint(InterestGroup.MakeScope.Var('alignment_seats').GetValue, '(CFixedPoint)0')]"
+										layoutpolicy_horizontal = expanding
+										layoutpolicy_vertical = expanding
+										layoutstretchfactor_horizontal = "[FixedPointToInt(InterestGroup.MakeScope.Var('alignment_seats').GetValue)]"
+
+										background = {
+											texture = "gfx/interface/tooltip/stacked_barchart_small_item.dds"
+											color = "[InterestGroup.GetColor]"
+											alpha = 0.72
+											spriteType = Corneredstretched
+											spriteborder = { 2 2 }
+										}
+									}
+								}
+							}
+
+							# Politically unaligned grey segment
+							hbox = {
+								visible = "[GreaterThan_CFixedPoint(Country.MakeScope.Var('ipg_alignment_unaligned_seats').GetValue, '(CFixedPoint)0')]"
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								layoutstretchfactor_horizontal = "[FixedPointToInt(Country.MakeScope.Var('ipg_alignment_unaligned_seats').GetValue)]"
+
+								background = {
+									texture = "gfx/interface/tooltip/stacked_barchart_small_item.dds"
+									color = { 0.48 0.48 0.50 0.68 }
+									spriteType = Corneredstretched
+									spriteborder = { 2 2 }
+								}
+							}
+						}
+
+						icon = {
+							size = { 100% 100% }
+							texture = "gfx/interface/progressbar/progressbar_frame.dds"
+							spriteType = Corneredstretched
+							spriteborder = { 6 6 }
+							texture_density = 2
+						}
 					}
 				}
-			}
-			custom_tooltip_textbox_fixed_width = {
-				visible = "[GreaterThan_CFixedPoint(Country.MakeScope.Var('ipg_alignment_unaligned_seats').GetValue, '(CFixedPoint)0')]"
-				text = "ipg_alignment_unaligned_desc"
+
+				# Grouped table
+				flowcontainer = {
+					direction = vertical
+					spacing = 2
+
+					widget = {
+						size = { 436 24 }
+
+						hbox = {
+							margin = { 8 0 }
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+
+							textbox = {
+								size = { 190 22 }
+								layoutpolicy_horizontal = fixed
+								text = "[concept_interest_group]"
+								align = left|nobaseline
+								using = fontsize_small
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+							textbox = {
+								size = { 60 22 }
+								layoutpolicy_horizontal = fixed
+								text = "ipg_seats_col"
+								default_format = "#title"
+								align = right|nobaseline
+								using = fontsize_small
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+							textbox = {
+								size = { 70 22 }
+								layoutpolicy_horizontal = fixed
+								text = "ipg_share_col"
+								default_format = "#title"
+								align = right|nobaseline
+								using = fontsize_small
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+							textbox = {
+								size = { 100 22 }
+								layoutpolicy_horizontal = fixed
+								text = "[concept_population]"
+								align = right|nobaseline
+								using = fontsize_small
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+						}
+
+						divider_clean = {
+							parentanchor = bottom|hcenter
+							size = { 436 2 }
+						}
+					}
+
+					# Government group
+					flowcontainer = {
+						visible = "[Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_alignment_gov_igs')))]"
+						direction = vertical
+						spacing = 0
+
+						ipg_tooltip_group_header = {
+							blockoverride "group_icon" {
+								texture = "gfx/interface/icons/generic_icons/in_government_icon.dds"
+							}
+							blockoverride "group_label" {
+								text = "concept_in_government"
+								default_format = "#P"
+							}
+							blockoverride "group_total" {
+								text = "ipg_alignment_gov_sub"
+							}
+						}
+
+						flowcontainer = {
+							direction = vertical
+							datamodel = "[Country.MakeScope.GetList('ipg_alignment_gov_igs')]"
+							item = { ipg_tooltip_alignment_row = {} }
+						}
+					}
+
+					# Opposition group
+					flowcontainer = {
+						visible = "[Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_alignment_opp_igs')))]"
+						direction = vertical
+						margin_top = 4
+						spacing = 0
+
+						ipg_tooltip_group_header = {
+							blockoverride "group_icon" {
+								texture = "gfx/interface/icons/generic_icons/in_opposition_icon.dds"
+							}
+							blockoverride "group_label" {
+								text = "concept_in_opposition"
+								default_format = "#N"
+							}
+							blockoverride "group_total" {
+								text = "ipg_alignment_opp_sub"
+							}
+						}
+
+						flowcontainer = {
+							direction = vertical
+							datamodel = "[Country.MakeScope.GetList('ipg_alignment_opp_igs')]"
+							item = { ipg_tooltip_alignment_row = {} }
+						}
+					}
+
+					# Politically Unaligned footer row
+					flowcontainer = {
+						visible = "[GreaterThan_CFixedPoint(Country.MakeScope.Var('ipg_alignment_unaligned_seats').GetValue, '(CFixedPoint)0')]"
+						direction = vertical
+						margin_top = 4
+						spacing = 2
+
+						divider_clean = {
+							size = { 436 2 }
+						}
+
+						widget = {
+							size = { 436 26 }
+							alpha = 0.82
+
+							hbox = {
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								margin = { 8 0 }
+
+								widget = {
+									size = { 190 26 }
+									layoutpolicy_horizontal = fixed
+
+									hbox = {
+										layoutpolicy_horizontal = expanding
+										layoutpolicy_vertical = expanding
+										spacing = 5
+
+										icon = {
+											size = { 8 8 }
+											texture = "gfx/interface/icons/ipg_white_circle.dds"
+											tintcolor = { 0.55 0.55 0.58 1 }
+										}
+										icon = {
+											size = { 20 20 }
+											texture = "gfx/interface/icons/ig_icons/politically_unaligned.dds"
+										}
+										textbox = {
+											layoutpolicy_horizontal = expanding
+											layoutpolicy_vertical = expanding
+											text = "ipg_unaligned"
+											align = left|nobaseline
+											elide = right
+											fontsize_min = 12
+											fonttintcolor = "[TooltipInfo.GetTintColor]"
+										}
+									}
+								}
+
+								textbox = {
+									size = { 60 26 }
+									layoutpolicy_horizontal = fixed
+									text = "ipg_unaligned_seats_cell"
+									align = right|nobaseline
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+
+								textbox = {
+									size = { 70 26 }
+									layoutpolicy_horizontal = fixed
+									text = "ipg_unaligned_share_cell"
+									align = right|nobaseline
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+
+								textbox = {
+									size = { 100 26 }
+									layoutpolicy_horizontal = fixed
+									raw_text = "—"
+									align = right|nobaseline
+									alpha = 0.5
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 	}
 
+	# =========================================================================
+	# 3. Party Structure (Electoral) Tooltip
+	# =========================================================================
 	type ipg_tooltip_electoral_dynamic = FancyTooltipWidgetType {
-		blockoverride "whole_icon" {}
-		blockoverride "header_text_margin_left" { margin_left = 18 }
-		blockoverride "name" { text = "ipg_view_electoral" }
-		blockoverride "type" {}
-		blockoverride "text" {}
+		blockoverride "icon_texture" {
+			texture = "gfx/interface/icons/event_icons/event_election.dds"
+		}
+		blockoverride "icon_size" {
+			size = { 44 44 }
+		}
+		blockoverride "color" {
+			color = { 0.58 0.42 0.30 1 }
+		}
+		blockoverride "name" {
+			text = "ipg_view_electoral"
+		}
+		blockoverride "type" {
+			text = "ipg_total_seats_header"
+		}
+		blockoverride "text" {
+			visible = no
+		}
 		blockoverride "tooltip_content_after" {
-			fixedgridbox = {
-				addcolumn = 500
-				addrow = 22
-				datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]"
-				item = {
-					custom_tooltip_textbox_fixed_width = {
-						datacontext = "[Scope.GetParty]"
-						text = "ipg_electoral_list_item"
+			flowcontainer = {
+				direction = vertical
+				spacing = 8
+
+				# Empty state before first election
+				textbox = {
+					visible = "[IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties'))]"
+					max_width = 436
+					autoresize = yes
+					multiline = yes
+					text = "ipg_no_election_yet"
+					alpha = 0.85
+					fonttintcolor = "[TooltipInfo.GetTintColor]"
+				}
+
+				# Populated electoral parliament breakdown
+				flowcontainer = {
+					visible = "[Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties')))]"
+					direction = vertical
+					spacing = 8
+
+					# Hero KPI with genuine Majority / Minority judgment + 50% threshold bar
+					flowcontainer = {
+						direction = vertical
+						spacing = 5
+
+						widget = {
+							size = { 436 24 }
+
+							hbox = {
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								margin = { 2 0 }
+
+								flowcontainer = {
+									spacing = 5
+									icon = {
+										size = { 20 20 }
+										parentanchor = vcenter
+										texture = "gfx/interface/icons/generic_icons/in_government_icon.dds"
+									}
+									textbox = {
+										autoresize = yes
+										parentanchor = vcenter
+										text = "ipg_electoral_gov_kpi"
+										align = left|nobaseline
+										fonttintcolor = "[TooltipInfo.GetTintColor]"
+									}
+								}
+
+								textbox = {
+									layoutpolicy_horizontal = expanding
+									autoresize = yes
+									text = "[SelectLocalization(GreaterThanOrEqualTo_CFixedPoint(Country.MakeScope.Var('ipg_electoral_gov_seats').GetValue, Country.MakeScope.Var('ipg_majority_threshold').GetValue), 'ipg_majority_tag', 'ipg_minority_tag')]"
+									align = hcenter|nobaseline
+									using = fontsize_small
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+
+								flowcontainer = {
+									spacing = 5
+									textbox = {
+										autoresize = yes
+										parentanchor = vcenter
+										text = "ipg_electoral_opp_kpi"
+										align = right|nobaseline
+										fonttintcolor = "[TooltipInfo.GetTintColor]"
+									}
+									icon = {
+										size = { 20 20 }
+										parentanchor = vcenter
+										texture = "gfx/interface/icons/generic_icons/in_opposition_icon.dds"
+									}
+								}
+							}
+						}
+
+						# Multi-color party seat bar with 50% majority marker
+						widget = {
+							size = { 436 16 }
+
+							background = {
+								using = dark_area
+								alpha = 0.75
+							}
+
+							hbox = {
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								margin = { 2 3 }
+
+								hbox = {
+									visible = "[GreaterThan_CFixedPoint(Country.MakeScope.Var('ipg_electoral_gov_seats').GetValue, '(CFixedPoint)0')]"
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									layoutstretchfactor_horizontal = "[FixedPointToInt(Country.MakeScope.Var('ipg_electoral_gov_seats').GetValue)]"
+									datamodel = "[Country.MakeScope.GetList('ipg_electoral_gov_parties')]"
+
+									item = {
+										hbox = {
+											datacontext = "[Scope.GetParty]"
+											visible = "[GreaterThan_CFixedPoint(Party.MakeScope.Var('electoral_seats').GetValue, '(CFixedPoint)0')]"
+											layoutpolicy_horizontal = expanding
+											layoutpolicy_vertical = expanding
+											layoutstretchfactor_horizontal = "[FixedPointToInt(Party.MakeScope.Var('electoral_seats').GetValue)]"
+
+											background = {
+												texture = "gfx/interface/tooltip/stacked_barchart_small_item.dds"
+												color = "[Party.GetColor]"
+												spriteType = Corneredstretched
+												spriteborder = { 2 2 }
+											}
+										}
+									}
+								}
+
+								hbox = {
+									visible = "[GreaterThan_CFixedPoint(Country.MakeScope.Var('ipg_electoral_opp_seats').GetValue, '(CFixedPoint)0')]"
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									layoutstretchfactor_horizontal = "[FixedPointToInt(Country.MakeScope.Var('ipg_electoral_opp_seats').GetValue)]"
+									datamodel = "[Country.MakeScope.GetList('ipg_electoral_opp_parties')]"
+
+									item = {
+										hbox = {
+											datacontext = "[Scope.GetParty]"
+											visible = "[GreaterThan_CFixedPoint(Party.MakeScope.Var('electoral_seats').GetValue, '(CFixedPoint)0')]"
+											layoutpolicy_horizontal = expanding
+											layoutpolicy_vertical = expanding
+											layoutstretchfactor_horizontal = "[FixedPointToInt(Party.MakeScope.Var('electoral_seats').GetValue)]"
+
+											background = {
+												texture = "gfx/interface/tooltip/stacked_barchart_small_item.dds"
+												color = "[Party.GetColor]"
+												alpha = 0.72
+												spriteType = Corneredstretched
+												spriteborder = { 2 2 }
+											}
+										}
+									}
+								}
+							}
+
+							icon = {
+								size = { 436 14 }
+								parentanchor = center
+								texture = "gfx/interface/progressbar/progressbar_frame.dds"
+								spriteType = Corneredstretched
+								spriteborder = { 6 6 }
+								texture_density = 2
+							}
+
+							# 50% parliamentary majority threshold needle
+							icon = {
+								parentanchor = hcenter|vcenter
+								size = { 2 18 }
+								texture = "gfx/interface/tooltip/stacked_barchart_small_item.dds"
+								color = { 0.98 0.94 0.82 0.95 }
+							}
+						}
+					}
+
+					# Grouped party table
+					flowcontainer = {
+						direction = vertical
+						spacing = 2
+
+						widget = {
+							size = { 436 24 }
+
+							hbox = {
+								margin = { 8 0 }
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+
+								textbox = {
+									size = { 186 22 }
+									layoutpolicy_horizontal = fixed
+									text = "[concept_party]"
+									align = left|nobaseline
+									using = fontsize_small
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+								textbox = {
+									size = { 56 22 }
+									layoutpolicy_horizontal = fixed
+									text = "ipg_seats_col"
+									default_format = "#title"
+									align = right|nobaseline
+									using = fontsize_small
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+								textbox = {
+									size = { 72 22 }
+									layoutpolicy_horizontal = fixed
+									text = "ipg_votes_col"
+									default_format = "#title"
+									align = right|nobaseline
+									using = fontsize_small
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+								textbox = {
+									size = { 106 22 }
+									layoutpolicy_horizontal = fixed
+									text = "ipg_members_col"
+									default_format = "#title"
+									align = right|nobaseline
+									using = fontsize_small
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+							}
+
+							divider_clean = {
+								parentanchor = bottom|hcenter
+								size = { 436 2 }
+							}
+						}
+
+						flowcontainer = {
+							visible = "[Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_gov_parties')))]"
+							direction = vertical
+							spacing = 0
+
+							ipg_tooltip_group_header = {
+								blockoverride "group_icon" {
+									texture = "gfx/interface/icons/generic_icons/in_government_icon.dds"
+								}
+								blockoverride "group_label" {
+									text = "concept_in_government"
+									default_format = "#P"
+								}
+								blockoverride "group_total" {
+									text = "ipg_electoral_gov_sub"
+								}
+							}
+
+							flowcontainer = {
+								direction = vertical
+								datamodel = "[Country.MakeScope.GetList('ipg_electoral_gov_parties')]"
+								item = { ipg_tooltip_electoral_row = {} }
+							}
+						}
+
+						flowcontainer = {
+							visible = "[Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_opp_parties')))]"
+							direction = vertical
+							margin_top = 4
+							spacing = 0
+
+							ipg_tooltip_group_header = {
+								blockoverride "group_icon" {
+									texture = "gfx/interface/icons/generic_icons/in_opposition_icon.dds"
+								}
+								blockoverride "group_label" {
+									text = "concept_in_opposition"
+									default_format = "#N"
+								}
+								blockoverride "group_total" {
+									text = "ipg_electoral_opp_sub"
+								}
+							}
+
+							flowcontainer = {
+								direction = vertical
+								datamodel = "[Country.MakeScope.GetList('ipg_electoral_opp_parties')]"
+								item = { ipg_tooltip_electoral_row = {} }
+							}
+						}
 					}
 				}
 			}
 		}
+	}
+
+	# =========================================================================
+	# 4. Bicameral Dual-Chamber Tooltip
+	# =========================================================================
+	type ipg_tooltip_bicameral_dynamic = FancyTooltipWidgetType {
+		blockoverride "icon_texture" {
+			texture = "gfx/interface/icons/law_icons/parliamentary_republic.dds"
+		}
+		blockoverride "icon_size" {
+			size = { 44 44 }
+		}
+		blockoverride "color" {
+			color = { 0.52 0.34 0.40 1 }
+		}
+		blockoverride "name" {
+			text = "ipg_layout_bicameral"
+		}
+		blockoverride "type" {
+			text = "ipg_total_seats_header"
+		}
+		blockoverride "text" {
+			visible = no
+		}
+		blockoverride "tooltip_content_after" {
+			flowcontainer = {
+				direction = vertical
+				spacing = 6
+
+				# --- Upper House (Power Structure) ---
+				flowcontainer = {
+					direction = vertical
+					spacing = 3
+
+					widget = {
+						size = { 436 22 }
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							margin = { 4 0 }
+
+							textbox = {
+								layoutpolicy_horizontal = expanding
+								autoresize = yes
+								text = "ipg_bicameral_upper"
+								default_format = "#title"
+								align = left|nobaseline
+								using = fontsize_small
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+							textbox = {
+								autoresize = yes
+								text = "ipg_bicameral_power_compact"
+								align = right|nobaseline
+								using = fontsize_small
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+						}
+					}
+
+					# Upper house compact stacked bar
+					widget = {
+						size = { 436 10 }
+						background = { using = dark_area alpha = 0.75 }
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							margin = { 2 2 }
+							datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+							item = {
+								hbox = {
+									datacontext = "[Scope.GetInterestGroup]"
+									visible = "[GreaterThan_CFixedPoint(InterestGroup.MakeScope.Var('power_seats').GetValue, '(CFixedPoint)0')]"
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									layoutstretchfactor_horizontal = "[FixedPointToInt(InterestGroup.MakeScope.Var('power_seats').GetValue)]"
+									background = {
+										texture = "gfx/interface/tooltip/stacked_barchart_small_item.dds"
+										color = "[InterestGroup.GetColor]"
+										spriteType = Corneredstretched
+										spriteborder = { 2 2 }
+									}
+								}
+							}
+						}
+						icon = {
+							size = { 100% 100% }
+							texture = "gfx/interface/progressbar/progressbar_frame.dds"
+							spriteType = Corneredstretched
+							spriteborder = { 6 6 }
+							texture_density = 2
+						}
+					}
+
+					flowcontainer = {
+						direction = vertical
+						datamodel = "[Country.MakeScope.GetList('ipg_power_igs')]"
+						item = { ipg_tooltip_bicameral_ig_row = {} }
+					}
+				}
+
+				divider_clean = {
+					size = { 436 2 }
+				}
+
+				# --- Lower House (Electoral when available) ---
+				flowcontainer = {
+					visible = "[And(Not(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties'))), Not(GetVariableSystem.HasValue('ipg_parl_view', 'alignment')))]"
+					direction = vertical
+					spacing = 3
+
+					widget = {
+						size = { 436 22 }
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							margin = { 4 0 }
+
+							textbox = {
+								layoutpolicy_horizontal = expanding
+								autoresize = yes
+								text = "ipg_bicameral_lower_electoral"
+								default_format = "#title"
+								align = left|nobaseline
+								using = fontsize_small
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+							textbox = {
+								autoresize = yes
+								text = "ipg_bicameral_electoral_compact"
+								align = right|nobaseline
+								using = fontsize_small
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+						}
+					}
+
+					widget = {
+						size = { 436 12 }
+						background = { using = dark_area alpha = 0.75 }
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							margin = { 2 3 }
+							datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]"
+							item = {
+								hbox = {
+									datacontext = "[Scope.GetParty]"
+									visible = "[GreaterThan_CFixedPoint(Party.MakeScope.Var('electoral_seats').GetValue, '(CFixedPoint)0')]"
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									layoutstretchfactor_horizontal = "[FixedPointToInt(Party.MakeScope.Var('electoral_seats').GetValue)]"
+									background = {
+										texture = "gfx/interface/tooltip/stacked_barchart_small_item.dds"
+										color = "[Party.GetColor]"
+										spriteType = Corneredstretched
+										spriteborder = { 2 2 }
+									}
+								}
+							}
+						}
+						icon = {
+							size = { 436 10 }
+							parentanchor = center
+							texture = "gfx/interface/progressbar/progressbar_frame.dds"
+							spriteType = Corneredstretched
+							spriteborder = { 6 6 }
+							texture_density = 2
+						}
+						icon = {
+							parentanchor = hcenter|vcenter
+							size = { 2 14 }
+							texture = "gfx/interface/tooltip/stacked_barchart_small_item.dds"
+							color = { 0.98 0.94 0.82 0.95 }
+						}
+					}
+
+					flowcontainer = {
+						direction = vertical
+						datamodel = "[Country.MakeScope.GetList('ipg_electoral_parties')]"
+						item = { ipg_tooltip_bicameral_party_row = {} }
+					}
+				}
+
+				# --- Lower House (Alignment fallback / selected) ---
+				flowcontainer = {
+					visible = "[Or(IsDataModelEmpty(Country.MakeScope.GetList('ipg_electoral_parties')), GetVariableSystem.HasValue('ipg_parl_view', 'alignment'))]"
+					direction = vertical
+					spacing = 3
+
+					widget = {
+						size = { 436 22 }
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							margin = { 4 0 }
+
+							textbox = {
+								layoutpolicy_horizontal = expanding
+								autoresize = yes
+								text = "ipg_bicameral_lower_alignment"
+								default_format = "#title"
+								align = left|nobaseline
+								using = fontsize_small
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+							textbox = {
+								autoresize = yes
+								text = "ipg_bicameral_alignment_compact"
+								align = right|nobaseline
+								using = fontsize_small
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+						}
+					}
+
+					widget = {
+						size = { 436 10 }
+						background = { using = dark_area alpha = 0.75 }
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							margin = { 2 2 }
+
+							hbox = {
+								visible = "[GreaterThan_CFixedPoint(Country.MakeScope.Var('ipg_alignment_gov_seats').GetValue, '(CFixedPoint)0')]"
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								layoutstretchfactor_horizontal = "[FixedPointToInt(Country.MakeScope.Var('ipg_alignment_gov_seats').GetValue)]"
+								datamodel = "[Country.MakeScope.GetList('ipg_alignment_gov_igs')]"
+								item = {
+									hbox = {
+										datacontext = "[Scope.GetInterestGroup]"
+										visible = "[GreaterThan_CFixedPoint(InterestGroup.MakeScope.Var('alignment_seats').GetValue, '(CFixedPoint)0')]"
+										layoutpolicy_horizontal = expanding
+										layoutpolicy_vertical = expanding
+										layoutstretchfactor_horizontal = "[FixedPointToInt(InterestGroup.MakeScope.Var('alignment_seats').GetValue)]"
+										background = {
+											texture = "gfx/interface/tooltip/stacked_barchart_small_item.dds"
+											color = "[InterestGroup.GetColor]"
+											spriteType = Corneredstretched
+											spriteborder = { 2 2 }
+										}
+									}
+								}
+							}
+							hbox = {
+								visible = "[GreaterThan_CFixedPoint(Country.MakeScope.Var('ipg_alignment_opp_seats').GetValue, '(CFixedPoint)0')]"
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								layoutstretchfactor_horizontal = "[FixedPointToInt(Country.MakeScope.Var('ipg_alignment_opp_seats').GetValue)]"
+								datamodel = "[Country.MakeScope.GetList('ipg_alignment_opp_igs')]"
+								item = {
+									hbox = {
+										datacontext = "[Scope.GetInterestGroup]"
+										visible = "[GreaterThan_CFixedPoint(InterestGroup.MakeScope.Var('alignment_seats').GetValue, '(CFixedPoint)0')]"
+										layoutpolicy_horizontal = expanding
+										layoutpolicy_vertical = expanding
+										layoutstretchfactor_horizontal = "[FixedPointToInt(InterestGroup.MakeScope.Var('alignment_seats').GetValue)]"
+										background = {
+											texture = "gfx/interface/tooltip/stacked_barchart_small_item.dds"
+											color = "[InterestGroup.GetColor]"
+											alpha = 0.72
+											spriteType = Corneredstretched
+											spriteborder = { 2 2 }
+										}
+									}
+								}
+							}
+							hbox = {
+								visible = "[GreaterThan_CFixedPoint(Country.MakeScope.Var('ipg_alignment_unaligned_seats').GetValue, '(CFixedPoint)0')]"
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								layoutstretchfactor_horizontal = "[FixedPointToInt(Country.MakeScope.Var('ipg_alignment_unaligned_seats').GetValue)]"
+								background = {
+									texture = "gfx/interface/tooltip/stacked_barchart_small_item.dds"
+									color = { 0.48 0.48 0.50 0.68 }
+									spriteType = Corneredstretched
+									spriteborder = { 2 2 }
+								}
+							}
+						}
+						icon = {
+							size = { 100% 100% }
+							texture = "gfx/interface/progressbar/progressbar_frame.dds"
+							spriteType = Corneredstretched
+							spriteborder = { 6 6 }
+							texture_density = 2
+						}
+					}
+
+					flowcontainer = {
+						direction = vertical
+						datamodel = "[Country.MakeScope.GetList('ipg_alignment_igs')]"
+						item = {
+							ipg_tooltip_bicameral_ig_row = {
+								blockoverride "bi_seats_text" { text = "ipg_alignment_seats_cell" }
+								blockoverride "bi_share_text" { text = "ipg_alignment_share_cell" }
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	# =========================================================================
+	# 5. Bottom-Right Layout Selector Status Tooltip (Current Layout + Why)
+	# =========================================================================
+	type ipg_tooltip_layout_status = FancyTooltipWidgetType {
+		blockoverride "icon_texture" {
+			texture = "gfx/interface/icons/law_icons/parliamentary_republic.dds"
+		}
+		blockoverride "icon_size" {
+			size = { 44 44 }
+		}
+		blockoverride "color" {
+			color = { 0.44 0.40 0.56 1 }
+		}
+		blockoverride "name" {
+			text = "ipg_layout_menu_title"
+		}
+		blockoverride "type" {
+			text = "[SelectLocalization(GetVariableSystem.Exists('ipg_layout_mode'), 'ipg_mode_manual_badge', 'ipg_mode_auto_badge')]"
+		}
+		blockoverride "text" {
+			visible = no
+		}
+		blockoverride "tooltip_content_after" {
+			flowcontainer = {
+				direction = vertical
+				spacing = 8
+
+				# Active chamber banner
+				widget = {
+					size = { 392 30 }
+
+					background = {
+						using = dark_area
+						alpha = 0.55
+					}
+
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+						margin = { 10 0 }
+						spacing = 8
+
+						textbox = {
+							autoresize = yes
+							text = "ipg_layout_current_label"
+							default_format = "#title"
+							align = left|nobaseline
+							using = fontsize_small
+							fonttintcolor = "[TooltipInfo.GetTintColor]"
+						}
+
+						widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+
+						# Active structure name (resolves both manual & auto)
+						textbox = {
+							visible = "[Or(GetVariableSystem.HasValue('ipg_layout_mode', 'hemicycle'), And(Not(GetVariableSystem.Exists('ipg_layout_mode')), Or(Not(Country.MakeScope.Var('ipg_auto_layout').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)1'))))]"
+							autoresize = yes
+							text = "ipg_layout_hemicycle"
+							default_format = "#v"
+							align = right|nobaseline
+							fonttintcolor = "[TooltipInfo.GetTintColor]"
+						}
+						textbox = {
+							visible = "[Or(GetVariableSystem.HasValue('ipg_layout_mode', 'westminster'), And(Not(GetVariableSystem.Exists('ipg_layout_mode')), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)2')))]"
+							autoresize = yes
+							text = "ipg_layout_westminster"
+							default_format = "#v"
+							align = right|nobaseline
+							fonttintcolor = "[TooltipInfo.GetTintColor]"
+						}
+						textbox = {
+							visible = "[Or(GetVariableSystem.HasValue('ipg_layout_mode', 'horseshoe'), And(Not(GetVariableSystem.Exists('ipg_layout_mode')), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)3')))]"
+							autoresize = yes
+							text = "ipg_layout_horseshoe"
+							default_format = "#v"
+							align = right|nobaseline
+							fonttintcolor = "[TooltipInfo.GetTintColor]"
+						}
+						textbox = {
+							visible = "[Or(GetVariableSystem.HasValue('ipg_layout_mode', 'assembly'), And(Not(GetVariableSystem.Exists('ipg_layout_mode')), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)4')))]"
+							autoresize = yes
+							text = "ipg_layout_assembly"
+							default_format = "#v"
+							align = right|nobaseline
+							fonttintcolor = "[TooltipInfo.GetTintColor]"
+						}
+						textbox = {
+							visible = "[Or(GetVariableSystem.HasValue('ipg_layout_mode', 'bicameral'), And(Not(GetVariableSystem.Exists('ipg_layout_mode')), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_layout').GetValue, '(CFixedPoint)5')))]"
+							autoresize = yes
+							text = "ipg_layout_bicameral"
+							default_format = "#v"
+							align = right|nobaseline
+							fonttintcolor = "[TooltipInfo.GetTintColor]"
+						}
+					}
+				}
+
+				# Reason explanation card
+				flowcontainer = {
+					direction = vertical
+					spacing = 4
+					margin = { 10 8 }
+
+					background = {
+						using = dark_area
+						alpha = 0.35
+					}
+
+					textbox = {
+						max_width = 372
+						min_width = 372
+						autoresize = yes
+						text = "ipg_layout_reason_label"
+						default_format = "#title"
+						align = left|nobaseline
+						using = fontsize_small
+						fonttintcolor = "[TooltipInfo.GetTintColor]"
+					}
+
+					divider_clean = {
+						size = { 372 2 }
+					}
+
+					# Manual override explanation
+					textbox = {
+						visible = "[GetVariableSystem.Exists('ipg_layout_mode')]"
+						max_width = 372
+						min_width = 372
+						autoresize = yes
+						multiline = yes
+						text = "ipg_layout_reason_manual"
+						align = left|nobaseline
+						fonttintcolor = "[TooltipInfo.GetTintColor]"
+					}
+
+					# Auto reason 1..7
+					textbox = {
+						visible = "[And(Not(GetVariableSystem.Exists('ipg_layout_mode')), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_reason').GetValue, '(CFixedPoint)1'))]"
+						max_width = 372
+						min_width = 372
+						autoresize = yes
+						multiline = yes
+						text = "ipg_layout_reason_1"
+						align = left|nobaseline
+						fonttintcolor = "[TooltipInfo.GetTintColor]"
+					}
+					textbox = {
+						visible = "[And(Not(GetVariableSystem.Exists('ipg_layout_mode')), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_reason').GetValue, '(CFixedPoint)2'))]"
+						max_width = 372
+						min_width = 372
+						autoresize = yes
+						multiline = yes
+						text = "ipg_layout_reason_2"
+						align = left|nobaseline
+						fonttintcolor = "[TooltipInfo.GetTintColor]"
+					}
+					textbox = {
+						visible = "[And(Not(GetVariableSystem.Exists('ipg_layout_mode')), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_reason').GetValue, '(CFixedPoint)3'))]"
+						max_width = 372
+						min_width = 372
+						autoresize = yes
+						multiline = yes
+						text = "ipg_layout_reason_3"
+						align = left|nobaseline
+						fonttintcolor = "[TooltipInfo.GetTintColor]"
+					}
+					textbox = {
+						visible = "[And(Not(GetVariableSystem.Exists('ipg_layout_mode')), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_reason').GetValue, '(CFixedPoint)4'))]"
+						max_width = 372
+						min_width = 372
+						autoresize = yes
+						multiline = yes
+						text = "ipg_layout_reason_4"
+						align = left|nobaseline
+						fonttintcolor = "[TooltipInfo.GetTintColor]"
+					}
+					textbox = {
+						visible = "[And(Not(GetVariableSystem.Exists('ipg_layout_mode')), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_reason').GetValue, '(CFixedPoint)5'))]"
+						max_width = 372
+						min_width = 372
+						autoresize = yes
+						multiline = yes
+						text = "ipg_layout_reason_5"
+						align = left|nobaseline
+						fonttintcolor = "[TooltipInfo.GetTintColor]"
+					}
+					textbox = {
+						visible = "[And(Not(GetVariableSystem.Exists('ipg_layout_mode')), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_reason').GetValue, '(CFixedPoint)6'))]"
+						max_width = 372
+						min_width = 372
+						autoresize = yes
+						multiline = yes
+						text = "ipg_layout_reason_6"
+						align = left|nobaseline
+						fonttintcolor = "[TooltipInfo.GetTintColor]"
+					}
+					textbox = {
+						visible = "[And(Not(GetVariableSystem.Exists('ipg_layout_mode')), Or(Not(Country.MakeScope.Var('ipg_auto_reason').IsSet), EqualTo_CFixedPoint(Country.MakeScope.Var('ipg_auto_reason').GetValue, '(CFixedPoint)7')))]"
+						max_width = 372
+						min_width = 372
+						autoresize = yes
+						multiline = yes
+						text = "ipg_layout_reason_7"
+						align = left|nobaseline
+						fonttintcolor = "[TooltipInfo.GetTintColor]"
+					}
+				}
+
+				# Click hint
+				textbox = {
+					max_width = 392
+					autoresize = yes
+					text = "ipg_layout_click_hint"
+					align = left|nobaseline
+					using = fontsize_small
+					alpha = 0.85
+					fonttintcolor = "[TooltipInfo.GetTintColor]"
+				}
+			}
+		}
+	}
+
+	# =========================================================================
+	# 6. Reusable Layout Option Tooltip Base & 6 Popup Option Tooltips
+	# =========================================================================
+	type ipg_tooltip_layout_option_base = FancyTooltipWidgetType {
+		blockoverride "icon_size" {
+			size = { 42 42 }
+		}
+		blockoverride "text" {
+			visible = no
+		}
+		blockoverride "tooltip_content_after" {
+			flowcontainer = {
+				direction = vertical
+				spacing = 8
+
+				textbox = {
+					max_width = 384
+					min_width = 384
+					autoresize = yes
+					multiline = yes
+					align = left|nobaseline
+					fonttintcolor = "[TooltipInfo.GetTintColor]"
+					block "opt_desc" {}
+				}
+
+				flowcontainer = {
+					direction = vertical
+					spacing = 4
+					margin = { 10 8 }
+
+					background = {
+						using = dark_area
+						alpha = 0.42
+					}
+
+					textbox = {
+						max_width = 364
+						min_width = 364
+						autoresize = yes
+						text = "ipg_layout_cond_label"
+						default_format = "#title"
+						align = left|nobaseline
+						using = fontsize_small
+						fonttintcolor = "[TooltipInfo.GetTintColor]"
+					}
+
+					divider_clean = {
+						size = { 364 2 }
+					}
+
+					textbox = {
+						max_width = 364
+						min_width = 364
+						autoresize = yes
+						multiline = yes
+						align = left|nobaseline
+						using = fontsize_small
+						fonttintcolor = "[TooltipInfo.GetTintColor]"
+						block "opt_cond" {}
+					}
+				}
+			}
+		}
+	}
+
+	type ipg_tooltip_opt_auto = ipg_tooltip_layout_option_base {
+		blockoverride "icon_texture" { texture = "gfx/interface/icons/law_icons/parliamentary_republic.dds" }
+		blockoverride "color" { color = { 0.36 0.54 0.44 1 } }
+		blockoverride "name" { text = "ipg_layout_auto" }
+		blockoverride "type" { text = "ipg_layout_opt_badge_auto" }
+		blockoverride "opt_desc" { text = "ipg_layout_auto_desc" }
+		blockoverride "opt_cond" { text = "ipg_layout_auto_cond" }
+	}
+
+	type ipg_tooltip_opt_hemicycle = ipg_tooltip_layout_option_base {
+		blockoverride "icon_texture" { texture = "gfx/interface/main_hud/pol_btn.dds" }
+		blockoverride "color" { color = { 0.52 0.38 0.50 1 } }
+		blockoverride "name" { text = "ipg_layout_hemicycle" }
+		blockoverride "type" { text = "ipg_layout_opt_badge_preset" }
+		blockoverride "opt_desc" { text = "ipg_layout_hemicycle_desc" }
+		blockoverride "opt_cond" { text = "ipg_layout_hemicycle_cond" }
+	}
+
+	type ipg_tooltip_opt_westminster = ipg_tooltip_layout_option_base {
+		blockoverride "icon_texture" { texture = "gfx/interface/icons/generic_icons/in_government_icon.dds" }
+		blockoverride "color" { color = { 0.34 0.52 0.46 1 } }
+		blockoverride "name" { text = "ipg_layout_westminster" }
+		blockoverride "type" { text = "ipg_layout_opt_badge_preset" }
+		blockoverride "opt_desc" { text = "ipg_layout_westminster_desc" }
+		blockoverride "opt_cond" { text = "ipg_layout_westminster_cond" }
+	}
+
+	type ipg_tooltip_opt_horseshoe = ipg_tooltip_layout_option_base {
+		blockoverride "icon_texture" { texture = "gfx/interface/icons/law_icons/wealth_voting.dds" }
+		blockoverride "color" { color = { 0.54 0.46 0.32 1 } }
+		blockoverride "name" { text = "ipg_layout_horseshoe" }
+		blockoverride "type" { text = "ipg_layout_opt_badge_preset" }
+		blockoverride "opt_desc" { text = "ipg_layout_horseshoe_desc" }
+		blockoverride "opt_cond" { text = "ipg_layout_horseshoe_cond" }
+	}
+
+	type ipg_tooltip_opt_assembly = ipg_tooltip_layout_option_base {
+		blockoverride "icon_texture" { texture = "gfx/interface/icons/generic_icons/government_building_icon.dds" }
+		blockoverride "color" { color = { 0.56 0.32 0.32 1 } }
+		blockoverride "name" { text = "ipg_layout_assembly" }
+		blockoverride "type" { text = "ipg_layout_opt_badge_preset" }
+		blockoverride "opt_desc" { text = "ipg_layout_assembly_desc" }
+		blockoverride "opt_cond" { text = "ipg_layout_assembly_cond" }
+	}
+
+	type ipg_tooltip_opt_bicameral = ipg_tooltip_layout_option_base {
+		blockoverride "icon_texture" { texture = "gfx/interface/icons/event_icons/event_election.dds" }
+		blockoverride "color" { color = { 0.50 0.36 0.44 1 } }
+		blockoverride "name" { text = "ipg_layout_bicameral" }
+		blockoverride "type" { text = "ipg_layout_opt_badge_dual" }
+		blockoverride "opt_desc" { text = "ipg_layout_bicameral_desc" }
+		blockoverride "opt_cond" { text = "ipg_layout_bicameral_cond" }
 	}
 }

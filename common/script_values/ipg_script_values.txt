@@ -1,23 +1,88 @@
 ﻿# =============================================================================
 # Improved ParliamentGraph - Script Values
 # -----------------------------------------------------------------------------
-# Aggregate values consumed by the seat-allocation scripted effects.
-# Kept side-effect free so they can be referenced from any country scope.
+# Aggregate values and dynamic seat-count formulas consumed by the
+# seat-allocation scripted effects. Side-effect free, country-scoped.
 # =============================================================================
 
-# Total seats in the hemicycle. The seat layout GUI is hand-laid out for 300
-# seats; changing this without re-laying out the layout will produce gaps.
-ipg_number_of_seats = {
-	value = 300
+# Base parliamentary seat count determined by Distribution of Power law.
+# Uses has_law_or_variant so vanilla flavor laws (Bakufu, Neo-Absolutism,
+# Labour Suffrage, etc.) and overhaul variants resolve cleanly.
+ipg_law_base_seats = {
+	if = {
+		limit = {
+			OR = {
+				has_law_or_variant = law_type:law_universal_suffrage
+				has_law_or_variant = law_type:law_single_party_state
+				has_law_or_variant = law_type:law_anarchy
+				has_law_or_variant = law_type:law_council_republic
+			}
+		}
+		value = 220
+	}
+	else_if = {
+		limit = { has_law_or_variant = law_type:law_census_voting }
+		value = 180
+	}
+	else_if = {
+		limit = { has_law_or_variant = law_type:law_wealth_voting }
+		value = 140
+	}
+	else_if = {
+		limit = { has_law_or_variant = law_type:law_landed_voting }
+		value = 100
+	}
+	else_if = {
+		limit = {
+			OR = {
+				has_law_or_variant = law_type:law_oligarchy
+				has_law_or_variant = law_type:law_technocracy
+			}
+		}
+		value = 60
+	}
+	else = {
+		# Autocracy, Elder Council, Chiefdom, etc.
+		value = 30
+	}
 }
 
-# Sum of clout across every IG that currently exerts political influence.
-# Used as the denominator for the Power Structure share calculation.
-ipg_total_active_ig_clout = {
-	value = 0
-	every_interest_group = {
-		limit = { ig_clout > 0 }
-		add = ig_clout
+# Additional seats per incorporated state (constituencies), scaled by franchise.
+ipg_law_state_seat_weight = {
+	if = {
+		limit = {
+			OR = {
+				has_law_or_variant = law_type:law_universal_suffrage
+				has_law_or_variant = law_type:law_single_party_state
+				has_law_or_variant = law_type:law_anarchy
+				has_law_or_variant = law_type:law_council_republic
+			}
+		}
+		value = 10
+	}
+	else_if = {
+		limit = { has_law_or_variant = law_type:law_census_voting }
+		value = 8
+	}
+	else_if = {
+		limit = { has_law_or_variant = law_type:law_wealth_voting }
+		value = 7
+	}
+	else_if = {
+		limit = { has_law_or_variant = law_type:law_landed_voting }
+		value = 6
+	}
+	else_if = {
+		limit = {
+			OR = {
+				has_law_or_variant = law_type:law_oligarchy
+				has_law_or_variant = law_type:law_technocracy
+			}
+		}
+		value = 4
+	}
+	else = {
+		value = 2
 	}
 }
 
@@ -39,8 +104,65 @@ ipg_total_unaligned_population_share = {
 	max = 1
 }
 
-# Party-scoped accessor used by ordered_active_party.  Ordering by a named
-# script value is supported by the same path already used for party clout.
+# Smooth participation multiplier (0.60 .. 1.60) driven by politically active
+# population share, filtering out politically inactive subsistence peasants.
+ipg_participation_factor = {
+	value = 0.6
+	add = ipg_total_aligned_population_share
+}
+
+# Continuous real parliamentary seat count (50 .. 650).
+# Driven by law franchise + incorporated states (constituencies) + active pops.
+ipg_real_total_seats = {
+	value = num_incorporated_states
+	multiply = ipg_law_state_seat_weight
+	add = ipg_law_base_seats
+	multiply = ipg_participation_factor
+	floor = yes
+	min = 50
+	max = 650
+}
+
+# Discrete visual canvas dot tier (100 / 200 / 300) selected automatically from
+# the continuous real seat count so small chambers look crisp and full.
+ipg_visual_tier = {
+	if = {
+		limit = { ipg_real_total_seats < 150 }
+		value = 100
+	}
+	else_if = {
+		limit = { ipg_real_total_seats < 250 }
+		value = 200
+	}
+	else = {
+		value = 300
+	}
+}
+
+# Majority threshold (floor(real_total_seats / 2) + 1) for coalition coloring.
+ipg_majority_seats = {
+	value = ipg_real_total_seats
+	divide = 2
+	floor = yes
+	add = 1
+}
+
+# Backwards-compatible alias referencing the active visual dot tier.
+ipg_number_of_seats = {
+	value = ipg_visual_tier
+}
+
+# Sum of clout across every IG that currently exerts political influence.
+# Used as the denominator for the Power Structure share calculation.
+ipg_total_active_ig_clout = {
+	value = 0
+	every_interest_group = {
+		limit = { ig_clout > 0 }
+		add = ig_clout
+	}
+}
+
+# Party-scoped accessor used by ordered_active_party.
 ipg_party_captured_vote_share = {
 	value = 0
 	if = {
@@ -50,8 +172,6 @@ ipg_party_captured_vote_share = {
 }
 
 # Sum of GUI-captured last-election vote shares on currently active parties.
-# Values remain in the API's native scale; normalizing by this total makes the
-# seat calculation scale-independent and robust to small rounding errors.
 ipg_total_captured_vote_share = {
 	value = 0
 	every_active_party = {

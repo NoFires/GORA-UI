@@ -1,45 +1,131 @@
 ﻿# =============================================================================
 # Improved ParliamentGraph - Seat Allocation
 # -----------------------------------------------------------------------------
-# Three independent visualizations are calculated here. Each one writes a
-# set of country / IG / party scoped variables that the GUI reads via
-# `MakeScope.Var(...)` expressions.
+# Three independent visualizations are calculated here with Government-first,
+# Opposition-second contiguous seating, Hamilton (largest-remainder) proportional
+# apportionment, and dual precision:
+#   1. Exact continuous real seat counts (50..650, law + states + active share)
+#      stored on IG / Party (`power_seats`, `alignment_seats`, `electoral_seats`)
+#      and country coalition totals (`ipg_*_gov_seats`, `ipg_*_opp_seats`,
+#      `ipg_*_gov_pct`, `ipg_*_opp_pct`) plus split lists (`ipg_*_gov_*`,
+#      `ipg_*_opp_*`) for grouped UI tables and stacked parliament bars.
+#   2. Proportional visual dot ranges (0..99, 0..199, or 0..299) stored on
+#      IG / Party (`*_seat_min`, `*_seat_max`) matching `ipg_visual_seats_val`.
 #
-# Variable-list conventions (country scope):
-#   ipg_power_igs                -> all positive-clout IGs ordered by clout
-#   ipg_alignment_igs            -> all aligned IGs ordered by population share
-#   ipg_electoral_parties        -> all parties with a captured positive share
-#   ipg_alignment_unaligned_*    -> Slot for the politically unaligned share
-#   ipg_alignment_unaligned_share-> Pre-computed pop share for the tooltip
-#
-# Variables stored on the IG / Party scope itself (so the seat-layout GUI
-# can read them via the current datacontext):
-#   power_seats     / power_seat_min     / power_seat_max     / power_share
-#   alignment_seats / alignment_seat_min / alignment_seat_max / alignment_share
-#   electoral_seats / electoral_seat_min / electoral_seat_max
-#
-# Leftover seats from floor() rounding are absorbed by the first list item,
-# and every other entry's seat range is shifted forward by `leftover` so the
-# hemicycle is exactly filled with no gaps and no overlaps.
+# All computations run strictly for player countries (`is_player = yes`).
+# Zero global variables; multiplayer-safe.
 # =============================================================================
 
 
-# Clout and population alignment drift continuously, so only these two views
-# belong on the monthly pulse. Party Structure changes only after an election.
-ipg_recalculate_dynamic_structures = {
-	ipg_calc_power_structure = yes
-	ipg_calc_political_alignment = yes
+# Snapshot dynamic totals and law-based automatic chamber layout.
+ipg_update_auto_layout = {
+	set_variable = { name = ipg_real_total_seats_val value = ipg_real_total_seats }
+	set_variable = { name = ipg_visual_seats_val value = ipg_visual_tier }
+	set_variable = { name = ipg_majority_threshold value = ipg_majority_seats }
+
+	# Auto layout ID (`ipg_auto_layout`) & explanation code (`ipg_auto_reason`):
+	#   1 = Hemicycle (default)
+	#   2 = Westminster (British/Anglo-Canadian heritage OR Parliamentary Republic)
+	#   3 = Horseshoe (Australian heritage OR other Constitutional Monarchies)
+	#   4 = Assembly Hall (Council Republic / Single-Party State)
+	#   5 = Bicameral (Presidential Republic with voting)
+	#
+	# Reason codes (`ipg_auto_reason`):
+	#   1 = Council Republic / Single-Party State -> Assembly Hall
+	#   2 = British / Anglo-Canadian parliamentary heritage -> Westminster
+	#   3 = Parliamentary Republic -> Westminster
+	#   4 = Australian parliamentary heritage -> Horseshoe
+	#   5 = Constitutional Monarchy (Monarchy + voting) -> Horseshoe
+	#   6 = Presidential Republic (with voting) -> Bicameral
+	#   7 = Default / General polity -> Hemicycle
+	if = {
+		limit = {
+			OR = {
+				has_law_or_variant = law_type:law_council_republic
+				has_law_or_variant = law_type:law_single_party_state
+			}
+		}
+		set_variable = { name = ipg_auto_layout value = 4 }
+		set_variable = { name = ipg_auto_reason value = 1 }
+	}
+	else_if = {
+		limit = {
+			NOT = { has_law_or_variant = law_type:law_autocracy }
+			OR = {
+				AND = {
+					any_primary_culture = { has_discrimination_trait = heritage_british }
+					NOT = { country_has_primary_culture = cu:australian }
+				}
+				country_has_primary_culture = cu:anglo_canadian
+			}
+		}
+		set_variable = { name = ipg_auto_layout value = 2 }
+		set_variable = { name = ipg_auto_reason value = 2 }
+	}
+	else_if = {
+		limit = { has_law_or_variant = law_type:law_parliamentary_republic }
+		set_variable = { name = ipg_auto_layout value = 2 }
+		set_variable = { name = ipg_auto_reason value = 3 }
+	}
+	else_if = {
+		limit = {
+			NOT = { has_law_or_variant = law_type:law_autocracy }
+			country_has_primary_culture = cu:australian
+		}
+		set_variable = { name = ipg_auto_layout value = 3 }
+		set_variable = { name = ipg_auto_reason value = 4 }
+	}
+	else_if = {
+		limit = {
+			has_law_or_variant = law_type:law_presidential_republic
+			OR = {
+				has_law_or_variant = law_type:law_landed_voting
+				has_law_or_variant = law_type:law_wealth_voting
+				has_law_or_variant = law_type:law_census_voting
+				has_law_or_variant = law_type:law_universal_suffrage
+			}
+		}
+		set_variable = { name = ipg_auto_layout value = 5 }
+		set_variable = { name = ipg_auto_reason value = 6 }
+	}
+	else_if = {
+		limit = {
+			has_law_or_variant = law_type:law_monarchy
+			OR = {
+				has_law_or_variant = law_type:law_landed_voting
+				has_law_or_variant = law_type:law_wealth_voting
+				has_law_or_variant = law_type:law_census_voting
+				has_law_or_variant = law_type:law_universal_suffrage
+			}
+		}
+		set_variable = { name = ipg_auto_layout value = 3 }
+		set_variable = { name = ipg_auto_reason value = 5 }
+	}
+	else = {
+		set_variable = { name = ipg_auto_layout value = 1 }
+		set_variable = { name = ipg_auto_reason value = 7 }
+	}
 }
 
-# Monthly country-scoped work. It deliberately does not request or recalculate
-# election data.
+# Recalculate Power Structure & Political Alignment, and re-project Electoral
+# Parliament from existing captured vote shares if present (so law changes,
+# cabinet reshuffles, and visual tier transitions keep all 3 views in sync).
+ipg_recalculate_dynamic_structures = {
+	ipg_update_auto_layout = yes
+	ipg_calc_power_structure = yes
+	ipg_calc_political_alignment = yes
+	if = {
+		limit = { ipg_total_captured_vote_share > 0 }
+		ipg_calc_electoral_from_votes = yes
+	}
+}
+
+# Country-scoped recalc entry point used by on_actions.
 ipg_recalculate_player = {
 	ipg_recalculate_dynamic_structures = yes
 }
 
-# Start one polhook capture. Old Party vote variables and the rendered Party
-# list are cleared here, before GUI callbacks begin, so no separate pending or
-# result-state marker is needed. The timed variable is the GUI visibility pulse.
+# Start one polhook capture pulse for AccessLastElectionParties.
 ipg_request_election_capture = {
 	every_active_party = {
 		remove_variable = ipg_last_election_vote_share
@@ -53,126 +139,291 @@ ipg_request_election_capture = {
 
 
 # =============================================================================
-# 1. POWER STRUCTURE
-#    Seats proportional to ig_clout. Every positive-clout IG is included;
-#    floor() leftovers go to the first IG and the others are shifted so it is
-#    fully filled.
+# 1. POWER STRUCTURE (Government IGs descending -> Opposition IGs descending)
 # =============================================================================
 ipg_calc_power_structure = {
 	save_scope_as = ipg_allocation_country
-	set_variable = { name = ipg_power_seats_assigned value = 0 }
+	set_variable = { name = ipg_power_real_assigned value = 0 }
+	set_variable = { name = ipg_power_vis_assigned value = 0 }
 	set_variable = { name = ipg_power_cursor value = 0 }
+	set_variable = { name = ipg_power_gov_seats value = 0 }
+	set_variable = { name = ipg_power_opp_seats value = 0 }
+	set_variable = { name = ipg_power_gov_pct value = 0 }
+	set_variable = { name = ipg_power_opp_pct value = 0 }
 	clear_variable_list = ipg_power_igs
+	clear_variable_list = ipg_power_gov_igs
+	clear_variable_list = ipg_power_opp_igs
 
-	# Remove stale entity ranges before rebuilding the ordered list.
 	every_interest_group = {
 		remove_variable = power_seats
 		remove_variable = power_seat_min
 		remove_variable = power_seat_max
 		remove_variable = power_share
+		remove_variable = ipg_tmp_real_rem
+		remove_variable = ipg_tmp_vis_count
+		remove_variable = ipg_tmp_vis_rem
+		remove_variable = ipg_tmp_got_real
+		remove_variable = ipg_tmp_got_vis
 	}
 
 	if = {
 		limit = {
 			ipg_total_active_ig_clout > 0
-			ipg_number_of_seats > 0
+			has_variable = ipg_real_total_seats_val
+			has_variable = ipg_visual_seats_val
 		}
 
-		# Every positive-clout IG is appended in descending clout order.
+		# Pass 1: In-government IGs (descending clout)
 		ordered_interest_group = {
-			limit = { ig_clout > 0 }
-			order_by = ig_clout
-
-			set_variable = { name = ipg_tmp_clout value = ig_clout }
-			prev = {
-				add_to_variable_list = {
-					name = ipg_power_igs
-					target = prev
-				}
-				set_variable = {
-					name = ipg_tmp_seats
-					value = {
-						value = prev.var:ipg_tmp_clout
-						divide = ipg_total_active_ig_clout
-						multiply = ipg_number_of_seats
-						floor = yes
-					}
-				}
-				set_variable = { name = ipg_tmp_min value = var:ipg_power_cursor }
-				set_variable = {
-					name = ipg_tmp_max
-					value = {
-						value = var:ipg_power_cursor
-						add = var:ipg_tmp_seats
-						subtract = 1
-					}
-				}
-				set_variable = {
-					name = ipg_tmp_share_pct
-					value = {
-						value = prev.var:ipg_tmp_clout
-						divide = ipg_total_active_ig_clout
-						multiply = 100
-					}
-				}
-				change_variable = { name = ipg_power_seats_assigned add = var:ipg_tmp_seats }
-				change_variable = { name = ipg_power_cursor add = var:ipg_tmp_seats }
+			limit = {
+				ig_clout > 0
+				is_in_government = yes
 			}
-
-			set_variable = { name = power_seats value = prev.var:ipg_tmp_seats }
-			set_variable = { name = power_seat_min value = prev.var:ipg_tmp_min }
-			set_variable = { name = power_seat_max value = prev.var:ipg_tmp_max }
-			set_variable = { name = power_share value = prev.var:ipg_tmp_share_pct }
-			remove_variable = ipg_tmp_clout
+			order_by = ig_clout
+			ipg_assign_power_ig_slot = yes
 		}
 
+		# Pass 2: Opposition IGs (descending clout)
+		ordered_interest_group = {
+			limit = {
+				ig_clout > 0
+				is_in_government = no
+			}
+			order_by = ig_clout
+			ipg_assign_power_ig_slot = yes
+		}
+
+		# Hamilton (largest-remainder) apportionment for real seats
 		set_variable = {
-			name = ipg_power_leftover
+			name = ipg_power_real_leftover
 			value = {
-				value = ipg_number_of_seats
-				subtract = var:ipg_power_seats_assigned
+				value = var:ipg_real_total_seats_val
+				subtract = var:ipg_power_real_assigned
 				min = 0
 			}
 		}
-		if = {
-			limit = { var:ipg_power_leftover > 0 }
+		while = {
+			limit = {
+				var:ipg_power_real_leftover > 0
+				any_in_list = {
+					variable = ipg_power_igs
+					NOT = { has_variable = ipg_tmp_got_real }
+				}
+			}
 			ordered_in_list = {
 				variable = ipg_power_igs
+				limit = { NOT = { has_variable = ipg_tmp_got_real } }
+				order_by = { value = var:ipg_tmp_real_rem }
 				position = 0
-				change_variable = { name = power_seats add = scope:ipg_allocation_country.var:ipg_power_leftover }
-				change_variable = { name = power_seat_max add = scope:ipg_allocation_country.var:ipg_power_leftover }
+				set_variable = { name = ipg_tmp_got_real value = 1 }
+				change_variable = { name = power_seats add = 1 }
+				if = {
+					limit = { is_in_government = yes }
+					scope:ipg_allocation_country = {
+						change_variable = { name = ipg_power_gov_seats add = 1 }
+					}
+				}
+				else = {
+					scope:ipg_allocation_country = {
+						change_variable = { name = ipg_power_opp_seats add = 1 }
+					}
+				}
 			}
-			every_in_list = {
-				variable = ipg_power_igs
-				limit = { var:power_seat_min > 0 }
-				change_variable = { name = power_seat_min add = scope:ipg_allocation_country.var:ipg_power_leftover }
-				change_variable = { name = power_seat_max add = scope:ipg_allocation_country.var:ipg_power_leftover }
+			change_variable = { name = ipg_power_real_leftover subtract = 1 }
+		}
+
+		# Hamilton (largest-remainder) apportionment for visual dots
+		set_variable = {
+			name = ipg_power_vis_leftover
+			value = {
+				value = var:ipg_visual_seats_val
+				subtract = var:ipg_power_vis_assigned
+				min = 0
 			}
 		}
-		remove_variable = ipg_power_leftover
+		while = {
+			limit = {
+				var:ipg_power_vis_leftover > 0
+				any_in_list = {
+					variable = ipg_power_igs
+					NOT = { has_variable = ipg_tmp_got_vis }
+				}
+			}
+			ordered_in_list = {
+				variable = ipg_power_igs
+				limit = { NOT = { has_variable = ipg_tmp_got_vis } }
+				order_by = { value = var:ipg_tmp_vis_rem }
+				position = 0
+				set_variable = { name = ipg_tmp_got_vis value = 1 }
+				change_variable = { name = ipg_tmp_vis_count add = 1 }
+			}
+			change_variable = { name = ipg_power_vis_leftover subtract = 1 }
+		}
+
+		# Assign contiguous visual dot ranges (0..visual_tier-1) in Gov -> Opp order
+		every_in_list = {
+			variable = ipg_power_igs
+			set_variable = { name = power_seat_min value = scope:ipg_allocation_country.var:ipg_power_cursor }
+			set_variable = {
+				name = power_seat_max
+				value = {
+					value = scope:ipg_allocation_country.var:ipg_power_cursor
+					add = var:ipg_tmp_vis_count
+					subtract = 1
+				}
+			}
+			scope:ipg_allocation_country = {
+				change_variable = { name = ipg_power_cursor add = prev.var:ipg_tmp_vis_count }
+			}
+			remove_variable = ipg_tmp_real_rem
+			remove_variable = ipg_tmp_vis_count
+			remove_variable = ipg_tmp_vis_rem
+			remove_variable = ipg_tmp_got_real
+			remove_variable = ipg_tmp_got_vis
+		}
+
+		# Coalition percentages for tooltip headers
+		if = {
+			limit = { var:ipg_real_total_seats_val > 0 }
+			set_variable = {
+				name = ipg_power_gov_pct
+				value = {
+					value = var:ipg_power_gov_seats
+					divide = var:ipg_real_total_seats_val
+					multiply = 100
+				}
+			}
+			set_variable = {
+				name = ipg_power_opp_pct
+				value = {
+					value = var:ipg_power_opp_seats
+					divide = var:ipg_real_total_seats_val
+					multiply = 100
+				}
+			}
+		}
+
+		remove_variable = ipg_power_real_leftover
+		remove_variable = ipg_power_vis_leftover
 	}
 
-	remove_variable = ipg_power_seats_assigned
+	remove_variable = ipg_power_real_assigned
+	remove_variable = ipg_power_vis_assigned
 	remove_variable = ipg_power_cursor
-	remove_variable = ipg_tmp_seats
-	remove_variable = ipg_tmp_min
-	remove_variable = ipg_tmp_max
+	remove_variable = ipg_tmp_real
+	remove_variable = ipg_tmp_real_exact
+	remove_variable = ipg_tmp_vis
+	remove_variable = ipg_tmp_vis_exact
 	remove_variable = ipg_tmp_share_pct
+}
+
+# Helper (IG scope): computes floor seats + remainders for one Power IG.
+ipg_assign_power_ig_slot = {
+	set_variable = { name = ipg_tmp_clout value = ig_clout }
+	scope:ipg_allocation_country = {
+		add_to_variable_list = {
+			name = ipg_power_igs
+			target = prev
+		}
+		if = {
+			limit = { prev = { is_in_government = yes } }
+			add_to_variable_list = {
+				name = ipg_power_gov_igs
+				target = prev
+			}
+		}
+		else = {
+			add_to_variable_list = {
+				name = ipg_power_opp_igs
+				target = prev
+			}
+		}
+
+		set_variable = {
+			name = ipg_tmp_real_exact
+			value = {
+				value = prev.var:ipg_tmp_clout
+				divide = ipg_total_active_ig_clout
+				multiply = var:ipg_real_total_seats_val
+			}
+		}
+		set_variable = {
+			name = ipg_tmp_real
+			value = {
+				value = var:ipg_tmp_real_exact
+				floor = yes
+			}
+		}
+		set_variable = {
+			name = ipg_tmp_vis_exact
+			value = {
+				value = prev.var:ipg_tmp_clout
+				divide = ipg_total_active_ig_clout
+				multiply = var:ipg_visual_seats_val
+			}
+		}
+		set_variable = {
+			name = ipg_tmp_vis
+			value = {
+				value = var:ipg_tmp_vis_exact
+				floor = yes
+			}
+		}
+		set_variable = {
+			name = ipg_tmp_share_pct
+			value = {
+				value = prev.var:ipg_tmp_clout
+				divide = ipg_total_active_ig_clout
+				multiply = 100
+			}
+		}
+		change_variable = { name = ipg_power_real_assigned add = var:ipg_tmp_real }
+		change_variable = { name = ipg_power_vis_assigned add = var:ipg_tmp_vis }
+		if = {
+			limit = { prev = { is_in_government = yes } }
+			change_variable = { name = ipg_power_gov_seats add = var:ipg_tmp_real }
+		}
+		else = {
+			change_variable = { name = ipg_power_opp_seats add = var:ipg_tmp_real }
+		}
+	}
+
+	set_variable = { name = power_seats value = scope:ipg_allocation_country.var:ipg_tmp_real }
+	set_variable = {
+		name = ipg_tmp_real_rem
+		value = {
+			value = scope:ipg_allocation_country.var:ipg_tmp_real_exact
+			subtract = scope:ipg_allocation_country.var:ipg_tmp_real
+		}
+	}
+	set_variable = { name = ipg_tmp_vis_count value = scope:ipg_allocation_country.var:ipg_tmp_vis }
+	set_variable = {
+		name = ipg_tmp_vis_rem
+		value = {
+			value = scope:ipg_allocation_country.var:ipg_tmp_vis_exact
+			subtract = scope:ipg_allocation_country.var:ipg_tmp_vis
+		}
+	}
+	set_variable = { name = power_share value = scope:ipg_allocation_country.var:ipg_tmp_share_pct }
+	remove_variable = ipg_tmp_clout
 }
 
 
 # =============================================================================
-# 2. POLITICAL ALIGNMENT
-#    Seats proportional to interest_group_population_percentage. Every aligned
-#    IG gets its own slot, while the unaligned population keeps one grey slot.
-#    Floor() leftovers are added to the first aligned IG and the following
-#    ranges are shifted forward by that amount.
+# 2. POLITICAL ALIGNMENT (Gov IGs -> Opp IGs -> Politically Unaligned)
 # =============================================================================
 ipg_calc_political_alignment = {
 	save_scope_as = ipg_allocation_country
-	set_variable = { name = ipg_alignment_seats_assigned value = 0 }
+	set_variable = { name = ipg_alignment_real_assigned value = 0 }
+	set_variable = { name = ipg_alignment_vis_assigned value = 0 }
 	set_variable = { name = ipg_alignment_cursor value = 0 }
+	set_variable = { name = ipg_alignment_gov_seats value = 0 }
+	set_variable = { name = ipg_alignment_opp_seats value = 0 }
+	set_variable = { name = ipg_alignment_gov_pct value = 0 }
+	set_variable = { name = ipg_alignment_opp_pct value = 0 }
 	clear_variable_list = ipg_alignment_igs
+	clear_variable_list = ipg_alignment_gov_igs
+	clear_variable_list = ipg_alignment_opp_igs
 
 	remove_variable = ipg_alignment_unaligned_seats
 	remove_variable = ipg_alignment_unaligned_min
@@ -184,56 +435,40 @@ ipg_calc_political_alignment = {
 		remove_variable = alignment_seat_min
 		remove_variable = alignment_seat_max
 		remove_variable = alignment_share
+		remove_variable = ipg_tmp_real_rem
+		remove_variable = ipg_tmp_vis_count
+		remove_variable = ipg_tmp_vis_rem
+		remove_variable = ipg_tmp_got_real
+		remove_variable = ipg_tmp_got_vis
 	}
 
 	if = {
-		limit = { ipg_number_of_seats > 0 }
-
-		ordered_interest_group = {
-			limit = { interest_group_population_percentage > 0 }
-			order_by = interest_group_population_percentage
-
-			set_variable = { name = ipg_tmp_share value = interest_group_population_percentage }
-			prev = {
-				add_to_variable_list = {
-					name = ipg_alignment_igs
-					target = prev
-				}
-				set_variable = {
-					name = ipg_tmp_seats
-					value = {
-						value = prev.var:ipg_tmp_share
-						multiply = ipg_number_of_seats
-						floor = yes
-					}
-				}
-				set_variable = { name = ipg_tmp_min value = var:ipg_alignment_cursor }
-				set_variable = {
-					name = ipg_tmp_max
-					value = {
-						value = var:ipg_alignment_cursor
-						add = var:ipg_tmp_seats
-						subtract = 1
-					}
-				}
-				set_variable = {
-					name = ipg_tmp_share_pct
-					value = {
-						value = prev.var:ipg_tmp_share
-						multiply = 100
-					}
-				}
-				change_variable = { name = ipg_alignment_seats_assigned add = var:ipg_tmp_seats }
-				change_variable = { name = ipg_alignment_cursor add = var:ipg_tmp_seats }
-			}
-
-			set_variable = { name = alignment_seats value = prev.var:ipg_tmp_seats }
-			set_variable = { name = alignment_seat_min value = prev.var:ipg_tmp_min }
-			set_variable = { name = alignment_seat_max value = prev.var:ipg_tmp_max }
-			set_variable = { name = alignment_share value = prev.var:ipg_tmp_share_pct }
-			remove_variable = ipg_tmp_share
+		limit = {
+			has_variable = ipg_real_total_seats_val
+			has_variable = ipg_visual_seats_val
 		}
 
+		# Pass 1: In-government IGs (descending population share)
+		ordered_interest_group = {
+			limit = {
+				interest_group_population_percentage > 0
+				is_in_government = yes
+			}
+			order_by = interest_group_population_percentage
+			ipg_assign_alignment_ig_slot = yes
+		}
+
+		# Pass 2: Opposition IGs (descending population share)
+		ordered_interest_group = {
+			limit = {
+				interest_group_population_percentage > 0
+				is_in_government = no
+			}
+			order_by = interest_group_population_percentage
+			ipg_assign_alignment_ig_slot = yes
+		}
+
+		# Pass 3: Politically unaligned population (grey seats at far end)
 		set_variable = {
 			name = ipg_alignment_unaligned_share
 			value = {
@@ -242,84 +477,305 @@ ipg_calc_political_alignment = {
 			}
 		}
 		set_variable = {
-			name = ipg_alignment_unaligned_seats
+			name = ipg_tmp_unaligned_real_exact
 			value = {
 				value = ipg_total_unaligned_population_share
-				multiply = ipg_number_of_seats
+				multiply = var:ipg_real_total_seats_val
+			}
+		}
+		set_variable = {
+			name = ipg_alignment_unaligned_seats
+			value = {
+				value = var:ipg_tmp_unaligned_real_exact
 				floor = yes
 			}
 		}
+		set_variable = {
+			name = ipg_tmp_unaligned_vis_exact
+			value = {
+				value = ipg_total_unaligned_population_share
+				multiply = var:ipg_visual_seats_val
+			}
+		}
+		set_variable = {
+			name = ipg_tmp_unaligned_vis_count
+			value = {
+				value = var:ipg_tmp_unaligned_vis_exact
+				floor = yes
+			}
+		}
+		change_variable = { name = ipg_alignment_real_assigned add = var:ipg_alignment_unaligned_seats }
+		change_variable = { name = ipg_alignment_vis_assigned add = var:ipg_tmp_unaligned_vis_count }
+
+		# Hamilton apportionment for real seats
+		set_variable = {
+			name = ipg_alignment_real_leftover
+			value = {
+				value = var:ipg_real_total_seats_val
+				subtract = var:ipg_alignment_real_assigned
+				min = 0
+			}
+		}
+		set_variable = {
+			name = ipg_tmp_unaligned_real_rem
+			value = {
+				value = var:ipg_tmp_unaligned_real_exact
+				subtract = var:ipg_alignment_unaligned_seats
+			}
+		}
+		if = {
+			limit = {
+				var:ipg_alignment_real_leftover > 0
+				var:ipg_tmp_unaligned_real_rem >= 0.5
+			}
+			change_variable = { name = ipg_alignment_unaligned_seats add = 1 }
+			change_variable = { name = ipg_alignment_real_leftover subtract = 1 }
+		}
+		while = {
+			limit = {
+				var:ipg_alignment_real_leftover > 0
+				any_in_list = {
+					variable = ipg_alignment_igs
+					NOT = { has_variable = ipg_tmp_got_real }
+				}
+			}
+			ordered_in_list = {
+				variable = ipg_alignment_igs
+				limit = { NOT = { has_variable = ipg_tmp_got_real } }
+				order_by = { value = var:ipg_tmp_real_rem }
+				position = 0
+				set_variable = { name = ipg_tmp_got_real value = 1 }
+				change_variable = { name = alignment_seats add = 1 }
+				if = {
+					limit = { is_in_government = yes }
+					scope:ipg_allocation_country = {
+						change_variable = { name = ipg_alignment_gov_seats add = 1 }
+					}
+				}
+				else = {
+					scope:ipg_allocation_country = {
+						change_variable = { name = ipg_alignment_opp_seats add = 1 }
+					}
+				}
+			}
+			change_variable = { name = ipg_alignment_real_leftover subtract = 1 }
+		}
+		if = {
+			limit = { var:ipg_alignment_real_leftover > 0 }
+			change_variable = { name = ipg_alignment_unaligned_seats add = var:ipg_alignment_real_leftover }
+		}
+
+		# Hamilton apportionment for visual dots
+		set_variable = {
+			name = ipg_alignment_vis_leftover
+			value = {
+				value = var:ipg_visual_seats_val
+				subtract = var:ipg_alignment_vis_assigned
+				min = 0
+			}
+		}
+		set_variable = {
+			name = ipg_tmp_unaligned_vis_rem
+			value = {
+				value = var:ipg_tmp_unaligned_vis_exact
+				subtract = var:ipg_tmp_unaligned_vis_count
+			}
+		}
+		if = {
+			limit = {
+				var:ipg_alignment_vis_leftover > 0
+				var:ipg_tmp_unaligned_vis_rem >= 0.5
+			}
+			change_variable = { name = ipg_tmp_unaligned_vis_count add = 1 }
+			change_variable = { name = ipg_alignment_vis_leftover subtract = 1 }
+		}
+		while = {
+			limit = {
+				var:ipg_alignment_vis_leftover > 0
+				any_in_list = {
+					variable = ipg_alignment_igs
+					NOT = { has_variable = ipg_tmp_got_vis }
+				}
+			}
+			ordered_in_list = {
+				variable = ipg_alignment_igs
+				limit = { NOT = { has_variable = ipg_tmp_got_vis } }
+				order_by = { value = var:ipg_tmp_vis_rem }
+				position = 0
+				set_variable = { name = ipg_tmp_got_vis value = 1 }
+				change_variable = { name = ipg_tmp_vis_count add = 1 }
+			}
+			change_variable = { name = ipg_alignment_vis_leftover subtract = 1 }
+		}
+		if = {
+			limit = { var:ipg_alignment_vis_leftover > 0 }
+			change_variable = { name = ipg_tmp_unaligned_vis_count add = var:ipg_alignment_vis_leftover }
+		}
+
+		# Assign contiguous visual dot ranges (Gov -> Opp -> Unaligned)
+		every_in_list = {
+			variable = ipg_alignment_igs
+			set_variable = { name = alignment_seat_min value = scope:ipg_allocation_country.var:ipg_alignment_cursor }
+			set_variable = {
+				name = alignment_seat_max
+				value = {
+					value = scope:ipg_allocation_country.var:ipg_alignment_cursor
+					add = var:ipg_tmp_vis_count
+					subtract = 1
+				}
+			}
+			scope:ipg_allocation_country = {
+				change_variable = { name = ipg_alignment_cursor add = prev.var:ipg_tmp_vis_count }
+			}
+			remove_variable = ipg_tmp_real_rem
+			remove_variable = ipg_tmp_vis_count
+			remove_variable = ipg_tmp_vis_rem
+			remove_variable = ipg_tmp_got_real
+			remove_variable = ipg_tmp_got_vis
+		}
+
 		set_variable = { name = ipg_alignment_unaligned_min value = var:ipg_alignment_cursor }
 		set_variable = {
 			name = ipg_alignment_unaligned_max
 			value = {
 				value = var:ipg_alignment_cursor
-				add = var:ipg_alignment_unaligned_seats
+				add = var:ipg_tmp_unaligned_vis_count
 				subtract = 1
 			}
 		}
-		change_variable = { name = ipg_alignment_seats_assigned add = var:ipg_alignment_unaligned_seats }
-		change_variable = { name = ipg_alignment_cursor add = var:ipg_alignment_unaligned_seats }
 
-		set_variable = {
-			name = ipg_alignment_leftover
-			value = {
-				value = ipg_number_of_seats
-				subtract = var:ipg_alignment_seats_assigned
-				min = 0
-			}
-		}
+		# Coalition percentages
 		if = {
-			limit = {
-				var:ipg_alignment_leftover > 0
-				has_variable_list = ipg_alignment_igs
+			limit = { var:ipg_real_total_seats_val > 0 }
+			set_variable = {
+				name = ipg_alignment_gov_pct
+				value = {
+					value = var:ipg_alignment_gov_seats
+					divide = var:ipg_real_total_seats_val
+					multiply = 100
+				}
 			}
-			ordered_in_list = {
-				variable = ipg_alignment_igs
-				position = 0
-				change_variable = { name = alignment_seats add = scope:ipg_allocation_country.var:ipg_alignment_leftover }
-				change_variable = { name = alignment_seat_max add = scope:ipg_allocation_country.var:ipg_alignment_leftover }
+			set_variable = {
+				name = ipg_alignment_opp_pct
+				value = {
+					value = var:ipg_alignment_opp_seats
+					divide = var:ipg_real_total_seats_val
+					multiply = 100
+				}
 			}
-			every_in_list = {
-				variable = ipg_alignment_igs
-				limit = { var:alignment_seat_min > 0 }
-				change_variable = { name = alignment_seat_min add = scope:ipg_allocation_country.var:ipg_alignment_leftover }
-				change_variable = { name = alignment_seat_max add = scope:ipg_allocation_country.var:ipg_alignment_leftover }
-			}
-			change_variable = { name = ipg_alignment_unaligned_min add = var:ipg_alignment_leftover }
-			change_variable = { name = ipg_alignment_unaligned_max add = var:ipg_alignment_leftover }
 		}
-		remove_variable = ipg_alignment_leftover
+
+		remove_variable = ipg_alignment_real_leftover
+		remove_variable = ipg_alignment_vis_leftover
+		remove_variable = ipg_tmp_unaligned_real_exact
+		remove_variable = ipg_tmp_unaligned_real_rem
+		remove_variable = ipg_tmp_unaligned_vis_exact
+		remove_variable = ipg_tmp_unaligned_vis_rem
+		remove_variable = ipg_tmp_unaligned_vis_count
 	}
 
-	remove_variable = ipg_alignment_seats_assigned
+	remove_variable = ipg_alignment_real_assigned
+	remove_variable = ipg_alignment_vis_assigned
 	remove_variable = ipg_alignment_cursor
-	remove_variable = ipg_tmp_seats
-	remove_variable = ipg_tmp_min
-	remove_variable = ipg_tmp_max
+	remove_variable = ipg_tmp_real
+	remove_variable = ipg_tmp_real_exact
+	remove_variable = ipg_tmp_vis
+	remove_variable = ipg_tmp_vis_exact
 	remove_variable = ipg_tmp_share_pct
+}
+
+# Helper (IG scope): computes floor seats + remainders for one Alignment IG.
+ipg_assign_alignment_ig_slot = {
+	set_variable = { name = ipg_tmp_share value = interest_group_population_percentage }
+	scope:ipg_allocation_country = {
+		add_to_variable_list = {
+			name = ipg_alignment_igs
+			target = prev
+		}
+		if = {
+			limit = { prev = { is_in_government = yes } }
+			add_to_variable_list = {
+				name = ipg_alignment_gov_igs
+				target = prev
+			}
+		}
+		else = {
+			add_to_variable_list = {
+				name = ipg_alignment_opp_igs
+				target = prev
+			}
+		}
+
+		set_variable = {
+			name = ipg_tmp_real_exact
+			value = {
+				value = prev.var:ipg_tmp_share
+				multiply = var:ipg_real_total_seats_val
+			}
+		}
+		set_variable = {
+			name = ipg_tmp_real
+			value = {
+				value = var:ipg_tmp_real_exact
+				floor = yes
+			}
+		}
+		set_variable = {
+			name = ipg_tmp_vis_exact
+			value = {
+				value = prev.var:ipg_tmp_share
+				multiply = var:ipg_visual_seats_val
+			}
+		}
+		set_variable = {
+			name = ipg_tmp_vis
+			value = {
+				value = var:ipg_tmp_vis_exact
+				floor = yes
+			}
+		}
+		set_variable = {
+			name = ipg_tmp_share_pct
+			value = {
+				value = prev.var:ipg_tmp_share
+				multiply = 100
+			}
+		}
+		change_variable = { name = ipg_alignment_real_assigned add = var:ipg_tmp_real }
+		change_variable = { name = ipg_alignment_vis_assigned add = var:ipg_tmp_vis }
+		if = {
+			limit = { prev = { is_in_government = yes } }
+			change_variable = { name = ipg_alignment_gov_seats add = var:ipg_tmp_real }
+		}
+		else = {
+			change_variable = { name = ipg_alignment_opp_seats add = var:ipg_tmp_real }
+		}
+	}
+
+	set_variable = { name = alignment_seats value = scope:ipg_allocation_country.var:ipg_tmp_real }
+	set_variable = {
+		name = ipg_tmp_real_rem
+		value = {
+			value = scope:ipg_allocation_country.var:ipg_tmp_real_exact
+			subtract = scope:ipg_allocation_country.var:ipg_tmp_real
+		}
+	}
+	set_variable = { name = ipg_tmp_vis_count value = scope:ipg_allocation_country.var:ipg_tmp_vis }
+	set_variable = {
+		name = ipg_tmp_vis_rem
+		value = {
+			value = scope:ipg_allocation_country.var:ipg_tmp_vis_exact
+			subtract = scope:ipg_allocation_country.var:ipg_tmp_vis
+		}
+	}
+	set_variable = { name = alignment_share value = scope:ipg_allocation_country.var:ipg_tmp_share_pct }
+	remove_variable = ipg_tmp_share
 }
 
 
 # =============================================================================
-# 3. ELECTORAL PARLIAMENT - REAL LAST-ELECTION RESULTS
-# -----------------------------------------------------------------------------
-# Vote shares are captured by gui/ipg_election_capture.gui through the
-# ipg_capture_election_vote_share_sg scripted GUI.  Each Party receives an
-# `ipg_last_election_vote_share` variable in the native numeric scale exposed
-# by Party.GetCurrentVotingPowerShare. Allocation normalizes by the total, so
-# it does not depend on whether the API represents the share as 0..1 or 0..100.
-#
-# The chart shows every active party with a positive captured share. Shares are
-# normalized by the captured total and converted into a 300-seat projection.
-# Floor-rounding leftovers are awarded to the first party, matching the stable
-# rounding strategy used by the other two views.
+# 3. ELECTORAL PARLIAMENT - REAL LAST-ELECTION RESULTS (Gov -> Opp)
 # =============================================================================
-
-# Country-scoped setter called through the Party -> random member IG -> owner
-# bridge used by polhook-master. The request effect has already cleared the old
-# snapshot. Each callback appends its Party and recalculates from the values
-# received so far; the final callback therefore leaves the complete result.
 ipg_election_vote_setter = {
 	scope:ipg_capture_party = {
 		set_variable = {
@@ -328,101 +784,267 @@ ipg_election_vote_setter = {
 		}
 	}
 
-	# A historical Party can exist in AccessLastElectionParties without being
-	# active now. Rebuild only once the allocator has usable active-party data.
 	if = {
 		limit = { ipg_total_captured_vote_share > 0 }
+		ipg_update_auto_layout = yes
 		ipg_calc_electoral_from_votes = yes
 	}
 }
 
 ipg_calc_electoral_from_votes = {
 	save_scope_as = ipg_allocation_country
-	set_variable = { name = ipg_electoral_seats_assigned value = 0 }
+	set_variable = { name = ipg_electoral_real_assigned value = 0 }
+	set_variable = { name = ipg_electoral_vis_assigned value = 0 }
 	set_variable = { name = ipg_electoral_cursor value = 0 }
+	set_variable = { name = ipg_electoral_gov_seats value = 0 }
+	set_variable = { name = ipg_electoral_opp_seats value = 0 }
+	set_variable = { name = ipg_electoral_gov_pct value = 0 }
+	set_variable = { name = ipg_electoral_opp_pct value = 0 }
 	clear_variable_list = ipg_electoral_parties
+	clear_variable_list = ipg_electoral_gov_parties
+	clear_variable_list = ipg_electoral_opp_parties
 
 	every_active_party = {
 		remove_variable = electoral_seats
 		remove_variable = electoral_seat_min
 		remove_variable = electoral_seat_max
+		remove_variable = ipg_tmp_real_rem
+		remove_variable = ipg_tmp_vis_count
+		remove_variable = ipg_tmp_vis_rem
+		remove_variable = ipg_tmp_got_real
+		remove_variable = ipg_tmp_got_vis
 	}
+
 	if = {
 		limit = {
 			ipg_total_captured_vote_share > 0
-			ipg_number_of_seats > 0
+			has_variable = ipg_real_total_seats_val
+			has_variable = ipg_visual_seats_val
 		}
 
+		# Pass 1: Governing parties (descending captured vote share)
 		ordered_active_party = {
 			limit = {
 				has_variable = ipg_last_election_vote_share
 				var:ipg_last_election_vote_share > 0
+				any_member = { is_in_government = yes }
 			}
 			order_by = ipg_party_captured_vote_share
-
-			set_variable = { name = ipg_tmp_vote_share value = var:ipg_last_election_vote_share }
-			prev = {
-				add_to_variable_list = {
-					name = ipg_electoral_parties
-					target = prev
-				}
-				set_variable = {
-					name = ipg_tmp_seats
-					value = {
-						value = prev.var:ipg_tmp_vote_share
-						divide = ipg_total_captured_vote_share
-						multiply = ipg_number_of_seats
-						floor = yes
-					}
-				}
-				set_variable = { name = ipg_tmp_min value = var:ipg_electoral_cursor }
-				set_variable = {
-					name = ipg_tmp_max
-					value = {
-						value = var:ipg_electoral_cursor
-						add = var:ipg_tmp_seats
-						subtract = 1
-					}
-				}
-				change_variable = { name = ipg_electoral_seats_assigned add = var:ipg_tmp_seats }
-				change_variable = { name = ipg_electoral_cursor add = var:ipg_tmp_seats }
-			}
-
-			set_variable = { name = electoral_seats value = prev.var:ipg_tmp_seats }
-			set_variable = { name = electoral_seat_min value = prev.var:ipg_tmp_min }
-			set_variable = { name = electoral_seat_max value = prev.var:ipg_tmp_max }
-			remove_variable = ipg_tmp_vote_share
+			ipg_assign_electoral_party_slot = yes
 		}
 
+		# Pass 2: Opposition parties (descending captured vote share)
+		ordered_active_party = {
+			limit = {
+				has_variable = ipg_last_election_vote_share
+				var:ipg_last_election_vote_share > 0
+				NOT = { any_member = { is_in_government = yes } }
+			}
+			order_by = ipg_party_captured_vote_share
+			ipg_assign_electoral_party_slot = yes
+		}
+
+		# Hamilton apportionment for real seats
 		set_variable = {
-			name = ipg_electoral_leftover
+			name = ipg_electoral_real_leftover
 			value = {
-				value = ipg_number_of_seats
-				subtract = var:ipg_electoral_seats_assigned
+				value = var:ipg_real_total_seats_val
+				subtract = var:ipg_electoral_real_assigned
 				min = 0
 			}
 		}
-		if = {
-			limit = { var:ipg_electoral_leftover > 0 }
+		while = {
+			limit = {
+				var:ipg_electoral_real_leftover > 0
+				any_in_list = {
+					variable = ipg_electoral_parties
+					NOT = { has_variable = ipg_tmp_got_real }
+				}
+			}
 			ordered_in_list = {
 				variable = ipg_electoral_parties
+				limit = { NOT = { has_variable = ipg_tmp_got_real } }
+				order_by = { value = var:ipg_tmp_real_rem }
 				position = 0
-				change_variable = { name = electoral_seats add = scope:ipg_allocation_country.var:ipg_electoral_leftover }
-				change_variable = { name = electoral_seat_max add = scope:ipg_allocation_country.var:ipg_electoral_leftover }
+				set_variable = { name = ipg_tmp_got_real value = 1 }
+				change_variable = { name = electoral_seats add = 1 }
+				if = {
+					limit = { any_member = { is_in_government = yes } }
+					scope:ipg_allocation_country = {
+						change_variable = { name = ipg_electoral_gov_seats add = 1 }
+					}
+				}
+				else = {
+					scope:ipg_allocation_country = {
+						change_variable = { name = ipg_electoral_opp_seats add = 1 }
+					}
+				}
 			}
-			every_in_list = {
-				variable = ipg_electoral_parties
-				limit = { var:electoral_seat_min > 0 }
-				change_variable = { name = electoral_seat_min add = scope:ipg_allocation_country.var:ipg_electoral_leftover }
-				change_variable = { name = electoral_seat_max add = scope:ipg_allocation_country.var:ipg_electoral_leftover }
+			change_variable = { name = ipg_electoral_real_leftover subtract = 1 }
+		}
+
+		# Hamilton apportionment for visual dots
+		set_variable = {
+			name = ipg_electoral_vis_leftover
+			value = {
+				value = var:ipg_visual_seats_val
+				subtract = var:ipg_electoral_vis_assigned
+				min = 0
 			}
 		}
-		remove_variable = ipg_electoral_leftover
+		while = {
+			limit = {
+				var:ipg_electoral_vis_leftover > 0
+				any_in_list = {
+					variable = ipg_electoral_parties
+					NOT = { has_variable = ipg_tmp_got_vis }
+				}
+			}
+			ordered_in_list = {
+				variable = ipg_electoral_parties
+				limit = { NOT = { has_variable = ipg_tmp_got_vis } }
+				order_by = { value = var:ipg_tmp_vis_rem }
+				position = 0
+				set_variable = { name = ipg_tmp_got_vis value = 1 }
+				change_variable = { name = ipg_tmp_vis_count add = 1 }
+			}
+			change_variable = { name = ipg_electoral_vis_leftover subtract = 1 }
+		}
+
+		# Assign contiguous visual dot ranges (Gov -> Opp)
+		every_in_list = {
+			variable = ipg_electoral_parties
+			set_variable = { name = electoral_seat_min value = scope:ipg_allocation_country.var:ipg_electoral_cursor }
+			set_variable = {
+				name = electoral_seat_max
+				value = {
+					value = scope:ipg_allocation_country.var:ipg_electoral_cursor
+					add = var:ipg_tmp_vis_count
+					subtract = 1
+				}
+			}
+			scope:ipg_allocation_country = {
+				change_variable = { name = ipg_electoral_cursor add = prev.var:ipg_tmp_vis_count }
+			}
+			remove_variable = ipg_tmp_real_rem
+			remove_variable = ipg_tmp_vis_count
+			remove_variable = ipg_tmp_vis_rem
+			remove_variable = ipg_tmp_got_real
+			remove_variable = ipg_tmp_got_vis
+		}
+
+		# Coalition percentages
+		if = {
+			limit = { var:ipg_real_total_seats_val > 0 }
+			set_variable = {
+				name = ipg_electoral_gov_pct
+				value = {
+					value = var:ipg_electoral_gov_seats
+					divide = var:ipg_real_total_seats_val
+					multiply = 100
+				}
+			}
+			set_variable = {
+				name = ipg_electoral_opp_pct
+				value = {
+					value = var:ipg_electoral_opp_seats
+					divide = var:ipg_real_total_seats_val
+					multiply = 100
+				}
+			}
+		}
+
+		remove_variable = ipg_electoral_real_leftover
+		remove_variable = ipg_electoral_vis_leftover
 	}
 
-	remove_variable = ipg_electoral_seats_assigned
+	remove_variable = ipg_electoral_real_assigned
+	remove_variable = ipg_electoral_vis_assigned
 	remove_variable = ipg_electoral_cursor
-	remove_variable = ipg_tmp_seats
-	remove_variable = ipg_tmp_min
-	remove_variable = ipg_tmp_max
+	remove_variable = ipg_tmp_real
+	remove_variable = ipg_tmp_real_exact
+	remove_variable = ipg_tmp_vis
+	remove_variable = ipg_tmp_vis_exact
+}
+
+# Helper (Party scope): computes floor seats + remainders for one Party.
+ipg_assign_electoral_party_slot = {
+	set_variable = { name = ipg_tmp_vote_share value = var:ipg_last_election_vote_share }
+	scope:ipg_allocation_country = {
+		add_to_variable_list = {
+			name = ipg_electoral_parties
+			target = prev
+		}
+		if = {
+			limit = { prev = { any_member = { is_in_government = yes } } }
+			add_to_variable_list = {
+				name = ipg_electoral_gov_parties
+				target = prev
+			}
+		}
+		else = {
+			add_to_variable_list = {
+				name = ipg_electoral_opp_parties
+				target = prev
+			}
+		}
+
+		set_variable = {
+			name = ipg_tmp_real_exact
+			value = {
+				value = prev.var:ipg_tmp_vote_share
+				divide = ipg_total_captured_vote_share
+				multiply = var:ipg_real_total_seats_val
+			}
+		}
+		set_variable = {
+			name = ipg_tmp_real
+			value = {
+				value = var:ipg_tmp_real_exact
+				floor = yes
+			}
+		}
+		set_variable = {
+			name = ipg_tmp_vis_exact
+			value = {
+				value = prev.var:ipg_tmp_vote_share
+				divide = ipg_total_captured_vote_share
+				multiply = var:ipg_visual_seats_val
+			}
+		}
+		set_variable = {
+			name = ipg_tmp_vis
+			value = {
+				value = var:ipg_tmp_vis_exact
+				floor = yes
+			}
+		}
+		change_variable = { name = ipg_electoral_real_assigned add = var:ipg_tmp_real }
+		change_variable = { name = ipg_electoral_vis_assigned add = var:ipg_tmp_vis }
+		if = {
+			limit = { prev = { any_member = { is_in_government = yes } } }
+			change_variable = { name = ipg_electoral_gov_seats add = var:ipg_tmp_real }
+		}
+		else = {
+			change_variable = { name = ipg_electoral_opp_seats add = var:ipg_tmp_real }
+		}
+	}
+
+	set_variable = { name = electoral_seats value = scope:ipg_allocation_country.var:ipg_tmp_real }
+	set_variable = {
+		name = ipg_tmp_real_rem
+		value = {
+			value = scope:ipg_allocation_country.var:ipg_tmp_real_exact
+			subtract = scope:ipg_allocation_country.var:ipg_tmp_real
+		}
+	}
+	set_variable = { name = ipg_tmp_vis_count value = scope:ipg_allocation_country.var:ipg_tmp_vis }
+	set_variable = {
+		name = ipg_tmp_vis_rem
+		value = {
+			value = scope:ipg_allocation_country.var:ipg_tmp_vis_exact
+			subtract = scope:ipg_allocation_country.var:ipg_tmp_vis
+		}
+	}
+	remove_variable = ipg_tmp_vote_share
 }

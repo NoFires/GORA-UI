@@ -1,5 +1,11 @@
 ﻿# =============================================================================
-# Improved ParliamentGraph - GUI-to-script election result bridge
+# Improved ParliamentGraph - Scripted GUIs
+# -----------------------------------------------------------------------------
+# 1. `ipg_capture_election_vote_share_sg`: Party -> Country bridge used by
+#    `gui/ipg_election_capture.gui` to persist GUI-only election vote shares.
+# 2. `ipg_open_refresh_sg`: Country-scoped on-demand refresh invoked when
+#    `parliament_item` opens/expands; refreshes dynamic seats + auto layout and
+#    triggers a one-shot election capture on mid-save loads if needed.
 # =============================================================================
 
 ipg_capture_election_vote_share_sg = {
@@ -14,6 +20,23 @@ ipg_capture_election_vote_share_sg = {
 		save_scope_as = ipg_capture_party
 		scope:ipg_capture_member.owner = {
 			ipg_election_vote_setter = yes
+		}
+	}
+}
+
+ipg_open_refresh_sg = {
+	scope = country
+	effect = {
+		ipg_recalculate_dynamic_structures = yes
+		if = {
+			limit = {
+				NOT = { has_variable_list = ipg_electoral_parties }
+				NOT = { has_variable = ipg_election_capture_requested }
+				any_active_party = {
+					party_has_members = yes
+				}
+			}
+			ipg_request_election_capture = yes
 		}
 	}
 }
