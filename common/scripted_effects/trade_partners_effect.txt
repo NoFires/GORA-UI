@@ -8,10 +8,8 @@
 #      decentralized, or inactive markets) are skipped before evaluating bilateral
 #      trade totals, and each partner list is capped at the top 20 partners.
 #   3. Pure observer mode: Victoria 3 blocks Scripted GUI execution when no country
-#      is player-controlled, so an on_action fallback is required to populate charts.
-#      To avoid an expensive monthly O(N^2) global market scan, observer updates run
-#      immediately at game start and then once per quarter (every 3 months), gated
-#      by the `trade_partner_show_all` game rule.
+#      is player-controlled, so an on_action fallback refreshes active markets on
+#      lobby start and monthly pulse, gated by the `trade_partner_show_all` game rule.
 
 trade_partners_set_import_partners = {
 	save_temporary_scope_as = base_market
@@ -103,8 +101,7 @@ trade_partners_market_update = {
 	}
 }
 
-# Pure observer-mode full refresh (executed immediately after lobby on game start,
-# and quarterly thereafter via `trade_partners_market_update_observer_quarterly`).
+# Pure observer-mode full refresh (executed on game start and monthly pulse).
 # Skips automatically whenever any human player exists or `trade_partner_show_all` is off.
 trade_partners_market_update_observer = {
 	if = {
@@ -118,30 +115,6 @@ trade_partners_market_update_observer = {
 			}
 			trade_partners_set_export_partners = yes
 			trade_partners_set_import_partners = yes
-		}
-	}
-}
-
-# Quarterly throttle wrapper for `on_monthly_pulse` in pure observer mode.
-# Runs `trade_partners_market_update_observer` once every 3 months (tick cycle 0 -> 1 -> 2 -> refresh),
-# reducing observer-mode pulse overhead by ~85-90% together with market pruning and top-20 capping.
-trade_partners_market_update_observer_quarterly = {
-	if = {
-		limit = {
-			has_game_rule = trade_partner_show_all
-			NOT = { any_country = { is_player = yes } }
-		}
-		if = {
-			limit = { NOT = { has_global_variable = trade_partners_obs_tick } }
-			set_global_variable = { name = trade_partners_obs_tick value = 1 }
-		}
-		else_if = {
-			limit = { global_var:trade_partners_obs_tick >= 2 }
-			set_global_variable = { name = trade_partners_obs_tick value = 0 }
-			trade_partners_market_update_observer = yes
-		}
-		else = {
-			change_global_variable = { name = trade_partners_obs_tick add = 1 }
 		}
 	}
 }

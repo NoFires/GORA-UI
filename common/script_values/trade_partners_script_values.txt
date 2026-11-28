@@ -14,50 +14,17 @@ trade_partners_total_trade = {
 	add = "market_exports(scope:base_market)"
 }
 
-# Inherent World Market demand buffer (traded_quantity * WORLD_MARKET_GOODS_DEMAND_BUFFER = 10)
-# for a `market_goods` scope, matching vanilla common/goods/00_goods.txt (default 50).
+# Dynamic approximation of the inherent World Market demand buffer
+# (`traded_quantity * WORLD_MARKET_GOODS_DEMAND_BUFFER = 10`) from `goods.base_price`.
+# Uses zero hardcoded `g:<good>` keys so mods that add or remove goods produce zero warnings.
 trade_partners_goods_demand_buffer = {
-	value = 50
-	if = {
-		limit = { goods = { OR = { this = g:grain this = g:fish } } }
-		value = 120
+	value = 2200
+	divide = {
+		value = goods.base_price
+		min = 1
 	}
-	else_if = {
-		limit = { goods = { OR = { this = g:fabric this = g:wood } } }
-		value = 100
-	}
-	else_if = {
-		limit = { goods = { this = g:groceries } }
-		value = 90
-	}
-	else_if = {
-		limit = { goods = { OR = { this = g:clothes this = g:furniture this = g:meat this = g:fruit this = g:liquor this = g:sugar } } }
-		value = 80
-	}
-	else_if = {
-		limit = { goods = { OR = { this = g:paper this = g:coal this = g:fertilizer } } }
-		value = 70
-	}
-	else_if = {
-		limit = { goods = { this = g:oil } }
-		value = 60
-	}
-	else_if = {
-		limit = { goods = { OR = { this = g:small_arms this = g:merchant_marine this = g:sulfur this = g:engines this = g:steel this = g:explosives this = g:telephones this = g:luxury_clothes this = g:luxury_furniture } } }
-		value = 40
-	}
-	else_if = {
-		limit = { goods = { OR = { this = g:artillery this = g:manowars this = g:ironclads this = g:clippers this = g:steamers this = g:porcelain this = g:radios } } }
-		value = 35
-	}
-	else_if = {
-		limit = { goods = { OR = { this = g:tanks this = g:aeroplanes this = g:automobiles } } }
-		value = 30
-	}
-	else_if = {
-		limit = { goods = { this = g:fine_art } }
-		value = 15
-	}
+	min = 10
+	max = 120
 }
 
 # Reconstructs the current World Market Price (`Goods.GetWorldMarketBasePrice`) for an

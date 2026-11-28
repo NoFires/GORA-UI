@@ -1,12 +1,10 @@
 ﻿# Observer-mode refresh hooks for Trade Partners.
 # In normal player sessions, partner charts refresh on demand via Scripted GUI and these
 # on_actions exit immediately on the first trigger check (`NOT = { any_country = { is_player = yes } }`).
-# In pure observer mode, Scripted GUIs are blocked by the engine, so these hooks populate charts
-# immediately after lobby and then refresh quarterly (every 3 months) to minimize performance impact.
 
 on_monthly_pulse = {
 	on_actions = {
-		on_actions_trade_partners_market_update_quarterly
+		on_actions_trade_partners_market_update
 	}
 }
 
@@ -19,11 +17,5 @@ on_game_started_after_lobby = {
 on_actions_trade_partners_market_update = {
 	effect = {
 		trade_partners_market_update_observer = yes
-	}
-}
-
-on_actions_trade_partners_market_update_quarterly = {
-	effect = {
-		trade_partners_market_update_observer_quarterly = yes
 	}
 }
