@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.3] - 2026-11-29
+
+- Fixed Pop Acceptance & Culture pie/treemap charts in the Society panel (`gui/0_gora_society_panel.gui`) leaving an inner gap around their decorative bronze frames by sizing the charts via `blockoverride "piechartsize"` (`150x150`) instead of stretching the outer container.
+- Rebuilt `pop_list` collapsed & expanded rows (`gui/0_gora_pops_overview.gui`) with `hbox` + capped `fixedgridbox` (`5` goods tiles in Society/Overview, `4` tiles in Building Workforce) so Visible Pop Needs cards never clip off the right edge or overlap Radicals/Loyalists.
+- Eliminated `pdx_gui_animation_runtime_state.cpp:618` warnings by adding `alpha = 1` to callback-only / no-op animation `state` blocks across Market, Smart Treaties, and IPG panels.
+- Replaced hardcoded vanilla goods keys in Trade Partners' World Market demand-buffer valuation (`common/script_values/trade_partners_script_values.txt`) with a dynamic `goods.base_price` formula for zero warnings with goods-adding and total-conversion mods, and restored upstream's observer-mode refresh cadence.
+
 ## [1.4.2] - 2026-11-29
 
 - Upgraded bundled Improved ParliamentGraph to v3.1.1: unified equal-outer-diameter matte-enamel seat dots (plus dedicated 16x16 small-dot textures eliminating aliasing on dense chambers), crowned Head of State medallion, true 50-seat visual tier (e.g. 50-seat Prussia renders 50 spaced dots), per-tier faded floorplan underlays for Westminster & Assembly Hall, vertically centered symmetric 8+8 Assembly Hall, roomier Horseshoe margins, and balanced Bicameral split with majority/minority seat colors and top-left title.

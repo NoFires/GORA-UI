@@ -1012,6 +1012,7 @@ types politics_panel_types
 			# On-demand refresh whenever the panel becomes visible / expanded
 			state = {
 				name = _show
+				alpha = 1
 				on_start = "[GetScriptedGui('ipg_open_refresh_sg').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
 			}
 
@@ -2687,6 +2688,7 @@ types politics_panel_types
 
 			state = {
 				name = _show
+				alpha = 1
 				on_start = "[GetScriptedGui('ipg_inspect_foreign_sg').Execute(GuiScope.SetRoot(Country.MakeScope).End)]"
 			}
 

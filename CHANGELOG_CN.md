@@ -1,5 +1,12 @@
 # 更新日志
 
+## [1.4.3] - 2026-11-29
+
+- 修复社会面板中人口接纳度与文化饼图/树状图（`gui/0_gora_society_panel.gui`）与铜质花边外框之间存在空缝的问题：改用原生 `blockoverride "piechartsize"`（`150×150`）缩放内层图表，实现图表与外框严丝合缝贴合。
+- 重构人口列表折叠行与展开行布局（`gui/0_gora_pops_overview.gui`），采用 `hbox + fixedgridbox` 并按场景通过 `DataModelFirst` 精确限数（社会/人口总览完整展示 5 张、建筑劳动力页展示 4 张商品消费卡），彻底消除右边界截断及与激进/效忠派重叠的问题。
+- 为市场、Smart Treaties 与 IPG 面板中仅触发回调/空占位的 GUI 动画 `state` 补齐 `alpha = 1`，消除 `error.log` 中的 `pdx_gui_animation_runtime_state.cpp:618` 警告。
+- 优化 Trade Partners 世界市场估值缓冲公式（`common/script_values/trade_partners_script_values.txt`），以动态 `goods.base_price` 公式取代原版商品键硬编码，兼容新增或删除原版商品的各类大修且零警告，并恢复上游观察者模式更新节奏。
+
 ## [1.4.2] - 2026-11-29
 
 - 内置 Improved ParliamentGraph 升级至 v3.1.1：统一执政/在野等外径哑光珐琅席位圆点并新增 16×16 小圆点专用贴图消除密集格局锯齿；统治者席升级王冠底座徽章；新增真 50 席点阵档位（如普鲁士 50 席直接渲染 50 颗舒展大点）；威斯敏斯特与阶梯大会堂改用分档位精确底图；阶梯大会堂左右 8+8 对称并垂直居中；马蹄形加大四周留白；两院分席拉近左右弧度、区分过半绿/未过半琥珀金语义并补左上标题。

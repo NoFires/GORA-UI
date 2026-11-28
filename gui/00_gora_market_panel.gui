@@ -41,11 +41,13 @@ template gora_trade_partners_refresh_states {
 	state = {
 		name = gora_trade_partners_refresh_valid
 		duration = 0
+		alpha = 1
 		on_start = "[GetScriptedGui('trade_partners_scripted_gui').Execute(GuiScope.SetRoot(MarketPanel.GetMarket.MakeScope).End)]"
 	}
 	state = {
 		name = gora_trade_partners_refresh_skip
 		duration = 0
+		alpha = 1
 	}
 }
 
@@ -967,6 +969,7 @@ types market_panel
 							name = recalc_trade
 							next = recalc_trade
 							duration = 5
+							alpha = 1
 							trigger_on_create = yes
 							on_finish = "[PdxGuiWidget.TriggerAnimation(Select_CString(MarketPanel.GetMarket.IsValid, 'gora_trade_partners_refresh_valid', 'gora_trade_partners_refresh_skip'))]"
 						}

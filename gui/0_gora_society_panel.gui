@@ -496,9 +496,8 @@ types society_panel
 									size = { 200 30 }
 									text = "POP_ACCEPTANCE_TOTAL_POP_HEADER"
 								}
-								blockoverride "tree_chart_size" {
-									minimumsize = { 150 150 }
-									maximumsize = { 150 150 }
+								blockoverride "piechartsize" {
+									size = { 150 150 }
 								}
 								blockoverride "datamodel" {
 									datamodel = "[AccessPlayer.GetAllAcceptanceStatusSegments]"
@@ -558,9 +557,8 @@ types society_panel
 										size = { 200 30 }
 										text = "POP_ACCEPTANCE_MINORITIES_HEADER"
 									}
-									blockoverride "tree_chart_size" {
-										minimumsize = { 150 150 }
-										maximumsize = { 150 150 }
+									blockoverride "piechartsize" {
+										size = { 150 150 }
 									}
 									blockoverride "datamodel" {
 										datamodel = "[AccessPlayer.AccessPopCulturesSortedByPopulation]"
@@ -1314,12 +1312,10 @@ types society_panel
 
 			v3_piechart = {
 				visible = "[Not(GetVariableSystem.Exists('pac_areacharts'))]"
-				block "tree_chart_size" {}
 			}
 
 			v3_treemapchart = {
 				visible = "[GetVariableSystem.Exists('pac_areacharts')]"
-				block "tree_chart_size" {}
 			}
 
 			block "labels" {

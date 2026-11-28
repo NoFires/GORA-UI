@@ -879,6 +879,7 @@ widget = {
 	datacontext = "[ArticleDraft.GetSecondOrTarget.GetMarket]"
 	state = {
 		name = st_none
+	alpha = 1
 	}
 	state = {
 		name = st_rl
@@ -897,6 +898,7 @@ widget = {
 		size = { 0 0 }
 		state = {
 			name = st_none
+	alpha = 1
 		}
 		state = {
 			name = st_pl
@@ -915,6 +917,7 @@ widget = {
 			size = { 0 0 }
 			state = {
 				name = st_none
+	alpha = 1
 			}
 			state = {
 				name = st_ll0
@@ -945,6 +948,7 @@ widget = {
 				size = { 0 0 }
 				state = {
 					name = st_none
+	alpha = 1
 				}
 				state = {
 					name = st_ll1
@@ -975,6 +979,7 @@ widget = {
 					size = { 0 0 }
 					state = {
 						name = st_none
+	alpha = 1
 					}
 					state = {
 						name = st_ll2
@@ -1005,6 +1010,7 @@ widget = {
 						size = { 0 0 }
 						state = {
 							name = st_none
+	alpha = 1
 						}
 						state = {
 							name = st_ll3
@@ -1041,6 +1047,7 @@ widget = {
 	size = { 0 0 }
 state = {
 	name = st_none
+	alpha = 1
 }
 state = {
 	name = st_rec_go
