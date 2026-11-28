@@ -164,10 +164,14 @@ ipg_real_total_seats = {
 	max = 650
 }
 
-# Discrete visual canvas dot tier (100 / 200 / 300) selected automatically from
-# the continuous real seat count so small chambers look crisp and full.
+# Discrete visual canvas dot tier (50 / 100 / 200 / 300) selected automatically from
+# the continuous real seat count so small 50-seat chambers stay truthful & spacious.
 ipg_visual_tier = {
 	if = {
+		limit = { ipg_real_total_seats < 75 }
+		value = 50
+	}
+	else_if = {
 		limit = { ipg_real_total_seats < 150 }
 		value = 100
 	}

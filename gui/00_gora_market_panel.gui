@@ -719,23 +719,57 @@ types market_panel
 					}
 					### Smart Treaties — end suggested goods transfers
 
-					section_header_button = {
-						blockoverride "left_text" {
-							text = "CHARTS"
-							fontsize_min = 12
-							elide = right
+					container = {
+						parentanchor = hcenter
+
+						section_header_button = {
+							blockoverride "left_text" {
+								text = "CHARTS"
+								fontsize_min = 12
+								elide = right
+							}
+
+							blockoverride "onclick" {
+								onclick = "[GetVariableSystem.Toggle( 'market_world_market_charts' )]"
+							}
+							
+							blockoverride "onclick_showmore" {
+								visible = "[GetVariableSystem.Exists( 'market_world_market_charts' )]" # Flipped to show by Default
+							}
+
+							blockoverride "onclick_showless" {
+								visible = "[Not(GetVariableSystem.Exists( 'market_world_market_charts' ))]" # Flipped to show by Default
+							}
 						}
 
-						blockoverride "onclick" {
-							onclick = "[GetVariableSystem.Toggle( 'market_world_market_charts' )]"
-						}
-						
-						blockoverride "onclick_showmore" {
-							visible = "[GetVariableSystem.Exists( 'market_world_market_charts' )]" # Flipped to show by Default
-						}
+						# Shared Pie / Treemap view toggle controlling all 6 market charts below
+						button_icon_round_toggle = {
+							visible = "[Not(GetVariableSystem.Exists( 'market_world_market_charts' ))]"
+							size = { 29 29 }
+							parentanchor = right|vcenter
+							position = { -10 0 }
 
-						blockoverride "onclick_showless" {
-							visible = "[Not(GetVariableSystem.Exists( 'market_world_market_charts' ))]" # Flipped to show by Default
+							blockoverride "on_click" {
+								onclick = "[GetVariableSystem.Toggle('piecharts')]"
+							}
+							blockoverride "view_1" {
+								visible = "[Not(GetVariableSystem.Exists('piecharts'))]"
+							}
+							blockoverride "view_2" {
+								visible = "[GetVariableSystem.Exists('piecharts')]"
+							}
+							blockoverride "icon_1" {
+								texture = "gfx/interface/buttons/button_icons/piecharts.dds"
+							}
+							blockoverride "icon_2" {
+								texture = "gfx/interface/buttons/button_icons/areacharts.dds"
+							}
+							blockoverride "tooltip_1" {
+								tooltip = "TOOLTIP_PIE_CHART"
+							}
+							blockoverride "tooltip_2" {
+								tooltip = "TOOLTIP_AREA_CHART"
+							}
 						}
 					}
 
@@ -753,12 +787,9 @@ types market_panel
 								datamodel = "[Market.AccessMarketGoodsSortedOnExports( MarketPanel.GetFilters )]"
 							}
 
-							blockoverride "show_more_button_visibility" {
-								visible = "[GreaterThan_int32(GetDataModelSize(Market.AccessMarketGoods( MarketPanel.GetFilters )), '(int32)3')]"
-							}
-
 							blockoverride "heading" {
 								text = "EXPORTS"
+								tooltip = "GORA_EXPORTS_TOOLTIP"
 							}
 
 							blockoverride "tooltip" {
@@ -794,7 +825,7 @@ types market_panel
 							}
 
 							blockoverride "rightside2_info" {
-								raw_text = "#positive_value @money!+[Multiply_CFixedPoint(Market.GetExportedAmount(Goods.Self), Goods.GetWorldMarketBasePrice)|1K]#!"
+								raw_text = "#gold_value @money![Multiply_CFixedPoint(Market.GetExportedAmount(Goods.Self), Goods.GetWorldMarketBasePrice)|1K]#!"
 							}
 						}
 
@@ -803,12 +834,9 @@ types market_panel
 								datamodel = "[Market.AccessMarketGoodsSortedOnImports( MarketPanel.GetFilters )]"
 							}
 
-							blockoverride "show_more_button_visibility" {
-								visible = "[GreaterThan_int32(GetDataModelSize(Market.AccessMarketGoods( MarketPanel.GetFilters )), '(int32)3')]"
-							}
-
 							blockoverride "heading" {
 								text = "IMPORTS"
+								tooltip = "GORA_IMPORTS_TOOLTIP"
 							}
 
 							blockoverride "tooltip" {
@@ -844,7 +872,7 @@ types market_panel
 							}
 
 							blockoverride "rightside2_info" {
-								raw_text = "#negative_value @money!-[Multiply_CFixedPoint(Market.GetImportedAmount(Goods.Self), Goods.GetWorldMarketBasePrice)|1K]#!"
+								raw_text = "#blue_value @money![Multiply_CFixedPoint(Market.GetImportedAmount(Goods.Self), Goods.GetWorldMarketBasePrice)|1K]#!"
 							}
 						}
 					}

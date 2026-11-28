@@ -12,7 +12,7 @@ Mods bundled into GORA UI+ and their versions. TBD = version not yet verified.
 | Expanded Building Grid | TBD |
 | CMF Expanded Building Grid Compatibility Patch | TBD |
 | Collapsable Buildings List | TBD |
-| Trade Partners | TBD |
+| Trade Partners | 0.1.4 |
 | Colored Market Price Graph | TBD |
 | Visible Pop Needs | TBD |
 | State Assets and National Capital Tracking | TBD |
@@ -26,3 +26,4 @@ Mods bundled into GORA UI+ and their versions. TBD = version not yet verified.
 | Smart Treaties | 0.14 |
 | Reorder Research Queue: drag & drop techs | 0.10 |
 | Improved Ship Icons (ship silhouette sprites only) | TBD |
+| Victorian Charts | 1.0.0 |

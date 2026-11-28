@@ -1,8 +1,4 @@
-# GORA UI+ / IPG v3.1 — country_panel_politics_content (partial type override)
-# Vanilla 1.15 baseline: gui/country_politics_panel.gui (lines 14..697).
-# Other types (country_panel_law_item, country_panel_institution_item) inherited unchanged.
-# Delta: single `ipg_foreign_parliament_section = {}` inserted between TOP INFO and MOVEMENTS.
-
+﻿# COPY-PASTED FOR NOW
 @panel_width_minus_10 = 530			# used to be 450
 @panel_width = 540  				# used to be 460
 @panel_width_half = 270				# used to be 230
@@ -13,7 +9,7 @@
 @panel_width_plus_30 = 570			# used to be 490
 @panel_width_plus_70 = 610			# used to be 530
 
-types gora_country_politics_panel
+types country_panel_types
 {
 	type country_panel_politics_content = flowcontainer {
 		datacontext = "[CountryPanel.GetCountry]"
@@ -212,9 +208,11 @@ types gora_country_politics_panel
 
 		widget = { size = { 10 10 } }
 
-		### GORA UI+ / IPG v3.1: On-Demand Foreign Parliament Viewer
+		### IPG v3.1 — Foreign AI Parliament Viewer (defined in gui/ipg_parliament_panel.gui)
 		ipg_foreign_parliament_section = {}
+
 		widget = { size = { 10 10 } }
+		### /IPG v3.1
 
 		### MOVEMENTS
 		default_header = {
@@ -701,6 +699,205 @@ types gora_country_politics_panel
 			size = { @panel_width 50 }
 			using = fontsize_large
 			onclick = "[InformationPanelBar.OpenPopBrowserPanel( Country.Self )]"
+		}		
+	}
+	
+	### LAW ITEM WITH IMPOSE OPTION
+	type country_panel_law_item = button {
+		size = { 170 65 }
+		using = default_button
+
+		block "law_onclick" {
+			onclick = "[RightClickMenuManager.ShowForImposeLaw(Law.AccessSelf)]"
+		}
+
+		block "law_item_tooltip" {
+			tooltipwidget = {
+				FancyTooltip_LawWithCountryContext = {
+					blockoverride "text_before" {
+		   				visible = "[Not(GreaterThan_int32(Law.GetGroup.GetNumImposeOptions( Country.Self ), '(int32)0'))]"
+		   				margin_bottom = 15
+		   				text =  "IMPOSE_LAW_NO_OPTIONS"
+		   			}
+				}
+			}
+		}
+
+		hbox = {
+			layoutpolicy_horizontal = expanding
+			spacing = 5
+			margin = { 8 0 }
+		
+			law_icon = {
+				size = { 40 40 }
+			}
+
+			vbox = {
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+
+				expand = {}
+
+				textbox = {
+					layoutpolicy_horizontal = expanding
+					align = nobaseline
+					minimumsize = { -1 20 }
+					using = fontsize_small
+					multiline = yes
+					text = "[Law.GetGroup.GetNameNoFormatting]"
+				}
+
+				textbox = {
+					layoutpolicy_horizontal = expanding
+					minimumsize = { -1 20 }
+					align = nobaseline
+					fontsize_min = 10
+					multiline = yes
+					text = "[Law.GetNameNoFormatting]"
+				}
+
+				expand = {}
+			}
+		}
+
+		block "law_highlighting" {}
+		
+		### Number of impose options available shows in the corner of the button
+		textbox = {
+			block "impose_number_visibility" {
+				visible = "[GreaterThan_int32(Law.GetGroup.GetNumImposeOptions( Country.Self ), '(int32)0')]"
+			}
+
+			parentanchor = top|right
+			position = { -5 0 }
+			autoresize = yes
+			align = right|nobaseline
+			using = fontsize_small
+
+			block "impose_number_text" {
+				raw_text = "#b [Law.GetGroup.GetNumImposeOptions( Country.Self )|+]#!"
+			}
+
+			background = {
+				using = default_background
+				margin = { 8 4 }
+			}
+		}
+	}
+
+	### LAW ITEM
+	type country_panel_law_item_is_enacting = widget {
+		size = { 170 65 }
+		
+		tooltipwidget = {
+			FancyTooltip_LawWithCountryContext = {
+				blockoverride "text_before" {
+   				text =  "LAW_BEING_ENACTED_DESC"
+   				margin_bottom = 15
+   			}
+			}
+		}
+
+
+		hbox = {
+			layoutpolicy_horizontal = expanding
+			spacing = 5
+			margin = { 8 0 }
+
+			icon = {
+				size = { 54 54 }
+				texture = "gfx/interface/backgrounds/round_button_bg.dds"
+				
+				round_progress_default = {
+					size = { 48 48 }
+					value = "[FixedPointToFloat(Country.GetLawEnactmentProgress)]"
+					parentanchor = center
+				}
+				
+				law_icon = {
+					size = { 45 45 }
+					parentanchor = center
+				}
+			}
+			
+			vbox = {
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+
+				expand = {}
+
+				textbox = {
+					layoutpolicy_horizontal = expanding
+					align = nobaseline
+					minimumsize = { -1 20 }
+					using = fontsize_small
+					multiline = yes
+					text = "[Law.GetGroup.GetNameNoFormatting]"
+				}
+
+				textbox = {
+					layoutpolicy_horizontal = expanding
+					minimumsize = { -1 20 }
+					align = nobaseline
+					fontsize_min = 10
+					multiline = yes
+					text = "[Law.GetNameNoFormatting]"
+				}
+
+				expand = {}
+			}
+		}
+
+		background = { 
+			using = paper_bg 
+		}
+
+		icon = {
+			using = highlighted_square_selection
+		}
+	}
+	
+	### INSTITUTION ITEM
+	type country_panel_institution_item = widget {
+		size = { @panel_width_minus_10 40 }
+		
+		background = {		
+			using = entry_bg	
+		}		
+
+		institution_icon = {
+			size = { 50 50 }
+			position = { 5 0 }
+			parentanchor = vcenter
+			alwaystransparent = yes
+		}										
+		
+		textbox = {
+			parentanchor = vcenter
+			position = { 60 0 }
+			autoresize = yes
+			align = left|nobaseline
+			using = fontsize_large
+			text = "[Institution.GetName]"
+			alwaystransparent = yes
+		}		
+		
+		textbox = {
+			position = { -10 0 }
+			autoresize = yes
+			parentanchor = right|vcenter
+			align = right|nobaseline
+			elide = right
+			using = fontsize_large
+			text = "INSTITUTION_INVESTMENT_LEVEL"
+		}
+
+		widget = {
+			size = { 100% 100% }
+			
+			tooltipwidget = {
+				FancyTooltip_Institution = {}
+			}
 		}		
 	}
 }

@@ -1,231 +1,2686 @@
-﻿@tooltip_max_width = 550 #copied from tooltip.gui
+﻿# GORA UI+ — Trade Partners 0.1.4 Beautified Tooltips & FancyTooltip_Market
+# ─────────────────────────────────────────────────────────────────────────────
+# Vanilla 1.15.2 baseline for FancyTooltip_Market: gui/custom_tooltip.gui.
+# Uses 100% verbatim vanilla & upstream Trade Partners localization keys
+# (zero custom terminology), exact monetary (£) Trade Deficit/Surplus via
+# trigger binary search, unified route orientation, and auto-resizing
+# scrollable goods breakdown tables.
+# ─────────────────────────────────────────────────────────────────────────────
 
-@tooltip_fixed_width = 500 #for 2 column layouts etc, since max_width is quite wide
-@tooltip_fixed_column_width = 245 #tooltip_fixed_width/2 - 10/2
+@tooltip_max_width = 550 # copied from tooltip.gui
+
+@tooltip_fixed_width = 500
+@tooltip_fixed_column_width = 245
 @tooltip_fixed_column_width_minus_40 = 205
 @tooltip_fixed_column_width_minus_16 = 229
 
+@tp_inner_width = 432
+@tp_row_width = 418
+
 types TooltipTypes {
 
-type RegularTooltip_MarketWorldMarketImportPartners = RegularTooltip {
+	# =========================================================================
+	# 0A. Export Partners Chart Heading Interactive FancyTooltip
+	# =========================================================================
+	type RegularTooltip_TradePartnersExportHeader = FancyTooltipWidgetType {
+		blockoverride "name" {
+			text = "[Market.GetNameNoFormatting]"
+			alwaystransparent = no
+			tooltipwidget = {
+				FancyTooltip_Market = {}
+			}
+		}
+
+		blockoverride "type" {
+			alpha = 0.92
+			raw_text = "#white [Localize('TRADE_PARTNERS_EXPORT_PARTNERS_GRAPH_TITLE')]#!"
+		}
+
+		blockoverride "color" {
+			color = "[Market.GetOwner.GetMapColor]"
+		}
+
+		blockoverride "replace_icon" {
+			small_flag = {
+				parentanchor = center
+				datacontext = "[Market.GetOwner]"
+			}
+		}
+
+		blockoverride "icon_background_texture" {}
+		blockoverride "icon_frame" {}
+
+		blockoverride "tooltip_icon_position" {
+			position = { 11 3 }
+		}
+
+		blockoverride "header_text_margin_left" {
+			margin_left = 72
+		}
+
+		blockoverride "go_to_button_visibility" {
+			visible = no
+		}
+
+		blockoverride "text" {
+			visible = no
+		}
+
 		blockoverride "tooltip_content_after" {
 			flowcontainer = {
 				direction = vertical
-				margin_top = 10
+				spacing = 8
 
-				custom_tooltip_textbox = {
-					text = "TRADE_PARTNERS_IMPORTED_GOODS_TITLE"
+				# Live Market Export Summary Card
+				flowcontainer = {
+					using = tooltip_segment_background
+					direction = vertical
+					margin = { 12 8 }
+					spacing = 4
+
+					widget = {
+						size = { 380 22 }
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							spacing = 6
+
+							textbox = {
+								autoresize = yes
+								align = left|nobaseline
+								text = "TRADE_PARTNERS_HEADER_EXPORTS_LABEL"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+
+							textbox = {
+								autoresize = yes
+								align = right|nobaseline
+								raw_text = "#gold_value [Market.GetTotalExportedAmount|D]#!"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+						}
+					}
+
+					widget = {
+						size = { 380 20 }
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							spacing = 6
+
+							textbox = {
+								autoresize = yes
+								align = left|nobaseline
+								using = fontsize_small
+								alpha = 0.90
+								text = "TRADE_PARTNERS_EXPORT_PARTNERS_GRAPH_TITLE"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+
+							textbox = {
+								autoresize = yes
+								align = right|nobaseline
+								using = fontsize_small
+								raw_text = "#v [GetDataModelSize(Market.GetOwner.MakeScope.GetList('trade_partners_all_markets_export'))]#!"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+						}
+					}
+
+					divider_clean = {
+						size = { 380 2 }
+						alpha = 0.4
+					}
+
+					# Interactive Market Trade Surplus/Deficit row (hovers to vanilla breakdown!)
+					widget = {
+						size = { 380 22 }
+						alwaystransparent = no
+						tooltip = "TRADE_SURPLUS_TOOLTIP"
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							spacing = 6
+
+							textbox = {
+								autoresize = yes
+								align = left|nobaseline
+								using = fontsize_small
+								alpha = 0.95
+								text = "TRADE_DEFICIT_SURPLUS"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+
+							textbox = {
+								autoresize = yes
+								align = right|nobaseline
+								raw_text = "#tooltippable [Market.GetTradeSurplus|=v%0]#!"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+						}
+					}
 				}
 
-				# in scope here: 
-				# Scope.GetMarket -> Other market
-				# Market -> Player's market
+				# Interactive Formula & Concepts Card
 				flowcontainer = {
-					datamodel = "[Scope.GetMarket.GetExports]"
-					margin_top = 5
-					wrap_count = 4
+					using = tooltip_segment_background
+					direction = vertical
+					margin = { 12 8 }
 
-					item = {
-						flowcontainer = {
-							visible = "[GreaterThanOrEqualTo_CFixedPoint(Scope.GetMarket.GetExportedAmountToMarket(Market.Self, Goods.Self), '(CFixedPoint)1')]"
-
-							background = {
-								using = entry_bg_simple
-							}
-							margin = { 8 6 }
-							spacing = 7
-
-							icon = {
-								size = { 23 23 }
-								texture = "[Goods.GetTexture]"
-								parentanchor = vcenter
-							}
-
-							custom_tooltip_textbox = {
-								text = "[Scope.GetMarket.GetExportedAmountToMarket(Market.Self, Goods.Self)|v0]"
-								autoresize = yes
-								align = nobaseline
-								parentanchor = vcenter
-								minimumsize = { 50 -1 }
-								maximumsize = { 50 -1 }
-								using = elide_fontsize_min
-								multiline = no
+					custom_tooltip_textbox = {
+						maximumsize = { 380 -1 }
+						text = "TRADE_PARTNERS_EXPORT_PARTNERS_GRAPH_TOOLTIP"
+					}
+				}
 			}
+		}
+	}
 
-							tooltipwidget = {
-								FancyTooltip_Goods = {}
+	# =========================================================================
+	# 0B. Import Partners Chart Heading Interactive FancyTooltip
+	# =========================================================================
+	type RegularTooltip_TradePartnersImportHeader = FancyTooltipWidgetType {
+		blockoverride "name" {
+			text = "[Market.GetNameNoFormatting]"
+			alwaystransparent = no
+			tooltipwidget = {
+				FancyTooltip_Market = {}
+			}
+		}
+
+		blockoverride "type" {
+			alpha = 0.92
+			raw_text = "#white [Localize('TRADE_PARTNERS_IMPORT_PARTNERS_GRAPH_TITLE')]#!"
+		}
+
+		blockoverride "color" {
+			color = "[Market.GetOwner.GetMapColor]"
+		}
+
+		blockoverride "replace_icon" {
+			small_flag = {
+				parentanchor = center
+				datacontext = "[Market.GetOwner]"
+			}
+		}
+
+		blockoverride "icon_background_texture" {}
+		blockoverride "icon_frame" {}
+
+		blockoverride "tooltip_icon_position" {
+			position = { 11 3 }
+		}
+
+		blockoverride "header_text_margin_left" {
+			margin_left = 72
+		}
+
+		blockoverride "go_to_button_visibility" {
+			visible = no
+		}
+
+		blockoverride "text" {
+			visible = no
+		}
+
+		blockoverride "tooltip_content_after" {
+			flowcontainer = {
+				direction = vertical
+				spacing = 8
+
+				# Live Market Import Summary Card
+				flowcontainer = {
+					using = tooltip_segment_background
+					direction = vertical
+					margin = { 12 8 }
+					spacing = 4
+
+					widget = {
+						size = { 380 22 }
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							spacing = 6
+
+							textbox = {
+								autoresize = yes
+								align = left|nobaseline
+								text = "TRADE_PARTNERS_HEADER_IMPORTS_LABEL"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
 							}
+
+							widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+
+							textbox = {
+								autoresize = yes
+								align = right|nobaseline
+								raw_text = "#blue_value [Market.GetTotalImportedAmount|D]#!"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+						}
+					}
+
+					widget = {
+						size = { 380 20 }
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							spacing = 6
+
+							textbox = {
+								autoresize = yes
+								align = left|nobaseline
+								using = fontsize_small
+								alpha = 0.90
+								text = "TRADE_PARTNERS_IMPORT_PARTNERS_GRAPH_TITLE"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+
+							textbox = {
+								autoresize = yes
+								align = right|nobaseline
+								using = fontsize_small
+								raw_text = "#v [GetDataModelSize(Market.GetOwner.MakeScope.GetList('trade_partners_all_markets_import'))]#!"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+						}
+					}
+
+					divider_clean = {
+						size = { 380 2 }
+						alpha = 0.4
+					}
+
+					# Interactive Market Trade Surplus/Deficit row (hovers to vanilla breakdown!)
+					widget = {
+						size = { 380 22 }
+						alwaystransparent = no
+						tooltip = "TRADE_SURPLUS_TOOLTIP"
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							spacing = 6
+
+							textbox = {
+								autoresize = yes
+								align = left|nobaseline
+								using = fontsize_small
+								alpha = 0.95
+								text = "TRADE_DEFICIT_SURPLUS"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+
+							textbox = {
+								autoresize = yes
+								align = right|nobaseline
+								raw_text = "#tooltippable [Market.GetTradeSurplus|=v%0]#!"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+						}
+					}
+				}
+
+				# Interactive Formula & Concepts Card
+				flowcontainer = {
+					using = tooltip_segment_background
+					direction = vertical
+					margin = { 12 8 }
+
+					custom_tooltip_textbox = {
+						maximumsize = { 380 -1 }
+						text = "TRADE_PARTNERS_IMPORT_PARTNERS_GRAPH_TOOLTIP"
+					}
+				}
+			}
+		}
+	}
+
+	# =========================================================================
+	# 0C. Nested Bilateral Import Value (£) Per-Good Derivation Tooltip
+	#     Shows exact Amount × World Market Price = Value for every imported good
+	# =========================================================================
+	type RegularTooltip_TradePartnersImportValueBreakdown = FancyTooltipWidgetType {
+		blockoverride "name" {
+			text = "IMPORTS"
+		}
+
+		blockoverride "type" {
+			datacontext = "[Scope.GetMarket]"
+			alpha = 0.92
+			raw_text = "#white [Market.GetNameNoFormatting]#!"
+			alwaystransparent = no
+			tooltipwidget = {
+				FancyTooltip_Market = {}
+			}
+		}
+
+		blockoverride "color" {
+			color = "[Scope.GetMarket.GetOwner.GetMapColor]"
+		}
+
+		blockoverride "replace_icon" {
+			icon = {
+				parentanchor = center
+				size = { 36 36 }
+				texture = "gfx/interface/icons/trade_icons/imports.dds"
+			}
+		}
+
+		blockoverride "icon_background_texture" {}
+		blockoverride "icon_frame" {}
+
+		blockoverride "tooltip_icon_position" {
+			position = { 10 8 }
+		}
+
+		blockoverride "header_text_margin_left" {
+			margin_left = 62
+		}
+
+		blockoverride "go_to_button_visibility" {
+			visible = no
+		}
+
+		blockoverride "text" {
+			visible = no
+		}
+
+		blockoverride "tooltip_content_after" {
+			flowcontainer = {
+				direction = vertical
+				spacing = 6
+
+				flowcontainer = {
+					using = tooltip_segment_background
+					direction = vertical
+					margin = { 12 8 }
+					spacing = 4
+
+					widget = {
+						size = { @tp_inner_width 22 }
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							spacing = 4
+
+							container = {
+								datacontext = "[Market]"
+								alwaystransparent = no
+								tooltipwidget = { FancyTooltip_Market = {} }
+
+								textbox = {
+									autoresize = yes
+									align = left|nobaseline
+									elide = right
+									max_width = 152
+									raw_text = "[Market.GetOwner.GetFlagTextIcon] #header [Market.GetNameNoFormatting]#!"
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+							}
+
+							textbox = {
+								autoresize = yes
+								align = center|nobaseline
+								raw_text = "#gold ◀#!"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							container = {
+								datacontext = "[Scope.GetMarket]"
+								alwaystransparent = no
+								tooltipwidget = { FancyTooltip_Market = {} }
+
+								textbox = {
+									autoresize = yes
+									align = left|nobaseline
+									elide = right
+									max_width = 152
+									raw_text = "[Market.GetOwner.GetFlagTextIcon] #header [Market.GetNameNoFormatting]#!"
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+							}
+
+							widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+
+							textbox = {
+								autoresize = yes
+								align = right|nobaseline
+								raw_text = "@money!#v [TradePartnersGetImportValueFrom(Market, Scope.GetMarket)|D]#!"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+						}
+					}
+
+					custom_tooltip_textbox = {
+						maximumsize = { @tp_inner_width -1 }
+						using = fontsize_small
+						alpha = 0.82
+						text = "TRADE_PARTNERS_VALUE_FORMULA_NOTE"
+					}
+
+					# Aligned manifest column header
+					widget = {
+						visible = "[TradePartnersIsImporterFrom(Market, Scope.GetMarket)]"
+						size = { @tp_inner_width 18 }
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							margin_left = 8
+							margin_right = 22
+							spacing = 6
+
+							textbox = {
+								layoutpolicy_horizontal = expanding
+								align = left|nobaseline
+								using = fontsize_small
+								alpha = 0.80
+								text = "MARKET_FILTER_IMPORTS"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							textbox = {
+								size = { 60 18 }
+								align = right|nobaseline
+								using = fontsize_small
+								alpha = 0.80
+								text = "AMOUNT"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							textbox = {
+								size = { 68 18 }
+								align = right|nobaseline
+								using = fontsize_small
+								alpha = 0.80
+								text = "MARKET_PRICE"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							textbox = {
+								size = { 78 18 }
+								align = right|nobaseline
+								using = fontsize_small
+								alpha = 0.80
+								text = "MARKET_TRADED_AMOUNT"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+						}
+					}
+
+					divider_clean = {
+						size = { @tp_inner_width 2 }
+					}
+
+					textbox = {
+						visible = "[Not(TradePartnersIsImporterFrom(Market, Scope.GetMarket))]"
+						size = { @tp_inner_width 24 }
+						align = center|nobaseline
+						using = empty_state_text_properties
+						text = "NONE"
+					}
+
+					scrollarea = {
+						visible = "[TradePartnersIsImporterFrom(Market, Scope.GetMarket)]"
+						autoresizescrollarea = yes
+						maximumsize = { @tp_inner_width 300 }
+						scrollbarpolicy_horizontal = always_off
+						alwaystransparent = no
+
+						scrollwidget = {
+							flowcontainer = {
+								datamodel = "[Scope.GetMarket.GetExports]"
+								direction = vertical
+								ignoreinvisible = yes
+								spacing = 2
+
+								item = {
+									widget = {
+										visible = "[GreaterThanOrEqualTo_CFixedPoint(Scope.GetMarket.GetExportedAmountToMarket(Market.Self, Goods.Self), '(CFixedPoint)1')]"
+										size = { @tp_row_width 26 }
+										alwaystransparent = no
+
+										background = {
+											using = entry_bg_simple
+											alpha = 0.85
+										}
+
+										tooltipwidget = {
+											FancyTooltip_Goods = {}
+										}
+
+										hbox = {
+											layoutpolicy_horizontal = expanding
+											layoutpolicy_vertical = expanding
+											margin = { 8 2 }
+											spacing = 6
+
+											icon = {
+												size = { 20 20 }
+												texture = "[Goods.GetTexture]"
+											}
+
+											textbox = {
+												layoutpolicy_horizontal = expanding
+												size = { 0 20 }
+												align = left|nobaseline
+												elide = right
+												using = fontsize_small
+												text = "[Goods.GetNameNoFormatting]"
+												fonttintcolor = "[TooltipInfo.GetTintColor]"
+											}
+
+											textbox = {
+												size = { 60 20 }
+												align = right|nobaseline
+												using = fontsize_small
+												alwaystransparent = no
+												tooltip = "TRADE_PARTNERS_GOODS_IMPORT_AMOUNT_BREAKDOWN"
+												raw_text = "#v [Scope.GetMarket.GetExportedAmountToMarket(Market.Self, Goods.Self)|0D]#!"
+												fonttintcolor = "[TooltipInfo.GetTintColor]"
+											}
+
+											textbox = {
+												size = { 68 20 }
+												align = right|nobaseline
+												using = fontsize_small
+												alwaystransparent = no
+												tooltip = "[Goods.GetWorldMarketBasePriceDesc]"
+												raw_text = "@money!#v [Goods.GetWorldMarketBasePrice|1]#!"
+												fonttintcolor = "[TooltipInfo.GetTintColor]"
+											}
+
+											textbox = {
+												size = { 78 20 }
+												align = right|nobaseline
+												using = fontsize_small
+												alwaystransparent = no
+												tooltip = "TRADE_PARTNERS_GOODS_IMPORT_VALUE_BREAKDOWN"
+												raw_text = "@money!#v [Multiply_CFixedPoint(Scope.GetMarket.GetExportedAmountToMarket(Market.Self, Goods.Self), Goods.GetWorldMarketBasePrice)|D]#!"
+												fonttintcolor = "[TooltipInfo.GetTintColor]"
+											}
+										}
+									}
+								}
+							}
+						}
+
+						scrollbar_vertical = {
+							using = vertical_scrollbar
 						}
 					}
 				}
 			}
 		}
-}
-type RegularTooltip_MarketWorldMarketExportPartners = RegularTooltip {
+	}
+
+	# =========================================================================
+	# 0D. Nested Bilateral Export Value (£) Per-Good Derivation Tooltip
+	#     Shows exact Amount × World Market Price = Value for every exported good
+	# =========================================================================
+	type RegularTooltip_TradePartnersExportValueBreakdown = FancyTooltipWidgetType {
+		blockoverride "name" {
+			text = "EXPORTS"
+		}
+
+		blockoverride "type" {
+			datacontext = "[Scope.GetMarket]"
+			alpha = 0.92
+			raw_text = "#white [Market.GetNameNoFormatting]#!"
+			alwaystransparent = no
+			tooltipwidget = {
+				FancyTooltip_Market = {}
+			}
+		}
+
+		blockoverride "color" {
+			color = "[Scope.GetMarket.GetOwner.GetMapColor]"
+		}
+
+		blockoverride "replace_icon" {
+			icon = {
+				parentanchor = center
+				size = { 36 36 }
+				texture = "gfx/interface/icons/trade_icons/exports.dds"
+			}
+		}
+
+		blockoverride "icon_background_texture" {}
+		blockoverride "icon_frame" {}
+
+		blockoverride "tooltip_icon_position" {
+			position = { 10 8 }
+		}
+
+		blockoverride "header_text_margin_left" {
+			margin_left = 62
+		}
+
+		blockoverride "go_to_button_visibility" {
+			visible = no
+		}
+
+		blockoverride "text" {
+			visible = no
+		}
+
 		blockoverride "tooltip_content_after" {
 			flowcontainer = {
 				direction = vertical
-				margin_top = 10
+				spacing = 6
 
-				custom_tooltip_textbox = {
-					text = "TRADE_PARTNERS_EXPORTED_GOODS_TITLE"
-				}
-
-				# in scope here: 
-				# Scope.GetMarket -> Other market
-				# Market -> Player's market
 				flowcontainer = {
-					datamodel = "[Scope.GetMarket.GetImports]"
-					margin_top = 5
-					wrap_count = 4
+					using = tooltip_segment_background
+					direction = vertical
+					margin = { 12 8 }
+					spacing = 4
 
-					item = {
-						flowcontainer = {
-							visible = "[GreaterThanOrEqualTo_CFixedPoint(Scope.GetMarket.GetImportedAmountFromMarket(Market.Self, Goods.Self), '(CFixedPoint)1')]"
+					widget = {
+						size = { @tp_inner_width 22 }
 
-							background = {
-								using = entry_bg_simple
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							spacing = 4
+
+							container = {
+								datacontext = "[Market]"
+								alwaystransparent = no
+								tooltipwidget = { FancyTooltip_Market = {} }
+
+								textbox = {
+									autoresize = yes
+									align = left|nobaseline
+									elide = right
+									max_width = 152
+									raw_text = "[Market.GetOwner.GetFlagTextIcon] #header [Market.GetNameNoFormatting]#!"
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
 							}
-							margin = { 8 6 }
-							spacing = 7
 
-							icon = {
-								size = { 23 23 }
-								texture = "[Goods.GetTexture]"
-								parentanchor = vcenter
-							}
-
-							custom_tooltip_textbox = {
-								text = "[Scope.GetMarket.GetImportedAmountFromMarket(Market.Self, Goods.Self)|v0]"
+							textbox = {
 								autoresize = yes
-								align = nobaseline
-								parentanchor = vcenter
-								minimumsize = { 50 -1 }
-								maximumsize = { 50 -1 }
-								using = elide_fontsize_min
-								multiline = no
-			}
-
-							tooltipwidget = {
-								FancyTooltip_Goods = {}
+								align = center|nobaseline
+								raw_text = "#gold ▶#!"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
 							}
+
+							container = {
+								datacontext = "[Scope.GetMarket]"
+								alwaystransparent = no
+								tooltipwidget = { FancyTooltip_Market = {} }
+
+								textbox = {
+									autoresize = yes
+									align = left|nobaseline
+									elide = right
+									max_width = 152
+									raw_text = "[Market.GetOwner.GetFlagTextIcon] #header [Market.GetNameNoFormatting]#!"
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+							}
+
+							widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+
+							textbox = {
+								autoresize = yes
+								align = right|nobaseline
+								raw_text = "@money!#v [TradePartnersGetExportValueTo(Market, Scope.GetMarket)|D]#!"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+						}
+					}
+
+					custom_tooltip_textbox = {
+						maximumsize = { @tp_inner_width -1 }
+						using = fontsize_small
+						alpha = 0.82
+						text = "TRADE_PARTNERS_VALUE_FORMULA_NOTE"
+					}
+
+					# Aligned manifest column header
+					widget = {
+						visible = "[TradePartnersIsExporterTo(Market, Scope.GetMarket)]"
+						size = { @tp_inner_width 18 }
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							margin_left = 8
+							margin_right = 22
+							spacing = 6
+
+							textbox = {
+								layoutpolicy_horizontal = expanding
+								align = left|nobaseline
+								using = fontsize_small
+								alpha = 0.80
+								text = "MARKET_FILTER_EXPORTS"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							textbox = {
+								size = { 60 18 }
+								align = right|nobaseline
+								using = fontsize_small
+								alpha = 0.80
+								text = "AMOUNT"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							textbox = {
+								size = { 68 18 }
+								align = right|nobaseline
+								using = fontsize_small
+								alpha = 0.80
+								text = "MARKET_PRICE"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							textbox = {
+								size = { 78 18 }
+								align = right|nobaseline
+								using = fontsize_small
+								alpha = 0.80
+								text = "MARKET_TRADED_AMOUNT"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+						}
+					}
+
+					divider_clean = {
+						size = { @tp_inner_width 2 }
+					}
+
+					textbox = {
+						visible = "[Not(TradePartnersIsExporterTo(Market, Scope.GetMarket))]"
+						size = { @tp_inner_width 24 }
+						align = center|nobaseline
+						using = empty_state_text_properties
+						text = "NONE"
+					}
+
+					scrollarea = {
+						visible = "[TradePartnersIsExporterTo(Market, Scope.GetMarket)]"
+						autoresizescrollarea = yes
+						maximumsize = { @tp_inner_width 300 }
+						scrollbarpolicy_horizontal = always_off
+						alwaystransparent = no
+
+						scrollwidget = {
+							flowcontainer = {
+								datamodel = "[Scope.GetMarket.GetImports]"
+								direction = vertical
+								ignoreinvisible = yes
+								spacing = 2
+
+								item = {
+									widget = {
+										visible = "[GreaterThanOrEqualTo_CFixedPoint(Scope.GetMarket.GetImportedAmountFromMarket(Market.Self, Goods.Self), '(CFixedPoint)1')]"
+										size = { @tp_row_width 26 }
+										alwaystransparent = no
+
+										background = {
+											using = entry_bg_simple
+											alpha = 0.85
+										}
+
+										tooltipwidget = {
+											FancyTooltip_Goods = {}
+										}
+
+										hbox = {
+											layoutpolicy_horizontal = expanding
+											layoutpolicy_vertical = expanding
+											margin = { 8 2 }
+											spacing = 6
+
+											icon = {
+												size = { 20 20 }
+												texture = "[Goods.GetTexture]"
+											}
+
+											textbox = {
+												layoutpolicy_horizontal = expanding
+												size = { 0 20 }
+												align = left|nobaseline
+												elide = right
+												using = fontsize_small
+												text = "[Goods.GetNameNoFormatting]"
+												fonttintcolor = "[TooltipInfo.GetTintColor]"
+											}
+
+											textbox = {
+												size = { 60 20 }
+												align = right|nobaseline
+												using = fontsize_small
+												alwaystransparent = no
+												tooltip = "TRADE_PARTNERS_GOODS_EXPORT_AMOUNT_BREAKDOWN"
+												raw_text = "#v [Scope.GetMarket.GetImportedAmountFromMarket(Market.Self, Goods.Self)|0D]#!"
+												fonttintcolor = "[TooltipInfo.GetTintColor]"
+											}
+
+											textbox = {
+												size = { 68 20 }
+												align = right|nobaseline
+												using = fontsize_small
+												alwaystransparent = no
+												tooltip = "[Goods.GetWorldMarketBasePriceDesc]"
+												raw_text = "@money!#v [Goods.GetWorldMarketBasePrice|1]#!"
+												fonttintcolor = "[TooltipInfo.GetTintColor]"
+											}
+
+											textbox = {
+												size = { 78 20 }
+												align = right|nobaseline
+												using = fontsize_small
+												alwaystransparent = no
+												tooltip = "TRADE_PARTNERS_GOODS_EXPORT_VALUE_BREAKDOWN"
+												raw_text = "@money!#v [Multiply_CFixedPoint(Scope.GetMarket.GetImportedAmountFromMarket(Market.Self, Goods.Self), Goods.GetWorldMarketBasePrice)|D]#!"
+												fonttintcolor = "[TooltipInfo.GetTintColor]"
+											}
+										}
+									}
+								}
+							}
+						}
+
+						scrollbar_vertical = {
+							using = vertical_scrollbar
 						}
 					}
 				}
 			}
 		}
-}
+	}
 
-# Called from the tooltip for another country's market 
-# Market = other country's market
-type RegularTooltip_MarketOtherMarketImportExport = RegularTooltip {
+	# =========================================================================
+	# 1. Import Partner FancyTooltip (Market imports from Scope.GetMarket)
+	# =========================================================================
+	type RegularTooltip_MarketWorldMarketImportPartners = FancyTooltipWidgetType {
+		blockoverride "name" {
+			datacontext = "[Scope.GetMarket]"
+			text = "[Market.GetNameNoFormatting]"
+			alwaystransparent = no
+			tooltipwidget = {
+				FancyTooltip_Market = {}
+			}
+		}
+
+		blockoverride "type" {
+			alpha = 0.92
+			raw_text = "#white [Localize('TRADE_PARTNERS_IMPORT_PARTNERS_GRAPH_TITLE')]#!"
+		}
+
+		blockoverride "color" {
+			color = "[Scope.GetMarket.GetOwner.GetMapColor]"
+		}
+
+		blockoverride "replace_icon" {
+			small_flag = {
+				parentanchor = center
+				datacontext = "[Scope.GetMarket.GetOwner]"
+			}
+		}
+
+		blockoverride "icon_background_texture" {}
+		blockoverride "icon_frame" {}
+
+		blockoverride "tooltip_icon_position" {
+			position = { 11 3 }
+		}
+
+		blockoverride "header_text_margin_left" {
+			margin_left = 72
+		}
+
+		blockoverride "go_to_button_visibility" {
+			visible = no
+		}
+
+		blockoverride "text" {
+			visible = no
+		}
+
 		blockoverride "tooltip_content_after" {
 			flowcontainer = {
 				direction = vertical
+				spacing = 8
 
-				custom_tooltip_textbox = {
-					text = "TRADE_PARTNERS_OTHER_MARKET_IMPORTS_TOOLTIP"
-				}
-				datacontext = "[Market]"
+				# --- Bilateral Monetary Overview Card ---
 				flowcontainer = {
-					datamodel = "[Market.GetImports]"
-					margin_top = 5
-					wrap_count = 4
+					using = tooltip_segment_background
+					direction = vertical
+					margin = { 12 10 }
+					spacing = 4
 
-					item = {
-						flowcontainer = {
-							visible = "[GreaterThanOrEqualTo_CFixedPoint(Market.GetImportedAmountFromMarket(GetPlayer.GetMarket.Self, Goods.Self), '(CFixedPoint)1')]"
+					# Interactive Route banner: hover either market for FancyTooltip_Market (pure tooltip, no button)
+					widget = {
+						size = { @tp_inner_width 24 }
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							spacing = 4
+
+							container = {
+								datacontext = "[Market]"
+								alwaystransparent = no
+								tooltipwidget = { FancyTooltip_Market = {} }
+
+								textbox = {
+									autoresize = yes
+									margin = { 2 1 }
+									align = left|nobaseline
+									elide = right
+									max_width = 186
+									raw_text = "[Market.GetOwner.GetFlagTextIcon] #header [Market.GetNameNoFormatting]#!"
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+							}
+
+							textbox = {
+								autoresize = yes
+								align = center|nobaseline
+								raw_text = "#gold ◀#!"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							container = {
+								datacontext = "[Scope.GetMarket]"
+								alwaystransparent = no
+								tooltipwidget = { FancyTooltip_Market = {} }
+
+								textbox = {
+									autoresize = yes
+									margin = { 2 1 }
+									align = left|nobaseline
+									elide = right
+									max_width = 186
+									raw_text = "[Market.GetOwner.GetFlagTextIcon] #header [Market.GetNameNoFormatting]#!"
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+							}
+
+							widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+						}
+					}
+
+					divider_clean = {
+						size = { @tp_inner_width 2 }
+						alpha = 0.4
+					}
+
+					# Primary monetary KPI row (concepts hoverable; £ values open full per-good derivation tooltips!)
+					widget = {
+						size = { @tp_inner_width 26 }
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							spacing = 5
+
+							textbox = {
+								autoresize = yes
+								align = left|nobaseline
+								text = "TRADE_PARTNERS_KPI_IMPORTS_LABEL"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							textbox = {
+								autoresize = yes
+								align = left|nobaseline
+								using = fontsize_large
+								alwaystransparent = no
+								raw_text = "@money!#tooltippable [TradePartnersGetImportValueFrom(Market, Scope.GetMarket)|vD]#!"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+
+								tooltipwidget = {
+									RegularTooltip_TradePartnersImportValueBreakdown = {}
+								}
+							}
+
+							widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+
+							textbox = {
+								autoresize = yes
+								align = right|nobaseline
+								alpha = "[Select_float(TradePartnersIsExporterTo(Market, Scope.GetMarket), '(float)1.0', '(float)0.55')]"
+								text = "TRADE_PARTNERS_KPI_EXPORTS_LABEL"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							textbox = {
+								autoresize = yes
+								align = right|nobaseline
+								using = fontsize_large
+								alwaystransparent = no
+								alpha = "[Select_float(TradePartnersIsExporterTo(Market, Scope.GetMarket), '(float)1.0', '(float)0.55')]"
+								raw_text = "@money!#tooltippable [TradePartnersGetExportValueTo(Market, Scope.GetMarket)|vD]#!"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+
+								tooltipwidget = {
+									RegularTooltip_TradePartnersExportValueBreakdown = {}
+								}
+							}
+						}
+					}
+
+					# Secondary volume & share row (each side hoverable for exact Partner ÷ Market Total ratio breakdown!)
+					widget = {
+						size = { @tp_inner_width 18 }
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							spacing = 5
+
+							flowcontainer = {
+								spacing = 4
+								alwaystransparent = no
+								tooltip = "TRADE_PARTNERS_IMPORT_SHARE_BREAKDOWN"
+
+								textbox = {
+									autoresize = yes
+									align = left|nobaseline
+									using = fontsize_small
+									alpha = 0.90
+									raw_text = "#title [Localize('AMOUNT')]:#! #v [TradePartnersGetImportsFrom(Market, Scope.GetMarket)|0D]#!"
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+
+								textbox = {
+									visible = "[GreaterThan_CFixedPoint(Market.GetTotalImportedAmount, '(CFixedPoint)0')]"
+									autoresize = yes
+									align = left|nobaseline
+									using = fontsize_small
+									raw_text = "#blue_value (#tooltippable [Divide_CFixedPoint(TradePartnersGetImportsFrom(Market, Scope.GetMarket), Max_CFixedPoint(Market.GetTotalImportedAmount, '(CFixedPoint)1'))|%1]#!)#!"
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+							}
+
+							widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+
+							flowcontainer = {
+								spacing = 4
+								alwaystransparent = no
+								tooltip = "TRADE_PARTNERS_EXPORT_SHARE_BREAKDOWN"
+
+								textbox = {
+									autoresize = yes
+									align = right|nobaseline
+									using = fontsize_small
+									alpha = "[Select_float(TradePartnersIsExporterTo(Market, Scope.GetMarket), '(float)0.90', '(float)0.50')]"
+									raw_text = "#title [Localize('AMOUNT')]:#! #v [TradePartnersGetExportsTo(Market, Scope.GetMarket)|0D]#!"
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+
+								textbox = {
+									visible = "[And(TradePartnersIsExporterTo(Market, Scope.GetMarket), GreaterThan_CFixedPoint(Market.GetTotalExportedAmount, '(CFixedPoint)0'))]"
+									autoresize = yes
+									align = right|nobaseline
+									using = fontsize_small
+									raw_text = "#gold_value (#tooltippable [Divide_CFixedPoint(TradePartnersGetExportsTo(Market, Scope.GetMarket), Max_CFixedPoint(Market.GetTotalExportedAmount, '(CFixedPoint)1'))|%1]#!)#!"
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+							}
+						}
+					}
+
+					# Victorian bilateral monetary bar with 50% center tick & hover share breakdown
+					widget = {
+						size = { @tp_inner_width 20 }
+						alwaystransparent = no
+						tooltip = "TRADE_PARTNERS_BAR_BREAKDOWN"
+
+						widget = {
+							parentanchor = vcenter
+							size = { @tp_inner_width 12 }
 
 							background = {
-								using = entry_bg_simple
+								using = dark_area
+								alpha = 0.85
 							}
-							margin = { 8 6 }
-							spacing = 7
+
+							hbox = {
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								margin = { 2 2 }
+
+								hbox = {
+									visible = "[GreaterThan_CFixedPoint(TradePartnersGetImportValueFrom(Market, Scope.GetMarket), '(CFixedPoint)0')]"
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									layoutstretchfactor_horizontal = "[FixedPointToInt(Max_CFixedPoint('(CFixedPoint)1', TradePartnersGetImportValueFrom(Market, Scope.GetMarket)))]"
+
+									background = {
+										texture = "gfx/interface/tooltip/stacked_barchart_small_item.dds"
+										color = { 0.36 0.60 0.72 1 }
+										spriteType = Corneredstretched
+										spriteborder = { 2 2 }
+
+										modify_texture = {
+											texture = "gfx/interface/textures/velvet_texture.dds"
+											spriteType = Corneredtiled
+											texture_density = 2
+											blend_mode = overlay
+											alpha = 0.25
+										}
+									}
+								}
+
+								hbox = {
+									visible = "[GreaterThan_CFixedPoint(TradePartnersGetExportValueTo(Market, Scope.GetMarket), '(CFixedPoint)0')]"
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									layoutstretchfactor_horizontal = "[FixedPointToInt(Max_CFixedPoint('(CFixedPoint)1', TradePartnersGetExportValueTo(Market, Scope.GetMarket)))]"
+
+									background = {
+										texture = "gfx/interface/tooltip/stacked_barchart_small_item.dds"
+										color = { 0.84 0.60 0.30 1 }
+										spriteType = Corneredstretched
+										spriteborder = { 2 2 }
+
+										modify_texture = {
+											texture = "gfx/interface/textures/velvet_texture.dds"
+											spriteType = Corneredtiled
+											texture_density = 2
+											blend_mode = overlay
+											alpha = 0.25
+										}
+									}
+								}
+							}
 
 							icon = {
-								size = { 23 23 }
-								texture = "[Goods.GetTexture]"
-								parentanchor = vcenter
+								size = { 100% 100% }
+								texture = "gfx/interface/progressbar/progressbar_frame.dds"
+								spriteType = Corneredstretched
+								spriteborder = { 6 6 }
+								texture_density = 2
 							}
+						}
 
-							custom_tooltip_textbox = {
-								text = "[Market.GetImportedAmountFromMarket(GetPlayer.GetMarket.Self, Goods.Self)|v0]"
+						# 50% balance center benchmark tick mark
+						icon = {
+							parentanchor = center
+							size = { 2 16 }
+							texture = "gfx/interface/progressbar/bar_horizontal_marker_line.dds"
+							color = { 1.0 0.94 0.78 1 }
+							alpha = 0.92
+							alwaystransparent = yes
+						}
+					}
+
+					# Dynamic Trade Surplus / Trade Deficit row with hover subtraction formula
+					widget = {
+						size = { @tp_inner_width 20 }
+						alwaystransparent = no
+						tooltip = "TRADE_PARTNERS_BALANCE_BREAKDOWN"
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							spacing = 4
+
+							textbox = {
 								autoresize = yes
-								align = nobaseline
-								parentanchor = vcenter
-								minimumsize = { 50 -1 }
-								maximumsize = { 50 -1 }
-								using = elide_fontsize_min
-								multiline = no
+								align = left|nobaseline
+								raw_text = "[Market.GetOwner.GetFlagTextIcon]"
 							}
 
-							tooltipwidget = {
-								FancyTooltip_Goods = {}
+							textbox = {
+								visible = "[GreaterThan_CFixedPoint(TradePartnersGetExportValueTo(Market, Scope.GetMarket), TradePartnersGetImportValueFrom(Market, Scope.GetMarket))]"
+								autoresize = yes
+								align = left|nobaseline
+								alpha = 0.95
+								text = "TRADE_PARTNERS_TRADE_SURPLUS"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							textbox = {
+								visible = "[LessThan_CFixedPoint(TradePartnersGetExportValueTo(Market, Scope.GetMarket), TradePartnersGetImportValueFrom(Market, Scope.GetMarket))]"
+								autoresize = yes
+								align = left|nobaseline
+								alpha = 0.95
+								text = "TRADE_PARTNERS_TRADE_DEFICIT"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							textbox = {
+								visible = "[EqualTo_CFixedPoint(TradePartnersGetExportValueTo(Market, Scope.GetMarket), TradePartnersGetImportValueFrom(Market, Scope.GetMarket))]"
+								autoresize = yes
+								align = left|nobaseline
+								alpha = 0.95
+								text = "TRADE_DEFICIT_SURPLUS"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+
+							textbox = {
+								autoresize = yes
+								align = right|nobaseline
+								raw_text = "@money!#tooltippable [Subtract_CFixedPoint(TradePartnersGetExportValueTo(Market, Scope.GetMarket), TradePartnersGetImportValueFrom(Market, Scope.GetMarket))|=+D]#!"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
 							}
 						}
 					}
 				}
-			}			
-			flowcontainer = {
-				direction = vertical
-				margin_top = 10
-				custom_tooltip_textbox = {
-					text = "TRADE_PARTNERS_OTHER_MARKET_EXPORTS_TOOLTIP"
-				}
-				datacontext = "[Market]"
+
+				# --- Imported Goods Breakdown Table (clickable rows + cell-level formula tooltips) ---
 				flowcontainer = {
-					datamodel = "[Market.GetExports]"
-					margin_top = 5
-					wrap_count = 4
+					using = tooltip_segment_background
+					direction = vertical
+					margin = { 12 8 }
+					spacing = 4
 
-					item = {
-						flowcontainer = {
-							visible = "[GreaterThanOrEqualTo_CFixedPoint(Market.GetExportedAmountToMarket(GetPlayer.GetMarket.Self, Goods.Self), '(CFixedPoint)1')]"
+					widget = {
+						size = { @tp_inner_width 22 }
 
-							background = {
-								using = entry_bg_simple
-							}
-							margin = { 8 6 }
-							spacing = 7
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							margin_left = 8
+							margin_right = 22
+							spacing = 6
 
 							icon = {
-								size = { 23 23 }
-								texture = "[Goods.GetTexture]"
-								parentanchor = vcenter
+								size = { 20 20 }
+								texture = "gfx/interface/icons/trade_icons/imports.dds"
 							}
 
-							custom_tooltip_textbox = {
-								text = "[Market.GetExportedAmountToMarket(GetPlayer.GetMarket.Self, Goods.Self)|v0]"
-								autoresize = yes
-								align = nobaseline
-								parentanchor = vcenter
-								minimumsize = { 50 -1 }
-								maximumsize = { 50 -1 }
-								using = elide_fontsize_min
-								multiline = no
+							textbox = {
+								layoutpolicy_horizontal = expanding
+								align = left|nobaseline
+								default_format = "#header"
+								text = "MARKET_FILTER_IMPORTS"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
 							}
 
-							tooltipwidget = {
-								FancyTooltip_Goods = {}
+							widget = {
+								size = { 22 1 }
 							}
+
+							textbox = {
+								size = { 68 20 }
+								align = right|nobaseline
+								using = fontsize_small
+								alpha = 0.85
+								text = "AMOUNT"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							textbox = {
+								size = { 102 20 }
+								align = right|nobaseline
+								using = fontsize_small
+								alpha = 0.85
+								text = "MARKET_TRADED_AMOUNT"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+						}
+					}
+
+					divider_clean = {
+						size = { @tp_inner_width 2 }
+					}
+
+					scrollarea = {
+						autoresizescrollarea = yes
+						maximumsize = { @tp_inner_width 380 }
+						scrollbarpolicy_horizontal = always_off
+						alwaystransparent = no
+
+						scrollwidget = {
+							flowcontainer = {
+								datamodel = "[Scope.GetMarket.GetExports]"
+								direction = vertical
+								ignoreinvisible = yes
+								spacing = 2
+
+								item = {
+									widget = {
+										visible = "[GreaterThanOrEqualTo_CFixedPoint(Scope.GetMarket.GetExportedAmountToMarket(Market.Self, Goods.Self), '(CFixedPoint)1')]"
+										size = { @tp_row_width 28 }
+										alwaystransparent = no
+
+										background = {
+											using = entry_bg_simple
+											alpha = 0.85
+										}
+
+										tooltipwidget = {
+											FancyTooltip_Goods = {}
+										}
+
+										hbox = {
+											layoutpolicy_horizontal = expanding
+											layoutpolicy_vertical = expanding
+											margin = { 8 2 }
+											spacing = 6
+
+											icon = {
+												size = { 22 22 }
+												texture = "[Goods.GetTexture]"
+											}
+
+											textbox = {
+												layoutpolicy_horizontal = expanding
+												size = { 0 22 }
+												align = left|nobaseline
+												elide = right
+												fontsize_min = 12
+												text = "[Goods.GetNameNoFormatting]"
+												fonttintcolor = "[TooltipInfo.GetTintColor]"
+											}
+
+											textbox = {
+												size = { 22 22 }
+												align = center|nobaseline
+												alwaystransparent = no
+												tooltip = "[Goods.GetWorldMarketBasePriceDesc]"
+												raw_text = "[Goods.GetCompareIconAgainstBasePriceNoFormatting(Goods.GetWorldMarketBasePrice)]"
+											}
+
+											textbox = {
+												size = { 68 22 }
+												align = right|nobaseline
+												using = elide_fontsize_min
+												alwaystransparent = no
+												tooltip = "TRADE_PARTNERS_GOODS_IMPORT_AMOUNT_BREAKDOWN"
+												raw_text = "#v [Scope.GetMarket.GetExportedAmountToMarket(Market.Self, Goods.Self)|0D]#!"
+												fonttintcolor = "[TooltipInfo.GetTintColor]"
+											}
+
+											textbox = {
+												size = { 102 22 }
+												align = right|nobaseline
+												using = elide_fontsize_min
+												alwaystransparent = no
+												tooltip = "TRADE_PARTNERS_GOODS_IMPORT_VALUE_BREAKDOWN"
+												raw_text = "@money!#v [Multiply_CFixedPoint(Scope.GetMarket.GetExportedAmountToMarket(Market.Self, Goods.Self), Goods.GetWorldMarketBasePrice)|D]#!"
+												fonttintcolor = "[TooltipInfo.GetTintColor]"
+											}
+										}
+									}
+								}
+							}
+						}
+
+						scrollbar_vertical = {
+							using = vertical_scrollbar
 						}
 					}
 				}
 			}
 		}
-}
+	}
 
-type FancyTooltip_Market = FancyTooltipWidgetType {
+	# =========================================================================
+	# 2. Export Partner FancyTooltip (Market exports to Scope.GetMarket)
+	# =========================================================================
+	type RegularTooltip_MarketWorldMarketExportPartners = FancyTooltipWidgetType {
+		blockoverride "name" {
+			datacontext = "[Scope.GetMarket]"
+			text = "[Market.GetNameNoFormatting]"
+			alwaystransparent = no
+			tooltipwidget = {
+				FancyTooltip_Market = {}
+			}
+		}
+
+		blockoverride "type" {
+			alpha = 0.92
+			raw_text = "#white [Localize('TRADE_PARTNERS_EXPORT_PARTNERS_GRAPH_TITLE')]#!"
+		}
+
+		blockoverride "color" {
+			color = "[Scope.GetMarket.GetOwner.GetMapColor]"
+		}
+
+		blockoverride "replace_icon" {
+			small_flag = {
+				parentanchor = center
+				datacontext = "[Scope.GetMarket.GetOwner]"
+			}
+		}
+
+		blockoverride "icon_background_texture" {}
+		blockoverride "icon_frame" {}
+
+		blockoverride "tooltip_icon_position" {
+			position = { 11 3 }
+		}
+
+		blockoverride "header_text_margin_left" {
+			margin_left = 72
+		}
+
+		blockoverride "go_to_button_visibility" {
+			visible = no
+		}
+
+		blockoverride "text" {
+			visible = no
+		}
+
+		blockoverride "tooltip_content_after" {
+			flowcontainer = {
+				direction = vertical
+				spacing = 8
+
+				# --- Bilateral Monetary Overview Card ---
+				flowcontainer = {
+					using = tooltip_segment_background
+					direction = vertical
+					margin = { 12 10 }
+					spacing = 4
+
+					# Interactive Route banner: hover either market for FancyTooltip_Market (pure tooltip, no button)
+					widget = {
+						size = { @tp_inner_width 24 }
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							spacing = 4
+
+							container = {
+								datacontext = "[Market]"
+								alwaystransparent = no
+								tooltipwidget = { FancyTooltip_Market = {} }
+
+								textbox = {
+									autoresize = yes
+									margin = { 2 1 }
+									align = left|nobaseline
+									elide = right
+									max_width = 186
+									raw_text = "[Market.GetOwner.GetFlagTextIcon] #header [Market.GetNameNoFormatting]#!"
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+							}
+
+							textbox = {
+								autoresize = yes
+								align = center|nobaseline
+								raw_text = "#gold ▶#!"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							container = {
+								datacontext = "[Scope.GetMarket]"
+								alwaystransparent = no
+								tooltipwidget = { FancyTooltip_Market = {} }
+
+								textbox = {
+									autoresize = yes
+									margin = { 2 1 }
+									align = left|nobaseline
+									elide = right
+									max_width = 186
+									raw_text = "[Market.GetOwner.GetFlagTextIcon] #header [Market.GetNameNoFormatting]#!"
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+							}
+
+							widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+						}
+					}
+
+					divider_clean = {
+						size = { @tp_inner_width 2 }
+						alpha = 0.4
+					}
+
+					# Primary monetary KPI row (concepts hoverable; £ values open full per-good derivation tooltips!)
+					widget = {
+						size = { @tp_inner_width 26 }
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							spacing = 5
+
+							textbox = {
+								autoresize = yes
+								align = left|nobaseline
+								text = "TRADE_PARTNERS_KPI_EXPORTS_LABEL"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							textbox = {
+								autoresize = yes
+								align = left|nobaseline
+								using = fontsize_large
+								alwaystransparent = no
+								raw_text = "@money!#tooltippable [TradePartnersGetExportValueTo(Market, Scope.GetMarket)|vD]#!"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+
+								tooltipwidget = {
+									RegularTooltip_TradePartnersExportValueBreakdown = {}
+								}
+							}
+
+							widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+
+							textbox = {
+								autoresize = yes
+								align = right|nobaseline
+								alpha = "[Select_float(TradePartnersIsImporterFrom(Market, Scope.GetMarket), '(float)1.0', '(float)0.55')]"
+								text = "TRADE_PARTNERS_KPI_IMPORTS_LABEL"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							textbox = {
+								autoresize = yes
+								align = right|nobaseline
+								using = fontsize_large
+								alwaystransparent = no
+								alpha = "[Select_float(TradePartnersIsImporterFrom(Market, Scope.GetMarket), '(float)1.0', '(float)0.55')]"
+								raw_text = "@money!#tooltippable [TradePartnersGetImportValueFrom(Market, Scope.GetMarket)|vD]#!"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+
+								tooltipwidget = {
+									RegularTooltip_TradePartnersImportValueBreakdown = {}
+								}
+							}
+						}
+					}
+
+					# Secondary volume & share row (each side hoverable for exact Partner ÷ Market Total ratio breakdown!)
+					widget = {
+						size = { @tp_inner_width 18 }
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							spacing = 5
+
+							flowcontainer = {
+								spacing = 4
+								alwaystransparent = no
+								tooltip = "TRADE_PARTNERS_EXPORT_SHARE_BREAKDOWN"
+
+								textbox = {
+									autoresize = yes
+									align = left|nobaseline
+									using = fontsize_small
+									alpha = 0.90
+									raw_text = "#title [Localize('AMOUNT')]:#! #v [TradePartnersGetExportsTo(Market, Scope.GetMarket)|0D]#!"
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+
+								textbox = {
+									visible = "[GreaterThan_CFixedPoint(Market.GetTotalExportedAmount, '(CFixedPoint)0')]"
+									autoresize = yes
+									align = left|nobaseline
+									using = fontsize_small
+									raw_text = "#gold_value (#tooltippable [Divide_CFixedPoint(TradePartnersGetExportsTo(Market, Scope.GetMarket), Max_CFixedPoint(Market.GetTotalExportedAmount, '(CFixedPoint)1'))|%1]#!)#!"
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+							}
+
+							widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+
+							flowcontainer = {
+								spacing = 4
+								alwaystransparent = no
+								tooltip = "TRADE_PARTNERS_IMPORT_SHARE_BREAKDOWN"
+
+								textbox = {
+									autoresize = yes
+									align = right|nobaseline
+									using = fontsize_small
+									alpha = "[Select_float(TradePartnersIsImporterFrom(Market, Scope.GetMarket), '(float)0.90', '(float)0.50')]"
+									raw_text = "#title [Localize('AMOUNT')]:#! #v [TradePartnersGetImportsFrom(Market, Scope.GetMarket)|0D]#!"
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+
+								textbox = {
+									visible = "[And(TradePartnersIsImporterFrom(Market, Scope.GetMarket), GreaterThan_CFixedPoint(Market.GetTotalImportedAmount, '(CFixedPoint)0'))]"
+									autoresize = yes
+									align = right|nobaseline
+									using = fontsize_small
+									raw_text = "#blue_value (#tooltippable [Divide_CFixedPoint(TradePartnersGetImportsFrom(Market, Scope.GetMarket), Max_CFixedPoint(Market.GetTotalImportedAmount, '(CFixedPoint)1'))|%1]#!)#!"
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+							}
+						}
+					}
+
+					# Victorian bilateral monetary bar with 50% center tick & hover share breakdown
+					widget = {
+						size = { @tp_inner_width 20 }
+						alwaystransparent = no
+						tooltip = "TRADE_PARTNERS_BAR_BREAKDOWN"
+
+						widget = {
+							parentanchor = vcenter
+							size = { @tp_inner_width 12 }
+
+							background = {
+								using = dark_area
+								alpha = 0.85
+							}
+
+							hbox = {
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								margin = { 2 2 }
+
+								hbox = {
+									visible = "[GreaterThan_CFixedPoint(TradePartnersGetExportValueTo(Market, Scope.GetMarket), '(CFixedPoint)0')]"
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									layoutstretchfactor_horizontal = "[FixedPointToInt(Max_CFixedPoint('(CFixedPoint)1', TradePartnersGetExportValueTo(Market, Scope.GetMarket)))]"
+
+									background = {
+										texture = "gfx/interface/tooltip/stacked_barchart_small_item.dds"
+										color = { 0.84 0.60 0.30 1 }
+										spriteType = Corneredstretched
+										spriteborder = { 2 2 }
+
+										modify_texture = {
+											texture = "gfx/interface/textures/velvet_texture.dds"
+											spriteType = Corneredtiled
+											texture_density = 2
+											blend_mode = overlay
+											alpha = 0.25
+										}
+									}
+								}
+
+								hbox = {
+									visible = "[GreaterThan_CFixedPoint(TradePartnersGetImportValueFrom(Market, Scope.GetMarket), '(CFixedPoint)0')]"
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									layoutstretchfactor_horizontal = "[FixedPointToInt(Max_CFixedPoint('(CFixedPoint)1', TradePartnersGetImportValueFrom(Market, Scope.GetMarket)))]"
+
+									background = {
+										texture = "gfx/interface/tooltip/stacked_barchart_small_item.dds"
+										color = { 0.36 0.60 0.72 1 }
+										spriteType = Corneredstretched
+										spriteborder = { 2 2 }
+
+										modify_texture = {
+											texture = "gfx/interface/textures/velvet_texture.dds"
+											spriteType = Corneredtiled
+											texture_density = 2
+											blend_mode = overlay
+											alpha = 0.25
+										}
+									}
+								}
+							}
+
+							icon = {
+								size = { 100% 100% }
+								texture = "gfx/interface/progressbar/progressbar_frame.dds"
+								spriteType = Corneredstretched
+								spriteborder = { 6 6 }
+								texture_density = 2
+							}
+						}
+
+						# 50% balance center benchmark tick mark
+						icon = {
+							parentanchor = center
+							size = { 2 16 }
+							texture = "gfx/interface/progressbar/bar_horizontal_marker_line.dds"
+							color = { 1.0 0.94 0.78 1 }
+							alpha = 0.92
+							alwaystransparent = yes
+						}
+					}
+
+					# Dynamic Trade Surplus / Trade Deficit row with hover subtraction formula
+					widget = {
+						size = { @tp_inner_width 20 }
+						alwaystransparent = no
+						tooltip = "TRADE_PARTNERS_BALANCE_BREAKDOWN"
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							spacing = 4
+
+							textbox = {
+								autoresize = yes
+								align = left|nobaseline
+								raw_text = "[Market.GetOwner.GetFlagTextIcon]"
+							}
+
+							textbox = {
+								visible = "[GreaterThan_CFixedPoint(TradePartnersGetExportValueTo(Market, Scope.GetMarket), TradePartnersGetImportValueFrom(Market, Scope.GetMarket))]"
+								autoresize = yes
+								align = left|nobaseline
+								alpha = 0.95
+								text = "TRADE_PARTNERS_TRADE_SURPLUS"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							textbox = {
+								visible = "[LessThan_CFixedPoint(TradePartnersGetExportValueTo(Market, Scope.GetMarket), TradePartnersGetImportValueFrom(Market, Scope.GetMarket))]"
+								autoresize = yes
+								align = left|nobaseline
+								alpha = 0.95
+								text = "TRADE_PARTNERS_TRADE_DEFICIT"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							textbox = {
+								visible = "[EqualTo_CFixedPoint(TradePartnersGetExportValueTo(Market, Scope.GetMarket), TradePartnersGetImportValueFrom(Market, Scope.GetMarket))]"
+								autoresize = yes
+								align = left|nobaseline
+								alpha = 0.95
+								text = "TRADE_DEFICIT_SURPLUS"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+
+							textbox = {
+								autoresize = yes
+								align = right|nobaseline
+								raw_text = "@money!#tooltippable [Subtract_CFixedPoint(TradePartnersGetExportValueTo(Market, Scope.GetMarket), TradePartnersGetImportValueFrom(Market, Scope.GetMarket))|=+D]#!"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+						}
+					}
+				}
+
+				# --- Exported Goods Breakdown Table (clickable rows + cell-level formula tooltips) ---
+				flowcontainer = {
+					using = tooltip_segment_background
+					direction = vertical
+					margin = { 12 8 }
+					spacing = 4
+
+					widget = {
+						size = { @tp_inner_width 22 }
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							margin_left = 8
+							margin_right = 22
+							spacing = 6
+
+							icon = {
+								size = { 20 20 }
+								texture = "gfx/interface/icons/trade_icons/exports.dds"
+							}
+
+							textbox = {
+								layoutpolicy_horizontal = expanding
+								align = left|nobaseline
+								default_format = "#header"
+								text = "MARKET_FILTER_EXPORTS"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							widget = {
+								size = { 22 1 }
+							}
+
+							textbox = {
+								size = { 68 20 }
+								align = right|nobaseline
+								using = fontsize_small
+								alpha = 0.85
+								text = "AMOUNT"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							textbox = {
+								size = { 102 20 }
+								align = right|nobaseline
+								using = fontsize_small
+								alpha = 0.85
+								text = "MARKET_TRADED_AMOUNT"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+						}
+					}
+
+					divider_clean = {
+						size = { @tp_inner_width 2 }
+					}
+
+					scrollarea = {
+						autoresizescrollarea = yes
+						maximumsize = { @tp_inner_width 380 }
+						scrollbarpolicy_horizontal = always_off
+						alwaystransparent = no
+
+						scrollwidget = {
+							flowcontainer = {
+								datamodel = "[Scope.GetMarket.GetImports]"
+								direction = vertical
+								ignoreinvisible = yes
+								spacing = 2
+
+								item = {
+									widget = {
+										visible = "[GreaterThanOrEqualTo_CFixedPoint(Scope.GetMarket.GetImportedAmountFromMarket(Market.Self, Goods.Self), '(CFixedPoint)1')]"
+										size = { @tp_row_width 28 }
+										alwaystransparent = no
+
+										background = {
+											using = entry_bg_simple
+											alpha = 0.85
+										}
+
+										tooltipwidget = {
+											FancyTooltip_Goods = {}
+										}
+
+										hbox = {
+											layoutpolicy_horizontal = expanding
+											layoutpolicy_vertical = expanding
+											margin = { 8 2 }
+											spacing = 6
+
+											icon = {
+												size = { 22 22 }
+												texture = "[Goods.GetTexture]"
+											}
+
+											textbox = {
+												layoutpolicy_horizontal = expanding
+												size = { 0 22 }
+												align = left|nobaseline
+												elide = right
+												fontsize_min = 12
+												text = "[Goods.GetNameNoFormatting]"
+												fonttintcolor = "[TooltipInfo.GetTintColor]"
+											}
+
+											textbox = {
+												size = { 22 22 }
+												align = center|nobaseline
+												alwaystransparent = no
+												tooltip = "[Goods.GetWorldMarketBasePriceDesc]"
+												raw_text = "[Goods.GetCompareIconAgainstBasePriceNoFormatting(Goods.GetWorldMarketBasePrice)]"
+											}
+
+											textbox = {
+												size = { 68 22 }
+												align = right|nobaseline
+												using = elide_fontsize_min
+												alwaystransparent = no
+												tooltip = "TRADE_PARTNERS_GOODS_EXPORT_AMOUNT_BREAKDOWN"
+												raw_text = "#v [Scope.GetMarket.GetImportedAmountFromMarket(Market.Self, Goods.Self)|0D]#!"
+												fonttintcolor = "[TooltipInfo.GetTintColor]"
+											}
+
+											textbox = {
+												size = { 102 22 }
+												align = right|nobaseline
+												using = elide_fontsize_min
+												alwaystransparent = no
+												tooltip = "TRADE_PARTNERS_GOODS_EXPORT_VALUE_BREAKDOWN"
+												raw_text = "@money!#v [Multiply_CFixedPoint(Scope.GetMarket.GetImportedAmountFromMarket(Market.Self, Goods.Self), Goods.GetWorldMarketBasePrice)|D]#!"
+												fonttintcolor = "[TooltipInfo.GetTintColor]"
+											}
+										}
+									}
+								}
+							}
+						}
+
+						scrollbar_vertical = {
+							using = vertical_scrollbar
+						}
+					}
+				}
+			}
+		}
+	}
+
+	# =========================================================================
+	# 3. Bilateral Goods Breakdown FancyTooltip (from Foreign FancyTooltip_Market)
+	#    Market = other country's market; GetPlayer.GetMarket = player's market
+	# =========================================================================
+	type RegularTooltip_MarketOtherMarketImportExport = FancyTooltipWidgetType {
+		blockoverride "name" {
+			text = "[Market.GetNameNoFormatting]"
+		}
+
+		blockoverride "type" {
+			alpha = 0.92
+			raw_text = "#white [Localize('TRADE')]#!"
+		}
+
+		blockoverride "color" {
+			color = "[Market.GetOwner.GetMapColor]"
+		}
+
+		blockoverride "replace_icon" {
+			small_flag = {
+				parentanchor = center
+				datacontext = "[Market.GetOwner]"
+			}
+		}
+
+		blockoverride "icon_background_texture" {}
+		blockoverride "icon_frame" {}
+
+		blockoverride "tooltip_icon_position" {
+			position = { 11 3 }
+		}
+
+		blockoverride "header_text_margin_left" {
+			margin_left = 72
+		}
+
+		blockoverride "go_to_button_visibility" {
+			visible = no
+		}
+
+		blockoverride "text" {
+			visible = no
+		}
+
+		blockoverride "tooltip_content_after" {
+			flowcontainer = {
+				direction = vertical
+				spacing = 8
+				ignoreinvisible = yes
+
+				# --- Bilateral Monetary Overview Summary ---
+				flowcontainer = {
+					using = tooltip_segment_background
+					direction = vertical
+					margin = { 12 10 }
+					spacing = 4
+
+					widget = {
+						size = { @tp_inner_width 26 }
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							spacing = 5
+
+							textbox = {
+								autoresize = yes
+								align = left|nobaseline
+								alpha = "[Select_float(TradePartnersIsImporterFrom(Market, GetPlayer.GetMarket), '(float)1.0', '(float)0.55')]"
+								text = "TRADE_PARTNERS_KPI_EXPORTS_LABEL"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							textbox = {
+								autoresize = yes
+								align = left|nobaseline
+								using = fontsize_large
+								alwaystransparent = no
+								tooltip = "TRADE_PARTNERS_VALUE_FORMULA_NOTE"
+								alpha = "[Select_float(TradePartnersIsImporterFrom(Market, GetPlayer.GetMarket), '(float)1.0', '(float)0.55')]"
+								raw_text = "@money!#tooltippable [TradePartnersGetImportValueFrom(Market, GetPlayer.GetMarket)|vD]#!"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+
+							textbox = {
+								autoresize = yes
+								align = right|nobaseline
+								alpha = "[Select_float(TradePartnersIsExporterTo(Market, GetPlayer.GetMarket), '(float)1.0', '(float)0.55')]"
+								text = "TRADE_PARTNERS_KPI_IMPORTS_LABEL"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							textbox = {
+								autoresize = yes
+								align = right|nobaseline
+								using = fontsize_large
+								alwaystransparent = no
+								tooltip = "TRADE_PARTNERS_VALUE_FORMULA_NOTE"
+								alpha = "[Select_float(TradePartnersIsExporterTo(Market, GetPlayer.GetMarket), '(float)1.0', '(float)0.55')]"
+								raw_text = "@money!#tooltippable [TradePartnersGetExportValueTo(Market, GetPlayer.GetMarket)|vD]#!"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+						}
+					}
+
+					widget = {
+						size = { @tp_inner_width 18 }
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							spacing = 5
+
+							flowcontainer = {
+								spacing = 4
+								alwaystransparent = no
+								tooltip = "TRADE_PARTNERS_OTHER_EXPORT_SHARE_BREAKDOWN"
+
+								textbox = {
+									autoresize = yes
+									align = left|nobaseline
+									using = fontsize_small
+									alpha = "[Select_float(TradePartnersIsImporterFrom(Market, GetPlayer.GetMarket), '(float)0.90', '(float)0.50')]"
+									raw_text = "#title [Localize('AMOUNT')]:#! #v [TradePartnersGetImportsFrom(Market, GetPlayer.GetMarket)|0D]#!"
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+
+								textbox = {
+									visible = "[And(TradePartnersIsImporterFrom(Market, GetPlayer.GetMarket), GreaterThan_CFixedPoint(GetPlayer.GetMarket.GetTotalExportedAmount, '(CFixedPoint)0'))]"
+									autoresize = yes
+									align = left|nobaseline
+									using = fontsize_small
+									raw_text = "#gold_value (#tooltippable [Divide_CFixedPoint(TradePartnersGetImportsFrom(Market, GetPlayer.GetMarket), Max_CFixedPoint(GetPlayer.GetMarket.GetTotalExportedAmount, '(CFixedPoint)1'))|%1]#!)#!"
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+							}
+
+							widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+
+							flowcontainer = {
+								spacing = 4
+								alwaystransparent = no
+								tooltip = "TRADE_PARTNERS_OTHER_IMPORT_SHARE_BREAKDOWN"
+
+								textbox = {
+									autoresize = yes
+									align = right|nobaseline
+									using = fontsize_small
+									alpha = "[Select_float(TradePartnersIsExporterTo(Market, GetPlayer.GetMarket), '(float)0.90', '(float)0.50')]"
+									raw_text = "#title [Localize('AMOUNT')]:#! #v [TradePartnersGetExportsTo(Market, GetPlayer.GetMarket)|0D]#!"
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+
+								textbox = {
+									visible = "[And(TradePartnersIsExporterTo(Market, GetPlayer.GetMarket), GreaterThan_CFixedPoint(GetPlayer.GetMarket.GetTotalImportedAmount, '(CFixedPoint)0'))]"
+									autoresize = yes
+									align = right|nobaseline
+									using = fontsize_small
+									raw_text = "#blue_value (#tooltippable [Divide_CFixedPoint(TradePartnersGetExportsTo(Market, GetPlayer.GetMarket), Max_CFixedPoint(GetPlayer.GetMarket.GetTotalImportedAmount, '(CFixedPoint)1'))|%1]#!)#!"
+									fonttintcolor = "[TooltipInfo.GetTintColor]"
+								}
+							}
+						}
+					}
+
+					# Victorian bilateral monetary bar (Player Exports £ amber-gold vs Player Imports £ steel-cyan) + 50% center tick
+					widget = {
+						size = { @tp_inner_width 20 }
+						alwaystransparent = no
+						tooltip = "TRADE_PARTNERS_OTHER_BAR_BREAKDOWN"
+
+						widget = {
+							parentanchor = vcenter
+							size = { @tp_inner_width 12 }
+
+							background = {
+								using = dark_area
+								alpha = 0.85
+							}
+
+							hbox = {
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								margin = { 2 2 }
+
+								hbox = {
+									visible = "[GreaterThan_CFixedPoint(TradePartnersGetImportValueFrom(Market, GetPlayer.GetMarket), '(CFixedPoint)0')]"
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									layoutstretchfactor_horizontal = "[FixedPointToInt(Max_CFixedPoint('(CFixedPoint)1', TradePartnersGetImportValueFrom(Market, GetPlayer.GetMarket)))]"
+
+									background = {
+										texture = "gfx/interface/tooltip/stacked_barchart_small_item.dds"
+										color = { 0.84 0.60 0.30 1 }
+										spriteType = Corneredstretched
+										spriteborder = { 2 2 }
+
+										modify_texture = {
+											texture = "gfx/interface/textures/velvet_texture.dds"
+											spriteType = Corneredtiled
+											texture_density = 2
+											blend_mode = overlay
+											alpha = 0.25
+										}
+									}
+								}
+
+								hbox = {
+									visible = "[GreaterThan_CFixedPoint(TradePartnersGetExportValueTo(Market, GetPlayer.GetMarket), '(CFixedPoint)0')]"
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									layoutstretchfactor_horizontal = "[FixedPointToInt(Max_CFixedPoint('(CFixedPoint)1', TradePartnersGetExportValueTo(Market, GetPlayer.GetMarket)))]"
+
+									background = {
+										texture = "gfx/interface/tooltip/stacked_barchart_small_item.dds"
+										color = { 0.36 0.60 0.72 1 }
+										spriteType = Corneredstretched
+										spriteborder = { 2 2 }
+
+										modify_texture = {
+											texture = "gfx/interface/textures/velvet_texture.dds"
+											spriteType = Corneredtiled
+											texture_density = 2
+											blend_mode = overlay
+											alpha = 0.25
+										}
+									}
+								}
+							}
+
+							icon = {
+								size = { 100% 100% }
+								texture = "gfx/interface/progressbar/progressbar_frame.dds"
+								spriteType = Corneredstretched
+								spriteborder = { 6 6 }
+								texture_density = 2
+							}
+						}
+
+						# 50% balance center benchmark tick mark
+						icon = {
+							parentanchor = center
+							size = { 2 16 }
+							texture = "gfx/interface/progressbar/bar_horizontal_marker_line.dds"
+							color = { 1.0 0.94 0.78 1 }
+							alpha = 0.92
+							alwaystransparent = yes
+						}
+					}
+
+					# Dynamic Trade Surplus / Trade Deficit row from player's perspective with formula breakdown
+					widget = {
+						size = { @tp_inner_width 20 }
+						alwaystransparent = no
+						tooltip = "TRADE_PARTNERS_OTHER_BALANCE_BREAKDOWN"
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							spacing = 4
+
+							textbox = {
+								autoresize = yes
+								align = left|nobaseline
+								raw_text = "[GetPlayer.GetMarket.GetOwner.GetFlagTextIcon]"
+							}
+
+							textbox = {
+								visible = "[GreaterThan_CFixedPoint(TradePartnersGetImportValueFrom(Market, GetPlayer.GetMarket), TradePartnersGetExportValueTo(Market, GetPlayer.GetMarket))]"
+								autoresize = yes
+								align = left|nobaseline
+								alpha = 0.95
+								text = "TRADE_PARTNERS_TRADE_SURPLUS"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							textbox = {
+								visible = "[LessThan_CFixedPoint(TradePartnersGetImportValueFrom(Market, GetPlayer.GetMarket), TradePartnersGetExportValueTo(Market, GetPlayer.GetMarket))]"
+								autoresize = yes
+								align = left|nobaseline
+								alpha = 0.95
+								text = "TRADE_PARTNERS_TRADE_DEFICIT"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							textbox = {
+								visible = "[EqualTo_CFixedPoint(TradePartnersGetImportValueFrom(Market, GetPlayer.GetMarket), TradePartnersGetExportValueTo(Market, GetPlayer.GetMarket))]"
+								autoresize = yes
+								align = left|nobaseline
+								alpha = 0.95
+								text = "TRADE_DEFICIT_SURPLUS"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							widget = { size = { 0 1 } layoutpolicy_horizontal = expanding }
+
+							textbox = {
+								autoresize = yes
+								align = right|nobaseline
+								raw_text = "@money!#tooltippable [Subtract_CFixedPoint(TradePartnersGetImportValueFrom(Market, GetPlayer.GetMarket), TradePartnersGetExportValueTo(Market, GetPlayer.GetMarket))|=+D]#!"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+						}
+					}
+				}
+
+				# --- Section A: Foreign Market Imports from Player (= Player's Exports) ---
+				flowcontainer = {
+					visible = "[TradePartnersIsImporterFrom(Market, GetPlayer.GetMarket)]"
+					using = tooltip_segment_background
+					direction = vertical
+					margin = { 12 8 }
+					spacing = 4
+					datacontext = "[Market]"
+
+					widget = {
+						size = { @tp_inner_width 22 }
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							margin_left = 8
+							margin_right = 22
+							spacing = 6
+
+							icon = {
+								size = { 20 20 }
+								texture = "gfx/interface/icons/trade_icons/imports.dds"
+							}
+
+							textbox = {
+								layoutpolicy_horizontal = expanding
+								align = left|nobaseline
+								elide = right
+								raw_text = "[Localize('IMPORTING_FROM_TITLE')] [GetPlayer.GetMarket.GetOwner.GetFlagTextIcon] #header [GetPlayer.GetMarket.GetNameNoFormatting]#!"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							widget = {
+								size = { 22 1 }
+							}
+
+							textbox = {
+								size = { 68 20 }
+								align = right|nobaseline
+								using = fontsize_small
+								alpha = 0.85
+								text = "AMOUNT"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							textbox = {
+								size = { 102 20 }
+								align = right|nobaseline
+								using = fontsize_small
+								alpha = 0.85
+								text = "MARKET_TRADED_AMOUNT"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+						}
+					}
+
+					divider_clean = {
+						size = { @tp_inner_width 2 }
+					}
+
+					scrollarea = {
+						autoresizescrollarea = yes
+						maximumsize = { @tp_inner_width 240 }
+						scrollbarpolicy_horizontal = always_off
+						alwaystransparent = no
+
+						scrollwidget = {
+							flowcontainer = {
+								datamodel = "[Market.GetImports]"
+								direction = vertical
+								ignoreinvisible = yes
+								spacing = 2
+
+								item = {
+									widget = {
+										visible = "[GreaterThanOrEqualTo_CFixedPoint(Market.GetImportedAmountFromMarket(GetPlayer.GetMarket.Self, Goods.Self), '(CFixedPoint)1')]"
+										size = { @tp_row_width 28 }
+										alwaystransparent = no
+
+										background = {
+											using = entry_bg_simple
+											alpha = 0.85
+										}
+
+										tooltipwidget = {
+											FancyTooltip_Goods = {}
+										}
+
+										hbox = {
+											layoutpolicy_horizontal = expanding
+											layoutpolicy_vertical = expanding
+											margin = { 8 2 }
+											spacing = 6
+
+											icon = {
+												size = { 22 22 }
+												texture = "[Goods.GetTexture]"
+											}
+
+											textbox = {
+												layoutpolicy_horizontal = expanding
+												size = { 0 22 }
+												align = left|nobaseline
+												elide = right
+												fontsize_min = 12
+												text = "[Goods.GetNameNoFormatting]"
+												fonttintcolor = "[TooltipInfo.GetTintColor]"
+											}
+
+											textbox = {
+												size = { 22 22 }
+												align = center|nobaseline
+												alwaystransparent = no
+												tooltip = "[Goods.GetWorldMarketBasePriceDesc]"
+												raw_text = "[Goods.GetCompareIconAgainstBasePriceNoFormatting(Goods.GetWorldMarketBasePrice)]"
+											}
+
+											textbox = {
+												size = { 68 22 }
+												align = right|nobaseline
+												using = elide_fontsize_min
+												alwaystransparent = no
+												tooltip = "TRADE_PARTNERS_OTHER_GOODS_IMPORT_AMOUNT_BREAKDOWN"
+												raw_text = "#v [Market.GetImportedAmountFromMarket(GetPlayer.GetMarket.Self, Goods.Self)|0D]#!"
+												fonttintcolor = "[TooltipInfo.GetTintColor]"
+											}
+
+											textbox = {
+												size = { 102 22 }
+												align = right|nobaseline
+												using = elide_fontsize_min
+												alwaystransparent = no
+												tooltip = "TRADE_PARTNERS_OTHER_GOODS_IMPORT_VALUE_BREAKDOWN"
+												raw_text = "@money!#v [Multiply_CFixedPoint(Market.GetImportedAmountFromMarket(GetPlayer.GetMarket.Self, Goods.Self), Goods.GetWorldMarketBasePrice)|D]#!"
+												fonttintcolor = "[TooltipInfo.GetTintColor]"
+											}
+										}
+									}
+								}
+							}
+						}
+
+						scrollbar_vertical = {
+							using = vertical_scrollbar
+						}
+					}
+				}
+
+				# --- Section B: Foreign Market Exports to Player (= Player's Imports) ---
+				flowcontainer = {
+					visible = "[TradePartnersIsExporterTo(Market, GetPlayer.GetMarket)]"
+					using = tooltip_segment_background
+					direction = vertical
+					margin = { 12 8 }
+					spacing = 4
+					datacontext = "[Market]"
+
+					widget = {
+						size = { @tp_inner_width 22 }
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							margin_left = 8
+							margin_right = 22
+							spacing = 6
+
+							icon = {
+								size = { 20 20 }
+								texture = "gfx/interface/icons/trade_icons/exports.dds"
+							}
+
+							textbox = {
+								layoutpolicy_horizontal = expanding
+								align = left|nobaseline
+								elide = right
+								raw_text = "[Localize('EXPORTING_TO_TITLE')] [GetPlayer.GetMarket.GetOwner.GetFlagTextIcon] #header [GetPlayer.GetMarket.GetNameNoFormatting]#!"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							widget = {
+								size = { 22 1 }
+							}
+
+							textbox = {
+								size = { 68 20 }
+								align = right|nobaseline
+								using = fontsize_small
+								alpha = 0.85
+								text = "AMOUNT"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							textbox = {
+								size = { 102 20 }
+								align = right|nobaseline
+								using = fontsize_small
+								alpha = 0.85
+								text = "MARKET_TRADED_AMOUNT"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+						}
+					}
+
+					divider_clean = {
+						size = { @tp_inner_width 2 }
+					}
+
+					scrollarea = {
+						autoresizescrollarea = yes
+						maximumsize = { @tp_inner_width 240 }
+						scrollbarpolicy_horizontal = always_off
+						alwaystransparent = no
+
+						scrollwidget = {
+							flowcontainer = {
+								datamodel = "[Market.GetExports]"
+								direction = vertical
+								ignoreinvisible = yes
+								spacing = 2
+
+								item = {
+									widget = {
+										visible = "[GreaterThanOrEqualTo_CFixedPoint(Market.GetExportedAmountToMarket(GetPlayer.GetMarket.Self, Goods.Self), '(CFixedPoint)1')]"
+										size = { @tp_row_width 28 }
+										alwaystransparent = no
+
+										background = {
+											using = entry_bg_simple
+											alpha = 0.85
+										}
+
+										tooltipwidget = {
+											FancyTooltip_Goods = {}
+										}
+
+										hbox = {
+											layoutpolicy_horizontal = expanding
+											layoutpolicy_vertical = expanding
+											margin = { 8 2 }
+											spacing = 6
+
+											icon = {
+												size = { 22 22 }
+												texture = "[Goods.GetTexture]"
+											}
+
+											textbox = {
+												layoutpolicy_horizontal = expanding
+												size = { 0 22 }
+												align = left|nobaseline
+												elide = right
+												fontsize_min = 12
+												text = "[Goods.GetNameNoFormatting]"
+												fonttintcolor = "[TooltipInfo.GetTintColor]"
+											}
+
+											textbox = {
+												size = { 22 22 }
+												align = center|nobaseline
+												alwaystransparent = no
+												tooltip = "[Goods.GetWorldMarketBasePriceDesc]"
+												raw_text = "[Goods.GetCompareIconAgainstBasePriceNoFormatting(Goods.GetWorldMarketBasePrice)]"
+											}
+
+											textbox = {
+												size = { 68 22 }
+												align = right|nobaseline
+												using = elide_fontsize_min
+												alwaystransparent = no
+												tooltip = "TRADE_PARTNERS_OTHER_GOODS_EXPORT_AMOUNT_BREAKDOWN"
+												raw_text = "#v [Market.GetExportedAmountToMarket(GetPlayer.GetMarket.Self, Goods.Self)|0D]#!"
+												fonttintcolor = "[TooltipInfo.GetTintColor]"
+											}
+
+											textbox = {
+												size = { 102 22 }
+												align = right|nobaseline
+												using = elide_fontsize_min
+												alwaystransparent = no
+												tooltip = "TRADE_PARTNERS_OTHER_GOODS_EXPORT_VALUE_BREAKDOWN"
+												raw_text = "@money!#v [Multiply_CFixedPoint(Market.GetExportedAmountToMarket(GetPlayer.GetMarket.Self, Goods.Self), Goods.GetWorldMarketBasePrice)|D]#!"
+												fonttintcolor = "[TooltipInfo.GetTintColor]"
+											}
+										}
+									}
+								}
+							}
+						}
+
+						scrollbar_vertical = {
+							using = vertical_scrollbar
+						}
+					}
+				}
+			}
+		}
+	}
+
+	# =========================================================================
+	# 4. FancyTooltip_Market (Vanilla 1.15.2 + Beautified Bilateral Quick Card)
+	# =========================================================================
+	type FancyTooltip_Market = FancyTooltipWidgetType {
 		blockoverride "tooltip_content_before_before" {
 			flowcontainer = {
-				visible = "[Not(GetPlayer.GetMarket.IsSame(Market.Self))]"
+				visible = "[And3(GetPlayer.IsValid, Not(GetPlayer.GetMarket.IsSame(Market.Self)), TradePartnersHasAnyTrade(Market, GetPlayer.GetMarket))]"
 				direction = vertical
-				custom_tooltip_textbox = {
-					text = "TRADE_PARTNERS_MARKET_TOOLTIP_VALUES"
+				margin_bottom = 10
+
+				flowcontainer = {
+					using = tooltip_segment_background
+					direction = vertical
+					margin = { 12 8 }
+					spacing = 5
+
+					tooltipwidget = {
+						RegularTooltip_MarketOtherMarketImportExport = {}
+					}
+
+					# Card Header: Player Market + Vanilla "Trade" + monetary Trade Deficit/Surplus badge
+					widget = {
+						size = { @tp_inner_width 22 }
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							spacing = 6
+
+							textbox = {
+								layoutpolicy_horizontal = expanding
+								align = left|nobaseline
+								elide = right
+								default_format = "#title"
+								raw_text = "[GetPlayer.GetMarket.GetOwner.GetFlagTextIcon] [GetPlayer.GetMarket.GetNameNoFormatting] · [Localize('TRADE')]"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+
+							textbox = {
+								autoresize = yes
+								align = right|nobaseline
+								using = fontsize_small
+								raw_text = "@money![Subtract_CFixedPoint(TradePartnersGetImportValueFrom(Market, GetPlayer.GetMarket), TradePartnersGetExportValueTo(Market, GetPlayer.GetMarket))|=+D]"
+								fonttintcolor = "[TooltipInfo.GetTintColor]"
+							}
+						}
+					}
+
+					divider_clean = {
+						size = { @tp_inner_width 2 }
+					}
+
+					custom_tooltip_textbox = {
+						visible = "[TradePartnersIsImporterFrom(Market, GetPlayer.GetMarket)]"
+						maximumsize = { @tp_inner_width -1 }
+						text = "TRADE_PARTNERS_MARKET_TOOLTIP_IMPORT"
+					}
+
+					custom_tooltip_textbox = {
+						visible = "[TradePartnersIsExporterTo(Market, GetPlayer.GetMarket)]"
+						maximumsize = { @tp_inner_width -1 }
+						text = "TRADE_PARTNERS_MARKET_TOOLTIP_EXPORT"
+					}
+
+					# Mini bilateral monetary flow bar (Player Exports £ amber-gold vs Player Imports £ steel-cyan + 50% tick)
+					widget = {
+						size = { @tp_inner_width 10 }
+
+						background = {
+							using = dark_area
+							alpha = 0.85
+						}
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							margin = { 1 1 }
+
+							hbox = {
+								visible = "[GreaterThan_CFixedPoint(TradePartnersGetImportValueFrom(Market, GetPlayer.GetMarket), '(CFixedPoint)0')]"
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								layoutstretchfactor_horizontal = "[FixedPointToInt(Max_CFixedPoint('(CFixedPoint)1', TradePartnersGetImportValueFrom(Market, GetPlayer.GetMarket)))]"
+
+								background = {
+									texture = "gfx/interface/tooltip/stacked_barchart_small_item.dds"
+									color = { 0.84 0.60 0.30 1 }
+									spriteType = Corneredstretched
+									spriteborder = { 2 2 }
+								}
+							}
+
+							hbox = {
+								visible = "[GreaterThan_CFixedPoint(TradePartnersGetExportValueTo(Market, GetPlayer.GetMarket), '(CFixedPoint)0')]"
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								layoutstretchfactor_horizontal = "[FixedPointToInt(Max_CFixedPoint('(CFixedPoint)1', TradePartnersGetExportValueTo(Market, GetPlayer.GetMarket)))]"
+
+								background = {
+									texture = "gfx/interface/tooltip/stacked_barchart_small_item.dds"
+									color = { 0.36 0.60 0.72 1 }
+									spriteType = Corneredstretched
+									spriteborder = { 2 2 }
+								}
+							}
+						}
+
+						icon = {
+							parentanchor = center
+							size = { 2 10 }
+							texture = "gfx/interface/progressbar/bar_horizontal_marker_line.dds"
+							color = { 1.0 0.94 0.78 1 }
+							alpha = 0.88
+							alwaystransparent = yes
+						}
+					}
 				}
-				tooltipwidget = {
-					RegularTooltip_MarketOtherMarketImportExport = {}
-				}	
 			}
 		}
 
@@ -257,7 +2712,7 @@ type FancyTooltip_Market = FancyTooltipWidgetType {
 		blockoverride "icon_frame" {}
 
 		### Changed position due to using a flag
-		blockoverride "tooltip_icon_position"{
+		blockoverride "tooltip_icon_position" {
 			position = { 11 3 }
 		}
 
@@ -336,7 +2791,6 @@ type FancyTooltip_Market = FancyTooltipWidgetType {
 
 				flowcontainer = {
 					spacing = 20
-
 
 					flowcontainer = {
 						direction = vertical

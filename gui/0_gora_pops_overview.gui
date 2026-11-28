@@ -454,7 +454,7 @@ types pops_overview
 								direction = vertical
 								visible = "[PopList.HasBuildingContext]"
 								datacontext = "[PopList.GetBuildingContext]"
-								margin_right = 10 
+								margin_right = 6
 
 								### WAGE
 								textbox = {
@@ -462,6 +462,9 @@ types pops_overview
 									text = "AVG_WAGE_POP_LIST"
 									align = left|nobaseline
 									autoresize = yes
+									max_width = 148
+									fontsize_min = 11
+									elide = right
 									tooltip = "ANNUAL_WAGE_TOOLTIP"
 									alpha = "[TransparentIfFalse(GreaterThan_CFixedPoint(PopListItem.GetAverageAnnualWage, '(CFixedPoint)0'))]"
 								}
@@ -478,6 +481,9 @@ types pops_overview
 										text = "[Building.GetPopTypeFullyReplacedDesc(PopListItem.GetPopType)]"
 										align = left|nobaseline
 										autoresize = yes
+										max_width = 148
+										fontsize_min = 11
+										elide = right
 									}
 
 									default_progressbar_horizontal = {
@@ -514,21 +520,24 @@ types pops_overview
 
 							flowcontainer = {
 								direction = vertical
-								margin_left = 5
-								margin_bottom = 10
+								margin_left = 4
+								margin_bottom = 4
 								parentanchor = vcenter
 
 								flowcontainer = {
 									spacing = 2
 									icon = {
 										texture = "gfx/interface/icons/generic_icons/population_radical.dds"
-										size = { 26 26 }
+										size = { 24 24 }
 										parentanchor = vcenter
 									}
 									textbox = {
 										parentanchor = vcenter
 										raw_text = "#variable [PopListItem.GetNumRadicals|D]#!"
 										autoresize = yes
+										max_width = 52
+										fontsize_min = 11
+										elide = right
 										align = left|nobaseline
 										tooltip = "RADICALS_TOOLTIP_POP_LIST"
 										alpha = "[TransparentIfZero_int64(PopListItem.GetNumRadicals)]"
@@ -539,13 +548,16 @@ types pops_overview
 									spacing = 2
 									icon = {
 										texture = "gfx/interface/icons/generic_icons/population_loyalist.dds"
-										size = { 26 26 }
+										size = { 24 24 }
 										parentanchor = vcenter
 									}
 									textbox = {
 										parentanchor = vcenter
 										raw_text = "#variable [PopListItem.GetNumLoyalists|D]#!"
 										autoresize = yes
+										max_width = 52
+										fontsize_min = 11
+										elide = right
 										align = left|nobaseline
 										tooltip = "LOYALISTS_TOOLTIP_POP_LIST"
 										alpha = "[TransparentIfZero_int64(PopListItem.GetNumLoyalists)]"
@@ -555,10 +567,9 @@ types pops_overview
 						}
 
 						flowcontainer = {
-							parentanchor = left|vcenter
-							position = { 150 0 }
+							parentanchor = right|vcenter
+							position = { -8 0 }
 							direction = vertical
-							margin_bottom = 10
 
 							flowcontainer = {
 								datacontext = "[PopListItem.GetFirstPop]"
@@ -812,15 +823,15 @@ types pops_overview
 												}
 											}
 
-											# Spacing to align Radicals and Loyalists
+											# Spacing to align Radicals and Loyalists (compact to clear right-anchored vpn_good_tile)
 											widget = {
-												size = { 108 10 }
+												size = { 42 10 }
 												visible = "[PopList.HasBuildingContext]"
 											}
 
 											flowcontainer = {
 												direction = vertical
-												margin_left = 15
+												margin_left = 8
 												parentanchor = vcenter
 
 												flowcontainer = {
@@ -830,13 +841,16 @@ types pops_overview
 													
 													icon = {
 														texture = "gfx/interface/icons/generic_icons/population_radical.dds"
-														size = { 26 26 }
+														size = { 24 24 }
 														parentanchor = vcenter
 													}
 													textbox = {
 														parentanchor = vcenter
 														raw_text = "#variable [Pop.GetNumRadicals|D]#!"
 														autoresize = yes
+														max_width = 56
+														fontsize_min = 11
+														elide = right
 														align = left|nobaseline
 													}
 												}
@@ -848,13 +862,16 @@ types pops_overview
 													
 													icon = {
 														texture = "gfx/interface/icons/generic_icons/population_loyalist.dds"
-														size = { 26 26 }
+														size = { 24 24 }
 														parentanchor = vcenter
 													}
 													textbox = {
 														parentanchor = vcenter
 														raw_text = "#variable [Pop.GetNumLoyalists|D]#!"
 														autoresize = yes
+														max_width = 56
+														fontsize_min = 11
+														elide = right
 														align = left|nobaseline
 													}
 												}

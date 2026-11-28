@@ -1,4 +1,7 @@
-﻿trade_partners_total_imports_from_target = {
+﻿# Trade Partners script values (units + exact World Market monetary valuation).
+# All values here are read-only and evaluated on demand when hovering tooltips.
+
+trade_partners_total_imports_from_target = {
 	value = "market_imports(scope:base_market)"
 }
 
@@ -9,4 +12,176 @@ trade_partners_total_exports_to_target = {
 trade_partners_total_trade = {
 	add = "market_imports(scope:base_market)"
 	add = "market_exports(scope:base_market)"
+}
+
+# Inherent World Market demand buffer (traded_quantity * WORLD_MARKET_GOODS_DEMAND_BUFFER = 10)
+# for a `market_goods` scope, matching vanilla common/goods/00_goods.txt (default 50).
+trade_partners_goods_demand_buffer = {
+	value = 50
+	if = {
+		limit = { goods = { OR = { this = g:grain this = g:fish } } }
+		value = 120
+	}
+	else_if = {
+		limit = { goods = { OR = { this = g:fabric this = g:wood } } }
+		value = 100
+	}
+	else_if = {
+		limit = { goods = { this = g:groceries } }
+		value = 90
+	}
+	else_if = {
+		limit = { goods = { OR = { this = g:clothes this = g:furniture this = g:meat this = g:fruit this = g:liquor this = g:sugar } } }
+		value = 80
+	}
+	else_if = {
+		limit = { goods = { OR = { this = g:paper this = g:coal this = g:fertilizer } } }
+		value = 70
+	}
+	else_if = {
+		limit = { goods = { this = g:oil } }
+		value = 60
+	}
+	else_if = {
+		limit = { goods = { OR = { this = g:small_arms this = g:merchant_marine this = g:sulfur this = g:engines this = g:steel this = g:explosives this = g:telephones this = g:luxury_clothes this = g:luxury_furniture } } }
+		value = 40
+	}
+	else_if = {
+		limit = { goods = { OR = { this = g:artillery this = g:manowars this = g:ironclads this = g:clippers this = g:steamers this = g:porcelain this = g:radios } } }
+		value = 35
+	}
+	else_if = {
+		limit = { goods = { OR = { this = g:tanks this = g:aeroplanes this = g:automobiles } } }
+		value = 30
+	}
+	else_if = {
+		limit = { goods = { this = g:fine_art } }
+		value = 15
+	}
+}
+
+# Reconstructs the current World Market Price (`Goods.GetWorldMarketBasePrice`) for an
+# exporter's `market_goods` scope:
+#   demand = goods.world_market_imports + traded_quantity * 10 (WORLD_MARKET_GOODS_DEMAND_BUFFER)
+#   supply = goods.world_market_exports
+#   mult   = clamp(1 + 0.75 * clamp((demand - supply) / max(min(demand, supply), 1), -1, 1), 0.25, 1.75)
+#   if exporter holds > 50% of global exports: mult *= (1 + market_goods_export_share * 0.2) (MONOPOLY_PRICE_IMPACT)
+# Note: in Victoria 3 script_values, `min = X` floors at X (max(v, X)) and `max = X` caps at X (min(v, X)).
+trade_partners_world_market_goods_price = {
+	value = goods.world_market_imports
+	add = trade_partners_goods_demand_buffer
+	save_temporary_value_as = tp_wm_demand
+
+	value = goods.base_price
+	multiply = {
+		value = 1
+		add = {
+			value = scope:tp_wm_demand
+			subtract = goods.world_market_exports
+			divide = {
+				value = scope:tp_wm_demand
+				max = goods.world_market_exports
+				min = 1
+			}
+			min = -1
+			max = 1
+			multiply = 0.75
+		}
+		if = {
+			limit = { market_goods_export_share > 0.5 }
+			multiply = {
+				value = 1
+				add = {
+					value = market_goods_export_share
+					multiply = 0.2
+				}
+			}
+		}
+		min = 0.25
+		max = 1.75
+	}
+}
+
+# Flat, no-rollback binary search (0..65535.5, 0.5-unit precision) recovering the exact
+# per-good export volume from root `market_goods`'s market to `scope:tp_target_market`.
+# Re-binds `scope:tp_good` locally and keeps all `save_temporary_value_as` at top level
+# with unique names per bit (no nested `if` saves, no temp-name reuse).
+trade_partners_goods_export_amount = {
+	value = 0
+	if = { limit = { goods = { save_temporary_scope_as = tp_good } } add = 0 }
+	if = { limit = { market = { market_exports = { target = scope:tp_target_market goods = scope:tp_good value >= 32768 } } } add = 32768 }
+	save_temporary_value_as = tp_e15
+	if = { limit = { market = { market_exports = { target = scope:tp_target_market goods = scope:tp_good value >= { value = scope:tp_e15 add = 16384 } } } } add = 16384 }
+	save_temporary_value_as = tp_e14
+	if = { limit = { market = { market_exports = { target = scope:tp_target_market goods = scope:tp_good value >= { value = scope:tp_e14 add = 8192 } } } } add = 8192 }
+	save_temporary_value_as = tp_e13
+	if = { limit = { market = { market_exports = { target = scope:tp_target_market goods = scope:tp_good value >= { value = scope:tp_e13 add = 4096 } } } } add = 4096 }
+	save_temporary_value_as = tp_e12
+	if = { limit = { market = { market_exports = { target = scope:tp_target_market goods = scope:tp_good value >= { value = scope:tp_e12 add = 2048 } } } } add = 2048 }
+	save_temporary_value_as = tp_e11
+	if = { limit = { market = { market_exports = { target = scope:tp_target_market goods = scope:tp_good value >= { value = scope:tp_e11 add = 1024 } } } } add = 1024 }
+	save_temporary_value_as = tp_e10
+	if = { limit = { market = { market_exports = { target = scope:tp_target_market goods = scope:tp_good value >= { value = scope:tp_e10 add = 512 } } } } add = 512 }
+	save_temporary_value_as = tp_e9
+	if = { limit = { market = { market_exports = { target = scope:tp_target_market goods = scope:tp_good value >= { value = scope:tp_e9 add = 256 } } } } add = 256 }
+	save_temporary_value_as = tp_e8
+	if = { limit = { market = { market_exports = { target = scope:tp_target_market goods = scope:tp_good value >= { value = scope:tp_e8 add = 128 } } } } add = 128 }
+	save_temporary_value_as = tp_e7
+	if = { limit = { market = { market_exports = { target = scope:tp_target_market goods = scope:tp_good value >= { value = scope:tp_e7 add = 64 } } } } add = 64 }
+	save_temporary_value_as = tp_e6
+	if = { limit = { market = { market_exports = { target = scope:tp_target_market goods = scope:tp_good value >= { value = scope:tp_e6 add = 32 } } } } add = 32 }
+	save_temporary_value_as = tp_e5
+	if = { limit = { market = { market_exports = { target = scope:tp_target_market goods = scope:tp_good value >= { value = scope:tp_e5 add = 16 } } } } add = 16 }
+	save_temporary_value_as = tp_e4
+	if = { limit = { market = { market_exports = { target = scope:tp_target_market goods = scope:tp_good value >= { value = scope:tp_e4 add = 8 } } } } add = 8 }
+	save_temporary_value_as = tp_e3
+	if = { limit = { market = { market_exports = { target = scope:tp_target_market goods = scope:tp_good value >= { value = scope:tp_e3 add = 4 } } } } add = 4 }
+	save_temporary_value_as = tp_e2
+	if = { limit = { market = { market_exports = { target = scope:tp_target_market goods = scope:tp_good value >= { value = scope:tp_e2 add = 2 } } } } add = 2 }
+	save_temporary_value_as = tp_e1
+	if = { limit = { market = { market_exports = { target = scope:tp_target_market goods = scope:tp_good value >= { value = scope:tp_e1 add = 1 } } } } add = 1 }
+	save_temporary_value_as = tp_e0
+	if = { limit = { market = { market_exports = { target = scope:tp_target_market goods = scope:tp_good value >= { value = scope:tp_e0 add = 0.5 } } } } add = 0.5 }
+}
+
+# Monetary value (£) of a single exported `market_goods` to `scope:tp_target_market`.
+trade_partners_goods_export_value = {
+	value = trade_partners_goods_export_amount
+	multiply = trade_partners_world_market_goods_price
+}
+
+# Core monetary sum (£) of all goods (>= 1 unit) exported from `this` market to `scope:tp_target_market`.
+trade_partners_export_value_core = {
+	value = 0
+	every_market_goods = {
+		limit = {
+			market_goods_exports >= 1
+			goods = { save_temporary_scope_as = tp_good }
+			market = { market_exports = { target = scope:tp_target_market goods = scope:tp_good value >= 1 } }
+		}
+		add = trade_partners_goods_export_value
+	}
+}
+
+# Total monetary value (£) of all goods (>= 1 unit) exported from root market
+# to scope:base_market, priced at each good's current World Market Price.
+# Also used symmetrically by TradePartnersGetImportValueFrom(Importer, Exporter).
+trade_partners_export_value_to_target = {
+	value = 0
+	if = {
+		limit = { scope:base_market = { save_temporary_scope_as = tp_target_market } }
+		add = trade_partners_export_value_core
+	}
+}
+
+# Symmetric alias for callers that pass root = Importer, scope:base_market = Exporter
+# (avoids shadowing permanent `base_market` and keeps live hot-reload compatible).
+trade_partners_import_value_from_target = {
+	value = 0
+	if = {
+		limit = { save_temporary_scope_as = tp_target_market }
+		scope:base_market = {
+			add = trade_partners_export_value_core
+		}
+	}
 }

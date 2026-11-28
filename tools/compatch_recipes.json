@@ -15,7 +15,7 @@
               "anchor": "in_opposition_icon.dds",
               "after_block_end": true,
               "enclosing_levels": 3,
-              "gora_file": "0_gora_politics_panel_government_details.gui",
+              "gora_file": "0_ipg_politics_panel_government_details.gui",
               "fence": "IPG hemicycle",
               "idempotent_marker": "parliament_item = {}"
             }

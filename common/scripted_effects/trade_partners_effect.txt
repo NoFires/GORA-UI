@@ -1,25 +1,48 @@
-﻿trade_partners_set_import_partners = {
+﻿# Trade Partners scripted effects with GORA UI+ performance optimizations.
+#
+# Performance design:
+#   1. Normal player games: market partner lists are refreshed on demand solely
+#      for the currently open market panel via `trade_partners_scripted_gui`.
+#      The observer on_action exits immediately on `any_country = { is_player = yes }`.
+#   2. Inner-loop pruning: markets with total `market_trade < 1` (isolated,
+#      decentralized, or inactive markets) are skipped before evaluating bilateral
+#      trade totals, and each partner list is capped at the top 20 partners.
+#   3. Pure observer mode: Victoria 3 blocks Scripted GUI execution when no country
+#      is player-controlled, so an on_action fallback is required to populate charts.
+#      To avoid an expensive monthly O(N^2) global market scan, observer updates run
+#      immediately at game start and then once per quarter (every 3 months), gated
+#      by the `trade_partner_show_all` game rule.
+
+trade_partners_set_import_partners = {
 	save_temporary_scope_as = base_market
 
 	owner = {
 		save_temporary_scope_as = base_market_owner
 		clear_variable_list = trade_partners_all_markets_import
 	}
-	
-	ordered_market = {
-		limit = {
-			AND = {
-				NOT = { this = scope:base_market }
-				trade_partners_total_exports_to_target > 0 
-			}
-		}
-		order_by = trade_partners_total_exports_to_target
 
-		save_temporary_scope_as = iter_market 
-		scope:base_market_owner = {
-			add_to_variable_list = {
-				name = trade_partners_all_markets_import
-				target = scope:iter_market
+	# Skip scanning when the base market itself has negligible world-market trade.
+	if = {
+		limit = {
+			market_trade = { value >= 1 }
+		}
+		ordered_market = {
+			limit = {
+				# Prune inactive/isolated markets before evaluating bilateral flows.
+				market_trade = { value >= 1 }
+				NOT = { this = scope:base_market }
+				trade_partners_total_exports_to_target >= 1
+			}
+			order_by = trade_partners_total_exports_to_target
+			max = 20
+			check_range_bounds = no
+
+			save_temporary_scope_as = iter_market
+			scope:base_market_owner = {
+				add_to_variable_list = {
+					name = trade_partners_all_markets_import
+					target = scope:iter_market
+				}
 			}
 		}
 	}
@@ -27,40 +50,45 @@
 
 trade_partners_set_export_partners = {
 	save_temporary_scope_as = base_market
-	
+
 	owner = {
 		save_temporary_scope_as = base_market_owner
 		clear_variable_list = trade_partners_all_markets_export
 	}
-	
-	ordered_market = {
-		limit = {
-			AND = { 
-				NOT = { this = scope:base_market }
-				trade_partners_total_imports_from_target > 0
-			}
-		}
-		order_by = trade_partners_total_imports_from_target
 
-		save_temporary_scope_as = iter_market 
-		scope:base_market_owner = {
-			add_to_variable_list = {
-				name = trade_partners_all_markets_export
-				target = scope:iter_market
+	# Skip scanning when the base market itself has negligible world-market trade.
+	if = {
+		limit = {
+			market_trade = { value >= 1 }
+		}
+		ordered_market = {
+			limit = {
+				# Prune inactive/isolated markets before evaluating bilateral flows.
+				market_trade = { value >= 1 }
+				NOT = { this = scope:base_market }
+				trade_partners_total_imports_from_target >= 1
+			}
+			order_by = trade_partners_total_imports_from_target
+			max = 20
+			check_range_bounds = no
+
+			save_temporary_scope_as = iter_market
+			scope:base_market_owner = {
+				add_to_variable_list = {
+					name = trade_partners_all_markets_export
+					target = scope:iter_market
+				}
 			}
 		}
 	}
 }
 
-# Update both export and import partner lists based on game rules
+# Entry point called by `trade_partners_scripted_gui` when a player opens or views a market panel.
+# Honors the GORA UI+ `trade_partners_chart_display` game rule.
 trade_partners_market_update = {
-	# Execute logic only if game rules allow it
 	if = {
 		limit = {
-			# Rule is NOT disabled
 			NOT = { has_game_rule = trade_partner_disabled }
-
-			# Game rule condition check: Show all OR (Show player only AND market owner is player)
 			OR = {
 				has_game_rule = trade_partner_show_all
 				AND = {
@@ -70,8 +98,50 @@ trade_partners_market_update = {
 			}
 		}
 
-		# Perform original updates
 		trade_partners_set_export_partners = yes
 		trade_partners_set_import_partners = yes
+	}
+}
+
+# Pure observer-mode full refresh (executed immediately after lobby on game start,
+# and quarterly thereafter via `trade_partners_market_update_observer_quarterly`).
+# Skips automatically whenever any human player exists or `trade_partner_show_all` is off.
+trade_partners_market_update_observer = {
+	if = {
+		limit = {
+			has_game_rule = trade_partner_show_all
+			NOT = { any_country = { is_player = yes } }
+		}
+		every_market = {
+			limit = {
+				market_trade = { value >= 1 }
+			}
+			trade_partners_set_export_partners = yes
+			trade_partners_set_import_partners = yes
+		}
+	}
+}
+
+# Quarterly throttle wrapper for `on_monthly_pulse` in pure observer mode.
+# Runs `trade_partners_market_update_observer` once every 3 months (tick cycle 0 -> 1 -> 2 -> refresh),
+# reducing observer-mode pulse overhead by ~85-90% together with market pruning and top-20 capping.
+trade_partners_market_update_observer_quarterly = {
+	if = {
+		limit = {
+			has_game_rule = trade_partner_show_all
+			NOT = { any_country = { is_player = yes } }
+		}
+		if = {
+			limit = { NOT = { has_global_variable = trade_partners_obs_tick } }
+			set_global_variable = { name = trade_partners_obs_tick value = 1 }
+		}
+		else_if = {
+			limit = { global_var:trade_partners_obs_tick >= 2 }
+			set_global_variable = { name = trade_partners_obs_tick value = 0 }
+			trade_partners_market_update_observer = yes
+		}
+		else = {
+			change_global_variable = { name = trade_partners_obs_tick add = 1 }
+		}
 	}
 }

@@ -44,19 +44,21 @@ GALLERY_FILES = [
 
 IPG_TITLE = "Improved ParliamentGraph 3.1"
 
-CHANGE_NOTE_IPG_EN = """v3.1.0 — Seat Apportionment Formulas, Historical Chambers & Foreign AI Parliaments!
-- Added bottom-left Seat Apportionment selector with 5 live formulas (Hare / Hamilton, D'Hondt, Sainte-Laguë, 5% Threshold PR, Mild Plurality / FPTP) + Smart Auto-Matching driven by Distribution of Power laws & cultural heritage
-- Linked active formula to BOTH all-3-view seat allocation (Party Structure, Power Structure, Political Alignment, including post-formula seat share %) AND historically authentic chamber size (+25% Plurality, +10% Sainte-Laguë, baseline Hare, -5% D'Hondt, -15% 5% Threshold)
-- Added 20+ country-specific historical chamber names with unified Upper House (Power), Lower House (Party), and Whole Parliament (Alignment) titles + custom Upper/Lower badges (e.g., GBR House of Lords / House of Commons, USA Senate / House of Representatives, Qing Grand Council / Advisory Council, Tsarist State Council / State Duma)
-- Added on-demand Foreign AI Parliament Viewer on other countries' Diplomacy -> Politics tab (Party Structure, Power Structure, Political Alignment; seamless Power Structure fallback for non-party nations; zero background AI overhead)
-- Added 5-election rolling seat history in per-seat tooltips, 3D enameled dot sheen, and full alignment with official Victoria 3 localization keys across all 11 languages"""
+CHANGE_NOTE_IPG_EN = """v3.1.1 — Visual & UX Polish, True 50-Seat Tier, Warm-Gold Tabs & Foreign Panel Mod Compatibility
+- Improved compatibility with foreign-panel mods (e.g. Improved Domestic Panel 3573737721): moved the foreign parliament hook from high-priority `0_ipg_country_politics_panel.gui` to lowest-priority vanilla-path `gui/country_politics_panel.gui` so other foreign-panel mods placed below IPG win cleanly
+- Unified equal-outer-diameter matte-enamel seat dots across all 5 chambers and added dedicated 16x16 small-dot textures (`<= 8px`) to eliminate jagged aliasing on Bicameral and 300-seat chambers
+- Upgraded the Head of State focal seat into a crowned double-gold-ring medallion and added subtle architectural floorplans (per-tier end-faded Westminster benches and exact-row Assembly Hall terraces)
+- Added a true 50-seat visual tier (50-seat countries like Prussia now render 50 spacious dots), centered symmetric 8+8 Assembly Hall vertically, added extra Horseshoe frame breathing room, and balanced Bicameral Split with majority green vs. minority warm-gold counts plus a top-left title
+- Replaced cool-silver active tab highlights with bespoke warm antique-gold frames docked cleanly to the canvas; upgraded the Foreign AI Parliament Viewer with auto-refresh on open, a compact round header refresh icon, and equal-thirds view tabs
+- Polished all tooltips across all 11 languages: extra bottom clearance above middle-click lock prompts, brighter warm-parchment category tags, non-breaking minus signs on standalone chamber-size lines, universal suffrage icon for D'Hondt, and removed duplicate Ruler IG icons"""
 
-CHANGE_NOTE_IPG_CN = """v3.1.0 — 议席分配算法、国别上下院与外国三视图议会大更新！
-- 画布左下角新增「议席分配算法」选择器，支持 5 套实时算法（哈密顿法、洪特法、圣拉格法、5% 门槛制、多数制加成）及按权力分配法律与文化传统自动匹配
-- 算法全面联动三视图席位分布（政党结构、权力结构、政治倾向及算法后占比）与历史总席位规模（多数制 +25%、圣拉格 +10%、哈密顿基准、洪特 -5%、5% 门槛 -15%）及 100/200/300 画布点数档位
-- 新增 20+ 国别专属历史议院名称，全面对齐上院（权力结构）、下院（政党结构）与整体议会（政治倾向）命名并配自定义上下院徽章（如英国上议院/下议院、美国参议院/众议院、大清军机处/资政院、俄国国务会议/国家杜马）
-- 外交国家政治页新增按需计算的「外国议会」三视图（政党结构、权力结构、政治倾向；无党派国家自动以权力结构无缝兜底，平时零 AI 后台算力开销）
-- 新增单席位近 5 届席位趋势、3D 搪瓷圆点高光质感，全部法律与政治术语直接对齐维多利亚 3 原版官方本地化"""
+CHANGE_NOTE_IPG_CN = """v3.1.1 — 五大格局精修、真 50 席档位、暖金页签与外邦面板兼容优化
+- 优化外邦面板 Mod 兼容（如 Improved Domestic Panel 3573737721）：移除高优先级 0_ipg_country_politics_panel.gui，改用最低优先级原版同名文件 gui/country_politics_panel.gui，其他改外邦面板的 Mod 放于 IPG 下方即可无冲突接管
+- 统一执政/在野等外径哑光珐琅席位圆点，并新增 16×16 小尺寸圆点专用贴图，彻底消除两院分席与高密格局下的黄点锯齿感
+- 统治者主位升级双层暗金王冠徽章；新增画布建筑辅助底图（威斯敏斯特按列宽两端淡出、阶梯大会堂按实际排数精确截断）
+- 新增真 50 席点阵档位（普鲁士等 50 席国家直接渲染 50 颗大点距圆点）；阶梯大会堂左右 8+8 对称并垂直居中；马蹄形加大四周留白；两院分席拉近左右弧高、区分过半亮绿/未过半琥珀金并补左上标题平衡构图
+- 本国/外国 6 个视图页签选中框统一换为暖古金色并紧贴画布；外国议会改为打开自动刷新 + 标题栏最右圆形刷新图标，下方三页签全宽三等分
+- 全 11 语 Tooltip 统一精修：底部增高避让中键锁定提示、提亮右上角类别标签、全算法「议会规模」独立成行并改用不折行负号、洪特法改用普选图标、移除统治者提示框重复利益集团图标"""
 
 BPM25_TITLE = "BPM2.5-ParliamentGraph(1.15)"
 
@@ -68,7 +70,7 @@ Complete standalone [b]Improved ParliamentGraph 3.1[/b] edition built specifical
 [*]Supported Game Version: [b]1.15.*[/b] (Better Politics Mod 2.5)
 [*]All-in-one standalone for BPM — do [b]not[/b] enable vanilla Improved ParliamentGraph or GORA UI+ alongside this mod (GORA UI+ users should use [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3726578545]GORA UI+ × BPM Compat[/url] instead)
 [*]Zero gameplay changes (pure UI), Ironman / Multiplayer safe, all 11 official languages
-[*]Load Order: [b]1. Better Politics Mod → 2. BPM2.5-ParliamentGraph(1.15)[/b] (partial-type `gui/!ipg_bpm.gui` preserves every other BPM widget cleanly)
+[*]Load Order: [b]1. Better Politics Mod → 2. BPM2.5-ParliamentGraph(1.15)[/b] (partial-type [b]gui/!ipg_bpm.gui[/b] preserves every other BPM widget cleanly)
 [/list]
 
 [h2]🔥 Highlights (IPG 3.1)[/h2]
@@ -95,7 +97,7 @@ BPM25_DESC_CN = """[h1]🏛️ BPM2.5-ParliamentGraph (1.15) — 全面升级至
 [*]支持游戏版本：[b]1.15.*[/b]（适配现行 BPM 2.5）
 [*]本模组已内置完整 IPG 3.1，[b]无需[/b]重复订阅原版独立 IPG（如同时使用 GORA UI+，请改用 [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3726578545]GORA UI+ × BPM 兼容补丁[/url]）
 [*]纯 UI 零玩法修改、支持联机与中途加档、完整支持全部 11 种官方语言
-[*]加载顺序：[b]1. Better Politics Mod → 2. BPM2.5-ParliamentGraph(1.15)[/b]（采用轻量局部覆盖 `gui/!ipg_bpm.gui`，完整保留 BPM 全部界面组件）
+[*]加载顺序：[b]1. Better Politics Mod → 2. BPM2.5-ParliamentGraph(1.15)[/b]（采用轻量局部覆盖 [b]gui/!ipg_bpm.gui[/b]，完整保留 BPM 全部界面组件）
 [/list]
 
 [h2]🔥 核心亮点（IPG 3.1）[/h2]
@@ -114,13 +116,15 @@ BPM25_DESC_CN = """[h1]🏛️ BPM2.5-ParliamentGraph (1.15) — 全面升级至
 [*]UI 合集旗舰版：[url=https://steamcommunity.com/sharedfiles/filedetails/?id=3724865565]GORA UI+[/url]
 [/list]"""
 
-CHANGE_NOTE_BPM25_EN = """v3.1.0 — Upgraded to Victoria 3 1.15.* + Improved ParliamentGraph 3.1!
-- Rebuilt BPM GUI integration cleanly against Better Politics Mod 2.5 (1.15.*) using partial-type `gui/!ipg_bpm.gui` (splices both `politics_panel_government_details` and `country_panel_politics_content`)
-- Upgraded full bundled engine to IPG 3.1: 5 chamber architectures, 5 live seat apportionment formulas linked to all 3 views & historical seat counts, 20+ country historical Upper/Lower chamber names, 5-election seat trends, 3D dot sheen, and on-demand 3-view Foreign AI Parliament Viewer"""
+CHANGE_NOTE_BPM25_EN = """v3.1.1 — IPG 3.1.1 Visual & UX Polish, True 50-Seat Tier & Warm-Gold Tabs
+- Synced full IPG 3.1.1 visual overhaul into BPM2.5-ParliamentGraph: equal-outer-diameter matte-enamel seat dots + 16x16 small-dot textures eliminating aliasing, crowned Head of State medallion, per-tier faded Westminster & Assembly Hall floorplans, true 50-seat visual tier, symmetric vertically-centered Assembly Hall, roomier Horseshoe margins, and balanced Bicameral Split with majority/minority colors & top-left title
+- Replaced cool-silver active tab highlights with warm antique-gold frames; upgraded Foreign AI Parliament Viewer with auto-refresh on open, a compact round header refresh button, and equal-thirds view tabs
+- Polished all 11-language tooltips (bottom middle-click lock clearance, brighter category tags, non-breaking minus on standalone chamber-size lines, universal suffrage icon for D'Hondt, removed duplicate Ruler IG icon) while keeping `gui/!ipg_bpm.gui` cleanly synced with BPM 2.5 (1.15.*)"""
 
-CHANGE_NOTE_BPM25_CN = """v3.1.0 — 升级适配维多利亚 3 1.15.* + Improved ParliamentGraph 3.1！
-- 基于 Better Politics Mod 2.5 (1.15.*) 重构轻量局部覆盖 `gui/!ipg_bpm.gui`，同时挂载本国议会与外交页外国议会视图
-- 完整升级内置引擎至 IPG 3.1：5 大历史议会形态、5 套实时算法联动三视图与历史总席位规模、20+ 国别历史上下院名称、近 5 届席位趋势、3D 圆点质感及外交外国三视图议会"""
+CHANGE_NOTE_BPM25_CN = """v3.1.1 — 同步 IPG 3.1.1 视觉精修、真 50 席档位与暖金页签
+- 完整同步 IPG 3.1.1 视觉与交互优化：统一等外径哑光珐琅席位点与 16×16 小圆点去锯齿贴图、双层暗金王冠统治者徽章、分档位精确威斯敏斯特/大会堂底图、真 50 席点阵档位、阶梯大会堂对称居中、马蹄形扩充边距、两院分席过半绿/未过半琥珀金与左上标题平衡
+- 本国/外国页签选中框统一换为暖古金色并紧贴画布；外国议会改为打开自动刷新 + 标题栏右侧圆形刷新按钮、下方三页签全宽等分
+- 全 11 语 Tooltip 统一精修（底部避让中键锁定、提亮类别标签、独立不折行负号、洪特法普选图标、去除统治者重复利益集团图标），同时保持 gui/!ipg_bpm.gui 与 BPM 2.5 (1.15.*) 完整同步"""
 
 CHANGE_NOTE_GORA_BPM_EN = """v1.2.0 — GORA UI+ 1.4.0 / IPG 3.1 Compatibility Update
 - Added `country_panel_politics_content` partial-type splice into `gui/!gora_bpm.gui` so the new IPG 3.1 on-demand Foreign AI Parliament Viewer (Party Structure, Power Structure, Political Alignment) renders cleanly alongside Better Politics Mod 2.5 (1.15.*)

@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.4.2] - 2026-11-29
+
+- Upgraded bundled Improved ParliamentGraph to v3.1.1: unified equal-outer-diameter matte-enamel seat dots (plus dedicated 16x16 small-dot textures eliminating aliasing on dense chambers), crowned Head of State medallion, true 50-seat visual tier (e.g. 50-seat Prussia renders 50 spaced dots), per-tier faded floorplan underlays for Westminster & Assembly Hall, vertically centered symmetric 8+8 Assembly Hall, roomier Horseshoe margins, and balanced Bicameral split with majority/minority seat colors and top-left title.
+- Polished IPG chrome & tooltips: replaced cool-silver tab highlights with warm antique-gold active tab frames, gave the Foreign AI Parliament Viewer equal-thirds tabs with auto-refresh on open plus a compact round refresh button in the header, added tooltip bottom padding for middle-click lock clearance, brightened tooltip category tags, fixed D'Hondt icon & non-breaking minus line wraps across all 11 languages, and removed the duplicate Ruler IG icon.
+- Improved foreign-panel mod compatibility: moved IPG's foreign parliament hook to lowest-priority `gui/country_politics_panel.gui` (yields cleanly to foreign-panel mods such as Improved Domestic Panel 3573737721 placed below GORA UI+) and aligned `gui/0_ipg_politics_panel_government_details.gui` with standalone IPG naming.
+- Integrated Victorian Charts (1.0.0): softer, lower-contrast Victorian pie & treemap chart shaders (`gfx/FX/pdxgui_piechart.shader`, `gfx/FX/pdxgui_treemapchart.shader`).
+- Updated bundled Trade Partners to v0.1.4: added a shared Pie/Treemap chart toggle on the Market Trade tab, refined export/import headers & tooltips, and updated 11-language localization.
+- Fixed Building Workforce Radicals/Loyalists counts overlapping the Visible Pop Needs consumption tiles on both collapsed and expanded pop rows (`gui/0_gora_pops_overview.gui`).
+
 ## [1.4.1] - 2026-11-28
 
 - Synced the military formation footer (`gui/0_gora_military_formation_panel.gui`) and military formations panel (`gui/0_gora_military_panel_formations.gui`) to Victoria 3 1.15.2 while keeping GORA UI+ performance optimizations intact.

@@ -1,20 +1,20 @@
-﻿# GORA UI+ — politics_panel_government_details (partial type override)
+﻿# Improved ParliamentGraph — politics_panel_government_details (partial type override)
 # ─────────────────────────────────────────────────────────────────────────────
-# Vanilla 1.13.9 baseline: gui/politics_panel_reform_government.gui.
-# type politics_panel_government_details (line 222+, inside types politics_panel_types).
+# Vanilla baseline: gui/politics_panel_reform_government.gui.
+# type politics_panel_government_details (inside types politics_panel_types).
 # Other vanilla types in that file (politics_panel_government, reform_government_option,
 # politics_panel_government_reform, laws_support_list, politics_panel_reform_no_ruler_item)
 # are inherited from vanilla unchanged.
 #
-# GORA delta: one `parliament_item = {}` line inserted in the Opposition column,
-# rendering the IPG hemicycle widget (parliament_item type defined in
-# gui/gora_ipg_parliament_panel.gui).
+# IPG delta: one `parliament_item = {}` line inserted in the Opposition column,
+# rendering the IPG parliament widget (parliament_item type defined in
+# gui/ipg_parliament_panel.gui).
 #
 # Re-sync recipe: diff vanilla type politics_panel_government_details, replace this
 # file's type body with new vanilla, re-insert the fenced `### GORA UI+` delta.
 # ─────────────────────────────────────────────────────────────────────────────
 
-types gora_politics_panel_government_details {
+types ipg_politics_panel_government_details {
 
 	type politics_panel_government_details = hbox {
 		layoutpolicy_horizontal = expanding
@@ -641,7 +641,7 @@ types gora_politics_panel_government_details {
 				}
 			}
 
-			### GORA UI+ — IPG hemicycle (parliament_item type lives in gui/gora_ipg_parliament_panel.gui)
+			### GORA UI+ — IPG hemicycle (parliament_item type lives in gui/ipg_parliament_panel.gui)
 			parliament_item = {}
 			### /GORA UI+
 

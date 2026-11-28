@@ -1,58 +1,158 @@
-﻿# Market goods charts: keep quantity and trade value readable in a narrow card.
-# The chart instances supply the goods model, amounts, prices and tooltips.
+﻿# Market panel compact charts: unified 144x112 scrollable legend with soft edge fade.
+# Victorian antique patina & 1px dark seams are handled globally by gfx/FX/pdxgui_piechart.shader
+# and gfx/FX/pdxgui_treemapchart.shader for both Pie and Treemap views without per-widget overlays.
 types market_panel {
-	type gora_trade_value_chart = compact_chart {
+	type gora_market_chart = container {
+		alwaystransparent = no
+
+		flowcontainer = {
+			block "chart_visible" {}
+			block "direction" {
+				direction = vertical
+			}
+			spacing = 5
+
+			block "margin" {
+				margin_left = 10
+				margin_right = 5
+				margin_top = 5
+				margin_bottom = 10
+			}
+
+			block "minimumsize" {}
+
+			block "background" {
+				background = {
+					using = entry_bg
+				}
+			}
+
+			block "title" {
+				textbox = {
+					using = default_list_position
+					size = { 100% 23 }
+					align = hcenter|nobaseline
+					default_format = "#title"
+					alwaystransparent = no
+
+					block "heading" {
+						raw_text = "#todo heading#!"
+					}
+				}
+			}
+
+			flowcontainer = {
+				spacing = 10
+
+				v3_piechart = {
+					visible = "[GetVariableSystem.Exists('piecharts')]"
+
+					blockoverride "piechartsize" {
+						size = { 120 120 }
+					}
+
+					blockoverride "chart_anchor" {}
+				}
+
+				v3_treemapchart = {
+					visible = "[Not(GetVariableSystem.Exists('piecharts'))]"
+
+					blockoverride "piechartsize" {
+						size = { 120 120 }
+					}
+
+					blockoverride "chart_anchor" {}
+				}
+
+				block "labels" {}
+			}
+		}
+	}
+
+	type gora_trade_value_chart = gora_market_chart {
 		blockoverride "labels" {
-			scrollarea = {
+			widget = {
 				size = { 144 112 }
 				parentanchor = vcenter
-				scrollbarpolicy_horizontal = always_off
-				alwaystransparent = no
 
-				scrollwidget = {
-					fixedgridbox = {
-						addrow = 28
-						addcolumn = 128
-						flipdirection = yes
-						datamodel_wrap = 1
-						block "datamodel" {}
+				scrollarea = {
+					size = { 144 112 }
+					scrollbarpolicy_horizontal = always_off
+					alwaystransparent = no
 
-						item = {
-							widget = {
-								size = { 128 28 }
-								block "tooltip" {}
-								block "pie_item_goto_button" {}
+					scrollwidget = {
+						fixedgridbox = {
+							addrow = 28
+							addcolumn = 128
+							flipdirection = yes
+							datamodel_wrap = 1
+							block "datamodel" {}
 
-								icon = {
-									position = { 3 6 }
-									size = { 3 16 }
-									texture = "/gfx/interface/piechart/piechart_legend.dds"
-									block "color" {}
-								}
-								textbox = {
-									position = { 9 2 }
-									size = { 47 24 }
-									align = left|nobaseline
-									fontsize = 14
-									fontsize_min = 11
-									elide = right
-									block "rightside1_info" {}
-								}
-								textbox = {
-									position = { 58 2 }
-									size = { 67 24 }
-									align = right|nobaseline
-									fontsize = 13
-									fontsize_min = 10
-									elide = right
-									block "rightside2_info" {}
+							item = {
+								widget = {
+									size = { 128 28 }
+									block "tooltip" {}
+									block "pie_item_goto_button" {}
+
+									icon = {
+										position = { 3 6 }
+										size = { 3 16 }
+										texture = "/gfx/interface/piechart/piechart_legend.dds"
+										block "color" {}
+									}
+									textbox = {
+										position = { 9 2 }
+										size = { 47 24 }
+										align = left|nobaseline
+										fontsize = 14
+										fontsize_min = 11
+										elide = right
+										block "rightside1_info" {}
+									}
+									textbox = {
+										position = { 58 2 }
+										size = { 67 24 }
+										align = right|nobaseline
+										fontsize = 13
+										fontsize_min = 10
+										elide = right
+										block "rightside2_info" {}
+									}
 								}
 							}
 						}
 					}
+					scrollbar_vertical = {
+						using = vertical_scrollbar
+					}
 				}
-				scrollbar_vertical = {
-					using = vertical_scrollbar
+
+				# Soft top/bottom fade to cushion mid-scroll edge clipping
+				icon = {
+					parentanchor = top|left
+					size = { 128 8 }
+					texture = "gfx/interface/backgrounds/dark_area.dds"
+					alpha = 0.35
+					alwaystransparent = yes
+
+					modify_texture = {
+						texture = "gfx/interface/masks/fade_vertical_bottom.dds"
+						spriteType = Corneredstretched
+						blend_mode = alphamultiply
+					}
+				}
+				icon = {
+					parentanchor = bottom|left
+					size = { 128 8 }
+					texture = "gfx/interface/backgrounds/dark_area.dds"
+					alpha = 0.35
+					alwaystransparent = yes
+
+					modify_texture = {
+						texture = "gfx/interface/masks/fade_vertical_top.dds"
+						spriteType = Corneredstretched
+						blend_mode = alphamultiply
+					}
 				}
 			}
 		}
