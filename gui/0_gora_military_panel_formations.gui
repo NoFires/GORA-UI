@@ -1,6 +1,6 @@
 ﻿# GORA UI+ — commander_and_formation_orders (partial type override)
 # ─────────────────────────────────────────────────────────────────────────────
-# Vanilla baseline: gui/military_panel_characters.gui (or military_formation_panel).
+# Vanilla 1.15.2 baseline: gui/military_panel_formations.gui.
 # The copied body tracks vanilla `commander_and_formation_orders` inside
 # types MilitaryPanelCharacters, overridden here under types gora_MilitaryPanelCharacters.
 # Other vanilla types in that file (rank_icon, hit_points_bar, morale_bar,
@@ -257,21 +257,6 @@ types gora_MilitaryPanelCharacters {
 				### GORA UI+ END
 
 				naval_mission_button_small = {}
-
-				# edit mission sea regions
-				button_icon_round_map_interaction = {
-					blockoverride "icon_size" { size = { 75% 75% } }
-					size = { 45 45 }
-					datacontext = "[MilitaryFormation]" # needed for the tooltip
-					tooltip = "EDIT_NAVAL_MISSION_SEA_REGIONS_TOOLTIP"
-					onclick = "[MilitaryFormation.OnEditMissionSeaRegionsClicked]"
-					enabled = "[MilitaryFormation.CanEditMissionSeaRegions]"
-					using = tooltip_ne
-
-					blockoverride "icon" {
-						texture = "gfx/interface/icons/generic_icons/edit_sea_nodes.dds"
-					}
-				}
 
 				### Additional actions Fleet
 				button_icon_round = {

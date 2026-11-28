@@ -1,6 +1,6 @@
 ﻿# GORA UI+ — military_formation_panel_default_footer (partial type override)
 # ─────────────────────────────────────────────────────────────────────────────
-# Vanilla baseline: gui/military_formation_panel.gui.
+# Vanilla 1.15.2 baseline: gui/military_formation_panel.gui.
 # The copied body tracks vanilla military_formation_panel_default_footer inside
 # types military_formation_panel_types, overridden here under
 # types gora_military_formation_change_name.
@@ -12,7 +12,10 @@
 #   (3) Deploy to Front (Army): dropped action_selection_number badge; changed
 #       `enabled` to `[MilitaryFormation.IsMobilized]` (MP v11.2 performance: avoids
 #       expensive CanDeployToFront pre-validation).
-#   (4) Fleet counterpart actions and remaining footer elements inherited unchanged.
+#   (4) Station in State (Fleet): dropped action_selection_number badge; changed
+#       `enabled` to `yes` (MP v11.2 performance: avoids expensive CanStation pre-validation).
+# Remaining footer elements (status icons, naval mission edit summary, auto-replace
+# lost ships checkbox, borrow/lending settings) track vanilla 1.15.2 unchanged.
 # All clusters fenced by `### GORA UI+` markers (search the file for re-sync).
 #
 # Re-sync recipe: diff vanilla type military_formation_panel_default_footer,
@@ -56,13 +59,53 @@ types gora_military_formation_change_name
 			using = dark_area
 		}
 
-		textbox = {
+		flowcontainer = {
 			parentanchor = hcenter
-			autoresize = yes
-			align = nobaseline
-			maximumsize = { @panel_width -1 }
-			multiline = yes
-			text = "[MilitaryFormation.GetFormationStatusDesc]"
+			spacing = 5
+
+			icon = {
+				visible = "[And(MilitaryFormation.IsDefeated, Not(MilitaryFormation.GetCurrentHQ.IsValid))]"
+				size = { 30 30 }
+				parentanchor = vcenter
+				texture = "gfx/interface/icons/commander_order_icons/admiral_repairing.dds"
+			}
+
+			icon = {
+				visible = "[Or(And(MilitaryFormation.IsDefeated, MilitaryFormation.GetCurrentHQ.IsValid), And(Not(MilitaryFormation.IsDefeated), MilitaryFormation.IsRecalledForRepairs))]"
+				size = { 30 30 }
+				parentanchor = vcenter
+				texture = "gfx/interface/icons/generic_icons/repairing.dds"
+			}
+
+			icon = {
+				visible = "[And(And(Not(MilitaryFormation.IsDefeated), Not(MilitaryFormation.IsRecalledForRepairs)), And(And(MilitaryFormation.HasInvasion, MilitaryFormation.GetInvasion.IsNavalInvasion), Not(Or(MilitaryFormation.IsBeingTransported, MilitaryFormation.IsAwaitingTransport))))]"
+				size = { 30 30 }
+				parentanchor = vcenter
+				texture = "gfx/interface/icons/formation_order_icons/naval_invasion.dds"
+			}
+
+			icon = {
+				visible = "[Or(Or(MilitaryFormation.IsBeingTransported, MilitaryFormation.IsAwaitingTransport), And(Not(MilitaryFormation.HasInvasion), And(Not(MilitaryFormation.IsDefeated), And(Not(MilitaryFormation.IsRecalledForRepairs), MilitaryFormation.IsAboutToTransportArmies))))]"
+				size = { 30 30 }
+				parentanchor = vcenter
+				texture = "gfx/interface/icons/formation_order_icons/embark_onto_fleet.dds"
+			}
+
+			icon = {
+				visible = "[And(Not(MilitaryFormation.IsDefeated), And(Not(MilitaryFormation.IsRecalledForRepairs), And(Not(MilitaryFormation.HasInvasion), And(Not(MilitaryFormation.IsAboutToTransportArmies), MilitaryFormation.HasNavalMission))))]"
+				size = { 30 30 }
+				parentanchor = vcenter
+				texture = "[MilitaryFormation.GetNavalMission.GetType.GetIcon]"
+			}
+
+			textbox = {
+				maximumsize = { 505 -1 }
+				parentanchor = vcenter
+				autoresize = yes
+				align = nobaseline
+				multiline = yes
+				text = "[MilitaryFormation.GetFormationStatusDesc]"
+			}
 		}
 
 		textbox = {
@@ -73,6 +116,17 @@ types gora_military_formation_change_name
 			maximumsize = { @panel_width -1 }
 			multiline = yes
 			text = "SELECTED_STRATEGIC_OBJECTIVE"
+		}
+
+		textbox = {
+			visible = "[MapInteractions.HasSelectionEditNavalMissionInteraction]"
+			max_update_rate = 8
+			maximumsize = { @panel_width -1 }
+			parentanchor = hcenter
+			autoresize = yes
+			align = nobaseline
+			multiline = yes
+			text = "MILITARY_FORMATION_NAVAL_MISSION_EDIT_SUMMARY"
 		}
 
 		widget = {
@@ -86,11 +140,18 @@ types gora_military_formation_change_name
 			blockoverride "size" {
 				size = { 530 60 }
 			}
+
 			blockoverride "button_size" {
 				size = { 95% 75% }
 			}
+
 			blockoverride "mobilization_icon_size" {
 				size = { 55 55 }
+			}
+
+			blockoverride "text_margin" {
+				margin_left = 33
+				margin_right = 8
 			}
 		}
 
@@ -111,6 +172,11 @@ types gora_military_formation_change_name
 
 				blockoverride "mobilization_icon_size" {
 					size = { 55 55 }
+				}
+
+				blockoverride "text_margin" {
+					margin_left = 34
+					margin_right = 8
 				}
 			}
 
@@ -242,11 +308,12 @@ types gora_military_formation_change_name
 			}
 
 			### Station in State
+			### GORA UI+ [Delta 4: Dropped counter badge & bypass expensive Fleet CanStation validation]
 			button_icon_round_map_interaction = {
 				size = { 60 60 }
 				tooltip = "STATION_MILITARY_FORMATION_TOOLTIP"
 				using = tooltip_ne
-				# MP v11.2: avoid expensive Army CanStation pre-validation; actual station selector remains original.
+				# MP v11.2: avoid expensive Fleet CanStation pre-validation; actual station selector remains original.
 				enabled = yes
 				onclick = "[MilitaryFormation.OnStationClicked]"
 
@@ -264,30 +331,12 @@ types gora_military_formation_change_name
 				#	}
 				#}
 			}
+			### GORA UI+ END
 
 			### Naval Mission
 			naval_mission_button = {
 				blockoverride "toggle_right_click_menu_onclick" {
 					onclick = "[RightClickMenuManager.ToggleSelectNavalMissionTypeForFleet(MilitaryFormation.AccessSelf, PdxGuiWidget.AccessSelf)]"
-				}
-			}
-
-			# edit mission sea regions
-			button_icon_round_map_interaction = {
-				size = { 60 60 }
-				parentanchor = vcenter
-                datacontext = "[MilitaryFormation]" # needed for the tooltip
-				tooltip = "EDIT_NAVAL_MISSION_SEA_REGIONS_TOOLTIP"
-				onclick = "[MilitaryFormation.OnEditMissionSeaRegionsClicked]"
-				enabled = "[MilitaryFormation.CanEditMissionSeaRegions]"
-				using = tooltip_ne
-				
-				blockoverride "icon_size" {
-					size = { 75% 75% }
-				}
-
-				blockoverride "icon" {
-					texture = "gfx/interface/icons/generic_icons/edit_sea_nodes.dds"
 				}
 			}
 			
@@ -349,6 +398,21 @@ types gora_military_formation_change_name
 				margin = { 10 10 }
 				direction = vertical
 				spacing = 5
+
+				button_checkbox_label = {
+					visible = "[And(MilitaryFormation.IsFleet, MilitaryFormation.GetCountry.IsLocalPlayer)]"
+					onclick = "[Execute( MilitaryFormation.ToggleReplaceLostShips )]"
+					enabled = "[IsValid( MilitaryFormation.ToggleReplaceLostShips )]"
+					tooltip = "AUTO_REPLACE_LOST_SHIPS_TOOLTIP"
+
+					blockoverride "checkbox" {
+						checked = "[MilitaryFormation.ReplacesLostShips]"
+					}
+
+					blockoverride "text" {
+						text = "AUTO_REPLACE_LOST_SHIPS_LABEL"
+					}
+				}
 
 				textbox = {
 					autoresize = yes

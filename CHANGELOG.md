@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.4.1] - 2026-11-28
+
+- Synced the military formation footer (`gui/0_gora_military_formation_panel.gui`) and military formations panel (`gui/0_gora_military_panel_formations.gui`) to Victoria 3 1.15.2 while keeping GORA UI+ performance optimizations intact.
+- Restored the 1.15.2 "Automatically replace lost ships" checkbox (`AUTO_REPLACE_LOST_SHIPS_LABEL`) inside fleet Formation Settings.
+- Removed the obsolete 1.15.0 "edit mission sea regions" button (whose engine bindings were removed in 1.15.2) from both fleet panels, and added vanilla 1.15.2 fleet status icons, the live naval mission sea-region edit summary banner, and button text margins.
+
 ## [1.4.0] - 2026-11-28
 
 - Upgraded bundled Improved ParliamentGraph to v3.1: added an interactive bottom-left Seat Apportionment selector with 5 live formulas (Hare / Hamilton, D'Hondt, Sainte-Laguë, 5% Threshold PR, and Mild Plurality / FPTP) plus Smart Auto-Matching driven by Distribution of Power laws and cultural heritage.
